@@ -16,3 +16,5 @@ PASSWORD=
 ```
 symfony php bin/console app:test-microsoft-graph
 ```
+
+## Startup
