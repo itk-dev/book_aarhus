@@ -25,7 +25,7 @@ class Helper
    *   A decoded guzzle response.
    * @throws GuzzleException
    */
-  public function connect()
+  public function connect(): mixed
   {
     // see https://github.com/microsoftgraph/msgraph-sdk-php for approach
     $guzzle = new \GuzzleHttp\Client();
