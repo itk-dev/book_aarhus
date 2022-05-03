@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class Helper
 {
   private ParameterBagInterface $params;
-  private string $scope = 'User.Read';
+  private string $scope = 'https://graph.microsoft.com/.default';
 
   public function __construct(ParameterBagInterface $params)
   {
@@ -25,7 +25,7 @@ class Helper
    *   A decoded guzzle response.
    * @throws GuzzleException
    */
-  public function connect(): mixed
+  public function connect()
   {
     // see https://github.com/microsoftgraph/msgraph-sdk-php for approach
     $guzzle = new \GuzzleHttp\Client();
@@ -34,7 +34,7 @@ class Helper
       return json_decode($guzzle->post($url, [
         'form_params' => [
           'client_id' => $this->params->get('client_id'),
-          'scope' => rawurlencode($this->scope),
+          'scope' => $this->scope,
           'username' => $this->params->get('username'),
           'password' => $this->params->get('password'),
           'grant_type' => 'password',
