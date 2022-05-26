@@ -16,4 +16,3 @@ itkdev-docker-compose composer install
 # Migrate the database
 itkdev-docker-compose bin/console doctrine:migrations:migrate
 ```
-
