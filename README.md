@@ -35,7 +35,7 @@ docker compose exec phpfpm composer update-api-spec
 
 If these are _breaking_ changes the API version must be changed accordingly.
 
-### Composer normalizer
+## Composer normalizer
 
 [Composer normalize](https://github.com/ergebnis/composer-normalize) is used for
 formatting `composer.json`
@@ -44,7 +44,7 @@ formatting `composer.json`
 docker compose exec phpfpm composer normalize
 ```
 
-### Coding Standards
+## Coding Standards
 
 The following command let you test that the code follows
 the coding standard for the project.
