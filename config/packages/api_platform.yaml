@@ -2,6 +2,8 @@ api_platform:
     title: Book Aarhus API Service
     description: 'API Service for Book Aarhus'
     version: 1.0
+    defaults:
+        route_prefix: 'v1'
     mapping:
         paths: ['%kernel.project_dir%/src/Entity']
     patch_formats:
