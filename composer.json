@@ -1,4 +1,6 @@
 {
+    "name": "itk-dev/book_aarhus",
+    "description": "Book Aarhus API Service",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",
@@ -72,6 +74,12 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "apply-coding-standards": [
+            "vendor/bin/php-cs-fixer fix"
+        ],
+        "check-coding-standards": [
+            "vendor/bin/php-cs-fixer fix --dry-run"
         ]
     },
     "conflict": {
