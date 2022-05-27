@@ -1,0 +1,29 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Book Aarhus API Service",
+        "description": "API Service for Book Aarhus",
+        "license": {
+            "name": "MIT"
+        },
+        "version": "1"
+    },
+    "servers": [
+        {
+            "url": "/",
+            "description": ""
+        }
+    ],
+    "paths": [],
+    "components": {
+        "schemas": {},
+        "responses": {},
+        "parameters": {},
+        "examples": {},
+        "requestBodies": {},
+        "headers": {},
+        "securitySchemes": {}
+    },
+    "security": [],
+    "tags": []
+}
