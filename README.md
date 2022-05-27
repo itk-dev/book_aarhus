@@ -4,17 +4,17 @@
 
 - PHP 8.1
 
-## Installation
+## Development Setup
 
-```bash
-# Up the docker containers
-itkdev-docker-compose up -d
+A `docker-compose.yml` file is included in this project.
+To install the dependencies you can run
 
-# Install the php packages
-itkdev-docker-compose composer install
+```shell
+docker compose up -d
+docker compose exec phpfpm composer install
 
-# Migrate the database
-itkdev-docker-compose bin/console doctrine:migrations:migrate
+# Run migrations
+docker compose exec phpfpm bin/console doctrine:migrations:migrate
 ```
 
 The api can be accessed at `/api/`.
@@ -69,4 +69,4 @@ Github Actions are used to run the test suite and code style checks on all PRs.
 
 We use [SemVer](http://semver.org/) for versioning.
 For the versions available, see the
-[tags on this repository](https://github.com/itk-dev/openid-connect/tags).
+[tags on this repository](https://github.com/itk-dev/book_aarhus/tags).
