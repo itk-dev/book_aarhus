@@ -30,8 +30,7 @@
         "symfony/serializer": "6.0.*",
         "symfony/twig-bundle": "6.0.*",
         "symfony/validator": "6.0.*",
-        "symfony/yaml": "6.0.*",
-        "ext-http": "*"
+        "symfony/yaml": "6.0.*"
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.27",
