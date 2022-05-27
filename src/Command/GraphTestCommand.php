@@ -14,7 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:graph:test',
-    description: 'Test that the application can connect to Microsoft Graph.',
+    description: 'Test requests for Microsoft Graph.',
 )]
 class GraphTestCommand extends Command
 {

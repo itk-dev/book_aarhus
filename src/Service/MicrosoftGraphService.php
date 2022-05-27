@@ -7,6 +7,9 @@ use GuzzleHttp\Exception\GuzzleException;
 use Microsoft\Graph\Exception\GraphException;
 use Microsoft\Graph\Graph;
 
+/**
+ * @see https://github.com/microsoftgraph/msgraph-sdk-php
+ */
 class MicrosoftGraphService
 {
     public function __construct(private string $tenantId, private string $clientId, private string $clientSecret)
