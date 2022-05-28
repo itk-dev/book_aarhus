@@ -19,7 +19,7 @@ class MicrosoftGraphService
     /**
      * @throws GuzzleException
      */
-    public function authenticate(): string
+    public function authenticateAsApplication(): string
     {
         $guzzle = new Client();
         $url = 'https://login.microsoftonline.com/'.$this->tenantId.'/oauth2/v2.0/token';
@@ -30,6 +30,29 @@ class MicrosoftGraphService
                 'client_secret' => $this->clientSecret,
                 'scope' => 'https://graph.microsoft.com/.default',
                 'grant_type' => 'client_credentials',
+            ],
+        ]);
+
+        $token = json_decode($response->getBody()->getContents());
+
+        return $token->access_token;
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function authenticateAsUser($username, $password): string
+    {
+        $guzzle = new Client();
+        $url = 'https://login.microsoftonline.com/'.$this->tenantId.'/oauth2/v2.0/token';
+
+        $response = $guzzle->post($url, [
+            'form_params' => [
+                'client_id' => $this->clientId,
+                'scope' => 'https://graph.microsoft.com/.default',
+                'username' => $username,
+                'password' => $password,
+                'grant_type' => 'password',
             ],
         ]);
 

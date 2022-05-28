@@ -13,10 +13,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'app:graph:test',
+    name: 'app:microsoft-graph:test',
     description: 'Test requests for Microsoft Graph.',
 )]
-class GraphTestCommand extends Command
+class MicrosoftGraphTestCommand extends Command
 {
     public function __construct(private MicrosoftGraphService $microsoftGraphService)
     {
@@ -36,8 +36,24 @@ class GraphTestCommand extends Command
 
         $endpoint = $input->getArgument('endpoint');
 
+        $username = $io->ask('Enter username');
+
+        if (null == $username) {
+            $io->error('Username is required');
+
+            return Command::INVALID;
+        }
+
+        $password = $io->askHidden('Enter password');
+
+        if (null == $password) {
+            $io->error('Password is required');
+
+            return Command::INVALID;
+        }
+
         try {
-            $accessToken = $this->microsoftGraphService->authenticate();
+            $accessToken = $this->microsoftGraphService->authenticateAsUser($username, $password);
             $graphResponse = $this->microsoftGraphService->request($endpoint, $accessToken);
             $body = $graphResponse->getBody();
 
