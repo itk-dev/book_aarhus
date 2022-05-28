@@ -21,22 +21,7 @@ class MicrosoftGraphService
      */
     public function authenticateAsServiceAccount(): string
     {
-        $guzzle = new Client();
-        $url = 'https://login.microsoftonline.com/'.$this->tenantId.'/oauth2/v2.0/token';
-
-        $response = $guzzle->post($url, [
-            'form_params' => [
-                'client_id' => $this->clientId,
-                'scope' => 'https://graph.microsoft.com/.default',
-                'username' => $this->serviceAccountUsername,
-                'password' => $this->serviceAccountPassword,
-                'grant_type' => 'password',
-            ],
-        ]);
-
-        $token = json_decode($response->getBody()->getContents());
-
-        return $token->access_token;
+        return $this->authenticateAsUser($this->serviceAccountUsername, $this->serviceAccountPassword);
     }
 
     /**
