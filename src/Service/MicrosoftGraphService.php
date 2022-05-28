@@ -6,13 +6,15 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Microsoft\Graph\Exception\GraphException;
 use Microsoft\Graph\Graph;
+use Microsoft\Graph\Http\GraphResponse;
 
 /**
  * @see https://github.com/microsoftgraph/msgraph-sdk-php
+ * @see https://docs.microsoft.com/en-us/graph/use-the-api
  */
 class MicrosoftGraphService
 {
-    public function __construct(private string $tenantId, private string $clientId, private string $serviceAccountUsername, private string $serviceAccountPassword)
+    public function __construct(private string $tenantId, private string $clientId, private string $serviceAccountUsername, private string $serviceAccountPassword, private string $timeZone)
     {
     }
 
@@ -51,11 +53,47 @@ class MicrosoftGraphService
      * @throws GraphException
      * @throws GuzzleException
      */
-    public function request(string $endpoint, string $accessToken, string $requestType = 'GET')
+    public function request(string $endpoint, string $accessToken, string $requestType = 'GET', array $body = null): GraphResponse
     {
         $graph = new Graph();
         $graph->setAccessToken($accessToken);
 
-        return $graph->createRequest($requestType, $endpoint)->execute();
+        $graphRequest = $graph->createRequest($requestType, $endpoint);
+
+        if ($body) {
+            $graphRequest->attachBody($body);
+        }
+
+        return $graphRequest->execute();
+    }
+
+    /**
+     * @throws GuzzleException|GraphException
+     *
+     * @see https://docs.microsoft.com/en-us/graph/api/calendar-getschedule?view=graph-rest-1.0&tabs=http
+     */
+    public function getFreeBusy(array $schedules, \DateTime $startTime, \DateTime $endTime): array
+    {
+        $token = $this->authenticateAsServiceAccount();
+
+        // see https://docs.microsoft.com/en-us/graph/api/resources/datetimetimezone?view=graph-rest-1.0
+        // example 2019-03-15T09:00:00
+        $format = 'Y-m-d\TH:i:s';
+
+        $body = [
+            'schedules' => $schedules,
+            'startTime' => [
+                'dateTime' => $startTime->format($format),
+                'timeZone' => $this->timeZone,
+            ],
+            'endTime' => [
+                'dateTime' => $endTime->format($format),
+                'timeZone' => $this->timeZone,
+            ],
+        ];
+
+        $response = $this->request('/me/calendar/getSchedule', $token, 'POST', $body);
+
+        return $response->getBody();
     }
 }

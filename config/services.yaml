@@ -8,6 +8,7 @@ parameters:
     microsoft_graph_client_id: '%env(string:MICROSOFT_GRAPH_CLIENT_ID)%'
     microsoft_graph_service_account_username: '%env(string:MICROSOFT_GRAPH_SERVICE_ACCOUNT_USERNAME)%'
     microsoft_graph_service_account_password: '%env(string:MICROSOFT_GRAPH_SERVICE_ACCOUNT_PASSWORD)%'
+    microsoft_graph_timezone: '%env(string:MICROSOFT_GRAPH_TIMEZONE)%'
 
 services:
     # default configuration for services in *this* file
@@ -33,3 +34,4 @@ services:
             - '%microsoft_graph_client_id%'
             - '%microsoft_graph_service_account_username%'
             - '%microsoft_graph_service_account_password%'
+            - '%microsoft_graph_timezone%'
