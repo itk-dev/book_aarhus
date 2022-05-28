@@ -9,14 +9,15 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'app:microsoft-graph:test',
+    name: 'app:graph:test',
     description: 'Test requests for Microsoft Graph.',
 )]
-class MicrosoftGraphTestCommand extends Command
+class GraphTestCommand extends Command
 {
     public function __construct(private MicrosoftGraphService $microsoftGraphService)
     {
@@ -25,9 +26,18 @@ class MicrosoftGraphTestCommand extends Command
 
     protected function configure(): void
     {
-        $this
-            ->addArgument('endpoint', InputArgument::REQUIRED, 'Microsoft graph endpoint to call. For example /me')
-        ;
+        $this->addArgument(
+            'endpoint',
+            InputArgument::REQUIRED,
+            'Microsoft graph endpoint to call. For example /me'
+        );
+
+        $this->addOption(
+            'ask-for-credentials',
+            null,
+            InputOption::VALUE_NONE,
+            'Set to ask for username/password. Otherwise the service account will be used.'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -36,24 +46,33 @@ class MicrosoftGraphTestCommand extends Command
 
         $endpoint = $input->getArgument('endpoint');
 
-        $username = $io->ask('Enter username');
+        $askFormCredentials = $input->getOption('ask-for-credentials');
 
-        if (null == $username) {
-            $io->error('Username is required');
+        if ($askFormCredentials) {
+            $username = $io->ask('Enter username');
 
-            return Command::INVALID;
-        }
+            if (null == $username) {
+                $io->error('Username is required');
 
-        $password = $io->askHidden('Enter password');
+                return Command::INVALID;
+            }
 
-        if (null == $password) {
-            $io->error('Password is required');
+            $password = $io->askHidden('Enter password');
 
-            return Command::INVALID;
+            if (null == $password) {
+                $io->error('Password is required');
+
+                return Command::INVALID;
+            }
         }
 
         try {
-            $accessToken = $this->microsoftGraphService->authenticateAsUser($username, $password);
+            if ($askFormCredentials) {
+                $accessToken = $this->microsoftGraphService->authenticateAsUser($username, $password);
+            } else {
+                $accessToken = $this->microsoftGraphService->authenticateAsServiceAccount();
+            }
+
             $graphResponse = $this->microsoftGraphService->request($endpoint, $accessToken);
             $body = $graphResponse->getBody();
 

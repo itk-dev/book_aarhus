@@ -6,7 +6,8 @@
 parameters:
     microsoft_graph_tenant_id: '%env(string:MICROSOFT_GRAPH_TENANT_ID)%'
     microsoft_graph_client_id: '%env(string:MICROSOFT_GRAPH_CLIENT_ID)%'
-    microsoft_graph_client_secret: '%env(string:MICROSOFT_GRAPH_CLIENT_SECRET)%'
+    microsoft_graph_service_account_username: '%env(string:MICROSOFT_GRAPH_SERVICE_ACCOUNT_USERNAME)%'
+    microsoft_graph_service_account_password: '%env(string:MICROSOFT_GRAPH_SERVICE_ACCOUNT_PASSWORD)%'
 
 services:
     # default configuration for services in *this* file
@@ -30,4 +31,5 @@ services:
         arguments:
             - '%microsoft_graph_tenant_id%'
             - '%microsoft_graph_client_id%'
-            - '%microsoft_graph_client_secret%'
+            - '%microsoft_graph_service_account_username%'
+            - '%microsoft_graph_service_account_password%'
