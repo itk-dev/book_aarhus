@@ -14,7 +14,7 @@ use Microsoft\Graph\Http\GraphResponse;
  */
 class MicrosoftGraphService
 {
-    public function __construct(private string $tenantId, private string $clientId, private string $serviceAccountUsername, private string $serviceAccountPassword, private string $timeZone)
+    public function __construct(private string $tenantId, private string $clientId, private string $serviceAccountUsername, private string $serviceAccountPassword)
     {
     }
 
@@ -83,17 +83,36 @@ class MicrosoftGraphService
         $body = [
             'schedules' => $schedules,
             'startTime' => [
-                'dateTime' => $startTime->format($format),
-                'timeZone' => $this->timeZone,
+                'dateTime' => $startTime->setTimezone(new \DateTimeZone('UTC'))->format($format),
+                'timeZone' => 'UTC',
             ],
             'endTime' => [
-                'dateTime' => $endTime->format($format),
-                'timeZone' => $this->timeZone,
+                'dateTime' => $endTime->setTimezone(new \DateTimeZone('UTC'))->format($format),
+                'timeZone' => 'UTC',
             ],
         ];
 
         $response = $this->request('/me/calendar/getSchedule', $token, 'POST', $body);
 
-        return $response->getBody();
+        $data = $response->getBody();
+
+        $scheduleData = $data['value'];
+
+        $result = [];
+
+        foreach ($scheduleData as $schedule) {
+            $scheduleResult = [];
+
+            foreach ($schedule['scheduleItems'] as $scheduleItem) {
+                $scheduleResult[] = [
+                    'startTime' => $scheduleItem['start'],
+                    'endTime' => $scheduleItem['end'],
+                ];
+            }
+
+            $result[$schedule['scheduleId']] = $scheduleResult;
+        }
+
+        return $result;
     }
 }

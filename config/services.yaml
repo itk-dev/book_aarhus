@@ -34,4 +34,3 @@ services:
             - '%microsoft_graph_client_id%'
             - '%microsoft_graph_service_account_username%'
             - '%microsoft_graph_service_account_password%'
-            - '%microsoft_graph_timezone%'
