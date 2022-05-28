@@ -19,6 +19,16 @@ docker compose exec phpfpm bin/console doctrine:migrations:migrate
 
 The api can be accessed at `/api/`.
 
+## Microsoft Graph
+
+The application relies on Microsoft Graph to handle free/busy and booking requests.
+
+A command is available to test requests in Microsoft Graph:
+
+```shell
+docker compose exec phpfpm bin/console app:graph:test
+```
+
 ## OpenAPI specification
 
 The OpenAPI specification is committed to this repo as `public/api-spec-v1.yaml`
@@ -57,7 +67,7 @@ docker compose exec phpfpm composer check-coding-standards
 
 To attempt to automatically fix coding style issues
 
-```sh
+```shell
 docker compose exec phpfpm composer apply-coding-standards
 ```
 
