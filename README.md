@@ -19,6 +19,25 @@ docker compose exec phpfpm bin/console doctrine:migrations:migrate
 
 The api can be accessed at `/api/`.
 
+## Microsoft Graph
+
+The application relies on Microsoft Graph to handle free/busy and booking requests.
+
+To enable this the following environment variables should be set in `.env.local`:
+
+```shell
+MICROSOFT_GRAPH_TENANT_ID=""
+MICROSOFT_GRAPH_CLIENT_ID=""
+MICROSOFT_GRAPH_SERVICE_ACCOUNT_USERNAME=""
+MICROSOFT_GRAPH_SERVICE_ACCOUNT_PASSWORD=""
+```
+
+A command is available to test requests in Microsoft Graph:
+
+```shell
+docker compose exec phpfpm bin/console app:graph:test
+```
+
 ## OpenAPI specification
 
 The OpenAPI specification is committed to this repo as `public/api-spec-v1.yaml`
@@ -35,7 +54,7 @@ docker compose exec phpfpm composer update-api-spec
 
 If these are _breaking_ changes the API version must be changed accordingly.
 
-### Composer normalizer
+## Composer normalizer
 
 [Composer normalize](https://github.com/ergebnis/composer-normalize) is used for
 formatting `composer.json`
@@ -44,7 +63,7 @@ formatting `composer.json`
 docker compose exec phpfpm composer normalize
 ```
 
-### Coding Standards
+## Coding Standards
 
 The following command let you test that the code follows
 the coding standard for the project.
@@ -57,7 +76,7 @@ docker compose exec phpfpm composer check-coding-standards
 
 To attempt to automatically fix coding style issues
 
-```sh
+```shell
 docker compose exec phpfpm composer apply-coding-standards
 ```
 
