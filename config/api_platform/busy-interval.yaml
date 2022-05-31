@@ -13,30 +13,24 @@ resources:
             - BusyInterval
           parameters:
             - schema:
-                type: integer
-                minimum: 0
-                format: int32
-                default: 1
-              in: query
-              name: page
-            - schema:
                 type: array
                 items:
                   type: string
-                  example: test@example.com
+                  example: test@bookaarhus.local.itkdev.dk
               name: resources
               in: query
+              required: true
             - schema:
                 type: string
                 format: date-time
-                example: "2017-07-21T17:32:28Z"
+                example: "2022-05-30T17:32:28Z"
               in: query
               name: dateStart
               required: true
             - schema:
                 type: string
                 format: date-time
-                example: "2017-07-22T17:32:28Z"
+                example: "2022-06-22T17:32:28Z"
               in: query
               name: dateEnd
               required: true

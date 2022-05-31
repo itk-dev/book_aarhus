@@ -11,7 +11,7 @@ class BusyInterval
 
     public string $resource;
 
-    public ?\DateTimeInterface $dateFrom;
+    public ?\DateTimeInterface $startTime;
 
-    public ?\DateTimeInterface $dateTo;
+    public ?\DateTimeInterface $endTime;
 }

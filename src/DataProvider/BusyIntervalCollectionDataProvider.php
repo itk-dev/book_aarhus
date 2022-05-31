@@ -32,13 +32,22 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
     {
         $filters = $context['filters'];
 
+        if (!isset($filters['dateStart'])) {
+            throw new BadRequestHttpException('dateStart filter not set.');
+        }
+
+        if (!isset($filters['dateEnd'])) {
+            throw new BadRequestHttpException('dateEnd filter not set.');
+        }
+
+        if (!isset($filters['resources'])) {
+            throw new BadRequestHttpException('resources filter not set.');
+        }
+
+
         $dateStart = new \DateTime($filters['dateStart']);
         $dateEnd = new \DateTime($filters['dateEnd']);
         $resources = explode(',', $filters['resources']);
-
-        if (empty($resources)) {
-            throw new BadRequestHttpException();
-        }
 
         $busyIntervals = $this->microsoftGraphService->getFreeBusy($resources, $dateStart, $dateEnd);
 
@@ -48,8 +57,8 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
                 $busyInterval->resource = $resourceName;
                 $busyInterval->id = Ulid::generate();
 
-                $busyInterval->dateFrom = new \DateTime($entry['startTime']['dateTime'], new \DateTimeZone($entry['startTime']['timeZone']));
-                $busyInterval->dateTo = new \DateTime($entry['endTime']['dateTime'], new \DateTimeZone($entry['endTime']['timeZone']));
+                $busyInterval->startTime = new \DateTime($entry['startTime']['dateTime'], new \DateTimeZone($entry['startTime']['timeZone']));
+                $busyInterval->endTime = new \DateTime($entry['endTime']['dateTime'], new \DateTimeZone($entry['endTime']['timeZone']));
                 yield $busyInterval;
             }
         }
