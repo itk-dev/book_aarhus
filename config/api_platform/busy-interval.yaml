@@ -20,6 +20,7 @@ resources:
               name: resources
               in: query
               required: true
+              description: Array of resources to request busy intervals for.
             - schema:
                 type: string
                 format: date-time
@@ -27,6 +28,7 @@ resources:
               in: query
               name: dateStart
               required: true
+              description: "Start time for the search interval (DateTime. Expected format: \"2022-05-30T17:32:28Z\")"
             - schema:
                 type: string
                 format: date-time
@@ -34,6 +36,7 @@ resources:
               in: query
               name: dateEnd
               required: true
+              description: "End time for the search interval (DateTime. Expected format: \"2022-05-30T17:32:28Z\")"
           responses:
             '200':
               description: OK
