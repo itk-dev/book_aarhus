@@ -44,7 +44,6 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
             throw new BadRequestHttpException('resources filter not set.');
         }
 
-
         $dateStart = new \DateTime($filters['dateStart']);
         $dateEnd = new \DateTime($filters['dateEnd']);
         $resources = explode(',', $filters['resources']);
