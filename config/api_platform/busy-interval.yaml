@@ -1,0 +1,49 @@
+---
+resources:
+  App\Entity\BusyInterval:
+    itemOperations:
+      get: ~
+    collectionOperations:
+      get:
+        openapi_context:
+          operationId: get-v1-busy-intervals
+          description: Retrieves busy intervals.
+          summary: Retrieves busy intervals.
+          tags:
+            - BusyInterval
+          parameters:
+            - schema:
+                type: integer
+                minimum: 0
+                format: int32
+                default: 1
+              in: query
+              name: page
+            - schema:
+                type: array
+                items:
+                  type: string
+                  example: test@example.com
+              name: resources
+              in: query
+            - schema:
+                type: string
+                format: date-time
+                example: "2017-07-21T17:32:28Z"
+              in: query
+              name: dateStart
+              required: true
+            - schema:
+                type: string
+                format: date-time
+                example: "2017-07-22T17:32:28Z"
+              in: query
+              name: dateEnd
+              required: true
+          responses:
+            '200':
+              description: OK
+              content:
+                application/ld+json:
+                  examples:
+              headers: { }
