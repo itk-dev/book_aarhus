@@ -5,7 +5,7 @@ namespace App\DataProvider;
 use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\BusyInterval;
-use App\Service\MicrosoftGraphService;
+use App\Service\MicrosoftGraphServiceInterface;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Microsoft\Graph\Exception\GraphException;
@@ -14,7 +14,7 @@ use Symfony\Component\Uid\Ulid;
 
 final class BusyIntervalCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    public function __construct(private MicrosoftGraphService $microsoftGraphService)
+    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService)
     {
     }
 
@@ -30,18 +30,22 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
      */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
+        if (!isset($context['filters'])) {
+            throw new BadRequestHttpException('Required filters not set.');
+        }
+
         $filters = $context['filters'];
 
         if (!isset($filters['dateStart'])) {
-            throw new BadRequestHttpException('dateStart filter not set.');
+            throw new BadRequestHttpException('Required dateStart filter not set.');
         }
 
         if (!isset($filters['dateEnd'])) {
-            throw new BadRequestHttpException('dateEnd filter not set.');
+            throw new BadRequestHttpException('Required dateEnd filter not set.');
         }
 
         if (!isset($filters['resources'])) {
-            throw new BadRequestHttpException('resources filter not set.');
+            throw new BadRequestHttpException('Required resources filter not set.');
         }
 
         $dateStart = new \DateTime($filters['dateStart']);
