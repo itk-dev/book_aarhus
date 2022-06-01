@@ -12,7 +12,7 @@ use Microsoft\Graph\Http\GraphResponse;
  * @see https://github.com/microsoftgraph/msgraph-sdk-php
  * @see https://docs.microsoft.com/en-us/graph/use-the-api
  */
-class MicrosoftGraphService
+class MicrosoftGraphService implements MicrosoftGraphServiceInterface
 {
     public function __construct(private string $tenantId, private string $clientId, private string $serviceAccountUsername, private string $serviceAccountPassword)
     {
