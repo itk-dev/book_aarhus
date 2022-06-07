@@ -6,7 +6,7 @@ use Microsoft\Graph\Http\GraphResponse;
 
 interface MicrosoftGraphServiceInterface
 {
-    public function getFreeBusy(array $schedules, \DateTime $startTime, \DateTime $endTime, string $accessToken = null): array;
+    public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, string $accessToken = null): array;
 
     public function request(string $endpoint, string $accessToken, string $requestType = 'GET', array $body = null): GraphResponse;
 

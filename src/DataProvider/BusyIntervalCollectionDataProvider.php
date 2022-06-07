@@ -52,7 +52,7 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
         $dateEnd = new \DateTime($filters['dateEnd']);
         $resources = explode(',', $filters['resources']);
 
-        $busyIntervals = $this->microsoftGraphService->getFreeBusy($resources, $dateStart, $dateEnd);
+        $busyIntervals = $this->microsoftGraphService->getBusyIntervals($resources, $dateStart, $dateEnd);
 
         foreach ($busyIntervals as $resourceName => $resourceEntry) {
             foreach ($resourceEntry as $entry) {

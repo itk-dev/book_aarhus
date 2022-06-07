@@ -52,7 +52,7 @@ class GraphFreeBusyCommand extends Command
         $now = new \DateTime();
         $nowPlusOneDay = (new \DateTime())->add(new \DateInterval('P1D'));
 
-        $freeBusy = $this->microsoftGraphService->getFreeBusy($schedules, $now, $nowPlusOneDay);
+        $freeBusy = $this->microsoftGraphService->getBusyIntervals($schedules, $now, $nowPlusOneDay);
 
         $io->info(json_encode($freeBusy));
 
