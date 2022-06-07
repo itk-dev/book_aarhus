@@ -23,6 +23,8 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      */
     public function authenticateAsServiceAccount(): string
     {
+        // TODO: Store access token until it expires to avoid unnecessary authentication calls.
+
         return $this->authenticateAsUser($this->serviceAccountUsername, $this->serviceAccountPassword);
     }
 
@@ -72,9 +74,10 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/api/calendar-getschedule?view=graph-rest-1.0&tabs=http
      */
-    public function getFreeBusy(array $schedules, \DateTime $startTime, \DateTime $endTime): array
+    public function getFreeBusy(array $schedules, \DateTime $startTime, \DateTime $endTime, string $accessToken = null): array
     {
-        $token = $this->authenticateAsServiceAccount();
+        // Use service account if accessToken is not set.
+        $token = $accessToken ?: $this->authenticateAsServiceAccount();
 
         // see https://docs.microsoft.com/en-us/graph/api/resources/datetimetimezone?view=graph-rest-1.0
         // example 2019-03-15T09:00:00
