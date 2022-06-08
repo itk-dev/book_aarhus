@@ -4,6 +4,8 @@ namespace App\Tests\Api;
 
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 use App\Service\MicrosoftGraphService;
+use Microsoft\Graph\Http\GraphRequest;
+use Microsoft\Graph\Http\GraphResponse;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class BusyIntervalTest extends ApiTestCase
@@ -31,24 +33,36 @@ class BusyIntervalTest extends ApiTestCase
 
         $microsoftGraphServiceMock = $this->getMockBuilder(MicrosoftGraphService::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getFreeBusy'])
+            ->onlyMethods(['request', 'authenticateAsServiceAccount'])
             ->getMock();
 
-        $microsoftGraphServiceMock->method('getFreeBusy')->willReturn([
-            'resource@example.com' => [
-                [
-                    'id' => '123',
-                    'startTime' => [
-                        'dateTime' => '2019-03-15T09:00:00',
-                        'timeZone' => 'UTC',
+        $microsoftGraphServiceMock->method('authenticateAsServiceAccount')->willReturn('1234');
+
+        $microsoftGraphServiceMock->method('request')->willReturn(
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([
+                    'value' => [
+                        [
+                            'scheduleId' => 'resource@example.com',
+                            'scheduleItems' => [
+                                [
+                                    'start' => [
+                                        'dateTime' => '2019-03-15T09:00:00',
+                                        'timeZone' => 'UTC',
+                                    ],
+                                    'end' => [
+                                        'dateTime' => '2019-03-15T11:00:00',
+                                        'timeZone' => 'UTC',
+                                    ],
+                                ],
+                            ],
+                        ],
                     ],
-                    'endTime' => [
-                        'dateTime' => '2019-03-15T11:00:00',
-                        'timeZone' => 'UTC',
-                    ],
-                ],
-            ],
-        ]);
+                ]),
+            )
+        );
+
         $container->set('App\Service\MicrosoftGraphServiceInterface', $microsoftGraphServiceMock);
 
         $url = '/v1/busy-intervals?resources=resource%40example.com&dateStart=2022-05-30T17%3A32%3A28Z&dateEnd=2022-06-22T17%3A32%3A28Z&page=1';
