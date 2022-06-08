@@ -6,7 +6,6 @@ use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 use App\Service\MicrosoftGraphService;
 use Microsoft\Graph\Http\GraphRequest;
 use Microsoft\Graph\Http\GraphResponse;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class BusyIntervalTest extends ApiTestCase
 {
@@ -15,9 +14,6 @@ class BusyIntervalTest extends ApiTestCase
         static::bootKernel();
     }
 
-    /**
-     * @throws TransportExceptionInterface
-     */
     public function testNoFilters(): void
     {
         $client = static::createClient();
