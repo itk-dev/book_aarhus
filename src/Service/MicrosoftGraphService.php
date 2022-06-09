@@ -14,6 +14,10 @@ use Microsoft\Graph\Http\GraphResponse;
  */
 class MicrosoftGraphService implements MicrosoftGraphServiceInterface
 {
+    // see https://docs.microsoft.com/en-us/graph/api/resources/datetimetimezone?view=graph-rest-1.0
+    // example 2019-03-15T09:00:00
+    public const DATE_FORMAT = 'Y-m-d\TH:i:s';
+
     public function __construct(private string $tenantId, private string $clientId, private string $serviceAccountUsername, private string $serviceAccountPassword)
     {
     }
@@ -79,18 +83,14 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
         // Use service account if accessToken is not set.
         $token = $accessToken ?: $this->authenticateAsServiceAccount();
 
-        // see https://docs.microsoft.com/en-us/graph/api/resources/datetimetimezone?view=graph-rest-1.0
-        // example 2019-03-15T09:00:00
-        $format = 'Y-m-d\TH:i:s';
-
         $body = [
             'schedules' => $schedules,
             'startTime' => [
-                'dateTime' => $startTime->setTimezone(new \DateTimeZone('UTC'))->format($format),
+                'dateTime' => $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
                 'timeZone' => 'UTC',
             ],
             'endTime' => [
-                'dateTime' => $endTime->setTimezone(new \DateTimeZone('UTC'))->format($format),
+                'dateTime' => $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
                 'timeZone' => 'UTC',
             ],
         ];
@@ -117,5 +117,76 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @throws GuzzleException|GraphException
+     *
+     * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
+     */
+    public function createBooking(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array
+    {
+        $token = $this->authenticateAsServiceAccount();
+
+        $body = [
+            'subject' => $subject,
+            'body' => [
+                'contentType' => 'text',
+                'content' => $body,
+            ],
+            'end' => [
+                'dateTime' => $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
+                'timeZone' => 'UTC',
+            ],
+            'start' => [
+                'dateTime' => $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
+                'timeZone' => 'UTC',
+            ],
+            'allowNewTimeProposals' => false,
+            'showAs' => 'busy',
+            'location' => [
+                'displayName' => $resourceName,
+            ],
+            'attendees' => [
+                [
+                    'emailAddress' => [
+                        'address' => $resourceEmail,
+                        'name' => $resourceName,
+                    ],
+                    'type' => 'required',
+                ],
+            ],
+        ];
+
+        $response = $this->request('/me/events', $token, 'POST', $body);
+
+        return $response->getBody();
+    }
+
+    /**
+     * @throws GuzzleException|GraphException
+     *
+     * @see https://docs.microsoft.com/en-us/graph/search-concept-events
+     */
+    public function getUserBookings(string $userId): array
+    {
+        $token = $this->authenticateAsServiceAccount();
+
+        $body = [
+            'requests' => [
+                [
+                    'entityTypes' => ['event'],
+                    'query' => [
+                        'queryString' => "[userid-$userId]",
+                    ],
+                    'from' => 0,
+                    'to' => 100,
+                ],
+            ],
+        ];
+
+        $response = $this->request('/search/query', $token, 'POST', $body);
+
+        return $response->getBody();
     }
 }
