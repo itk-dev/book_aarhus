@@ -698,6 +698,12 @@
                     },
                     "title": {
                         "type": "string"
+                    },
+                    "capacity": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
                     }
                 }
             },
@@ -744,6 +750,12 @@
                         "type": "integer"
                     },
                     "title": {
+                        "type": "string"
+                    },
+                    "capacity": {
+                        "type": "integer"
+                    },
+                    "name": {
                         "type": "string"
                     }
                 }

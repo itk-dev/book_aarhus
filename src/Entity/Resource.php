@@ -43,7 +43,7 @@ class Resource
 
     public function getCapacity(): ?int
     {
-        return $this->capacity; 
+        return $this->capacity;
     }
 
     public function setCapacity(int $capacity): self
