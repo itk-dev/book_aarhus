@@ -27,6 +27,9 @@ class ApiKeyUser implements UserInterface
     )]
     private string $apiKey;
 
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
+    private string $name;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -54,5 +57,17 @@ class ApiKeyUser implements UserInterface
     public function setApiKey(string $apiKey): void
     {
         $this->apiKey = $apiKey;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
     }
 }

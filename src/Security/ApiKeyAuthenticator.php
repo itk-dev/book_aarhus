@@ -13,6 +13,9 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
+/**
+ * @see https://symfony.com/doc/current/security/custom_authenticator.html
+ */
 class ApiKeyAuthenticator extends AbstractAuthenticator
 {
     public const AUTH_HEADER = 'Authorization';
