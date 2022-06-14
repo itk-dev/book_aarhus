@@ -482,6 +482,13 @@ components:
   examples: {  }
   requestBodies: {  }
   headers: {  }
-  securitySchemes: {  }
-security: []
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      description: 'Value for the Authorization header parameter.'
+      name: Authorization
+      in: header
+security:
+  -
+    apiKey: []
 tags: []

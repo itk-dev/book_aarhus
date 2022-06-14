@@ -2,21 +2,16 @@
 
 namespace App\Tests\Api;
 
-use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 use App\Service\MicrosoftGraphService;
+use App\Tests\AbstractBaseApiTestCase;
 use Microsoft\Graph\Http\GraphRequest;
 use Microsoft\Graph\Http\GraphResponse;
 
-class BusyIntervalTest extends ApiTestCase
+class BusyIntervalTest extends AbstractBaseApiTestCase
 {
-    public static function setUpBeforeClass(): void
-    {
-        static::bootKernel();
-    }
-
     public function testNoFilters(): void
     {
-        $client = static::createClient();
+        $client = self::getAuthenticatedClient();
 
         $client->request('GET', '/v1/busy-intervals?page=1', ['headers' => ['Content-Type' => 'application/ld+json']]);
         $this->assertResponseStatusCodeSame(400);
@@ -24,8 +19,7 @@ class BusyIntervalTest extends ApiTestCase
 
     public function testValidRequest(): void
     {
-        $client = static::createClient();
-        $container = self::getContainer();
+        $client = self::getAuthenticatedClient();
 
         $microsoftGraphServiceMock = $this->getMockBuilder(MicrosoftGraphService::class)
             ->disableOriginalConstructor()
@@ -59,7 +53,7 @@ class BusyIntervalTest extends ApiTestCase
             )
         );
 
-        $container->set('App\Service\MicrosoftGraphServiceInterface', $microsoftGraphServiceMock);
+        self::getContainer()->set('App\Service\MicrosoftGraphServiceInterface', $microsoftGraphServiceMock);
 
         $url = '/v1/busy-intervals?resources=resource%40example.com&dateStart=2022-05-30T17%3A32%3A28Z&dateEnd=2022-06-22T17%3A32%3A28Z&page=1';
 

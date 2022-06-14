@@ -36,6 +36,7 @@
     "require-dev": {
         "ergebnis/composer-normalize": "^2.27",
         "friendsofphp/php-cs-fixer": "^3.8",
+        "hautelook/alice-bundle": "^2.10",
         "phpunit/phpunit": "^9.5",
         "symfony/browser-kit": "6.0.*",
         "symfony/http-client": "6.0.*",
@@ -104,7 +105,7 @@
         "tests": [
             "bin/console --env=test doctrine:database:drop --if-exists --force --quiet",
             "bin/console --env=test doctrine:database:create --no-interaction --if-not-exists --quiet",
-            "# TODO: Add when migrations are added # bin/console --env=test doctrine:migrations:migrate --no-interaction --quiet",
+            "bin/console --env=test doctrine:migrations:migrate --no-interaction --quiet",
             "vendor/bin/phpunit --stop-on-failure"
         ],
         "update-api-spec": [

@@ -754,8 +754,19 @@
         "examples": {},
         "requestBodies": {},
         "headers": {},
-        "securitySchemes": {}
+        "securitySchemes": {
+            "apiKey": {
+                "type": "apiKey",
+                "description": "Value for the Authorization header parameter.",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
     },
-    "security": [],
+    "security": [
+        {
+            "apiKey": []
+        }
+    ],
     "tags": []
 }
