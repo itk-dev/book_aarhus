@@ -38,6 +38,28 @@ A command is available to test requests in Microsoft Graph:
 docker compose exec phpfpm bin/console app:graph:test
 ```
 
+## Authentication
+
+### ApiKey
+
+Generate an ApiKey with the following command:
+
+```
+docker compose exec phpfpm bin/console app:auth:create-apikey
+```
+
+To authenticate with an ApiKey add the Authentication header to each request to the api in the following way:
+
+```
+Authorization: Apikey [THE API KEY]
+```
+
+In the swagger UI press the "Authorize" button in the top and enter
+
+```
+Apikey [THE API KEY]
+```
+
 ## OpenAPI specification
 
 The OpenAPI specification is committed to this repo as `public/api-spec-v1.yaml`
