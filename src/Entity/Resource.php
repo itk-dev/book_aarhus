@@ -18,6 +18,12 @@ class Resource
     #[ORM\Column(type: 'string', length: 255)]
     private $title;
 
+    #[ORM\Column(type: 'integer')]
+    private $capacity;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private $email;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -31,6 +37,30 @@ class Resource
     public function setTitle(string $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getCapacity(): ?int
+    {
+        return $this->capacity;
+    }
+
+    public function setCapacity(int $capacity): self
+    {
+        $this->capacity = $capacity;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }
