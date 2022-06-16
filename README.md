@@ -38,6 +38,7 @@ A command is available to test requests in Microsoft Graph:
 docker compose exec phpfpm bin/console app:graph:test
 ```
 
+
 ## Doctrine Fixtures
 
 Since the doctrine fixtures bundle may not be included in the project by default, start by requiring it via composer:
@@ -59,6 +60,27 @@ Finally, load the fixtures:
 
 ```shell
 itkdev-docker-compose bin/console doctrine:fixtures:load
+
+## Authentication
+
+### ApiKey
+
+Generate an ApiKey with the following command:
+
+```
+docker compose exec phpfpm bin/console app:auth:create-apikey
+```
+
+To authenticate with an ApiKey add the Authentication header to each request to the api in the following way:
+
+```
+Authorization: Apikey [THE API KEY]
+```
+
+In the swagger UI press the "Authorize" button in the top and enter
+
+```
+Apikey [THE API KEY]
 ```
 
 ## OpenAPI specification
