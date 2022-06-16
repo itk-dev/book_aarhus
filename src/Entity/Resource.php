@@ -22,7 +22,7 @@ class Resource
     private $capacity;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $name;
+    private $email;
 
     public function getId(): ?int
     {
@@ -53,14 +53,14 @@ class Resource
         return $this;
     }
 
-    public function getName(): ?string
+    public function getEmail(): ?string
     {
-        return $this->name;
+        return $this->email;
     }
 
-    public function setName(string $name): self
+    public function setEmail(string $email): self
     {
-        $this->name = $name;
+        $this->email = $email;
 
         return $this;
     }

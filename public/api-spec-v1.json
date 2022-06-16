@@ -702,7 +702,7 @@
                     "capacity": {
                         "type": "integer"
                     },
-                    "name": {
+                    "email": {
                         "type": "string"
                     }
                 }
@@ -755,7 +755,7 @@
                     "capacity": {
                         "type": "integer"
                     },
-                    "name": {
+                    "email": {
                         "type": "string"
                     }
                 }

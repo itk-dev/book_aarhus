@@ -448,7 +448,7 @@ components:
           type: string
         capacity:
           type: integer
-        name:
+        email:
           type: string
     Resource.jsonld:
       type: object
@@ -483,7 +483,7 @@ components:
           type: string
         capacity:
           type: integer
-        name:
+        email:
           type: string
   responses: {  }
   parameters: {  }

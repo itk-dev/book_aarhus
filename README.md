@@ -38,32 +38,9 @@ A command is available to test requests in Microsoft Graph:
 docker compose exec phpfpm bin/console app:graph:test
 ```
 
-
-## Doctrine Fixtures
-
-Since the doctrine fixtures bundle may not be included in the project by default, start by requiring it via composer:
-
-```shell
-composer require orm-fixtures --dev
-```
-
-Make your fixtures file:
-
-```shell
-itkdev-docker-compose bin/console make:fixtures
-```
-
-Add your dummy data:
-More on format: https://symfonycasts.com/screencast/symfony-doctrine/fixtures
-
-Finally, load the fixtures:
-
-```shell
-itkdev-docker-compose bin/console doctrine:fixtures:load
-
 ## Authentication
 
-### ApiKey
+### ApiKey Authentication
 
 Generate an ApiKey with the following command:
 
