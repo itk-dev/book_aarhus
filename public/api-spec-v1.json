@@ -704,6 +704,19 @@
                     },
                     "email": {
                         "type": "string"
+                    },
+                    "location": {
+                        "type": "string"
+                    },
+                    "time_frame": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "timeFrame": {
+                        "type": "string"
                     }
                 }
             },
@@ -756,6 +769,19 @@
                         "type": "integer"
                     },
                     "email": {
+                        "type": "string"
+                    },
+                    "location": {
+                        "type": "string"
+                    },
+                    "time_frame": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "timeFrame": {
                         "type": "string"
                     }
                 }
