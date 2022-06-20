@@ -6,6 +6,7 @@
 parameters:
     microsoft_graph_tenant_id: '%env(string:MICROSOFT_GRAPH_TENANT_ID)%'
     microsoft_graph_client_id: '%env(string:MICROSOFT_GRAPH_CLIENT_ID)%'
+    microsoft_graph_service_account_name: '%env(string:MICROSOFT_GRAPH_SERVICE_ACCOUNT_NAME)%'
     microsoft_graph_service_account_username: '%env(string:MICROSOFT_GRAPH_SERVICE_ACCOUNT_USERNAME)%'
     microsoft_graph_service_account_password: '%env(string:MICROSOFT_GRAPH_SERVICE_ACCOUNT_PASSWORD)%'
 
@@ -33,6 +34,7 @@ services:
             - '%microsoft_graph_client_id%'
             - '%microsoft_graph_service_account_username%'
             - '%microsoft_graph_service_account_password%'
+            - '%microsoft_graph_service_account_name%'
 
     App\Service\MicrosoftGraphServiceInterface:
         alias: 'App\Service\MicrosoftGraphService'

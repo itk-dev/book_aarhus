@@ -7,6 +7,8 @@ use GuzzleHttp\Exception\GuzzleException;
 use Microsoft\Graph\Exception\GraphException;
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Http\GraphResponse;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @see https://github.com/microsoftgraph/msgraph-sdk-php
@@ -18,7 +20,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     // example 2019-03-15T09:00:00
     public const DATE_FORMAT = 'Y-m-d\TH:i:s';
 
-    public function __construct(private string $tenantId, private string $clientId, private string $serviceAccountUsername, private string $serviceAccountPassword)
+    public function __construct(private string $tenantId, private string $clientId, private string $serviceAccountUsername, private string $serviceAccountPassword, private string $serviceAccountName, private CacheInterface $cache)
     {
     }
 
@@ -27,15 +29,21 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      */
     public function authenticateAsServiceAccount(): string
     {
-        // TODO: Store access token until it expires to avoid unnecessary authentication calls.
+        $tokenEntry = $this->cache->get('serviceAccountToken', function (ItemInterface $item) {
+            $tokenEntry = $this->authenticateAsUser($this->serviceAccountUsername, $this->serviceAccountPassword);
 
-        return $this->authenticateAsUser($this->serviceAccountUsername, $this->serviceAccountPassword);
+            $item->expiresAfter($token->expires_in ?? 3600);
+
+            return $tokenEntry;
+        });
+
+        return $tokenEntry->access_token;
     }
 
     /**
      * @throws GuzzleException
      */
-    public function authenticateAsUser($username, $password): string
+    public function authenticateAsUser($username, $password): \stdClass
     {
         $guzzle = new Client();
         $url = 'https://login.microsoftonline.com/'.$this->tenantId.'/oauth2/v2.0/token';
@@ -50,9 +58,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
             ],
         ]);
 
-        $token = json_decode($response->getBody()->getContents());
-
-        return $token->access_token;
+        return json_decode($response->getBody()->getContents());
     }
 
     /**
@@ -144,23 +150,41 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
             ],
             'allowNewTimeProposals' => false,
             'showAs' => 'busy',
+            'isOrganizer' => false,
             'location' => [
                 'displayName' => $resourceName,
+                'locationEmailAddress' => $resourceEmail,
             ],
             'attendees' => [
                 [
                     'emailAddress' => [
-                        'address' => $resourceEmail,
-                        'name' => $resourceName,
+                        'address' => $this->serviceAccountUsername,
+                        'name' => $this->serviceAccountName,
                     ],
-                    'type' => 'required',
+                    'type' => 'optional',
                 ],
             ],
         ];
 
-        $response = $this->request('/me/events', $token, 'POST', $body);
+        $response = $this->request("/users/$resourceEmail/events", $token, 'POST', $body);
 
         return $response->getBody();
+    }
+
+    /**
+     * @throws GuzzleException|GraphException
+     */
+    public function acceptBooking(string $id): ?string
+    {
+        $token = $this->authenticateAsServiceAccount();
+
+        $urlEncodedId = urlencode($id);
+
+        $response = $this->request("/me/events/$urlEncodedId/accept", $token, 'POST', [
+            'sendResponse' => false,
+        ]);
+
+        return $response->getStatus();
     }
 
     /**
