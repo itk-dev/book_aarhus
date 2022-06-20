@@ -130,7 +130,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
      */
-    public function createBooking(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array
+    public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array
     {
         $token = $this->authenticateAsServiceAccount();
 
@@ -167,6 +167,51 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
         ];
 
         $response = $this->request("/users/$resourceEmail/events", $token, 'POST', $body);
+
+        return $response->getBody();
+    }
+
+    /**
+     * @throws GuzzleException|GraphException
+     *
+     * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
+     */
+    public function createBookingInviteResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array
+    {
+        $token = $this->authenticateAsServiceAccount();
+
+        $body = [
+            'subject' => $subject,
+            'body' => [
+                'contentType' => 'text',
+                'content' => $body,
+            ],
+            'end' => [
+                'dateTime' => $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
+                'timeZone' => 'UTC',
+            ],
+            'start' => [
+                'dateTime' => $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
+                'timeZone' => 'UTC',
+            ],
+            'allowNewTimeProposals' => false,
+            'showAs' => 'busy',
+            'location' => [
+                'displayName' => $resourceName,
+                'locationEmailAddress' => $resourceEmail,
+            ],
+            'attendees' => [
+                [
+                    'emailAddress' => [
+                        'address' => $resourceEmail,
+                        'name' => $resourceName,
+                    ],
+                    'type' => 'resource',
+                ],
+            ],
+        ];
+
+        $response = $this->request('/me/events', $token, 'POST', $body);
 
         return $response->getBody();
     }

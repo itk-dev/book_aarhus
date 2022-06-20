@@ -64,6 +64,9 @@ class GraphCreateBookingCommand extends Command
 
         $body = $io->ask('body', '');
 
+        $invitation = $io->confirm('Create as invitation?', false);
+        $invitationString = $invitation ? 'yes' : 'no';
+
         $start = (new \DateTime())->add(new \DateInterval($startOffset));
         $end = (new \DateTime())->add(new \DateInterval($endOffset));
 
@@ -78,6 +81,8 @@ class GraphCreateBookingCommand extends Command
             "End time: $endString",
             "Subject: $subject",
             "Body: $body",
+            "Send as invitation: $invitationString",
+            "\n\n",
         ];
 
         $confirm = $io->confirm(implode("\n", $confirmText));
@@ -88,14 +93,25 @@ class GraphCreateBookingCommand extends Command
             return Command::FAILURE;
         }
 
-        $data = $this->microsoftGraphService->createBooking(
-            $resourceEmail,
-            $resourceName,
-            $subject,
-            $body,
-            $start,
-            $end
-        );
+        if ($invitation) {
+            $data = $this->microsoftGraphService->createBookingInviteResource(
+                $resourceEmail,
+                $resourceName,
+                $subject,
+                $body,
+                $start,
+                $end
+            );
+        } else {
+            $data = $this->microsoftGraphService->createBookingForResource(
+                $resourceEmail,
+                $resourceName,
+                $subject,
+                $body,
+                $start,
+                $end
+            );
+        }
 
         $io->info(json_encode($data));
 
