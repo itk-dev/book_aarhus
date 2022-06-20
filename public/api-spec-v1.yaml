@@ -446,6 +446,10 @@ components:
           type: integer
         title:
           type: string
+        capacity:
+          type: integer
+        email:
+          type: string
     Resource.jsonld:
       type: object
       properties:
@@ -476,6 +480,10 @@ components:
           readOnly: true
           type: integer
         title:
+          type: string
+        capacity:
+          type: integer
+        email:
           type: string
   responses: {  }
   parameters: {  }

@@ -40,7 +40,7 @@ docker compose exec phpfpm bin/console app:graph:test
 
 ## Authentication
 
-### ApiKey
+### ApiKey Authentication
 
 Generate an ApiKey with the following command:
 
