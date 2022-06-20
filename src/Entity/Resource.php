@@ -24,6 +24,15 @@ class Resource
     #[ORM\Column(type: 'string', length: 255)]
     private $email;
 
+    #[ORM\Column(type: 'string', length: 255)]
+    private $location;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private $time_frame;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private $description;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -61,6 +70,42 @@ class Resource
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+
+    public function setLocation(string $location): self
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    public function getTimeFrame(): ?string
+    {
+        return $this->time_frame;
+    }
+
+    public function setTimeFrame(string $time_frame): self
+    {
+        $this->time_frame = $time_frame;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }
