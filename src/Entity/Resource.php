@@ -27,7 +27,6 @@ class Resource
     #[ORM\Column(type: 'string', length: 255)]
     private $location;
 
-
     #[ORM\Column(type: 'string', length: 255)]
     private $description;
 
