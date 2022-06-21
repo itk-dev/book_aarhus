@@ -27,11 +27,12 @@ class Resource
     #[ORM\Column(type: 'string', length: 255)]
     private $location;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $time_frame;
 
     #[ORM\Column(type: 'string', length: 255)]
     private $description;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private $timeframe;
 
     public function getId(): ?int
     {
@@ -88,12 +89,12 @@ class Resource
 
     public function getTimeFrame(): ?string
     {
-        return $this->time_frame;
+        return $this->timeframe;
     }
 
-    public function setTimeFrame(string $time_frame): self
+    public function setTimeFrame(string $timeframe): self
     {
-        $this->time_frame = $time_frame;
+        $this->timeframe = $timeframe;
 
         return $this;
     }
