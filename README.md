@@ -60,6 +60,27 @@ In the swagger UI press the "Authorize" button in the top and enter
 Apikey [THE API KEY]
 ```
 
+## Queue
+
+CRUD of bookings are handled through a queue (RabbitMQ) to ensure they are correctly handled.
+
+See https://symfony.com/doc/current/messenger.html for symfony messenger documentation.
+
+When a booking request is received it is added to the queue, and handled when the queue consumes the message.
+
+To consume messages run the following command
+```
+docker compose exec phpfpm composer queues
+```
+
+### Production
+
+Make sure proper production handling is set up.
+
+See https://symfony.com/doc/current/messenger.html#deploying-to-production.
+
+For example use Supervisor (https://symfony.com/doc/current/messenger.html#supervisor-configuration).
+
 ## OpenAPI specification
 
 The OpenAPI specification is committed to this repo as `public/api-spec-v1.yaml`

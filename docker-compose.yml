@@ -56,8 +56,20 @@ services:
       - "traefik.docker.network=frontend"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${COMPOSE_DOMAIN}`)"
 #      HTTPS config - uncomment to enable redirect from :80 to :443
-#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=redirect-to-https"
-#      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+
+  rabbit:
+    image: rabbitmq:3.9-management
+    networks:
+      - app
+      - frontend
+    ports:
+      - "15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
+      - RABBITMQ_ERLANG_COOKIE='d53f319cd7376f8f840aaf9889f315ab'
 
 #  mailhog:
 #    image: mailhog/mailhog
