@@ -22,6 +22,15 @@ docker compose exec phpfpm bin/console doctrine:migrations:migrate
 
 The api can be accessed at `/`.
 
+## PRs
+
+Before creating a PR make sure the code is ready.
+The following command will apply coding standards, run tests, normlize composer.json and update the openapi spec.
+
+```
+docker compose exec phpfpm composer prepare-code
+```
+
 ## Microsoft Graph
 
 The application relies on Microsoft Graph to handle free/busy and booking requests.

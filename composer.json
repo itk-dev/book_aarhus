@@ -106,6 +106,12 @@
         "check-coding-standards": [
             "vendor/bin/php-cs-fixer fix --dry-run"
         ],
+        "prepare-code": [
+            "@apply-coding-standards",
+            "@tests",
+            "@update-api-spec",
+            "composer normalize"
+        ],
         "queues": [
             "bin/console messenger:consume async -vv"
         ],
