@@ -15,6 +15,169 @@
         }
     ],
     "paths": {
+        "/v1/bookings": {
+            "post": {
+                "operationId": "postBookingCollection",
+                "tags": [
+                    "Booking"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Booking resource created",
+                        "content": {
+                            "application/ld+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Booking.jsonld"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Booking"
+                                }
+                            },
+                            "text/html": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Booking"
+                                }
+                            }
+                        },
+                        "links": {
+                            "GetBookingItem": {
+                                "operationId": "getBookingItem",
+                                "parameters": {
+                                    "id": "$response.body#/id"
+                                },
+                                "description": "The `id` value returned in the response can be used as the `id` parameter in `GET /v1/bookings/{id}`."
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "422": {
+                        "description": "Unprocessable entity"
+                    }
+                },
+                "summary": "Creates a Booking resource.",
+                "description": "Creates a Booking resource.",
+                "parameters": [],
+                "requestBody": {
+                    "description": "The new Booking resource",
+                    "content": {
+                        "application/ld+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Booking.BookingInput.jsonld"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Booking.BookingInput"
+                            }
+                        },
+                        "text/html": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Booking.BookingInput"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "deprecated": false
+            },
+            "parameters": []
+        },
+        "/v1/bookings-webform": {
+            "post": {
+                "operationId": "post-v1-create-booking-webform-submit",
+                "tags": [
+                    "Booking"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "422": {
+                        "description": "Unprocessable entity"
+                    }
+                },
+                "summary": "Create a booking from a Drupal Webform submit.",
+                "description": "Create a booking from a Drupal Webform submit.",
+                "parameters": [],
+                "requestBody": {
+                    "description": "The new Booking resource",
+                    "content": {
+                        "application/ld+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Booking.WebformBookingInput.jsonld"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Booking.WebformBookingInput"
+                            }
+                        },
+                        "text/html": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Booking.WebformBookingInput"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "deprecated": false
+            },
+            "parameters": []
+        },
+        "/v1/bookings/{id}": {
+            "get": {
+                "operationId": "getBookingItem",
+                "tags": [
+                    "Booking"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Booking resource",
+                        "content": {
+                            "application/ld+json": {
+                                "schema": {}
+                            },
+                            "application/json": {
+                                "schema": {}
+                            },
+                            "text/html": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "summary": "Unsupported action.",
+                "description": "Unsupported action.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Resource identifier",
+                        "required": true,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "simple",
+                        "explode": false,
+                        "allowReserved": false
+                    }
+                ],
+                "deprecated": false
+            },
+            "parameters": []
+        },
         "/v1/busy-intervals": {
             "get": {
                 "operationId": "get-v1-busy-intervals",
@@ -112,23 +275,17 @@
                     "BusyInterval"
                 ],
                 "responses": {
-                    "200": {
+                    "204": {
                         "description": "BusyInterval resource",
                         "content": {
                             "application/ld+json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/BusyInterval.jsonld"
-                                }
+                                "schema": {}
                             },
                             "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/BusyInterval"
-                                }
+                                "schema": {}
                             },
                             "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/BusyInterval"
-                                }
+                                "schema": {}
                             }
                         }
                     },
@@ -136,8 +293,8 @@
                         "description": "Resource not found"
                     }
                 },
-                "summary": "Retrieves a BusyInterval resource.",
-                "description": "Retrieves a BusyInterval resource.",
+                "summary": "Unsupported action.",
+                "description": "Unsupported action.",
                 "parameters": [
                     {
                         "name": "id",
@@ -612,6 +769,295 @@
     },
     "components": {
         "schemas": {
+            "Booking": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "resourceEmail": {
+                        "type": "string"
+                    },
+                    "resourceName": {
+                        "type": "string"
+                    },
+                    "subject": {
+                        "type": "string"
+                    },
+                    "body": {
+                        "type": "string"
+                    },
+                    "startTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "endTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "Booking.BookingInput": {
+                "type": "object",
+                "properties": {
+                    "resourceEmail": {
+                        "type": "string"
+                    },
+                    "resourceName": {
+                        "type": "string"
+                    },
+                    "subject": {
+                        "type": "string"
+                    },
+                    "body": {
+                        "type": "string"
+                    },
+                    "startTime": {
+                        "type": "string"
+                    },
+                    "endTime": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Booking.BookingInput.jsonld": {
+                "type": "object",
+                "properties": {
+                    "@context": {
+                        "readOnly": true,
+                        "oneOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "@vocab": {
+                                        "type": "string"
+                                    },
+                                    "hydra": {
+                                        "type": "string",
+                                        "enum": [
+                                            "http://www.w3.org/ns/hydra/core#"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "@vocab",
+                                    "hydra"
+                                ],
+                                "additionalProperties": true
+                            }
+                        ]
+                    },
+                    "@id": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "@type": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "resourceEmail": {
+                        "type": "string"
+                    },
+                    "resourceName": {
+                        "type": "string"
+                    },
+                    "subject": {
+                        "type": "string"
+                    },
+                    "body": {
+                        "type": "string"
+                    },
+                    "startTime": {
+                        "type": "string"
+                    },
+                    "endTime": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Booking.WebformBookingInput": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "default": {
+                            "webform": {
+                                "id": ""
+                            },
+                            "submission": {
+                                "uuid": ""
+                            }
+                        },
+                        "example": {
+                            "webform": {
+                                "id": ""
+                            },
+                            "submission": {
+                                "uuid": ""
+                            }
+                        },
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "links": {
+                        "default": {
+                            "sender": "",
+                            "get_submission_url": ""
+                        },
+                        "example": {
+                            "sender": "",
+                            "get_submission_url": ""
+                        },
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "Booking.WebformBookingInput.jsonld": {
+                "type": "object",
+                "properties": {
+                    "@context": {
+                        "readOnly": true,
+                        "oneOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "@vocab": {
+                                        "type": "string"
+                                    },
+                                    "hydra": {
+                                        "type": "string",
+                                        "enum": [
+                                            "http://www.w3.org/ns/hydra/core#"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "@vocab",
+                                    "hydra"
+                                ],
+                                "additionalProperties": true
+                            }
+                        ]
+                    },
+                    "@id": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "@type": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "data": {
+                        "default": {
+                            "webform": {
+                                "id": ""
+                            },
+                            "submission": {
+                                "uuid": ""
+                            }
+                        },
+                        "example": {
+                            "webform": {
+                                "id": ""
+                            },
+                            "submission": {
+                                "uuid": ""
+                            }
+                        },
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "links": {
+                        "default": {
+                            "sender": "",
+                            "get_submission_url": ""
+                        },
+                        "example": {
+                            "sender": "",
+                            "get_submission_url": ""
+                        },
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "Booking.jsonld": {
+                "type": "object",
+                "properties": {
+                    "@context": {
+                        "readOnly": true,
+                        "oneOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "@vocab": {
+                                        "type": "string"
+                                    },
+                                    "hydra": {
+                                        "type": "string",
+                                        "enum": [
+                                            "http://www.w3.org/ns/hydra/core#"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "@vocab",
+                                    "hydra"
+                                ],
+                                "additionalProperties": true
+                            }
+                        ]
+                    },
+                    "@id": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "@type": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "resourceEmail": {
+                        "type": "string"
+                    },
+                    "resourceName": {
+                        "type": "string"
+                    },
+                    "subject": {
+                        "type": "string"
+                    },
+                    "body": {
+                        "type": "string"
+                    },
+                    "startTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "endTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
             "BusyInterval": {
                 "type": "object",
                 "properties": {
@@ -643,33 +1089,6 @@
                     "@type": {
                         "readOnly": true,
                         "type": "string"
-                    },
-                    "@context": {
-                        "readOnly": true,
-                        "oneOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "object",
-                                "properties": {
-                                    "@vocab": {
-                                        "type": "string"
-                                    },
-                                    "hydra": {
-                                        "type": "string",
-                                        "enum": [
-                                            "http://www.w3.org/ns/hydra/core#"
-                                        ]
-                                    }
-                                },
-                                "required": [
-                                    "@vocab",
-                                    "hydra"
-                                ],
-                                "additionalProperties": true
-                            }
-                        ]
                     },
                     "id": {
                         "type": "string"
