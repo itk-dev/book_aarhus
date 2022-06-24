@@ -33,7 +33,9 @@ class AuthCreateApikeyCommand extends Command
 
         $name = $io->ask('Enter name for ApiKeyUser');
 
-        $apiKeyUser = $this->apiKeyUserService->createApiKey($name);
+        $webformApiKey = $io->ask('Enter webform api-key');
+
+        $apiKeyUser = $this->apiKeyUserService->createApiKey($name, $webformApiKey);
 
         $apiKey = $apiKeyUser->getApiKey();
 

@@ -2,6 +2,7 @@
 
 namespace App\MessageHandler;
 
+use ApiPlatform\Core\Exception\InvalidArgumentException;
 use App\Entity\Booking;
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
@@ -33,7 +34,11 @@ class WebformSubmitHandler
 
         $user = $this->apiKeyUserRepository->find($userId);
 
-        $webformSubmission = $this->getWebformSubmission($submissionUrl, $user->getApiKey());
+        if (!$user) {
+            throw new UnrecoverableMessageHandlingException('ApiKeyUser not set.');
+        }
+
+        $webformSubmission = $this->getWebformSubmission($submissionUrl, $user->getWebformApiKey());
 
         if (empty($webformSubmission['data'])) {
             throw new UnrecoverableMessageHandlingException('Webform data not set');
@@ -45,16 +50,20 @@ class WebformSubmitHandler
         // TODO: Set extra fields as string in body.
         // TODO: Add unique user id to end of body on the form: [userid-xxx].
 
-        $booking = new Booking();
-        $booking->setBody($data['body']);
-        $booking->setSubject($data['subject']);
-        $booking->setResourceEmail($data['resourceEmail']);
-        $booking->setResourceName($data['resourceName']);
-        $booking->setStartTime($this->validationUtils->validateDate($data['startTime']));
-        $booking->setEndTime($this->validationUtils->validateDate($data['endTime']));
+        try {
+            $booking = new Booking();
+            $booking->setBody($data['body']);
+            $booking->setSubject($data['subject']);
+            $booking->setResourceEmail($this->validationUtils->validateEmail($data['resourceEmail']));
+            $booking->setResourceName($data['resourceName']);
+            $booking->setStartTime($this->validationUtils->validateDate($data['startTime']));
+            $booking->setEndTime($this->validationUtils->validateDate($data['endTime']));
 
-        // Register job.
-        $this->bus->dispatch(new CreateBookingMessage($booking));
+            // Register job.
+            $this->bus->dispatch(new CreateBookingMessage($booking));
+        } catch (InvalidArgumentException $e) {
+            throw new UnrecoverableMessageHandlingException('Invalid booking data.');
+        }
     }
 
     private function getWebformSubmission(string $submissionUrl, string $webformApiKey): array
