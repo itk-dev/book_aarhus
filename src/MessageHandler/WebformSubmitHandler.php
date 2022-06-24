@@ -42,6 +42,8 @@ class WebformSubmitHandler
         $data = $webformSubmission['data'];
 
         // TODO: Validate that required fields are present.
+        // TODO: Set extra fields as string in body.
+        // TODO: Add unique user id to end of body on the form: [userid-xxx].
 
         $booking = new Booking();
         $booking->setBody($data['body']);
