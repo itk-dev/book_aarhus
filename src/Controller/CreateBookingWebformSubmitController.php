@@ -2,7 +2,8 @@
 
 namespace App\Controller;
 
-use App\Message\CreateBookingWebformSubmitMessage;
+use App\Entity\ApiKeyUser;
+use App\Message\WebformSubmitMessage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,14 +21,21 @@ class CreateBookingWebformSubmitController extends AbstractController
     {
         $webformContent = json_decode($request->getContent());
 
+        $user = $this->getUser();
+
+        if ($user instanceof ApiKeyUser) {
+            $userId = $user->getId();
+        }
+
         // TODO: Validate information.
 
         // Register job.
-        $this->bus->dispatch(new CreateBookingWebformSubmitMessage(
+        $this->bus->dispatch(new WebformSubmitMessage(
             $webformContent->data->webform->id ?? null,
             $webformContent->data->submission->uuid ?? null,
             $webformContent->links->sender ?? null,
             $webformContent->links->get_submission_url ?? null,
+            $userId ?? $user->getUserIdentifier() ?? null,
         ));
 
         return new Response(null, 201);

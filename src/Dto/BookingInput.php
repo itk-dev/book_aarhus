@@ -4,17 +4,10 @@ namespace App\Dto;
 
 final class BookingInput
 {
-    public array $data = [
-        'webform' => [
-            'id' => '',
-        ],
-        'submission' => [
-            'uuid' => '',
-        ],
-    ];
-
-    public array $links = [
-        'sender' => '',
-        'get_submission_url' => '',
-    ];
+    public string $resourceEmail;
+    public string $resourceName;
+    public string $subject;
+    public string $body;
+    public string $startTime;
+    public string $endTime;
 }

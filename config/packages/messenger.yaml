@@ -5,19 +5,19 @@ framework:
 
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
+            async: "%env(MESSENGER_TRANSPORT_DSN)%"
             # @see https://symfony.com/doc/current/messenger.html#saving-retrying-failed-messages
             failed: '%env(MESSENGER_TRANSPORT_DSN_FAILED)%'
-            async: "%env(MESSENGER_TRANSPORT_DSN)%"
 
         routing:
             # Route your messages to the transports
-            # 'App\Message\YourMessage': async
-            'App\Message\CreateBookingWebformSubmitMessage': async
+            'App\Message\WebformSubmitMessage': async
+            'App\Message\CreateBookingMessage': async
 
-# when@test:
-#    framework:
-#        messenger:
-#            transports:
-#                # replace with your transport name here (e.g., my_transport: 'in-memory://')
-#                # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
-#                async: 'in-memory://'
+when@test:
+   framework:
+       messenger:
+           transports:
+               # replace with your transport name here (e.g., my_transport: 'in-memory://')
+               # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
+               async: 'test://'
