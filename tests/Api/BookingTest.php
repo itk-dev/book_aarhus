@@ -62,7 +62,7 @@ class BookingTest extends AbstractBaseApiTestCase
             'subject' => 'Subject',
             'body' => 'Body',
             'startTime' => '2022-06-25T10:00:00.000Z',
-            'endTime' => '2022-06-25T10:30:00.000',
+            'endTime' => '2022-06-25T10:30:00.000Z',
         ];
 
         $client->request('POST', '/v1/bookings', [
@@ -83,5 +83,46 @@ class BookingTest extends AbstractBaseApiTestCase
         $this->assertEquals('Body', $booking->getBody());
         $this->assertEquals('2022-06-25T10:00:00+00:00', $booking->getStartTime()->format('c'));
         $this->assertEquals('2022-06-25T10:30:00+00:00', $booking->getEndTime()->format('c'));
+    }
+
+    public function testInvalidBooking(): void
+    {
+        $this->messenger('async')->queue()->assertEmpty();
+
+        $client = $this->getAuthenticatedClient();
+
+        $requestData = [
+            'resourceEmail' => 'test',
+            'resourceName' => 'Test',
+            'subject' => 'Subject',
+            'body' => 'Body',
+            'startTime' => '2022-06-25T10:00:00.000Z',
+            'endTime' => '2022-06-25T10:30:00.000Z',
+        ];
+
+        $client->request('POST', '/v1/bookings', [
+            'json' => $requestData,
+        ]);
+
+        $this->assertResponseStatusCodeSame(400);
+
+        $this->messenger('async')->queue()->assertCount(0);
+
+        $requestData = [
+            'resourceEmail' => 'test@example.com',
+            'resourceName' => 'Test',
+            'subject' => 'Subject',
+            'body' => 'Body',
+            'startTime' => 'not a date',
+            'endTime' => '2022-06-25T10:30:00.000Z',
+        ];
+
+        $client->request('POST', '/v1/bookings', [
+            'json' => $requestData,
+        ]);
+
+        $this->assertResponseStatusCodeSame(400);
+
+        $this->messenger('async')->queue()->assertCount(0);
     }
 }
