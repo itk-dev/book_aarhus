@@ -29,6 +29,9 @@ class ApiKeyUser implements UserInterface
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     private string $name;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $webformApiKey;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -68,5 +71,15 @@ class ApiKeyUser implements UserInterface
         $this->name = $name;
 
         return $this;
+    }
+
+    public function getWebformApiKey(): ?string
+    {
+        return $this->webformApiKey;
+    }
+
+    public function setWebformApiKey(?string $webformApiKey): void
+    {
+        $this->webformApiKey = $webformApiKey;
     }
 }

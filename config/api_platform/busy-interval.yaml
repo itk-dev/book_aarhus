@@ -2,7 +2,13 @@
 resources:
   App\Entity\BusyInterval:
     itemOperations:
-      get: ~
+      get:
+        controller: ApiPlatform\Core\Action\NotFoundAction
+        read: false
+        output: false
+        openapi_context:
+          description: Unsupported action.
+          summary: Unsupported action.
     collectionOperations:
       get:
         openapi_context:

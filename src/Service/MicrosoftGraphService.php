@@ -233,6 +233,39 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
+     * @see https://docs.microsoft.com/en-us/graph/api/event-update?view=graph-rest-1.0&tabs=http
+     *
+     * @throws GuzzleException|GraphException
+     */
+    public function updateBooking(string $id, array $newData = []): ?string
+    {
+        $token = $this->authenticateAsServiceAccount();
+
+        $urlEncodedId = urlencode($id);
+
+        $response = $this->request("/me/events/$urlEncodedId", $token, 'PATCH', $newData);
+
+        return $response->getStatus();
+    }
+
+    /**
+     * @see https://docs.microsoft.com/en-us/graph/api/event-delete?view=graph-rest-1.0&tabs=http
+     *
+     * @throws GuzzleException|GraphException
+     */
+    public function deleteBooking(string $id, string $ownerEmail): ?string
+    {
+        $token = $this->authenticateAsServiceAccount();
+
+        $urlEncodedId = urlencode($id);
+        $encodedOwnerEmail = urlencode($ownerEmail);
+
+        $response = $this->request("/users/$encodedOwnerEmail/events/$urlEncodedId", $token, 'DELETE');
+
+        return $response->getStatus();
+    }
+
+    /**
      * @throws GuzzleException|GraphException
      *
      * @see https://docs.microsoft.com/en-us/graph/search-concept-events
