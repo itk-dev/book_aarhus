@@ -13,8 +13,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'app:graph:free-busy',
-    description: 'Get free/busy for schedules',
+    name: 'app:graph:busy',
+    description: 'Get busy intervals for resource',
 )]
 class GraphFreeBusyCommand extends Command
 {
@@ -28,7 +28,7 @@ class GraphFreeBusyCommand extends Command
         $this->addArgument(
             'schedules',
             InputArgument::IS_ARRAY,
-            'Array of schedules to get free/busy for.'
+            'Array of emails to get busy intervals for.'
         );
     }
 
@@ -42,19 +42,19 @@ class GraphFreeBusyCommand extends Command
         $schedules = $input->getArgument('schedules');
 
         if (!$schedules) {
-            $io->error('Please enter some schedules to get free/busy for.');
+            $io->error('Please enter some schedules to get busy intervals for.');
 
             return Command::INVALID;
         }
 
-        $io->note(sprintf('You request free/busy for the following schedules: %s', implode(', ', $schedules)));
+        $io->note(sprintf('You request busy intervals for the following schedules: %s', implode(', ', $schedules)));
 
         $now = new \DateTime();
         $nowPlusOneDay = (new \DateTime())->add(new \DateInterval('P1D'));
 
-        $freeBusy = $this->microsoftGraphService->getBusyIntervals($schedules, $now, $nowPlusOneDay);
+        $busyIntervals = $this->microsoftGraphService->getBusyIntervals($schedules, $now, $nowPlusOneDay);
 
-        $io->info(json_encode($freeBusy));
+        $io->info(json_encode($busyIntervals));
 
         return Command::SUCCESS;
     }
