@@ -50,6 +50,32 @@ class BookingTest extends AbstractBaseApiTestCase
         $this->assertEquals(1, $message->getApiKeyUserId());
     }
 
+    public function testInvalidBookingWebform(): void
+    {
+        $this->messenger('async')->queue()->assertEmpty();
+
+        $client = $this->getAuthenticatedClient();
+
+        $requestData = [
+            'data' => [
+                'webform' => [
+                    'id' => 'booking',
+                ],
+                'submission' => [
+                    'uuid' => '795f5a1c-a0ac-4f8a-8834-bb71fca8585d',
+                ],
+            ],
+        ];
+
+        $client->request('POST', '/v1/bookings-webform', [
+            'json' => $requestData,
+        ]);
+
+        $this->assertResponseStatusCodeSame(400);
+
+        $this->messenger('async')->queue()->assertCount(0);
+    }
+
     public function testBooking(): void
     {
         $this->messenger('async')->queue()->assertEmpty();

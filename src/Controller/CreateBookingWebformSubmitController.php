@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\ApiKeyUser;
 use App\Message\WebformSubmitMessage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -27,15 +28,32 @@ class CreateBookingWebformSubmitController extends AbstractController
             $userId = $user->getId();
         }
 
-        // TODO: Validate information.
+        $webformId = $webformContent->data->webform->id ?? null;
+        $submissionUuid = $webformContent->data->submission->uuid ?? null;
+        $sender = $webformContent->links->sender ?? null;
+        $getSubmissionUrl = $webformContent->links->get_submission_url ?? null;
+        $apiKeyUserId = $userId ?? $user->getUserIdentifier() ?? null;
+
+        if (null === $webformId) {
+            throw new BadRequestException('data->webform->id should not be null');
+        }
+        if (null === $submissionUuid) {
+            throw new BadRequestException('data->submssion->uuid should not be null');
+        }
+        if (null === $sender) {
+            throw new BadRequestException('links->sender should not be null');
+        }
+        if (null === $getSubmissionUrl) {
+            throw new BadRequestException('links->get_submission_url should not be null');
+        }
 
         // Register job.
         $this->bus->dispatch(new WebformSubmitMessage(
-            $webformContent->data->webform->id ?? null,
-            $webformContent->data->submission->uuid ?? null,
-            $webformContent->links->sender ?? null,
-            $webformContent->links->get_submission_url ?? null,
-            $userId ?? $user->getUserIdentifier() ?? null,
+            $webformId,
+            $submissionUuid,
+            $sender,
+            $getSubmissionUrl,
+            $apiKeyUserId,
         ));
 
         return new Response(null, 201);
