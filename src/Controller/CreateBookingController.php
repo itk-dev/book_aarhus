@@ -21,6 +21,6 @@ class CreateBookingController extends AbstractController
         // Register job.
         $this->bus->dispatch(new CreateBookingMessage($data));
 
-        return new Response(null, 200);
+        return new Response(null, 201);
     }
 }

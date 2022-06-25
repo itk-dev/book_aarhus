@@ -2,6 +2,7 @@
 
 namespace App\Tests\Api;
 
+use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
 use App\Tests\AbstractBaseApiTestCase;
 use Zenstruck\Messenger\Test\InteractsWithMessenger;
@@ -47,8 +48,40 @@ class BookingTest extends AbstractBaseApiTestCase
         $this->assertEquals('https://bookaarhus.local.itkdev.dk', $message->getSender());
         $this->assertEquals('https://bookaarhus.local.itkdev.dk/webform_rest/booking/submission/123123123', $message->getSubmissionUrl());
         $this->assertEquals(1, $message->getApiKeyUserId());
+    }
 
-        $this->messenger('async')->reset();
-        $this->messenger('async')->queue()->assertCount(0);
+    public function testBooking(): void
+    {
+        $this->messenger('async')->queue()->assertEmpty();
+
+        $client = $this->getAuthenticatedClient();
+
+        $requestData = [
+            'resourceEmail' => 'test@example.com',
+            'resourceName' => 'Test',
+            'subject' => 'Subject',
+            'body' => 'Body',
+            'startTime' => '2022-06-25T10:00:00.000Z',
+            'endTime' => '2022-06-25T10:30:00.000',
+        ];
+
+        $client->request('POST', '/v1/bookings', [
+            'json' => $requestData,
+        ]);
+
+        $this->assertResponseStatusCodeSame(201);
+
+        $this->messenger('async')->queue()->assertCount(1);
+        $this->messenger('async')->queue()->assertContains(CreateBookingMessage::class);
+
+        /** @var CreateBookingMessage $message */
+        $message = $this->messenger('async')->queue()->first(CreateBookingMessage::class)->getMessage();
+        $booking = $message->getBooking();
+        $this->assertEquals('test@example.com', $booking->getResourceEmail());
+        $this->assertEquals('Test', $booking->getResourceName());
+        $this->assertEquals('Subject', $booking->getSubject());
+        $this->assertEquals('Body', $booking->getBody());
+        $this->assertEquals('2022-06-25T10:00:00+00:00', $booking->getStartTime()->format('c'));
+        $this->assertEquals('2022-06-25T10:30:00+00:00', $booking->getEndTime()->format('c'));
     }
 }
