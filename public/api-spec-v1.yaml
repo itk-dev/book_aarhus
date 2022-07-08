@@ -450,6 +450,12 @@ components:
           type: integer
         email:
           type: string
+        description:
+          type: string
+        businesshours:
+          type: string
+        location:
+          type: string
     Resource.jsonld:
       type: object
       properties:
@@ -484,6 +490,12 @@ components:
         capacity:
           type: integer
         email:
+          type: string
+        description:
+          type: string
+        businesshours:
+          type: string
+        location:
           type: string
   responses: {  }
   parameters: {  }

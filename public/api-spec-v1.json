@@ -704,6 +704,15 @@
                     },
                     "email": {
                         "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "businesshours": {
+                        "type": "string"
+                    },
+                    "location": {
+                        "type": "string"
                     }
                 }
             },
@@ -756,6 +765,15 @@
                         "type": "integer"
                     },
                     "email": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "businesshours": {
+                        "type": "string"
+                    },
+                    "location": {
                         "type": "string"
                     }
                 }
