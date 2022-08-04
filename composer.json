@@ -27,6 +27,7 @@
         "symfony/framework-bundle": "6.0.*",
         "symfony/http-client": "6.0.*",
         "symfony/messenger": "6.0.*",
+        "symfony/monolog-bundle": "^3.8",
         "symfony/property-access": "6.0.*",
         "symfony/property-info": "6.0.*",
         "symfony/proxy-manager-bridge": "6.0.*",
@@ -113,7 +114,7 @@
             "composer normalize"
         ],
         "queues": [
-            "bin/console messenger:consume async -vv"
+            "bin/console messenger:consume async -vvv"
         ],
         "tests": [
             "bin/console --env=test doctrine:database:drop --if-exists --force --quiet",

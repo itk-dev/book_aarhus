@@ -8,6 +8,7 @@ use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
 use App\Repository\ApiKeyUserRepository;
 use App\Utils\ValidationUtils;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\RecoverableMessageHandlingException;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -23,12 +24,14 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 #[AsMessageHandler]
 class WebformSubmitHandler
 {
-    public function __construct(private HttpClientInterface $client, private ApiKeyUserRepository $apiKeyUserRepository, private MessageBusInterface $bus, private ValidationUtils $validationUtils)
+    public function __construct(private HttpClientInterface $client, private ApiKeyUserRepository $apiKeyUserRepository, private MessageBusInterface $bus, private ValidationUtils $validationUtils, private LoggerInterface $logger)
     {
     }
 
     public function __invoke(WebformSubmitMessage $message): void
     {
+        $this->logger->info('WebformSubmitHandler invoked.');
+
         $submissionUrl = $message->getSubmissionUrl();
         $userId = $message->getApiKeyUserId();
 
@@ -38,6 +41,11 @@ class WebformSubmitHandler
             throw new UnrecoverableMessageHandlingException('ApiKeyUser not set.');
         }
 
+        // TODO: Remove this when url is correct from webform.
+        $submissionUrl = str_replace('http://default/', 'http://selvbetjening_nginx_1.frontend/', $submissionUrl);
+
+        $this->logger->info("Fetching $submissionUrl");
+
         $webformSubmission = $this->getWebformSubmission($submissionUrl, $user->getWebformApiKey());
 
         if (empty($webformSubmission['data'])) {
@@ -46,18 +54,61 @@ class WebformSubmitHandler
 
         $data = $webformSubmission['data'];
 
-        // TODO: Validate that required fields are present.
-        // TODO: Set extra fields as string in body.
-        // TODO: Add unique user id to end of body on the form: [userid-xxx].
+        $this->logger->info('Webform submission data fetched. Setting up CreateBooking job.');
+        $this->logger->info(json_encode($data));
+
+        // TODO: Adjust field requirements to booking array when it is ready in the webform.
+
+        if (!isset($data['subject'])) {
+            throw new UnrecoverableMessageHandlingException('Webform data.subject not set');
+        }
+
+        if (!isset($data['resourceemail'])) {
+            throw new UnrecoverableMessageHandlingException('Webform data.resourceemail not set');
+        }
+
+        if (!isset($data['resourcename'])) {
+            throw new UnrecoverableMessageHandlingException('Webform data.resourcename not set');
+        }
+
+        if (!isset($data['starttime'])) {
+            throw new UnrecoverableMessageHandlingException('Webform data.starttime not set');
+        }
+
+        if (!isset($data['endtime'])) {
+            throw new UnrecoverableMessageHandlingException('Webform data.endtime not set');
+        }
+
+        if (!isset($data['userid'])) {
+            throw new UnrecoverableMessageHandlingException('Webform data.userid not set');
+        }
+
+        $body = [];
+        $filterKeys = ['subject', 'resourceemail', 'resourcename', 'starttime', 'endtime', 'userid'];
+
+        // Add extra fields to body.
+        foreach ($data as $key => $datum) {
+            if (!in_array($key, $filterKeys)) {
+                $body[] = "$key: $datum";
+            }
+        }
+
+        // Add userid to bottom of body.
+        $userid = $data['userid'];
+        $body[] = "[userid-$userid]";
+
+        $bodyString = implode("\n", $body);
 
         try {
             $booking = new Booking();
-            $booking->setBody($data['body']);
-            $booking->setSubject($data['subject']);
-            $booking->setResourceEmail($this->validationUtils->validateEmail($data['resourceEmail']));
-            $booking->setResourceName($data['resourceName']);
-            $booking->setStartTime($this->validationUtils->validateDate($data['startTime']));
-            $booking->setEndTime($this->validationUtils->validateDate($data['endTime']));
+            $booking->setBody($bodyString);
+            $booking->setSubject($data['subject'] ?? '');
+            $booking->setResourceEmail($this->validationUtils->validateEmail($data['resourceemail']));
+            $booking->setResourceName($data['resourcename'] ?? '');
+            $booking->setStartTime($this->validationUtils->validateDate($data['starttime'], 'Y-m-d\TH:i:sO'));
+            $booking->setEndTime($this->validationUtils->validateDate($data['endtime'], 'Y-m-d\TH:i:sO'));
+
+            $this->logger->info('Registering CreateBookingMessage job');
 
             // Register job.
             $this->bus->dispatch(new CreateBookingMessage($booking));
