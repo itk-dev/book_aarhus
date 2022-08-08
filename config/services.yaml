@@ -43,3 +43,7 @@ services:
     App\Service\MicrosoftGraphServiceInterface:
         alias: 'App\Service\MicrosoftGraphService'
         public: true
+
+    App\Service\WebformServiceInterface:
+        alias: 'App\Service\WebformService'
+        public: true

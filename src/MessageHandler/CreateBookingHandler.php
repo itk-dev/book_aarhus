@@ -3,9 +3,8 @@
 namespace App\MessageHandler;
 
 use App\Message\CreateBookingMessage;
-use App\Service\MicrosoftGraphService;
-use GuzzleHttp\Exception\GuzzleException;
-use Microsoft\Graph\Exception\GraphException;
+use App\Service\MicrosoftGraphServiceInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
@@ -14,15 +13,14 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 class CreateBookingHandler
 {
-    public function __construct(private MicrosoftGraphService $microsoftGraphService)
+    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService, private LoggerInterface $logger)
     {
     }
 
-    /**
-     * @throws GuzzleException|GraphException
-     */
     public function __invoke(CreateBookingMessage $message): void
     {
+        $this->logger->info('CreateBookingHandler invoked.');
+
         $booking = $message->getBooking();
 
         $this->microsoftGraphService->createBookingForResource(

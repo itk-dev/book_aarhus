@@ -7,16 +7,13 @@ use App\Entity\Booking;
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
 use App\Repository\ApiKeyUserRepository;
+use App\Service\WebformServiceInterface;
 use App\Utils\ValidationUtils;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\Exception\RecoverableMessageHandlingException;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * @see https://github.com/itk-dev/os2forms_selvbetjening/blob/develop/web/modules/custom/os2forms_rest_api/README.md
@@ -24,7 +21,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 #[AsMessageHandler]
 class WebformSubmitHandler
 {
-    public function __construct(private HttpClientInterface $client, private ApiKeyUserRepository $apiKeyUserRepository, private MessageBusInterface $bus, private ValidationUtils $validationUtils, private LoggerInterface $logger)
+    public function __construct(private WebformServiceInterface $webformService, private ApiKeyUserRepository $apiKeyUserRepository, private MessageBusInterface $bus, private ValidationUtils $validationUtils, private LoggerInterface $logger)
     {
     }
 
@@ -46,42 +43,15 @@ class WebformSubmitHandler
 
         $this->logger->info("Fetching $submissionUrl");
 
-        $webformSubmission = $this->getWebformSubmission($submissionUrl, $user->getWebformApiKey());
+        $webformSubmission = $this->webformService->getWebformSubmission($submissionUrl, $user->getWebformApiKey());
 
-        if (empty($webformSubmission['data'])) {
-            throw new UnrecoverableMessageHandlingException('Webform data not set');
+        try {
+            $data = $this->webformService->getValidatedData($webformSubmission);
+        } catch (Exception $e) {
+            throw new UnrecoverableMessageHandlingException($e->getMessage());
         }
-
-        $data = $webformSubmission['data'];
 
         $this->logger->info('Webform submission data fetched. Setting up CreateBooking job.');
-        $this->logger->info(json_encode($data));
-
-        // TODO: Adjust field requirements to booking array when it is ready in the webform.
-
-        if (!isset($data['subject'])) {
-            throw new UnrecoverableMessageHandlingException('Webform data.subject not set');
-        }
-
-        if (!isset($data['resourceemail'])) {
-            throw new UnrecoverableMessageHandlingException('Webform data.resourceemail not set');
-        }
-
-        if (!isset($data['resourcename'])) {
-            throw new UnrecoverableMessageHandlingException('Webform data.resourcename not set');
-        }
-
-        if (!isset($data['starttime'])) {
-            throw new UnrecoverableMessageHandlingException('Webform data.starttime not set');
-        }
-
-        if (!isset($data['endtime'])) {
-            throw new UnrecoverableMessageHandlingException('Webform data.endtime not set');
-        }
-
-        if (!isset($data['userid'])) {
-            throw new UnrecoverableMessageHandlingException('Webform data.userid not set');
-        }
 
         $body = [];
         $filterKeys = ['subject', 'resourceemail', 'resourcename', 'starttime', 'endtime', 'userid'];
@@ -113,24 +83,7 @@ class WebformSubmitHandler
             // Register job.
             $this->bus->dispatch(new CreateBookingMessage($booking));
         } catch (InvalidArgumentException $e) {
-            throw new UnrecoverableMessageHandlingException('Invalid booking data.');
-        }
-    }
-
-    private function getWebformSubmission(string $submissionUrl, string $webformApiKey): array
-    {
-        try {
-            $response = $this->client->request('GET', $submissionUrl, [
-                'headers' => [
-                    'api-key' => $webformApiKey,
-                ],
-            ]);
-
-            return $response->toArray();
-        } catch (HttpExceptionInterface|TransportExceptionInterface $e) {
-            throw new RecoverableMessageHandlingException();
-        } catch (DecodingExceptionInterface $e) {
-            throw new UnrecoverableMessageHandlingException();
+            throw new UnrecoverableMessageHandlingException($e->getMessage());
         }
     }
 }

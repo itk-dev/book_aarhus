@@ -29,12 +29,12 @@ class CreateBookingWebformSubmitController extends AbstractController
             $userId = $user->getId();
         }
 
-        $webformContent = json_decode($request->getContent());
+        $webformContent = $request->toArray();
 
-        $webformId = $webformContent->data->webform->id ?? null;
-        $submissionUuid = $webformContent->data->submission->uuid ?? null;
-        $sender = $webformContent->links->sender ?? null;
-        $getSubmissionUrl = $webformContent->links->get_submission_url ?? null;
+        $webformId = $webformContent['data']['webform']['id'] ?? null;
+        $submissionUuid = $webformContent['data']['submission']['uuid'] ?? null;
+        $sender = $webformContent['links']['sender'] ?? null;
+        $getSubmissionUrl = $webformContent['links']['get_submission_url'] ?? null;
         $apiKeyUserId = $userId ?? $user->getUserIdentifier() ?? null;
 
         if (null === $webformId) {
