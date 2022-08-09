@@ -1,0 +1,31 @@
+---
+resources:
+  App\Entity\Booking:
+    attributes:
+      input: App\Dto\BookingInput
+    itemOperations:
+      get:
+        controller: ApiPlatform\Core\Action\NotFoundAction
+        read: false
+        output: false
+        openapi_context:
+          description: Unsupported action.
+          summary: Unsupported action.
+    collectionOperations:
+      post:
+        controller: App\Controller\CreateBookingController
+      create_booking_os2forms:
+        input: App\Dto\WebformBookingInput
+        method: POST
+        path: '/bookings-webform'
+        controller: App\Controller\CreateBookingWebformSubmitController
+        openapi_context:
+          description: Create a booking from a Drupal Webform submit.
+          summary: Create a booking from a Drupal Webform submit.
+          operationId: post-v1-create-booking-webform-submit
+          tags:
+            - Booking
+          parameters: []
+          responses:
+            '201':
+              description: Created

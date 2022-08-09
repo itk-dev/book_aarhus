@@ -10,14 +10,26 @@ A `docker-compose.yml` file is included in this project.
 To install the dependencies you can run
 
 ```shell
+# Up the docker containers
 docker compose up -d
+
+# Install dependencies
 docker compose exec phpfpm composer install
 
 # Run migrations
 docker compose exec phpfpm bin/console doctrine:migrations:migrate
 ```
 
-The api can be accessed at `/api/`.
+The api can be accessed at `/`.
+
+## PRs
+
+Before creating a PR make sure the code is ready.
+The following command will apply coding standards, run tests, normalize composer.json and update the openapi spec.
+
+```
+docker compose exec phpfpm composer prepare-code
+```
 
 ## Microsoft Graph
 
@@ -25,11 +37,14 @@ The application relies on Microsoft Graph to handle free/busy and booking reques
 
 To enable this the following environment variables should be set in `.env.local`:
 
-```shell
+```
+###> App ###
 MICROSOFT_GRAPH_TENANT_ID=""
 MICROSOFT_GRAPH_CLIENT_ID=""
+MICROSOFT_GRAPH_SERVICE_ACCOUNT_NAME=""
 MICROSOFT_GRAPH_SERVICE_ACCOUNT_USERNAME=""
 MICROSOFT_GRAPH_SERVICE_ACCOUNT_PASSWORD=""
+###< App ###
 ```
 
 A command is available to test requests in Microsoft Graph:
@@ -44,7 +59,7 @@ docker compose exec phpfpm bin/console app:graph:test
 
 Generate an ApiKey with the following command:
 
-```
+```shell
 docker compose exec phpfpm bin/console app:auth:create-apikey
 ```
 
@@ -59,6 +74,28 @@ In the swagger UI press the "Authorize" button in the top and enter
 ```
 Apikey [THE API KEY]
 ```
+
+## Queue
+
+CRUD of bookings are handled through a queue (RabbitMQ) to ensure they are correctly handled.
+
+See https://symfony.com/doc/current/messenger.html for symfony messenger documentation.
+
+When a booking request is received it is added to the queue, and handled when the queue consumes the message.
+
+To consume messages run the following command
+
+```shell
+docker compose exec phpfpm composer queues
+```
+
+### Production
+
+Make sure proper production handling is set up.
+
+See https://symfony.com/doc/current/messenger.html#deploying-to-production.
+
+For example use Supervisor (https://symfony.com/doc/current/messenger.html#supervisor-configuration).
 
 ## OpenAPI specification
 
