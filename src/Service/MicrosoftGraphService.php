@@ -291,4 +291,21 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
 
         return $response->getBody();
     }
+
+    /**
+     * @throws GuzzleException|GraphException
+     *
+     * @see https://docs.microsoft.com/en-us/graph/search-concept-events
+     */
+    public function getBookingDetails(string $bookingId): array
+    {
+        $token = $this->authenticateAsServiceAccount();
+
+        // Formatting the base64_decode(d) booking hitId, replacing "/" with "-" as this is graph-compatible, and replacing " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
+        $bookingId_formatted = str_replace(['/', ' '], ['-', '+'], $bookingId);
+
+        $response = $this->request('/me/events/'.$bookingId_formatted, $token, 'GET', null);
+
+        return $response->getBody();
+    }
 }

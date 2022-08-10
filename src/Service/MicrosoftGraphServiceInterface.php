@@ -10,6 +10,8 @@ interface MicrosoftGraphServiceInterface
 
     public function getUserBookings(string $userId): array;
 
+    public function getBookingDetails(string $bookingId): array;
+
     public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array;
 
     public function createBookingInviteResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array;
