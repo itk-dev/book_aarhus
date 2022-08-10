@@ -10,7 +10,6 @@ servers:
     url: /
     description: ''
 paths:
-
   /v1/booking-details:
     get:
       operationId: get-v1-booking-details
@@ -77,7 +76,21 @@ paths:
           description: 'Resource not found'
       summary: 'Retrieves a BookingDetails resource.'
       description: 'Retrieves a BookingDetails resource.'
-
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
   /v1/bookings:
     post:
       operationId: postBookingCollection
@@ -173,7 +186,6 @@ paths:
           description: 'Resource not found'
       summary: 'Unsupported action.'
       description: 'Unsupported action.'
-
       parameters:
         -
           name: id
@@ -706,52 +718,7 @@ paths:
     parameters: []
 components:
   schemas:
-
-    BookingDetails:
-      type: object
-      properties:
-        id:
-          type: string
-        displayName:
-          type: string
-        body:
-          type: string
-    BookingDetails.jsonld:
-      type: object
-      properties:
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
-        '@context':
-          readOnly: true
-          oneOf:
-            -
-              type: string
-            -
-              type: object
-              properties:
-                '@vocab':
-                  type: string
-                hydra:
-                  type: string
-                  enum: ['http://www.w3.org/ns/hydra/core#']
-              required:
-                - '@vocab'
-                - hydra
-              additionalProperties: true
-        id:
-          type: string
-        displayName:
-          type: string
-        body:
-          type: string
-
-
     Booking:
-
       type: object
       properties:
         id:
@@ -942,6 +909,47 @@ components:
         endTime:
           type: string
           format: date-time
+    BookingDetails:
+      type: object
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        body:
+          type: string
+    BookingDetails.jsonld:
+      type: object
+      properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        id:
+          type: string
+        displayName:
+          type: string
+        body:
+          type: string
     BusyInterval:
       type: object
       properties:
