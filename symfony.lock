@@ -148,6 +148,9 @@
     "microsoft/microsoft-graph": {
         "version": "1.66.0"
     },
+    "monolog/monolog": {
+        "version": "2.8.0"
+    },
     "myclabs/deep-copy": {
         "version": "1.11.0"
     },
@@ -294,6 +297,9 @@
     "sebastian/version": {
         "version": "3.0.2"
     },
+    "symfony/amqp-messenger": {
+        "version": "v6.0.7"
+    },
     "symfony/asset": {
         "version": "v6.0.7"
     },
@@ -328,6 +334,9 @@
         "version": "v3.0.1"
     },
     "symfony/doctrine-bridge": {
+        "version": "v6.0.8"
+    },
+    "symfony/doctrine-messenger": {
         "version": "v6.0.8"
     },
     "symfony/dom-crawler": {
@@ -405,6 +414,33 @@
             "version": "1.0",
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
+    },
+    "symfony/messenger": {
+        "version": "6.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "6.0",
+            "ref": "2523f7d31488903e247a522e760dc279be7f7aaf"
+        },
+        "files": [
+            "config/packages/messenger.yaml"
+        ]
+    },
+    "symfony/monolog-bridge": {
+        "version": "v6.0.10"
+    },
+    "symfony/monolog-bundle": {
+        "version": "3.8",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "3.7",
+            "ref": "213676c4ec929f046dfde5ea8e97625b81bc0578"
+        },
+        "files": [
+            "config/packages/monolog.yaml"
+        ]
     },
     "symfony/options-resolver": {
         "version": "v6.0.3"
@@ -560,5 +596,11 @@
     },
     "willdurand/negotiation": {
         "version": "3.1.0"
+    },
+    "zenstruck/assert": {
+        "version": "v1.0.1"
+    },
+    "zenstruck/messenger-test": {
+        "version": "v1.4.2"
     }
 }

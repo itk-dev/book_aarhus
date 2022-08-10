@@ -9,7 +9,7 @@ use App\Security\ApiKeyAuthenticator;
 
 abstract class AbstractBaseApiTestCase extends ApiTestCase
 {
-    private const API_KEY = '1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
+    public const API_KEY = '1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
 
     public static function setUpBeforeClass(): void
     {
@@ -28,6 +28,7 @@ abstract class AbstractBaseApiTestCase extends ApiTestCase
             $apiKeyUser = new ApiKeyUser();
             $apiKeyUser->setName('test');
             $apiKeyUser->setApiKey(self::API_KEY);
+            $apiKeyUser->setWebformApiKey(self::API_KEY);
             $entityManager->persist($apiKeyUser);
             $entityManager->flush();
         }
@@ -42,6 +43,7 @@ abstract class AbstractBaseApiTestCase extends ApiTestCase
     {
         return static::createClient([], ['headers' => [
             ApiKeyAuthenticator::AUTH_HEADER => ApiKeyAuthenticator::AUTH_HEADER_PREFIX.self::API_KEY,
+            'Content-Type' => 'application/ld+json',
         ]]);
     }
 }
