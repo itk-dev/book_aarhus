@@ -45,11 +45,12 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
         $userBookings = $this->microsoftGraphService->getUserBookings($userId);
         $userBookingsHits = $userBookings['value'][0]['hitsContainers'][0]['hits'];
         foreach ($userBookingsHits as $hit) {
-
             $userBooking = new UserBooking();
             $userBooking->id = Ulid::generate();
 
             $userBooking->hitId = $hit['hitId'];
+            $userBooking->summary = $hit['summary'];
+            $userBooking->subject = $hit['resource']['subject'];
             $userBooking->start = new \DateTime($hit['resource']['start']['dateTime'], new \DateTimeZone($hit['resource']['start']['timeZone']));
             $userBooking->end = new \DateTime($hit['resource']['end']['dateTime'], new \DateTimeZone($hit['resource']['end']['timeZone']));
 

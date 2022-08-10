@@ -258,4 +258,20 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
 
         return $response->getBody();
     }
+
+    /**
+     * @throws GuzzleException|GraphException
+     *
+     * @see https://docs.microsoft.com/en-us/graph/search-concept-events
+     */
+    public function getBookingDetails(string $bookingId): array
+    {
+        $token = $this->authenticateAsServiceAccount();
+
+        $bookingId_formatted = str_replace(['/', ' '], ['-', '+'], $bookingId);
+
+        $response = $this->request('/me/events/'.$bookingId_formatted, $token, 'GET', null);
+
+        return $response->getBody();
+    }
 }

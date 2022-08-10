@@ -11,7 +11,11 @@ class UserBooking
 
     public string $hitId;
 
+    public string $summary;
+
+    public string $subject;
+
     public ?\DateTimeInterface $start;
-    
+
     public ?\DateTimeInterface $end;
 }
