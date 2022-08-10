@@ -10,6 +10,6 @@ class BookingDetails
     public string $id;
 
     public string $displayName;
-    
+
     public string $body;
 }
