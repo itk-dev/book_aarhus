@@ -48,11 +48,12 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
             $userBooking = new UserBooking();
             $userBooking->id = Ulid::generate();
 
-            $userBooking->hitId = $hit['hitId'];
-            $userBooking->summary = $hit['summary'];
-            $userBooking->subject = $hit['resource']['subject'];
-            $userBooking->start = new \DateTime($hit['resource']['start']['dateTime'], new \DateTimeZone($hit['resource']['start']['timeZone']));
-            $userBooking->end = new \DateTime($hit['resource']['end']['dateTime'], new \DateTimeZone($hit['resource']['end']['timeZone']));
+            $userBooking->hitId = $hit['hitId'] ?? "";
+            $userBooking->summary = $hit['summary'] ?? "";
+            $userBooking->subject = $hit['resource']['subject'] ?? "";
+
+            $userBooking->start = new \DateTime($hit['resource']['start']['dateTime'], new \DateTimeZone($hit['resource']['start']['timeZone'])) ?? null;
+            $userBooking->end = new \DateTime($hit['resource']['end']['dateTime'], new \DateTimeZone($hit['resource']['end']['timeZone'])) ?? null;
 
             yield $userBooking;
         }
