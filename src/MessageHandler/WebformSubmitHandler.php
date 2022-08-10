@@ -38,9 +38,6 @@ class WebformSubmitHandler
             throw new UnrecoverableMessageHandlingException('ApiKeyUser not set.');
         }
 
-        // TODO: Remove this when url is correct from webform.
-        $submissionUrl = str_replace('http://default/', 'http://selvbetjening_nginx_1.frontend/', $submissionUrl);
-
         $this->logger->info("Fetching $submissionUrl");
 
         $webformSubmission = $this->webformService->getWebformSubmission($submissionUrl, $user->getWebformApiKey());
