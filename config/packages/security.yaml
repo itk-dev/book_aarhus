@@ -6,7 +6,7 @@ security:
     providers:
         app_server_provider:
             entity:
-                class: App\Entity\ApiKeyUser
+                class: App\Entity\Main\ApiKeyUser
                 property: apiKey
     firewalls:
         dev:
