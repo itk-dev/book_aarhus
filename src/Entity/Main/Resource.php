@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Main;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\ResourceRepository;
+use App\Repository\Main\ResourceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ResourceRepository::class)]

@@ -2,13 +2,13 @@
 
 namespace App\Tests\Api;
 
-use App\Entity\ApiKeyUser;
-use App\Entity\Booking;
+use App\Entity\Main\ApiKeyUser;
+use App\Entity\Main\Booking;
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
 use App\MessageHandler\CreateBookingHandler;
 use App\MessageHandler\WebformSubmitHandler;
-use App\Repository\ApiKeyUserRepository;
+use App\Repository\Main\ApiKeyUserRepository;
 use App\Service\MicrosoftGraphService;
 use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
@@ -80,6 +80,7 @@ class BookingTest extends AbstractBaseApiTestCase
         ]);
 
         $container = self::getContainer();
+        /** @var ApiKeyUserRepository $apiKeyUserRepository */
         $apiKeyUserRepository = $container->get(ApiKeyUserRepository::class);
         $bus = $container->get(MessageBusInterface::class);
         $validationUtils = $container->get(ValidationUtils::class);
