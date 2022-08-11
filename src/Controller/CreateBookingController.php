@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Booking;
+use App\Entity\Main\Booking;
 use App\Message\CreateBookingMessage;
 use App\Utils\ValidationUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

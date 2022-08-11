@@ -1,6 +1,6 @@
 ---
 resources:
-  App\Entity\BusyInterval:
+  App\Entity\Main\BusyInterval:
     itemOperations:
       get:
         controller: ApiPlatform\Core\Action\NotFoundAction

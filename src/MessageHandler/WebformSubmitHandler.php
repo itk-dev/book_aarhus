@@ -3,7 +3,7 @@
 namespace App\MessageHandler;
 
 use ApiPlatform\Core\Exception\InvalidArgumentException;
-use App\Entity\Booking;
+use App\Entity\Main\Booking;
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
 use App\Repository\Main\ApiKeyUserRepository;

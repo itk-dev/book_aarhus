@@ -1,6 +1,6 @@
 ---
 resources:
-  App\Entity\BookingDetails:
+  App\Entity\Main\BookingDetails:
     itemOperations:
       get: ~
     collectionOperations:
