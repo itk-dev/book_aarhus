@@ -5,7 +5,7 @@ namespace App\Entity\Resources;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Extbooking.openhours
+ * Extbooking.openhours.
  *
  * @ORM\Table(name="ExtBooking.OpenHours")
  * @ORM\Entity
@@ -55,6 +55,4 @@ class OpenHours
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
     private $updatetimestamp;
-
-
 }

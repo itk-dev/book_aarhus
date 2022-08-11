@@ -5,7 +5,7 @@ namespace App\Entity\Resources;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Extbooking.cvrwhitelist
+ * Extbooking.cvrwhitelist.
  *
  * @ORM\Table(name="ExtBooking.cvrWhiteList")
  * @ORM\Entity
@@ -41,6 +41,4 @@ class CvrWhitelist
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
     private $updatetimestamp;
-
-
 }
