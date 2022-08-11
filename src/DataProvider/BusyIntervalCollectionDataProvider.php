@@ -4,7 +4,7 @@ namespace App\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Entity\BusyInterval;
+use App\Entity\Main\BusyInterval;
 use App\Service\MicrosoftGraphServiceInterface;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
