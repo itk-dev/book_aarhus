@@ -1,3 +1,4 @@
 ---
 resources:
-  App\Entity\Main\Resource:
+  App\Entity\Resources\AAKResource:
+    shortName: 'Resource'
