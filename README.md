@@ -79,6 +79,32 @@ For dependency injection you can use `EntityManagerInterface $defaultEntityManag
 or `EntityManagerInterface $resourcesEntityManager` to have the relevant entitymanager 
 injected.
 
+### Migrations for development resource db
+
+To ease development, migrations are provided for the azure sql container.
+They are added to the `migrations_resources` directory. A special configuration file
+is supplied for this.
+
+To use the migrations supply the `--em` and `--configuration` parameters to
+doctrine migrations commands as below
+
+```shell
+# Migrate
+bin/console doctrine:migrations:migrate --em=resources --configuration=config/config-migrations/doctrine-migrations-resources.yaml
+
+# Status
+bin/console doctrine:migrations:status --em=resources --configuration=config/config-migrations/doctrine-migrations-resources.yaml
+
+# Diff
+bin/console doctrine:migrations:diff --em=resources --configuration=config/config-migrations/doctrine-migrations-resources.yaml
+```
+
+Fixtures are supplied to populate the development resources database.
+
+```
+bin/console doctrine:fixtures:load --em=resources --group=ResourceFixtures
+```
+
 ### Development access to the real Azure DB
 If you need to access the actaul azure database from the development set up a few 
 steps are needed because the Azure DB is behind a firewall with an IP filter. 

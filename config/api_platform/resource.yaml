@@ -1,3 +1,14 @@
 ---
 resources:
-  App\Entity\Main\Resource:
+  App\Entity\Resources\AAKResource:
+    shortName: 'Resource'
+    itemOperations:
+      get:
+        controller: ApiPlatform\Core\Action\NotFoundAction
+        read: false
+        output: false
+        openapi_context:
+          description: Unsupported action.
+          summary: Unsupported action.
+    collectionOperations:
+      get:
