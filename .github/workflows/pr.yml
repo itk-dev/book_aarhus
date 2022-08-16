@@ -19,19 +19,23 @@ jobs:
           extensions: apcu, ctype, iconv, imagick, json, pdo_sqlsrv, redis, soap, sqlsrv, xmlreader, zip
           coverage: none
 
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - name: Cache composer dependencies
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ matrix.php }}-composer-
+#      - name: Get composer cache directory
+#        id: composer-cache
+#        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+#
+#      - name: Cache composer dependencies
+#        uses: actions/cache@v2
+#        with:
+#          path: ${{ steps.composer-cache.outputs.dir }}
+#          key: ${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
+#          restore-keys: ${{ matrix.php }}-composer-
 
       - name: Validate composer files
         run: composer validate composer.json --strict
+
+
+      - name: Dump PHP info
+        run: php -i
 
       - name: '[prod] Composer install with exported .env variables'
         run: |
