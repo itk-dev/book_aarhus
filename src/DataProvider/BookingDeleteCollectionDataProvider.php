@@ -10,7 +10,6 @@ use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Microsoft\Graph\Exception\GraphException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Uid\Ulid;
 
 final class BookingDeleteCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -41,16 +40,13 @@ final class BookingDeleteCollectionDataProvider implements ContextAwareCollectio
         }
 
         $bookingId = $filters['bookingId'];
-        $bookingDeletion = array($this->microsoftGraphService->deleteBooking($bookingId, ""));
+        $bookingDeletion = [$this->microsoftGraphService->deleteBooking($bookingId, '')];
 
-        foreach($bookingDeletion as $status) {
+        foreach ($bookingDeletion as $status) {
             $bookingDelete = new BookingDelete();
-            $bookingDelete->status = "test";
+            $bookingDelete->status = 'test';
 
             yield $bookingDelete;
         }
-
-
-
     }
 }

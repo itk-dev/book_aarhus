@@ -44,8 +44,8 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
 
         $userBookings = $this->microsoftGraphService->getUserBookings($userId);
         $userBookingsHits = $userBookings['value'][0]['hitsContainers'][0]['hits'] ?? null;
-        if ($userBookingsHits === null) {
-            return "no results";
+        if (null === $userBookingsHits) {
+            return 'no results';
         }
         foreach ($userBookingsHits as $hit) {
             $userBooking = new UserBooking();
