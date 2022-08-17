@@ -21,6 +21,7 @@ doctrine:
                     # authentication: ActiveDirectoryPassword
                 driver: 'pdo_sqlsrv'
                 charset: 'UTF-8'
+                server_version: '%env(resolve:BOOKING_RESOURCES_DATABASE_SERVER_VERSION)%'
 
     orm:
         default_entity_manager: default

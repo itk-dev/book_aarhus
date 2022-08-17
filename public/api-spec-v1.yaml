@@ -361,19 +361,22 @@ paths:
       tags:
         - Resource
       responses:
-        204:
+        200:
           description: 'Resource resource'
           content:
             application/ld+json:
-              schema: {  }
+              schema:
+                $ref: '#/components/schemas/Resource.jsonld'
             application/json:
-              schema: {  }
+              schema:
+                $ref: '#/components/schemas/Resource'
             text/html:
-              schema: {  }
+              schema:
+                $ref: '#/components/schemas/Resource'
         404:
           description: 'Resource not found'
-      summary: 'Unsupported action.'
-      description: 'Unsupported action.'
+      summary: 'Retrieves a Resource resource.'
+      description: 'Retrieves a Resource resource.'
       parameters:
         -
           name: id
@@ -872,6 +875,23 @@ components:
         '@type':
           readOnly: true
           type: string
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
         id:
           readOnly: true
           type: integer
