@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\ApiKeyUser;
+use App\Entity\Main\ApiKeyUser;
 use App\Message\WebformSubmitMessage;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

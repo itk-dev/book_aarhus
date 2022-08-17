@@ -4,7 +4,7 @@ namespace App\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Entity\BookingDetails;
+use App\Entity\Main\BookingDetails;
 use App\Service\MicrosoftGraphServiceInterface;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;

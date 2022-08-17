@@ -354,50 +354,6 @@ paths:
           explode: false
           allowReserved: false
       deprecated: false
-    post:
-      operationId: postResourceCollection
-      tags:
-        - Resource
-      responses:
-        201:
-          description: 'Resource resource created'
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/Resource.jsonld'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Resource'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/Resource'
-          links:
-            GetResourceItem:
-              operationId: getResourceItem
-              parameters:
-                id: '$response.body#/id'
-              description: 'The `id` value returned in the response can be used as the `id` parameter in `GET /v1/resources/{id}`.'
-        400:
-          description: 'Invalid input'
-        422:
-          description: 'Unprocessable entity'
-      summary: 'Creates a Resource resource.'
-      description: 'Creates a Resource resource.'
-      parameters: []
-      requestBody:
-        description: 'The new Resource resource'
-        content:
-          application/ld+json:
-            schema:
-              $ref: '#/components/schemas/Resource.jsonld'
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Resource'
-          text/html:
-            schema:
-              $ref: '#/components/schemas/Resource'
-        required: true
-      deprecated: false
     parameters: []
   '/v1/resources/{id}':
     get:
@@ -405,22 +361,19 @@ paths:
       tags:
         - Resource
       responses:
-        200:
+        204:
           description: 'Resource resource'
           content:
             application/ld+json:
-              schema:
-                $ref: '#/components/schemas/Resource.jsonld'
+              schema: {  }
             application/json:
-              schema:
-                $ref: '#/components/schemas/Resource'
+              schema: {  }
             text/html:
-              schema:
-                $ref: '#/components/schemas/Resource'
+              schema: {  }
         404:
           description: 'Resource not found'
-      summary: 'Retrieves a Resource resource.'
-      description: 'Retrieves a Resource resource.'
+      summary: 'Unsupported action.'
+      description: 'Unsupported action.'
       parameters:
         -
           name: id
@@ -434,141 +387,6 @@ paths:
           style: simple
           explode: false
           allowReserved: false
-      deprecated: false
-    put:
-      operationId: putResourceItem
-      tags:
-        - Resource
-      responses:
-        200:
-          description: 'Resource resource updated'
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/Resource.jsonld'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Resource'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/Resource'
-          links:
-            GetResourceItem:
-              operationId: getResourceItem
-              parameters:
-                id: '$response.body#/id'
-              description: 'The `id` value returned in the response can be used as the `id` parameter in `GET /v1/resources/{id}`.'
-        400:
-          description: 'Invalid input'
-        422:
-          description: 'Unprocessable entity'
-        404:
-          description: 'Resource not found'
-      summary: 'Replaces the Resource resource.'
-      description: 'Replaces the Resource resource.'
-      parameters:
-        -
-          name: id
-          in: path
-          description: 'Resource identifier'
-          required: true
-          deprecated: false
-          allowEmptyValue: false
-          schema:
-            type: string
-          style: simple
-          explode: false
-          allowReserved: false
-      requestBody:
-        description: 'The updated Resource resource'
-        content:
-          application/ld+json:
-            schema:
-              $ref: '#/components/schemas/Resource.jsonld'
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Resource'
-          text/html:
-            schema:
-              $ref: '#/components/schemas/Resource'
-        required: true
-      deprecated: false
-    delete:
-      operationId: deleteResourceItem
-      tags:
-        - Resource
-      responses:
-        204:
-          description: 'Resource resource deleted'
-        404:
-          description: 'Resource not found'
-      summary: 'Removes the Resource resource.'
-      description: 'Removes the Resource resource.'
-      parameters:
-        -
-          name: id
-          in: path
-          description: 'Resource identifier'
-          required: true
-          deprecated: false
-          allowEmptyValue: false
-          schema:
-            type: string
-          style: simple
-          explode: false
-          allowReserved: false
-      deprecated: false
-    patch:
-      operationId: patchResourceItem
-      tags:
-        - Resource
-      responses:
-        200:
-          description: 'Resource resource updated'
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/Resource.jsonld'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Resource'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/Resource'
-          links:
-            GetResourceItem:
-              operationId: getResourceItem
-              parameters:
-                id: '$response.body#/id'
-              description: 'The `id` value returned in the response can be used as the `id` parameter in `GET /v1/resources/{id}`.'
-        400:
-          description: 'Invalid input'
-        422:
-          description: 'Unprocessable entity'
-        404:
-          description: 'Resource not found'
-      summary: 'Updates the Resource resource.'
-      description: 'Updates the Resource resource.'
-      parameters:
-        -
-          name: id
-          in: path
-          description: 'Resource identifier'
-          required: true
-          deprecated: false
-          allowEmptyValue: false
-          schema:
-            type: string
-          style: simple
-          explode: false
-          allowReserved: false
-      requestBody:
-        description: 'The updated Resource resource'
-        content:
-          application/merge-patch+json:
-            schema:
-              $ref: '#/components/schemas/Resource'
-        required: true
       deprecated: false
     parameters: []
   /v1/user-bookings:
@@ -988,42 +806,66 @@ components:
           nullable: true
     Resource:
       type: object
+      description: Extbooking.aakresources.
       properties:
         id:
           readOnly: true
           type: integer
-        title:
+        resourcemail:
           type: string
-        capacity:
-          type: integer
-        email:
+        resourcename:
           type: string
-        description:
+        resourceimage:
           type: string
-        businesshours:
+          nullable: true
+        resourceemailtext:
           type: string
         location:
           type: string
+        locationtype:
+          type: string
+        geocordinates:
+          type: string
+          nullable: true
+        capacity:
+          type: string
+          nullable: true
+        type:
+          type: string
+        resourcedescription:
+          type: string
+          nullable: true
+        wheelchairaccessible:
+          type: boolean
+        videoconferenceequipment:
+          type: boolean
+        monitorequipment:
+          type: boolean
+        bookingrights:
+          type: string
+        acceptanceflow:
+          type: boolean
+        openingHours:
+          type: string
+          nullable: true
+        holidayOpeningHours:
+          type: string
+          nullable: true
+        whitelist:
+          type: string
+          nullable: true
+        catering:
+          type: boolean
+        formid:
+          type: string
+          nullable: true
+        updatetimestamp:
+          type: string
+          format: date-time
     Resource.jsonld:
       type: object
+      description: Extbooking.aakresources.
       properties:
-        '@context':
-          readOnly: true
-          oneOf:
-            -
-              type: string
-            -
-              type: object
-              properties:
-                '@vocab':
-                  type: string
-                hydra:
-                  type: string
-                  enum: ['http://www.w3.org/ns/hydra/core#']
-              required:
-                - '@vocab'
-                - hydra
-              additionalProperties: true
         '@id':
           readOnly: true
           type: string
@@ -1033,18 +875,57 @@ components:
         id:
           readOnly: true
           type: integer
-        title:
+        resourcemail:
           type: string
-        capacity:
-          type: integer
-        email:
+        resourcename:
           type: string
-        description:
+        resourceimage:
           type: string
-        businesshours:
+          nullable: true
+        resourceemailtext:
           type: string
         location:
           type: string
+        locationtype:
+          type: string
+        geocordinates:
+          type: string
+          nullable: true
+        capacity:
+          type: string
+          nullable: true
+        type:
+          type: string
+        resourcedescription:
+          type: string
+          nullable: true
+        wheelchairaccessible:
+          type: boolean
+        videoconferenceequipment:
+          type: boolean
+        monitorequipment:
+          type: boolean
+        bookingrights:
+          type: string
+        acceptanceflow:
+          type: boolean
+        openingHours:
+          type: string
+          nullable: true
+        holidayOpeningHours:
+          type: string
+          nullable: true
+        whitelist:
+          type: string
+          nullable: true
+        catering:
+          type: boolean
+        formid:
+          type: string
+          nullable: true
+        updatetimestamp:
+          type: string
+          format: date-time
     UserBooking:
       type: object
       properties:

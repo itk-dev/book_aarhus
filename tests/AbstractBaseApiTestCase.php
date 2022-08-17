@@ -4,7 +4,7 @@ namespace App\Tests;
 
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Client;
-use App\Entity\ApiKeyUser;
+use App\Entity\Main\ApiKeyUser;
 use App\Security\ApiKeyAuthenticator;
 
 abstract class AbstractBaseApiTestCase extends ApiTestCase

@@ -1,6 +1,6 @@
 ---
 resources:
-  App\Entity\Booking:
+  App\Entity\Main\Booking:
     attributes:
       input: App\Dto\BookingInput
     itemOperations:

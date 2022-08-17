@@ -2,7 +2,7 @@
 
 namespace App\Message;
 
-use App\Entity\Booking;
+use App\Entity\Main\Booking;
 
 class CreateBookingMessage
 {

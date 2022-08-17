@@ -1,3 +1,8 @@
 ---
 resources:
-  App\Entity\Resource:
+  App\Entity\Resources\AAKResource:
+    shortName: 'Resource'
+    itemOperations:
+      get:
+    collectionOperations:
+      get:

@@ -3,10 +3,10 @@
 namespace App\MessageHandler;
 
 use ApiPlatform\Core\Exception\InvalidArgumentException;
-use App\Entity\Booking;
+use App\Entity\Main\Booking;
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
-use App\Repository\ApiKeyUserRepository;
+use App\Repository\Main\ApiKeyUserRepository;
 use App\Service\WebformServiceInterface;
 use App\Utils\ValidationUtils;
 use Psr\Log\LoggerInterface;
@@ -37,9 +37,6 @@ class WebformSubmitHandler
         if (!$user) {
             throw new UnrecoverableMessageHandlingException('ApiKeyUser not set.');
         }
-
-        // TODO: Remove this when url is correct from webform.
-        $submissionUrl = str_replace('http://default/', 'http://selvbetjening_nginx_1.frontend/', $submissionUrl);
 
         $this->logger->info("Fetching $submissionUrl");
 
