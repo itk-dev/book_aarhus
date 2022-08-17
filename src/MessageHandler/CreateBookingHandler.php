@@ -23,13 +23,23 @@ class CreateBookingHandler
 
         $booking = $message->getBooking();
 
-        $this->microsoftGraphService->createBookingForResource(
+        $this->logger->info(implode('---', [
             $booking->getResourceEmail(),
             $booking->getResourceName(),
             $booking->getSubject(),
             $booking->getBody(),
             $booking->getStartTime(),
             $booking->getEndTime(),
-        );
+        ]));
+        /*
+                $this->microsoftGraphService->createBookingForResource(
+                    $booking->getResourceEmail(),
+                    $booking->getResourceName(),
+                    $booking->getSubject(),
+                    $booking->getBody(),
+                    $booking->getStartTime(),
+                    $booking->getEndTime(),
+                );
+        */
     }
 }

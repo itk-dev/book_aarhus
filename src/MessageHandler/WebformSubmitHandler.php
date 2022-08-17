@@ -4,8 +4,10 @@ namespace App\MessageHandler;
 
 use ApiPlatform\Core\Exception\InvalidArgumentException;
 use App\Entity\Main\Booking;
+use App\Entity\Resources\AAKResource;
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
+use App\Repository\Main\AAKResourceRepository;
 use App\Repository\Main\ApiKeyUserRepository;
 use App\Service\WebformServiceInterface;
 use App\Utils\ValidationUtils;
@@ -21,8 +23,14 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[AsMessageHandler]
 class WebformSubmitHandler
 {
-    public function __construct(private WebformServiceInterface $webformService, private ApiKeyUserRepository $apiKeyUserRepository, private MessageBusInterface $bus, private ValidationUtils $validationUtils, private LoggerInterface $logger)
-    {
+    public function __construct(
+        private WebformServiceInterface $webformService,
+        private ApiKeyUserRepository $apiKeyUserRepository,
+        private MessageBusInterface $bus,
+        private ValidationUtils $validationUtils,
+        private LoggerInterface $logger,
+        private AAKResourceRepository $aakResourceRepository,
+    ) {
     }
 
     public function __invoke(WebformSubmitMessage $message): void
@@ -43,44 +51,58 @@ class WebformSubmitHandler
         $webformSubmission = $this->webformService->getWebformSubmission($submissionUrl, $user->getWebformApiKey());
 
         try {
-            $data = $this->webformService->getValidatedData($webformSubmission);
+            $dataSubmissions = $this->webformService->getValidatedData($webformSubmission);
         } catch (Exception $e) {
             throw new UnrecoverableMessageHandlingException($e->getMessage());
         }
 
-        $this->logger->info('Webform submission data fetched. Setting up CreateBooking job.');
+        $submissionsCount = count($dataSubmissions);
+        $this->logger->info("Webform submission data fetched. Setting up $submissionsCount CreateBooking jobs.");
 
-        $body = [];
-        $filterKeys = ['subject', 'resourceemail', 'resourcename', 'starttime', 'endtime', 'userid'];
+        $submissionKeys = array_keys($dataSubmissions);
 
-        // Add extra fields to body.
-        foreach ($data as $key => $datum) {
-            if (!in_array($key, $filterKeys)) {
-                $body[] = "$key: $datum";
+        foreach ($dataSubmissions as $data) {
+            $body = [];
+
+            $filterKeys = $submissionKeys + ['subject', 'resourceEmail', 'startTime', 'endTime', 'userId'];
+            $email = $this->validationUtils->validateEmail($data['resourceEmail']);
+
+            /** @var AAKResource $resource */
+            $resource = $this->aakResourceRepository->findOneBy(['resourcemail' => $email]);
+
+            if (null == $resource) {
+                throw new UnrecoverableMessageHandlingException("Resource $email not found.", 404);
             }
-        }
 
-        // Add userid to bottom of body.
-        $userid = $data['userid'];
-        $body[] = "[userid-$userid]";
+            // Add extra fields to body.
+            foreach ($data as $key => $datum) {
+                if (!in_array($key, $filterKeys)) {
+                    $body[] = "$key: $datum";
+                }
+            }
 
-        $bodyString = implode("\n", $body);
+            // Add userid to bottom of body.
+            $userId = $data['userId'];
+            $body[] = "[userid-$userId]";
 
-        try {
-            $booking = new Booking();
-            $booking->setBody($bodyString);
-            $booking->setSubject($data['subject'] ?? '');
-            $booking->setResourceEmail($this->validationUtils->validateEmail($data['resourceemail']));
-            $booking->setResourceName($data['resourcename'] ?? '');
-            $booking->setStartTime($this->validationUtils->validateDate($data['starttime'], 'Y-m-d\TH:i:sO'));
-            $booking->setEndTime($this->validationUtils->validateDate($data['endtime'], 'Y-m-d\TH:i:sO'));
+            $bodyString = implode("\n", $body);
 
-            $this->logger->info('Registering CreateBookingMessage job');
+            try {
+                $booking = new Booking();
+                $booking->setBody($bodyString);
+                $booking->setSubject($data['subject'] ?? '');
+                $booking->setResourceEmail($email);
+                $booking->setResourceName($resource->getResourcename());
+                $booking->setStartTime($this->validationUtils->validateDate($data['startTime'], 'Y-m-d\TH:i:sO'));
+                $booking->setEndTime($this->validationUtils->validateDate($data['endTime'], 'Y-m-d\TH:i:sO'));
 
-            // Register job.
-            $this->bus->dispatch(new CreateBookingMessage($booking));
-        } catch (InvalidArgumentException $e) {
-            throw new UnrecoverableMessageHandlingException($e->getMessage());
+                $this->logger->info('Registering CreateBookingMessage job');
+
+                // Register job.
+                $this->bus->dispatch(new CreateBookingMessage($booking));
+            } catch (InvalidArgumentException $e) {
+                throw new UnrecoverableMessageHandlingException($e->getMessage());
+            }
         }
     }
 }

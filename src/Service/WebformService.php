@@ -35,38 +35,59 @@ class WebformService implements WebformServiceInterface
 
     public function getValidatedData(array $webformSubmission): array
     {
-        // TODO: Adjust field requirements to booking array when it is ready in the webform.
-
         if (empty($webformSubmission['data'])) {
             throw new Exception('Webform data not set');
         }
 
-        $data = $webformSubmission['data'];
+        $acceptedSubmissions = [];
 
-        if (!isset($data['subject'])) {
-            throw new Exception('Webform data.subject not set');
+        foreach ($webformSubmission['data'] as $key => $entry) {
+            try {
+                $data = json_decode(json: $entry, associative: true, flags: JSON_THROW_ON_ERROR);
+
+                // Only handle fields that are json encoded and contain the formElement property with value booking_element.
+                if ('booking_element' == $data['formElement']) {
+                    // Enforce required fields.
+
+                    if (!isset($data['subject'])) {
+                        throw new Exception('Webform data.booking.subject not set');
+                    }
+
+                    if (!isset($data['resourceEmail'])) {
+                        throw new Exception('Webform data.booking.resourceEmail not set');
+                    }
+
+                    if (!isset($data['startTime'])) {
+                        throw new Exception('Webform data.booking.startTime not set');
+                    }
+
+                    if (!isset($data['endTime'])) {
+                        throw new Exception('Webform data.booking.endTime not set');
+                    }
+
+                    if (!isset($data['authorName'])) {
+                        throw new Exception('Webform data.booking.authorName not set');
+                    }
+
+                    if (!isset($data['authorEmail'])) {
+                        throw new Exception('Webform data.booking.authorEmail not set');
+                    }
+
+                    if (!isset($data['userId'])) {
+                        throw new Exception('Webform data.booking.userId not set');
+                    }
+
+                    $acceptedSubmissions[$key] = $data;
+                }
+            } catch (\JsonException $e) {
+                // Ignore if the property can not be parsed.
+            }
         }
 
-        if (!isset($data['resourceemail'])) {
-            throw new Exception('Webform data.resourceemail not set');
+        if (0 == count($acceptedSubmissions)) {
+            throw new Exception('No submission data found.');
         }
 
-        if (!isset($data['resourcename'])) {
-            throw new Exception('Webform data.resourcename not set');
-        }
-
-        if (!isset($data['starttime'])) {
-            throw new Exception('Webform data.starttime not set');
-        }
-
-        if (!isset($data['endtime'])) {
-            throw new Exception('Webform data.endtime not set');
-        }
-
-        if (!isset($data['userid'])) {
-            throw new Exception('Webform data.userid not set');
-        }
-
-        return $data;
+        return $acceptedSubmissions;
     }
 }
