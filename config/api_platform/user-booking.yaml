@@ -26,25 +26,4 @@ resources:
                 application/ld+json:
                   examples:
               headers: { }
-      post:
-          openapi_context:
-            operationId: get-v1-booking-delete
-            description: Deletes a specific booking.
-            summary: Deletes a specific booking.
-            tags:
-            parameters:
-              - schema:
-                  type: string
-                  format: string
-                  example: "1"
-                in: query
-                name: userId
-                required: true
-                description: "ID of the booking to request a deletion for"
-            responses:
-              '200':
-                description: OK
-                content:
-                  application/ld+json:
-                    examples:
-                headers: { }
+      

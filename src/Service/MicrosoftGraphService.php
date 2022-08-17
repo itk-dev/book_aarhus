@@ -253,14 +253,20 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      *
      * @throws GuzzleException|GraphException
      */
-    public function deleteBooking(string $id, string $ownerEmail): ?string
+    public function deleteBooking(string $bookingId, string $ownerEmail): ?string
     {
         $token = $this->authenticateAsServiceAccount();
 
-        $urlEncodedId = urlencode($id);
-        $encodedOwnerEmail = urlencode($ownerEmail);
+        // Formatting the base64_decode(d) booking hitId, replacing "/" with "-" as this is graph-compatible, and replacing " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
+        $bookingId_formatted = str_replace(['/', ' '], ['-', '+'], $bookingId);
 
-        $response = $this->request("/users/$encodedOwnerEmail/events/$urlEncodedId", $token, 'DELETE');
+        // TODO: Handle request for deletion of resource-event
+        // We need the HitId from the resource-event, to request the deletion of that event.
+        // $urlEncodedId = urlencode($id);
+        // $encodedOwnerEmail = urlencode($ownerEmail);
+        // $response = $this->request("/users/$encodedOwnerEmail/events/$urlEncodedId", $token, 'DELETE');
+
+        $response = $this->request("/me/events/$bookingId_formatted", $token, 'DELETE');
 
         return $response->getStatus();
     }
