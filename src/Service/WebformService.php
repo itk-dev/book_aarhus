@@ -50,36 +50,36 @@ class WebformService implements WebformServiceInterface
                     // Enforce required fields.
 
                     if (!isset($data['subject'])) {
-                        throw new Exception('Webform data.booking.subject not set');
+                        throw new Exception("Webform ($key) subject not set");
                     }
 
                     if (!isset($data['resourceEmail'])) {
-                        throw new Exception('Webform data.booking.resourceEmail not set');
+                        throw new Exception("Webform ($key) resourceEmail not set");
                     }
 
                     if (!isset($data['startTime'])) {
-                        throw new Exception('Webform data.booking.startTime not set');
+                        throw new Exception("Webform ($key) startTime not set");
                     }
 
                     if (!isset($data['endTime'])) {
-                        throw new Exception('Webform data.booking.endTime not set');
+                        throw new Exception("Webform ($key) endTime not set");
                     }
 
                     if (!isset($data['authorName'])) {
-                        throw new Exception('Webform data.booking.authorName not set');
+                        throw new Exception("Webform ($key) authorName not set");
                     }
 
                     if (!isset($data['authorEmail'])) {
-                        throw new Exception('Webform data.booking.authorEmail not set');
+                        throw new Exception("Webform ($key) authorEmail not set");
                     }
 
                     if (!isset($data['userId'])) {
-                        throw new Exception('Webform data.booking.userId not set');
+                        throw new Exception("Webform ($key) userId not set");
                     }
 
                     $acceptedSubmissions[$key] = $data;
                 }
-            } catch (\JsonException $e) {
+            } catch (\JsonException) {
                 // Ignore if the property can not be parsed.
             }
         }
