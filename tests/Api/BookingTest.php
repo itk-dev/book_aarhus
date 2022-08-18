@@ -75,8 +75,8 @@ class BookingTest extends AbstractBaseApiTestCase
                 'booking1' => json_encode([
                     'subject' => 'test1',
                     'resourceEmail' => 'test@bookaarhus.local.itkdev.dk',
-                    'startTime' => '2022-10-01T12:00:00+0200',
-                    'endTime' => '2022-10-01T13:00:00+0200',
+                    'startTime' => '2022-08-18T10:00:00.000Z',
+                    'endTime' => '2022-08-18T10:30:00.000Z',
                     'userId' => 'test4',
                     'formElement' => 'booking_element',
                     'authorName' => 'auther1',
