@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Messenger\Exception\RecoverableMessageHandlingException;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -12,7 +13,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class WebformService implements WebformServiceInterface
 {
-    public function __construct(private HttpClientInterface $client)
+    public function __construct(private HttpClientInterface $client, private LoggerInterface $logger)
     {
     }
 
@@ -46,7 +47,7 @@ class WebformService implements WebformServiceInterface
                 $data = json_decode(json: $entry, associative: true, flags: JSON_THROW_ON_ERROR);
 
                 // Only handle fields that are json encoded and contain the formElement property with value booking_element.
-                if ('booking_element' == $data['formElement']) {
+                if (is_array($data) && isset($data['formElement']) && 'booking_element' == $data['formElement']) {
                     // Enforce required fields.
 
                     if (!isset($data['subject'])) {

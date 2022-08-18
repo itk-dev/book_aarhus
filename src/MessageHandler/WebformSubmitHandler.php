@@ -93,8 +93,8 @@ class WebformSubmitHandler
                 $booking->setSubject($data['subject'] ?? '');
                 $booking->setResourceEmail($email);
                 $booking->setResourceName($resource->getResourcename());
-                $booking->setStartTime($this->validationUtils->validateDate($data['startTime'], 'Y-m-d\TH:i:sO'));
-                $booking->setEndTime($this->validationUtils->validateDate($data['endTime'], 'Y-m-d\TH:i:sO'));
+                $booking->setStartTime($this->validationUtils->validateDate($data['startTime']));
+                $booking->setEndTime($this->validationUtils->validateDate($data['endTime']));
 
                 $this->logger->info('Registering CreateBookingMessage job');
 
