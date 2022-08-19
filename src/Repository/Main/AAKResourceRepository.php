@@ -29,4 +29,12 @@ class AAKResourceRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    public function findAllLocations(): array
+    {
+        return $this->createQueryBuilder('res')
+            ->select('res.location')
+            ->groupBy('res.location')
+            ->getQuery()->getArrayResult();
+    }
 }
