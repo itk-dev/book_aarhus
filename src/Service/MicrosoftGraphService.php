@@ -283,7 +283,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
 
         $bookingId = urldecode($bookingId);
         $bookingId = str_replace(['/', ' '], ['-', '+'], $bookingId);
-        
+
         $response = $this->request('/me/events/'.$bookingId, $token, 'GET', null);
 
         return $response->getBody();

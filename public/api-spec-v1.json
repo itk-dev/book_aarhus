@@ -15,203 +15,6 @@
         }
     ],
     "paths": {
-        "/v1/booking-deletes": {
-            "get": {
-                "operationId": "get-v1-booking-delete",
-                "tags": [
-                    "BookingDelete"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/ld+json": {
-                                "examples": null
-                            }
-                        },
-                        "headers": {}
-                    }
-                },
-                "summary": "Requests deletion for a specific booking.",
-                "description": "Requests deletion for a specific booking.",
-                "parameters": [
-                    {
-                        "name": "bookingId",
-                        "in": "query",
-                        "description": "ID of the booking to retrieve details for",
-                        "required": true,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string",
-                            "format": "string",
-                            "example": "AAMkADA2YjNjYzNjLThjMjAtNDA3MS05NWEwLTZhZjM2MzYxZjZmNwBGAAAAAADPMx9il/l3TpK5N7vcXYJbBwCTGBSNlZNgQKMu0+Oa3o5eAAAAAAENAACTGBSNlZNgQKMu0+Oa3o5eAAAbYXKrAAA="
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
-                "deprecated": false
-            },
-            "parameters": []
-        },
-        "/v1/booking-deletes/{status}": {
-            "get": {
-                "operationId": "getBookingDeleteItem",
-                "tags": [
-                    "BookingDelete"
-                ],
-                "responses": {
-                    "204": {
-                        "description": "BookingDelete resource",
-                        "content": {
-                            "application/ld+json": {
-                                "schema": {}
-                            },
-                            "application/json": {
-                                "schema": {}
-                            },
-                            "text/html": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Resource not found"
-                    }
-                },
-                "summary": "Unsupported action.",
-                "description": "Unsupported action.",
-                "parameters": [
-                    {
-                        "name": "status",
-                        "in": "path",
-                        "description": "Resource identifier",
-                        "required": true,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "simple",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
-                "deprecated": false
-            },
-            "parameters": []
-        },
-        "/v1/booking-details": {
-            "get": {
-                "operationId": "get-v1-booking-details",
-                "tags": [
-                    "BookingDetails"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/ld+json": {
-                                "examples": null
-                            }
-                        },
-                        "headers": {}
-                    }
-                },
-                "summary": "Retrieves user booking details.",
-                "description": "Retrieves details on a specific booking details.",
-                "parameters": [
-                    {
-                        "name": "bookingId",
-                        "in": "query",
-                        "description": "ID of the booking to retrieve details for",
-                        "required": true,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string",
-                            "format": "string",
-                            "example": "AAMkADA2YjNjYzNjLThjMjAtNDA3MS05NWEwLTZhZjM2MzYxZjZmNwBGAAAAAADPMx9il/l3TpK5N7vcXYJbBwCTGBSNlZNgQKMu0+Oa3o5eAAAAAAENAACTGBSNlZNgQKMu0+Oa3o5eAAAbYXKrAAA="
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "The collection page number",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "integer",
-                            "default": 1
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
-                "deprecated": false
-            },
-            "parameters": []
-        },
-        "/v1/booking-details/{id}": {
-            "get": {
-                "operationId": "getBookingDetailsItem",
-                "tags": [
-                    "BookingDetails"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "BookingDetails resource",
-                        "content": {
-                            "application/ld+json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/BookingDetails.jsonld"
-                                }
-                            },
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/BookingDetails"
-                                }
-                            },
-                            "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/BookingDetails"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Resource not found"
-                    }
-                },
-                "summary": "Retrieves a BookingDetails resource.",
-                "description": "Retrieves a BookingDetails resource.",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Resource identifier",
-                        "required": true,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "simple",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
-                "deprecated": false
-            },
-            "parameters": []
-        },
         "/v1/bookings": {
             "post": {
                 "operationId": "postBookingCollection",
@@ -717,8 +520,8 @@
                         "headers": {}
                     }
                 },
-                "summary": "Retrieves user bookings.",
-                "description": "Retrieves user bookings.",
+                "summary": "Retrieves user bookings from a specific user.",
+                "description": "Retrieves user bookings from a specific user.",
                 "parameters": [
                     {
                         "name": "userId",
@@ -758,47 +561,82 @@
         },
         "/v1/user-bookings/{id}": {
             "get": {
-                "operationId": "getUserBookingItem",
+                "operationId": "get-v1-booking",
                 "tags": [
                     "UserBooking"
                 ],
                 "responses": {
                     "200": {
-                        "description": "UserBooking resource",
+                        "description": "OK",
                         "content": {
                             "application/ld+json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBooking.jsonld"
-                                }
-                            },
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBooking"
-                                }
-                            },
-                            "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBooking"
-                                }
+                                "examples": null
                             }
-                        }
+                        },
+                        "headers": {}
                     },
                     "404": {
                         "description": "Resource not found"
                     }
                 },
-                "summary": "Retrieves a UserBooking resource.",
-                "description": "Retrieves a UserBooking resource.",
+                "summary": "Retrieves a specific booking from a specific user.",
+                "description": "Retrieves a specific booking from a specific user.",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "Resource identifier",
+                        "description": "urlencoded ID of the booking to get",
                         "required": true,
                         "deprecated": false,
                         "allowEmptyValue": false,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "format": "string",
+                            "example": "AAMkADA2YjNjYzNjLThjMjAtNDA3MS05NWEwLTZhZjM2MzYxZjZmNwBGAAAAAADPMx9il%2Fl3TpK5N7vcXYJbBwCTGBSNlZNgQKMu0%2BOa3o5eAAAAAAENAACTGBSNlZNgQKMu0%2BOa3o5eAABLCAbAAAA%3D"
+                        },
+                        "style": "simple",
+                        "explode": false,
+                        "allowReserved": false
+                    }
+                ],
+                "deprecated": false
+            },
+            "delete": {
+                "operationId": "delete-v1-booking",
+                "tags": [
+                    "UserBooking"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "UserBooking resource deleted"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/ld+json": {
+                                "examples": null
+                            }
+                        },
+                        "headers": {}
+                    }
+                },
+                "summary": "Requests deletion for a specific booking.",
+                "description": "Requests deletion for a specific booking.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "urlencoded ID of the booking to delete",
+                        "required": true,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "string",
+                            "example": ""
                         },
                         "style": "simple",
                         "explode": false,
@@ -1101,93 +939,6 @@
                     }
                 }
             },
-            "BookingDelete": {
-                "type": "object",
-                "properties": {
-                    "status": {
-                        "type": "string"
-                    }
-                }
-            },
-            "BookingDelete.jsonld": {
-                "type": "object",
-                "properties": {
-                    "@id": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
-                    "@type": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
-                    "status": {
-                        "type": "string"
-                    }
-                }
-            },
-            "BookingDetails": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "string"
-                    },
-                    "displayName": {
-                        "type": "string"
-                    },
-                    "body": {
-                        "type": "string"
-                    }
-                }
-            },
-            "BookingDetails.jsonld": {
-                "type": "object",
-                "properties": {
-                    "@id": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
-                    "@type": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
-                    "@context": {
-                        "readOnly": true,
-                        "oneOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "object",
-                                "properties": {
-                                    "@vocab": {
-                                        "type": "string"
-                                    },
-                                    "hydra": {
-                                        "type": "string",
-                                        "enum": [
-                                            "http://www.w3.org/ns/hydra/core#"
-                                        ]
-                                    }
-                                },
-                                "required": [
-                                    "@vocab",
-                                    "hydra"
-                                ],
-                                "additionalProperties": true
-                            }
-                        ]
-                    },
-                    "id": {
-                        "type": "string"
-                    },
-                    "displayName": {
-                        "type": "string"
-                    },
-                    "body": {
-                        "type": "string"
-                    }
-                }
-            },
             "BusyInterval": {
                 "type": "object",
                 "properties": {
@@ -1446,10 +1197,22 @@
                     "hitId": {
                         "type": "string"
                     },
+                    "iCalUId": {
+                        "type": "string"
+                    },
                     "summary": {
                         "type": "string"
                     },
                     "subject": {
+                        "type": "string"
+                    },
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "body": {
+                        "type": "string"
+                    },
+                    "status": {
                         "type": "string"
                     },
                     "start": {
@@ -1508,10 +1271,22 @@
                     "hitId": {
                         "type": "string"
                     },
+                    "iCalUId": {
+                        "type": "string"
+                    },
                     "summary": {
                         "type": "string"
                     },
                     "subject": {
+                        "type": "string"
+                    },
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "body": {
+                        "type": "string"
+                    },
+                    "status": {
                         "type": "string"
                     },
                     "start": {

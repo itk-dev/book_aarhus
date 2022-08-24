@@ -2,16 +2,15 @@
 
 namespace App\DataProvider;
 
-use Exception;
-use Symfony\Component\Uid\Ulid;
+use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
-use App\Entity\Main\BookingDetails;
+use App\Service\MicrosoftGraphServiceInterface;
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Microsoft\Graph\Exception\GraphException;
-use App\Service\MicrosoftGraphServiceInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
+use Symfony\Component\Uid\Ulid;
 
 final class UserBookingCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -58,13 +57,13 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
             $userBooking->end = new \DateTime($hit['resource']['end']['dateTime'], new \DateTimeZone($hit['resource']['end']['timeZone'])) ?? null;
 
             $bookingDetailsData = [$this->microsoftGraphService->getBookingDetails($hit['hitId'])];
-            
+
             foreach ($bookingDetailsData as $bookingDetail) {
                 $userBooking->displayName = $bookingDetail['location']['displayName'];
                 $userBooking->body = $bookingDetail['body']['content'];
                 continue;
             }
-            
+
             yield $userBooking;
         }
     }

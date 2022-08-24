@@ -1,15 +1,16 @@
 <?php
+
 // api/src/DataProvider/BlogPostItemDataProvider.php
 
 namespace App\DataProvider;
 
-use Exception;
-use Symfony\Component\Uid\Ulid;
-use App\Entity\Main\UserBooking;
-use App\Service\MicrosoftGraphServiceInterface;
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use App\Entity\Main\UserBooking;
+use App\Service\MicrosoftGraphServiceInterface;
+use Exception;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Uid\Ulid;
 
 final class UserBookingItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -25,12 +26,12 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?UserBooking
     {
         switch ($context['item_operation_name']) {
-            case "get":
+            case 'get':
                 if (!isset($id)) {
                     throw new BadRequestHttpException('Required booking id is not set');
                 }
 
-                $userId = " ";
+                $userId = ' ';
                 $userBookingResults = [$this->microsoftGraphService->getUserBooking($userId, $id)];
                 $userBooking = new UserBooking();
 
@@ -53,20 +54,20 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
                 }
 
                 return $userBooking;
-            case "delete":
+            case 'delete':
                 if (!isset($id)) {
                     throw new BadRequestHttpException('Required booking id is not set');
                 }
 
-                $userId = " ";
+                $userId = ' ';
                 try {
                     $userBooking = new UserBooking();
                     $userBookingResult = $this->microsoftGraphService->deleteUserBooking($id, $userId);
                     $userBooking->status = $userBookingResult;
-                } catch(Exception $e) {
-                    die($e->getMessage());
+                } catch (Exception $e) {
+                    exit($e->getMessage());
                 }
-                
+
                 return $userBooking;
             default:
                 return false;
