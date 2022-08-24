@@ -4,29 +4,29 @@ resources:
     itemOperations:
       get: ~
       delete:
-        controller: App\Controller\DeleteBookingController
-        path: /user-bookings/{id}
-        openapi_context:
-          operationId: get-v1-booking-delete
-          description: Requests deletion for a specific booking.
-          summary: Requests deletion for a specific booking.
-          tags:
-          parameters:
-            - schema:
-                type: string
-                format: string
-                example: "AAMkADA2YjNjYzNjLThjMjAtNDA3MS05NWEwLTZhZjM2MzYxZjZmNwBGAAAAAADPMx9il/l3TpK5N7vcXYJbBwCTGBSNlZNgQKMu0+Oa3o5eAAAAAAENAACTGBSNlZNgQKMu0+Oa3o5eAAAbYXKrAAA="
-              in: path
-              name: id
-              required: true
-              description: "ID of the booking to delete"
-        responses:
-          '200':
-            description: OK
-            content:
-              application/ld+json:
-                examples:
-            headers: { }
+        # controller: App\Controller\DeleteBookingController
+        # path: /user-bookings/{id}
+        # openapi_context:
+        #   operationId: get-v1-booking-delete
+        #   description: Requests deletion for a specific booking.
+        #   summary: Requests deletion for a specific booking.
+        #   tags:
+        #   parameters:
+        #     - schema:
+        #         type: string
+        #         format: string
+        #         example: "AAMkADA2YjNjYzNjLThjMjAtNDA3MS05NWEwLTZhZjM2MzYxZjZmNwBGAAAAAADPMx9il/l3TpK5N7vcXYJbBwCTGBSNlZNgQKMu0+Oa3o5eAAAAAAENAACTGBSNlZNgQKMu0+Oa3o5eAAAbYXKrAAA="
+        #       in: path
+        #       name: id
+        #       required: true
+        #       description: "ID of the booking to delete"
+        #   responses:
+        #     '200':
+        #       description: OK
+        #       content:
+        #         application/ld+json:
+        #           examples:
+        #       headers: { }
     collectionOperations:
       get:
         openapi_context:
@@ -50,4 +50,5 @@ resources:
                 application/ld+json:
                   examples:
               headers: { }
+      
       

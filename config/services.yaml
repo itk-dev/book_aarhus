@@ -47,3 +47,8 @@ services:
     App\Service\WebformServiceInterface:
         alias: 'App\Service\WebformService'
         public: true
+
+    App\DataPersister\BlogPostDataPersister: ~
+        # Uncomment only if autoconfiguration is disabled
+        # tags: [ 'api_platform.data_persister' ]
+        

@@ -2,14 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\Main\UserBooking;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpKernel\Attribute\AsController;
 
-#[AsController]
-class DeleteBookingController extends AbstractController
+
+
+final class DeleteBookingController extends AbstractController
 {
-    public function __invoke(string $data): string
+    function __invoke(UserBooking $data): UserBooking
     {
-        die('F5');
+        return $data;
     }
 }
