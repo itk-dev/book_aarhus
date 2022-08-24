@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Messenger\Exception\RecoverableMessageHandlingException;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -12,7 +13,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class WebformService implements WebformServiceInterface
 {
-    public function __construct(private HttpClientInterface $client)
+    public function __construct(private HttpClientInterface $client, private LoggerInterface $logger)
     {
     }
 
@@ -35,38 +36,59 @@ class WebformService implements WebformServiceInterface
 
     public function getValidatedData(array $webformSubmission): array
     {
-        // TODO: Adjust field requirements to booking array when it is ready in the webform.
-
         if (empty($webformSubmission['data'])) {
             throw new Exception('Webform data not set');
         }
 
-        $data = $webformSubmission['data'];
+        $acceptedSubmissions = [];
 
-        if (!isset($data['subject'])) {
-            throw new Exception('Webform data.subject not set');
+        foreach ($webformSubmission['data'] as $key => $entry) {
+            try {
+                $data = json_decode(json: $entry, associative: true, flags: JSON_THROW_ON_ERROR);
+
+                // Only handle fields that are json encoded and contain the formElement property with value booking_element.
+                if (is_array($data) && isset($data['formElement']) && 'booking_element' == $data['formElement']) {
+                    // Enforce required fields.
+
+                    if (!isset($data['subject'])) {
+                        throw new Exception("Webform ($key) subject not set");
+                    }
+
+                    if (!isset($data['resourceEmail'])) {
+                        throw new Exception("Webform ($key) resourceEmail not set");
+                    }
+
+                    if (!isset($data['startTime'])) {
+                        throw new Exception("Webform ($key) startTime not set");
+                    }
+
+                    if (!isset($data['endTime'])) {
+                        throw new Exception("Webform ($key) endTime not set");
+                    }
+
+                    if (!isset($data['authorName'])) {
+                        throw new Exception("Webform ($key) authorName not set");
+                    }
+
+                    if (!isset($data['authorEmail'])) {
+                        throw new Exception("Webform ($key) authorEmail not set");
+                    }
+
+                    if (!isset($data['userId'])) {
+                        throw new Exception("Webform ($key) userId not set");
+                    }
+
+                    $acceptedSubmissions[$key] = $data;
+                }
+            } catch (\JsonException) {
+                // Ignore if the property can not be parsed.
+            }
         }
 
-        if (!isset($data['resourceemail'])) {
-            throw new Exception('Webform data.resourceemail not set');
+        if (0 == count($acceptedSubmissions)) {
+            throw new Exception('No submission data found.');
         }
 
-        if (!isset($data['resourcename'])) {
-            throw new Exception('Webform data.resourcename not set');
-        }
-
-        if (!isset($data['starttime'])) {
-            throw new Exception('Webform data.starttime not set');
-        }
-
-        if (!isset($data['endtime'])) {
-            throw new Exception('Webform data.endtime not set');
-        }
-
-        if (!isset($data['userid'])) {
-            throw new Exception('Webform data.userid not set');
-        }
-
-        return $data;
+        return $acceptedSubmissions;
     }
 }

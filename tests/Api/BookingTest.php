@@ -4,10 +4,12 @@ namespace App\Tests\Api;
 
 use App\Entity\Main\ApiKeyUser;
 use App\Entity\Main\Booking;
+use App\Entity\Resources\AAKResource;
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
 use App\MessageHandler\CreateBookingHandler;
 use App\MessageHandler\WebformSubmitHandler;
+use App\Repository\Main\AAKResourceRepository;
 use App\Repository\Main\ApiKeyUserRepository;
 use App\Service\MicrosoftGraphService;
 use App\Service\WebformService;
@@ -70,12 +72,16 @@ class BookingTest extends AbstractBaseApiTestCase
             ->getMock();
         $webformServiceMock->method('getWebformSubmission')->willReturn([
             'data' => [
-                'subject' => 'test1',
-                'resourceemail' => 'test@bookaarhus.local.itkdev.dk',
-                'resourcename' => 'test3',
-                'starttime' => '2022-10-01T12:00:00+0200',
-                'endtime' => '2022-10-01T13:00:00+0200',
-                'userid' => 'test4',
+                'booking1' => json_encode([
+                    'subject' => 'test1',
+                    'resourceEmail' => 'test@bookaarhus.local.itkdev.dk',
+                    'startTime' => '2022-08-18T10:00:00.000Z',
+                    'endTime' => '2022-08-18T10:30:00.000Z',
+                    'userId' => 'test4',
+                    'formElement' => 'booking_element',
+                    'authorName' => 'auther1',
+                    'authorEmail' => 'author1@bookaarhus.local.itkdev.dk',
+                ]),
             ],
         ]);
 
@@ -86,18 +92,26 @@ class BookingTest extends AbstractBaseApiTestCase
         $validationUtils = $container->get(ValidationUtils::class);
         $logger = $container->get(LoggerInterface::class);
 
+        $aakBookingRepository = $this->getMockBuilder(AAKResourceRepository::class)
+            ->onlyMethods(['findOneBy'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $resource = new AAKResource();
+        $resource->setResourcename('test3');
+        $aakBookingRepository->method('findOneBy')->willReturn($resource);
+
         $entityManager = self::getContainer()->get('doctrine')->getManager();
 
         /** @var ApiKeyUser $testUser */
-        $testUser = $entityManager->getRepository(ApiKeyUser::class)->findBy(['name' => 'test']);
+        $testUser = $entityManager->getRepository(ApiKeyUser::class)->findOneBy(['name' => 'test']);
 
-        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $apiKeyUserRepository, $bus, $validationUtils, $logger);
+        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $apiKeyUserRepository, $bus, $validationUtils, $logger, $aakBookingRepository);
         $webformSubmitHandler->__invoke(new WebformSubmitMessage(
             'booking',
             '795f5a1c-a0ac-4f8a-8834-bb71fca8585d',
             'https://bookaarhus.local.itkdev.dk',
             'https://bookaarhus.local.itkdev.dk/webform_rest/booking/submission/123123123',
-            $testUser[0]->getId()
+            $testUser->getId()
         ));
 
         $this->messenger('async')->queue()->assertContains(CreateBookingMessage::class);
