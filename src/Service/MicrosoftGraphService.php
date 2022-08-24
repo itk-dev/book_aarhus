@@ -253,12 +253,13 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      *
      * @throws GuzzleException|GraphException
      */
-    public function deleteBooking(string $bookingId, string $ownerEmail): ?string
+    public function deleteUserBooking(string $bookingId, string $ownerEmail): ?string
     {
         $token = $this->authenticateAsServiceAccount();
 
-        // Formatting the base64_decode(d) booking hitId, replacing "/" with "-" as this is graph-compatible, and replacing " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
-        $bookingId_formatted = str_replace(['/', ' '], ['-', '+'], $bookingId);
+        // Formatting the urldecode(d) booking hitId, replacing "/" with "-" as this is graph-compatible, and replacing " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
+        $bookingId = urldecode($bookingId);
+        $bookingId = str_replace(['/', ' '], ['-', '+'], $bookingId);
 
         // TODO: Handle request for deletion of resource-event
         // We need the HitId from the resource-event, to request the deletion of that event.
@@ -266,9 +267,26 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
         // $encodedOwnerEmail = urlencode($ownerEmail);
         // $response = $this->request("/users/$encodedOwnerEmail/events/$urlEncodedId", $token, 'DELETE');
 
-        $response = $this->request("/me/events/$bookingId_formatted", $token, 'DELETE');
+        $response = $this->request("/me/events/$bookingId", $token, 'DELETE');
 
         return $response->getStatus();
+    }
+
+    /**
+     * @throws GuzzleException|GraphException
+     *
+     * @see https://docs.microsoft.com/en-us/graph/search-concept-events
+     */
+    public function getUserBooking(string $userId, string $bookingId): array
+    {
+        $token = $this->authenticateAsServiceAccount();
+
+        $bookingId = urldecode($bookingId);
+        $bookingId = str_replace(['/', ' '], ['-', '+'], $bookingId);
+        
+        $response = $this->request('/me/events/'.$bookingId, $token, 'GET', null);
+
+        return $response->getBody();
     }
 
     /**
@@ -307,7 +325,6 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     {
         $token = $this->authenticateAsServiceAccount();
 
-        // Formatting the base64_decode(d) booking hitId, replacing "/" with "-" as this is graph-compatible, and replacing " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
         $bookingId_formatted = str_replace(['/', ' '], ['-', '+'], $bookingId);
 
         $response = $this->request('/me/events/'.$bookingId_formatted, $token, 'GET', null);

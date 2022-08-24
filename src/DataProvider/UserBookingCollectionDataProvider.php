@@ -2,15 +2,16 @@
 
 namespace App\DataProvider;
 
-use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Entity\Main\UserBooking;
-use App\Service\MicrosoftGraphServiceInterface;
 use Exception;
+use Symfony\Component\Uid\Ulid;
+use App\Entity\Main\UserBooking;
+use App\Entity\Main\BookingDetails;
 use GuzzleHttp\Exception\GuzzleException;
 use Microsoft\Graph\Exception\GraphException;
+use App\Service\MicrosoftGraphServiceInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Uid\Ulid;
+use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 
 final class UserBookingCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -50,14 +51,20 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
         foreach ($userBookingsHits as $hit) {
             $userBooking = new UserBooking();
             $userBooking->id = Ulid::generate();
-
             $userBooking->hitId = $hit['hitId'] ?? '';
             $userBooking->summary = $hit['summary'] ?? '';
             $userBooking->subject = $hit['resource']['subject'] ?? '';
-
             $userBooking->start = new \DateTime($hit['resource']['start']['dateTime'], new \DateTimeZone($hit['resource']['start']['timeZone'])) ?? null;
             $userBooking->end = new \DateTime($hit['resource']['end']['dateTime'], new \DateTimeZone($hit['resource']['end']['timeZone'])) ?? null;
 
+            $bookingDetailsData = [$this->microsoftGraphService->getBookingDetails($hit['hitId'])];
+            
+            foreach ($bookingDetailsData as $bookingDetail) {
+                $userBooking->displayName = $bookingDetail['location']['displayName'];
+                $userBooking->body = $bookingDetail['body']['content'];
+                continue;
+            }
+            
             yield $userBooking;
         }
     }
