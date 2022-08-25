@@ -51,7 +51,7 @@ resources:
     collectionOperations:
       get:
         openapi_context:
-          operationId: get-v1-user-bookings
+          operationId: get-v1-bookings
           description: Retrieves user bookings from a specific user.
           summary: Retrieves user bookings from a specific user.
           tags:
