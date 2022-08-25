@@ -505,7 +505,7 @@
         },
         "/v1/user-bookings": {
             "get": {
-                "operationId": "get-v1-user-bookings",
+                "operationId": "get-v1-bookings",
                 "tags": [
                     "UserBooking"
                 ],
