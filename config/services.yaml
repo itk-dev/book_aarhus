@@ -49,6 +49,7 @@ services:
         public: true
 
     resource.location_filter:
+        # https://api-platform.com/docs/core/filters/#search-filter
         parent: 'api_platform.doctrine.orm.search_filter'
         arguments: [ { location: 'exact' } ]
         tags:  [ 'api_platform.filter' ]
