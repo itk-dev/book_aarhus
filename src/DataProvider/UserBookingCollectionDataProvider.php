@@ -43,17 +43,26 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
         $userId = $filters['userId'];
 
         $userBookings = $this->microsoftGraphService->getUserBookings($userId);
-        $userBookingsHits = $userBookings['value'][0]['hitsContainers'][0]['hits'];
+        $userBookingsHits = $userBookings['value'][0]['hitsContainers'][0]['hits'] ?? null;
+        if (null === $userBookingsHits) {
+            return 'no results';
+        }
         foreach ($userBookingsHits as $hit) {
             $userBooking = new UserBooking();
             $userBooking->id = Ulid::generate();
-
             $userBooking->hitId = $hit['hitId'] ?? '';
             $userBooking->summary = $hit['summary'] ?? '';
             $userBooking->subject = $hit['resource']['subject'] ?? '';
-
             $userBooking->start = new \DateTime($hit['resource']['start']['dateTime'], new \DateTimeZone($hit['resource']['start']['timeZone'])) ?? null;
             $userBooking->end = new \DateTime($hit['resource']['end']['dateTime'], new \DateTimeZone($hit['resource']['end']['timeZone'])) ?? null;
+
+            $bookingDetailsData = [$this->microsoftGraphService->getBookingDetails($hit['hitId'])];
+
+            foreach ($bookingDetailsData as $bookingDetail) {
+                $userBooking->displayName = $bookingDetail['location']['displayName'];
+                $userBooking->body = $bookingDetail['body']['content'];
+                continue;
+            }
 
             yield $userBooking;
         }

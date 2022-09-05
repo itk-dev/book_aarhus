@@ -10,87 +10,6 @@ servers:
     url: /
     description: ''
 paths:
-  /v1/booking-details:
-    get:
-      operationId: get-v1-booking-details
-      tags:
-        - BookingDetails
-      responses:
-        200:
-          description: OK
-          content:
-            application/ld+json:
-              examples: null
-          headers: {  }
-      summary: 'Retrieves user booking details.'
-      description: 'Retrieves details on a specific booking details.'
-      parameters:
-        -
-          name: bookingId
-          in: query
-          description: 'ID of the booking to retrieve details for'
-          required: true
-          deprecated: false
-          allowEmptyValue: false
-          schema:
-            type: string
-            format: string
-            example: AAMkADA2YjNjYzNjLThjMjAtNDA3MS05NWEwLTZhZjM2MzYxZjZmNwBGAAAAAADPMx9il/l3TpK5N7vcXYJbBwCTGBSNlZNgQKMu0+Oa3o5eAAAAAAENAACTGBSNlZNgQKMu0+Oa3o5eAAAbYXKrAAA=
-          style: form
-          explode: false
-          allowReserved: false
-        -
-          name: page
-          in: query
-          description: 'The collection page number'
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: integer
-            default: 1
-          style: form
-          explode: false
-          allowReserved: false
-      deprecated: false
-    parameters: []
-  '/v1/booking-details/{id}':
-    get:
-      operationId: getBookingDetailsItem
-      tags:
-        - BookingDetails
-      responses:
-        200:
-          description: 'BookingDetails resource'
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/BookingDetails.jsonld'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BookingDetails'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/BookingDetails'
-        404:
-          description: 'Resource not found'
-      summary: 'Retrieves a BookingDetails resource.'
-      description: 'Retrieves a BookingDetails resource.'
-      parameters:
-        -
-          name: id
-          in: path
-          description: 'Resource identifier'
-          required: true
-          deprecated: false
-          allowEmptyValue: false
-          schema:
-            type: string
-          style: simple
-          explode: false
-          allowReserved: false
-      deprecated: false
-    parameters: []
   /v1/bookings:
     post:
       operationId: postBookingCollection
@@ -458,7 +377,7 @@ paths:
     parameters: []
   /v1/user-bookings:
     get:
-      operationId: get-v1-user-bookings
+      operationId: get-v1-bookings
       tags:
         - UserBooking
       responses:
@@ -468,8 +387,8 @@ paths:
             application/ld+json:
               examples: null
           headers: {  }
-      summary: 'Retrieves user bookings.'
-      description: 'Retrieves user bookings.'
+      summary: 'Retrieves user bookings from a specific user.'
+      description: 'Retrieves user bookings from a specific user.'
       parameters:
         -
           name: userId
@@ -499,103 +418,68 @@ paths:
           explode: false
           allowReserved: false
       deprecated: false
-    post:
-      operationId: get-v1-booking-delete
+    parameters: []
+  '/v1/user-bookings/{id}':
+    get:
+      operationId: get-v1-booking
       tags:
         - UserBooking
       responses:
-        201:
-          description: 'UserBooking resource created'
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/UserBooking.jsonld'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserBooking'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/UserBooking'
-          links:
-            GetUserBookingItem:
-              operationId: getUserBookingItem
-              parameters:
-                id: '$response.body#/id'
-              description: 'The `id` value returned in the response can be used as the `id` parameter in `GET /v1/user-bookings/{id}`.'
-        400:
-          description: 'Invalid input'
-        422:
-          description: 'Unprocessable entity'
         200:
           description: OK
           content:
             application/ld+json:
               examples: null
           headers: {  }
-      summary: 'Deletes a specific booking.'
-      description: 'Deletes a specific booking.'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a specific booking from a specific user.'
+      description: 'Retrieves a specific booking from a specific user.'
       parameters:
         -
-          name: userId
-          in: query
-          description: 'ID of the booking to request a deletion for'
+          name: id
+          in: path
+          description: 'urlencoded ID of the booking to get'
           required: true
           deprecated: false
           allowEmptyValue: false
           schema:
             type: string
             format: string
-            example: '1'
-          style: form
+            example: AAMkADA2YjNjYzNjLThjMjAtNDA3MS05NWEwLTZhZjM2MzYxZjZmNwBGAAAAAADPMx9il%2Fl3TpK5N7vcXYJbBwCTGBSNlZNgQKMu0%2BOa3o5eAAAAAAENAACTGBSNlZNgQKMu0%2BOa3o5eAABLCAbAAAA%3D
+          style: simple
           explode: false
           allowReserved: false
-      requestBody:
-        description: 'The new UserBooking resource'
-        content:
-          application/ld+json:
-            schema:
-              $ref: '#/components/schemas/UserBooking.jsonld'
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserBooking'
-          text/html:
-            schema:
-              $ref: '#/components/schemas/UserBooking'
-        required: true
       deprecated: false
-    parameters: []
-  '/v1/user-bookings/{id}':
-    get:
-      operationId: getUserBookingItem
+    delete:
+      operationId: delete-v1-booking
       tags:
         - UserBooking
       responses:
-        200:
-          description: 'UserBooking resource'
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/UserBooking.jsonld'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserBooking'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/UserBooking'
+        204:
+          description: 'UserBooking resource deleted'
         404:
           description: 'Resource not found'
-      summary: 'Retrieves a UserBooking resource.'
-      description: 'Retrieves a UserBooking resource.'
+        200:
+          description: OK
+          content:
+            application/ld+json:
+              examples: null
+          headers: {  }
+      summary: 'Requests deletion for a specific booking.'
+      description: 'Requests deletion for a specific booking.'
       parameters:
         -
           name: id
           in: path
-          description: 'Resource identifier'
+          description: 'urlencoded ID of the booking to delete'
           required: true
           deprecated: false
           allowEmptyValue: false
           schema:
             type: string
+            format: string
+            example: ''
           style: simple
           explode: false
           allowReserved: false
@@ -794,47 +678,6 @@ components:
         endTime:
           type: string
           format: date-time
-    BookingDetails:
-      type: object
-      properties:
-        id:
-          type: string
-        displayName:
-          type: string
-        body:
-          type: string
-    BookingDetails.jsonld:
-      type: object
-      properties:
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
-        '@context':
-          readOnly: true
-          oneOf:
-            -
-              type: string
-            -
-              type: object
-              properties:
-                '@vocab':
-                  type: string
-                hydra:
-                  type: string
-                  enum: ['http://www.w3.org/ns/hydra/core#']
-              required:
-                - '@vocab'
-                - hydra
-              additionalProperties: true
-        id:
-          type: string
-        displayName:
-          type: string
-        body:
-          type: string
     BusyInterval:
       type: object
       properties:
@@ -1033,9 +876,17 @@ components:
           type: string
         hitId:
           type: string
+        iCalUId:
+          type: string
         summary:
           type: string
         subject:
+          type: string
+        displayName:
+          type: string
+        body:
+          type: string
+        status:
           type: string
         start:
           type: string
@@ -1048,6 +899,12 @@ components:
     UserBooking.jsonld:
       type: object
       properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
         '@context':
           readOnly: true
           oneOf:
@@ -1065,19 +922,21 @@ components:
                 - '@vocab'
                 - hydra
               additionalProperties: true
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
         id:
           type: string
         hitId:
           type: string
+        iCalUId:
+          type: string
         summary:
           type: string
         subject:
+          type: string
+        displayName:
+          type: string
+        body:
+          type: string
+        status:
           type: string
         start:
           type: string

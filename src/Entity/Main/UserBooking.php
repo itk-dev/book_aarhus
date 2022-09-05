@@ -11,9 +11,17 @@ class UserBooking
 
     public string $hitId;
 
+    public string $iCalUId;
+
     public string $summary;
 
     public string $subject;
+
+    public string $displayName;
+
+    public string $body;
+
+    public string $status;
 
     public ?\DateTimeInterface $start;
 
