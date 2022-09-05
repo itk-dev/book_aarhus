@@ -6,3 +6,4 @@ resources:
       get:
     collectionOperations:
       get:
+        filters: ['resource.location_filter']

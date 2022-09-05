@@ -47,3 +47,11 @@ services:
     App\Service\WebformServiceInterface:
         alias: 'App\Service\WebformService'
         public: true
+
+    resource.location_filter:
+        parent: 'api_platform.doctrine.orm.search_filter'
+        arguments: [ { location: 'exact' } ]
+        tags:  [ 'api_platform.filter' ]
+        autowire: false
+        autoconfigure: false
+        public: false
