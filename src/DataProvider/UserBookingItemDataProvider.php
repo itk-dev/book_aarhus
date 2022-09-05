@@ -32,25 +32,23 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
                 }
 
                 $userId = ' ';
-                $userBookingResults = [$this->microsoftGraphService->getUserBooking($userId, $id)];
+                $userBookingResults = $this->microsoftGraphService->getUserBooking($userId, $id);
                 $userBooking = new UserBooking();
 
-                foreach ($userBookingResults as $userBookingResult) {
-                    $userBooking->id = Ulid::generate();
-                    $userBooking->hitId = $userBookingResult['id'] ?? '';
-                    $userBooking->summary = $userBookingResult['summary'] ?? '';
-                    $userBooking->subject = $userBookingResult['resource']['subject'] ?? '';
-                    $userBooking->start = new \DateTime($userBookingResult['start']['dateTime'], new \DateTimeZone($userBookingResult['start']['timeZone'])) ?? null;
-                    $userBooking->end = new \DateTime($userBookingResult['end']['dateTime'], new \DateTimeZone($userBookingResult['end']['timeZone'])) ?? null;
-                    $userBooking->iCalUId = $userBookingResult['iCalUId'];
+                $userBooking->id = Ulid::generate();
+                $userBooking->hitId = $userBookingResults['id'] ?? '';
+                $userBooking->summary = $userBookingResults['summary'] ?? '';
+                $userBooking->subject = $userBookingResults['resource']['subject'] ?? '';
+                $userBooking->start = new \DateTime($userBookingResults['start']['dateTime'], new \DateTimeZone($userBookingResults['start']['timeZone'])) ?? null;
+                $userBooking->end = new \DateTime($userBookingResults['end']['dateTime'], new \DateTimeZone($userBookingResults['end']['timeZone'])) ?? null;
+                $userBooking->iCalUId = $userBookingResults['iCalUId'];
 
-                    $bookingDetailsData = [$this->microsoftGraphService->getBookingDetails($userBookingResult['id'])];
+                $bookingDetailsData = [$this->microsoftGraphService->getBookingDetails($userBookingResults['id'])];
 
-                    foreach ($bookingDetailsData as $bookingDetail) {
-                        $userBooking->displayName = $bookingDetail['location']['displayName'];
-                        $userBooking->body = $bookingDetail['body']['content'];
-                        continue;
-                    }
+                foreach ($bookingDetailsData as $bookingDetail) {
+                    $userBooking->displayName = $bookingDetail['location']['displayName'];
+                    $userBooking->body = $bookingDetail['body']['content'];
+                    continue;
                 }
 
                 return $userBooking;
