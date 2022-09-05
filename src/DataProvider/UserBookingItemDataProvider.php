@@ -43,13 +43,10 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
                 $userBooking->end = new \DateTime($userBookingResults['end']['dateTime'], new \DateTimeZone($userBookingResults['end']['timeZone'])) ?? null;
                 $userBooking->iCalUId = $userBookingResults['iCalUId'];
 
-                $bookingDetailsData = [$this->microsoftGraphService->getBookingDetails($userBookingResults['id'])];
+                $bookingDetailsData = $this->microsoftGraphService->getBookingDetails($userBookingResults['id']);
 
-                foreach ($bookingDetailsData as $bookingDetail) {
-                    $userBooking->displayName = $bookingDetail['location']['displayName'];
-                    $userBooking->body = $bookingDetail['body']['content'];
-                    continue;
-                }
+                $userBooking->displayName = $bookingDetailsData['location']['displayName'];
+                $userBooking->body = $bookingDetailsData['body']['content'];
 
                 return $userBooking;
             case 'delete':
