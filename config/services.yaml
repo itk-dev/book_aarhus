@@ -47,3 +47,12 @@ services:
     App\Service\WebformServiceInterface:
         alias: 'App\Service\WebformService'
         public: true
+
+    resource.capacity_filter:
+        # https://api-platform.com/docs/core/filters/#range-filter
+        parent: 'api_platform.doctrine.orm.range_filter'
+        arguments: [ { capacity: ~ } ]
+        tags:  [ 'api_platform.filter' ]
+        autowire: false
+        autoconfigure: false
+        public: false
