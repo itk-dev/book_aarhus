@@ -47,3 +47,30 @@ services:
     App\Service\WebformServiceInterface:
         alias: 'App\Service\WebformService'
         public: true
+
+    resource.search_filter:
+        # https://api-platform.com/docs/core/filters/#search-filter
+        parent: 'api_platform.doctrine.orm.search_filter'
+        arguments: [ { location: 'exact', resourcename: 'partial' } ]
+        tags:  [ 'api_platform.filter' ]
+        autowire: false
+        autoconfigure: false
+        public: false
+
+    resource.boolean_filter:
+        # https://api-platform.com/docs/core/filters/#boolean-filter
+        parent: 'api_platform.doctrine.orm.boolean_filter'
+        arguments: [ { wheelchairaccessible: ~, videoconferenceequipment: ~, monitorequipment: ~, acceptanceflow: ~, catering: ~ } ]
+        tags:  [ 'api_platform.filter' ]
+        autowire: false
+        autoconfigure: false
+        public: false
+
+    resource.range_filter:
+        # https://api-platform.com/docs/core/filters/#range-filter
+        parent: 'api_platform.doctrine.orm.range_filter'
+        arguments: [ { capacity: ~ } ]
+        tags:  [ 'api_platform.filter' ]
+        autowire: false
+        autoconfigure: false
+        public: false

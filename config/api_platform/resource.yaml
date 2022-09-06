@@ -6,3 +6,4 @@ resources:
       get:
     collectionOperations:
       get:
+        filters: ['resource.search_filter', 'resource.boolean_filter', 'resource.range_filter']
