@@ -1,4 +1,6 @@
-FROM itkdev/php8.1-fpm:alpine
+#FROM itkdev/php8.1-fpm:alpine
+# THIS IS A HACK
+FROM itkdev/php8.1-fpm:alpine-1.1.15
 
 # Install dependencies for building packages
 RUN apk --update add --no-cache --virtual .build-deps \
