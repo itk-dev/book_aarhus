@@ -9,6 +9,19 @@
 A `docker-compose.yml` file is included in this project.
 To install the dependencies you can run
 
+Add the following fields to `.env.local` with relevant values:
+
+```
+MICROSOFT_GRAPH_TENANT_ID=""
+MICROSOFT_GRAPH_CLIENT_ID=""
+MICROSOFT_GRAPH_SERVICE_ACCOUNT_NAME=""
+MICROSOFT_GRAPH_SERVICE_ACCOUNT_USERNAME=""
+MICROSOFT_GRAPH_SERVICE_ACCOUNT_PASSWORD=""
+
+BOOKING_RESOURCES_DATABASE_OPTION_AUTHENTICATION="SqlPassword"
+BOOKING_RESOURCES_DATABASE_OPTION_TRUST_SERVER_CERTIFICATE=true
+```
+
 ```shell
 # Up the docker containers
 docker compose up -d
