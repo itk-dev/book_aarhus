@@ -17,8 +17,8 @@ doctrine:
                 user: '%env(resolve:BOOKING_RESOURCES_DATABASE_USER)%'
                 password: '%env(resolve:BOOKING_RESOURCES_DATABASE_PASSWORD)%'
                 options:
-                    # Uncomment when connecting to Azure DB through SSH tunnel
-                    # authentication: ActiveDirectoryPassword
+                    authentication: '%env(resolve:BOOKING_RESOURCES_DATABASE_OPTION_AUTHENTICATION)%'
+                    TrustServerCertificate: '%env(resolve:BOOKING_RESOURCES_DATABASE_OPTION_TRUST_SERVER_CERTIFICATE)%'
                 driver: 'pdo_sqlsrv'
                 charset: 'UTF-8'
                 server_version: '%env(resolve:BOOKING_RESOURCES_DATABASE_SERVER_VERSION)%'
