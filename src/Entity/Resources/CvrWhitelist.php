@@ -42,4 +42,67 @@ class CvrWhitelist
      */
     private $updatetimestamp;
 
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getResourceid(): int
+    {
+        return $this->resourceid;
+    }
+
+    /**
+     * @param int $resourceid
+     */
+    public function setResourceid(int $resourceid): void
+    {
+        $this->resourceid = $resourceid;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCvr(): int
+    {
+        return $this->cvr;
+    }
+
+    /**
+     * @param int $cvr
+     */
+    public function setCvr(int $cvr): void
+    {
+        $this->cvr = $cvr;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatetimestamp(): \DateTime
+    {
+        return $this->updatetimestamp;
+    }
+
+    /**
+     * @param \DateTime $updatetimestamp
+     */
+    public function setUpdatetimestamp(\DateTime $updatetimestamp): void
+    {
+        $this->updatetimestamp = $updatetimestamp;
+    }
 }

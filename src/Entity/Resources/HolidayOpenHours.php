@@ -48,4 +48,84 @@ class HolidayOpenHours
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
     private $updatetimestamp;
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getResourceid(): int
+    {
+        return $this->resourceid;
+    }
+
+    /**
+     * @param int $resourceid
+     */
+    public function setResourceid(int $resourceid): void
+    {
+        $this->resourceid = $resourceid;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getHolidayopen(): \DateTime
+    {
+        return $this->holidayopen;
+    }
+
+    /**
+     * @param \DateTime $holidayopen
+     */
+    public function setHolidayopen(\DateTime $holidayopen): void
+    {
+        $this->holidayopen = $holidayopen;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getHolidayclose(): \DateTime
+    {
+        return $this->holidayclose;
+    }
+
+    /**
+     * @param \DateTime $holidayclose
+     */
+    public function setHolidayclose(\DateTime $holidayclose): void
+    {
+        $this->holidayclose = $holidayclose;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatetimestamp(): \DateTime
+    {
+        return $this->updatetimestamp;
+    }
+
+    /**
+     * @param \DateTime $updatetimestamp
+     */
+    public function setUpdatetimestamp(\DateTime $updatetimestamp): void
+    {
+        $this->updatetimestamp = $updatetimestamp;
+    }
 }

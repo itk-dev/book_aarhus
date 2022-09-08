@@ -17,8 +17,6 @@ class ResourceFixtures extends Fixture
                 'resourceDescription' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
                 'resourceEmailText' => '',
                 'location' => 'LOCATION1',
-                'locationType' => 'LOCATION_TYPE_1',
-                'type' => 'room',
                 'wheelChairAccessible' => true,
                 'videoConferenceEquipment' => false,
                 'monitorEquipment' => false,
@@ -32,8 +30,6 @@ class ResourceFixtures extends Fixture
                 'resourceDescription' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
                 'resourceEmailText' => '',
                 'location' => 'LOCATION1',
-                'locationType' => 'LOCATION_TYPE_1',
-                'type' => 'room',
                 'wheelChairAccessible' => false,
                 'videoConferenceEquipment' => true,
                 'monitorEquipment' => false,
@@ -47,8 +43,6 @@ class ResourceFixtures extends Fixture
                 'resourceDescription' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
                 'resourceEmailText' => '',
                 'location' => 'LOCATION2',
-                'locationType' => 'LOCATION_TYPE_3',
-                'type' => 'equipment',
                 'videoConferenceEquipment' => false,
                 'wheelChairAccessible' => true,
                 'monitorEquipment' => false,
@@ -62,8 +56,6 @@ class ResourceFixtures extends Fixture
                 'resourceDescription' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
                 'resourceEmailText' => '',
                 'location' => 'LOCATION2',
-                'locationType' => 'LOCATION_TYPE_3',
-                'type' => 'vehicle',
                 'videoConferenceEquipment' => false,
                 'wheelChairAccessible' => false,
                 'monitorEquipment' => false,
@@ -80,8 +72,6 @@ class ResourceFixtures extends Fixture
             $res->setResourcedescription($resource['resourceDescription']);
             $res->setResourceemailtext($resource['resourceEmailText']);
             $res->setLocation($resource['location']);
-            $res->setLocationType($resource['locationType']);
-            $res->setType($resource['type']);
             $res->setWheelchairaccessible($resource['wheelChairAccessible']);
             $res->setVideoconferenceequipment($resource['videoConferenceEquipment']);
             $res->setUpdatetimestamp(new \DateTime());
@@ -89,7 +79,6 @@ class ResourceFixtures extends Fixture
             $res->setCatering($resource['catering']);
             $res->setAcceptanceflow($resource['acceptanceFlow']);
             $res->setCapacity($resource['capacity']);
-            $res->setBookingrights('');
             $manager->persist($res);
         }
 
