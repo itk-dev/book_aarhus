@@ -43,9 +43,9 @@ class AAKResource
     private $resourceimage;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="ResourceEmailText", type="text", length=-1, nullable=false)
+     * @ORM\Column(name="ResourceEmailText", type="text", length=-1, nullable=true)
      */
     private $resourceemailtext;
 
@@ -55,13 +55,6 @@ class AAKResource
      * @ORM\Column(name="Location", type="string", length=128, nullable=false)
      */
     private $location;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="LocationType", type="text", length=-1, nullable=false)
-     */
-    private $locationtype;
 
     /**
      * @var string|null
@@ -76,13 +69,6 @@ class AAKResource
      * @ORM\Column(name="Capacity", type="bigint", nullable=true)
      */
     private $capacity;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="Type", type="text", length=-1, nullable=false)
-     */
-    private $type;
 
     /**
      * @var string|null
@@ -113,39 +99,11 @@ class AAKResource
     private $monitorequipment;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="BookingRights", type="text", length=-1, nullable=false)
-     */
-    private $bookingrights;
-
-    /**
      * @var bool
      *
      * @ORM\Column(name="AcceptanceFlow", type="boolean", nullable=false)
      */
     private $acceptanceflow;
-
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="Opening_Hours", type="text", length=-1, nullable=true)
-     */
-    private $openingHours;
-
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="Holiday_Opening_Hours", type="text", length=-1, nullable=true)
-     */
-    private $holidayOpeningHours;
-
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="Whitelist", type="text", length=-1, nullable=true)
-     */
-    private $whitelist;
 
     /**
      * @var bool
@@ -162,6 +120,48 @@ class AAKResource
     private $formid;
 
     /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="HasHolidayOpen", type="boolean", nullable=true)
+     */
+    private $hasholidayopen;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="HasOpen", type="boolean", nullable=true)
+     */
+    private $hasopen;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="HasWhiteList", type="boolean", nullable=true)
+     */
+    private $haswhitelist;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="PermissionEmployee", type="boolean", nullable=true)
+     */
+    private $permissionemployee;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="PermissionCitizen", type="boolean", nullable=true)
+     */
+    private $permissioncitizen;
+
+    /**
+     * @var bool|null
+     *
+     * @ORM\Column(name="PermissionBusinessPartner", type="boolean", nullable=true)
+     */
+    private $permissionbusinesspartner;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
@@ -174,6 +174,14 @@ class AAKResource
     public function getId(): int
     {
         return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
     /**
@@ -225,17 +233,17 @@ class AAKResource
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getResourceemailtext(): string
+    public function getResourceemailtext(): ?string
     {
         return $this->resourceemailtext;
     }
 
     /**
-     * @param string $resourceemailtext
+     * @param string|null $resourceemailtext
      */
-    public function setResourceemailtext(string $resourceemailtext): void
+    public function setResourceemailtext(?string $resourceemailtext): void
     {
         $this->resourceemailtext = $resourceemailtext;
     }
@@ -254,22 +262,6 @@ class AAKResource
     public function setLocation(string $location): void
     {
         $this->location = $location;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLocationtype(): string
-    {
-        return $this->locationtype;
-    }
-
-    /**
-     * @param string $locationtype
-     */
-    public function setLocationtype(string $locationtype): void
-    {
-        $this->locationtype = $locationtype;
     }
 
     /**
@@ -302,22 +294,6 @@ class AAKResource
     public function setCapacity(?int $capacity): void
     {
         $this->capacity = $capacity;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param string $type
-     */
-    public function setType(string $type): void
-    {
-        $this->type = $type;
     }
 
     /**
@@ -385,22 +361,6 @@ class AAKResource
     }
 
     /**
-     * @return string
-     */
-    public function getBookingrights(): string
-    {
-        return $this->bookingrights;
-    }
-
-    /**
-     * @param string $bookingrights
-     */
-    public function setBookingrights(string $bookingrights): void
-    {
-        $this->bookingrights = $bookingrights;
-    }
-
-    /**
      * @return bool
      */
     public function isAcceptanceflow(): bool
@@ -414,54 +374,6 @@ class AAKResource
     public function setAcceptanceflow(bool $acceptanceflow): void
     {
         $this->acceptanceflow = $acceptanceflow;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getOpeningHours(): ?string
-    {
-        return $this->openingHours;
-    }
-
-    /**
-     * @param string|null $openingHours
-     */
-    public function setOpeningHours(?string $openingHours): void
-    {
-        $this->openingHours = $openingHours;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getHolidayOpeningHours(): ?string
-    {
-        return $this->holidayOpeningHours;
-    }
-
-    /**
-     * @param string|null $holidayOpeningHours
-     */
-    public function setHolidayOpeningHours(?string $holidayOpeningHours): void
-    {
-        $this->holidayOpeningHours = $holidayOpeningHours;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getWhitelist(): ?string
-    {
-        return $this->whitelist;
-    }
-
-    /**
-     * @param string|null $whitelist
-     */
-    public function setWhitelist(?string $whitelist): void
-    {
-        $this->whitelist = $whitelist;
     }
 
     /**
@@ -494,6 +406,102 @@ class AAKResource
     public function setFormid(?string $formid): void
     {
         $this->formid = $formid;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getHasholidayopen(): ?bool
+    {
+        return $this->hasholidayopen;
+    }
+
+    /**
+     * @param bool|null $hasholidayopen
+     */
+    public function setHasholidayopen(?bool $hasholidayopen): void
+    {
+        $this->hasholidayopen = $hasholidayopen;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getHasopen(): ?bool
+    {
+        return $this->hasopen;
+    }
+
+    /**
+     * @param bool|null $hasopen
+     */
+    public function setHasopen(?bool $hasopen): void
+    {
+        $this->hasopen = $hasopen;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getHaswhitelist(): ?bool
+    {
+        return $this->haswhitelist;
+    }
+
+    /**
+     * @param bool|null $haswhitelist
+     */
+    public function setHaswhitelist(?bool $haswhitelist): void
+    {
+        $this->haswhitelist = $haswhitelist;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getPermissionemployee(): ?bool
+    {
+        return $this->permissionemployee;
+    }
+
+    /**
+     * @param bool|null $permissionemployee
+     */
+    public function setPermissionemployee(?bool $permissionemployee): void
+    {
+        $this->permissionemployee = $permissionemployee;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getPermissioncitizen(): ?bool
+    {
+        return $this->permissioncitizen;
+    }
+
+    /**
+     * @param bool|null $permissioncitizen
+     */
+    public function setPermissioncitizen(?bool $permissioncitizen): void
+    {
+        $this->permissioncitizen = $permissioncitizen;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getPermissionbusinesspartner(): ?bool
+    {
+        return $this->permissionbusinesspartner;
+    }
+
+    /**
+     * @param bool|null $permissionbusinesspartner
+     */
+    public function setPermissionbusinesspartner(?bool $permissionbusinesspartner): void
+    {
+        $this->permissionbusinesspartner = $permissionbusinesspartner;
     }
 
     /**

@@ -41,4 +41,5 @@ class CvrWhitelist
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
     private $updatetimestamp;
+
 }

@@ -19,14 +19,14 @@ class LocationType
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private int $id;
+    private $id;
 
     /**
      * @var int
      *
      * @ORM\Column(name="resourceID", type="integer", nullable=false)
      */
-    private int $resourceid;
+    private $resourceid;
 
     /**
      * @var string
