@@ -904,9 +904,8 @@ components:
           nullable: true
         resourceemailtext:
           type: string
+          nullable: true
         location:
-          type: string
-        locationtype:
           type: string
         geocordinates:
           type: string
@@ -914,8 +913,6 @@ components:
         capacity:
           type: string
           nullable: true
-        type:
-          type: string
         resourcedescription:
           type: string
           nullable: true
@@ -925,23 +922,30 @@ components:
           type: boolean
         monitorequipment:
           type: boolean
-        bookingrights:
-          type: string
         acceptanceflow:
           type: boolean
-        openingHours:
-          type: string
-          nullable: true
-        holidayOpeningHours:
-          type: string
-          nullable: true
-        whitelist:
-          type: string
-          nullable: true
         catering:
           type: boolean
         formid:
           type: string
+          nullable: true
+        hasholidayopen:
+          type: boolean
+          nullable: true
+        hasopen:
+          type: boolean
+          nullable: true
+        haswhitelist:
+          type: boolean
+          nullable: true
+        permissionemployee:
+          type: boolean
+          nullable: true
+        permissioncitizen:
+          type: boolean
+          nullable: true
+        permissionbusinesspartner:
+          type: boolean
           nullable: true
         updatetimestamp:
           type: string
@@ -985,9 +989,8 @@ components:
           nullable: true
         resourceemailtext:
           type: string
+          nullable: true
         location:
-          type: string
-        locationtype:
           type: string
         geocordinates:
           type: string
@@ -995,8 +998,6 @@ components:
         capacity:
           type: string
           nullable: true
-        type:
-          type: string
         resourcedescription:
           type: string
           nullable: true
@@ -1006,23 +1007,30 @@ components:
           type: boolean
         monitorequipment:
           type: boolean
-        bookingrights:
-          type: string
         acceptanceflow:
           type: boolean
-        openingHours:
-          type: string
-          nullable: true
-        holidayOpeningHours:
-          type: string
-          nullable: true
-        whitelist:
-          type: string
-          nullable: true
         catering:
           type: boolean
         formid:
           type: string
+          nullable: true
+        hasholidayopen:
+          type: boolean
+          nullable: true
+        hasopen:
+          type: boolean
+          nullable: true
+        haswhitelist:
+          type: boolean
+          nullable: true
+        permissionemployee:
+          type: boolean
+          nullable: true
+        permissioncitizen:
+          type: boolean
+          nullable: true
+        permissionbusinesspartner:
+          type: boolean
           nullable: true
         updatetimestamp:
           type: string
