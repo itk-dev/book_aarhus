@@ -68,7 +68,7 @@ class WebformSubmitHandler
             $email = $this->validationUtils->validateEmail($data['resourceEmail']);
 
             /** @var AAKResource $resource */
-            $resource = $this->aakResourceRepository->findOneBy(['resourcemail' => $email]);
+            $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
 
             if (null == $resource) {
                 throw new UnrecoverableMessageHandlingException("Resource $email not found.", 404);

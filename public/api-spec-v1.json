@@ -578,7 +578,7 @@
                         "allowReserved": false
                     },
                     {
-                        "name": "resourceEmail",
+                        "name": "resourceMail",
                         "in": "query",
                         "description": "",
                         "required": false,
@@ -592,7 +592,7 @@
                         "allowReserved": false
                     },
                     {
-                        "name": "resourceEmail[]",
+                        "name": "resourceMail[]",
                         "in": "query",
                         "description": "",
                         "required": false,
@@ -1324,7 +1324,7 @@
                         "readOnly": true,
                         "type": "integer"
                     },
-                    "resourceEmail": {
+                    "resourceMail": {
                         "type": "string"
                     },
                     "resourceName": {
@@ -1445,7 +1445,7 @@
                         "readOnly": true,
                         "type": "integer"
                     },
-                    "resourceEmail": {
+                    "resourceMail": {
                         "type": "string"
                     },
                     "resourceName": {

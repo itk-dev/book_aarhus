@@ -375,7 +375,7 @@ paths:
           explode: false
           allowReserved: false
         -
-          name: resourceEmail
+          name: resourceMail
           in: query
           description: ''
           required: false
@@ -387,7 +387,7 @@ paths:
           explode: false
           allowReserved: false
         -
-          name: 'resourceEmail[]'
+          name: 'resourceMail[]'
           in: query
           description: ''
           required: false
@@ -921,7 +921,7 @@ components:
         id:
           readOnly: true
           type: integer
-        resourceEmail:
+        resourceMail:
           type: string
         resourceName:
           type: string
@@ -1006,7 +1006,7 @@ components:
         id:
           readOnly: true
           type: integer
-        resourceEmail:
+        resourceMail:
           type: string
         resourceName:
           type: string
