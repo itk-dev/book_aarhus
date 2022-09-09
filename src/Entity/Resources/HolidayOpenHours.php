@@ -19,35 +19,35 @@ class HolidayOpenHours
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    private int $id;
 
     /**
      * @var int
      *
      * @ORM\Column(name="resourceID", type="integer", nullable=false)
      */
-    private $resourceid;
+    private int $resourceId;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="holidayopen", type="time", nullable=false)
      */
-    private $holidayopen;
+    private \DateTime $holidayOpen;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="holidayclose", type="time", nullable=false)
      */
-    private $holidayclose;
+    private \DateTime $holidayClose;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
-    private $updatetimestamp;
+    private \DateTime $updateTimestamp;
 
     /**
      * @return int
@@ -68,64 +68,64 @@ class HolidayOpenHours
     /**
      * @return int
      */
-    public function getResourceid(): int
+    public function getResourceId(): int
     {
-        return $this->resourceid;
+        return $this->resourceId;
     }
 
     /**
-     * @param int $resourceid
+     * @param int $resourceId
      */
-    public function setResourceid(int $resourceid): void
+    public function setResourceId(int $resourceId): void
     {
-        $this->resourceid = $resourceid;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getHolidayopen(): \DateTime
-    {
-        return $this->holidayopen;
-    }
-
-    /**
-     * @param \DateTime $holidayopen
-     */
-    public function setHolidayopen(\DateTime $holidayopen): void
-    {
-        $this->holidayopen = $holidayopen;
+        $this->resourceId = $resourceId;
     }
 
     /**
      * @return \DateTime
      */
-    public function getHolidayclose(): \DateTime
+    public function getHolidayOpen(): \DateTime
     {
-        return $this->holidayclose;
+        return $this->holidayOpen;
     }
 
     /**
-     * @param \DateTime $holidayclose
+     * @param \DateTime $holidayOpen
      */
-    public function setHolidayclose(\DateTime $holidayclose): void
+    public function setHolidayOpen(\DateTime $holidayOpen): void
     {
-        $this->holidayclose = $holidayclose;
+        $this->holidayOpen = $holidayOpen;
     }
 
     /**
      * @return \DateTime
      */
-    public function getUpdatetimestamp(): \DateTime
+    public function getHolidayClose(): \DateTime
     {
-        return $this->updatetimestamp;
+        return $this->holidayClose;
     }
 
     /**
-     * @param \DateTime $updatetimestamp
+     * @param \DateTime $holidayClose
      */
-    public function setUpdatetimestamp(\DateTime $updatetimestamp): void
+    public function setHolidayClose(\DateTime $holidayClose): void
     {
-        $this->updatetimestamp = $updatetimestamp;
+        $this->holidayClose = $holidayClose;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdateTimestamp(): \DateTime
+    {
+        return $this->updateTimestamp;
+    }
+
+    /**
+     * @param \DateTime $updateTimestamp
+     */
+    public function setUpdateTimestamp(\DateTime $updateTimestamp): void
+    {
+        $this->updateTimestamp = $updateTimestamp;
     }
 }

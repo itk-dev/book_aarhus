@@ -51,7 +51,7 @@ services:
     resource.search_filter:
         # https://api-platform.com/docs/core/filters/#search-filter
         parent: 'api_platform.doctrine.orm.search_filter'
-        arguments: [ { location: 'exact', resourcename: 'partial' } ]
+        arguments: [ { location: 'exact', resourceName: 'partial', resourceEmail: 'exact' } ]
         tags:  [ 'api_platform.filter' ]
         autowire: false
         autoconfigure: false
@@ -60,7 +60,7 @@ services:
     resource.boolean_filter:
         # https://api-platform.com/docs/core/filters/#boolean-filter
         parent: 'api_platform.doctrine.orm.boolean_filter'
-        arguments: [ { wheelchairaccessible: ~, videoconferenceequipment: ~, monitorequipment: ~, acceptanceflow: ~, catering: ~ } ]
+        arguments: [ { wheelchairAccessible: ~, videoConferenceEquipment: ~, monitorEquipment: ~, acceptanceFlow: ~, catering: ~ } ]
         tags:  [ 'api_platform.filter' ]
         autowire: false
         autoconfigure: false

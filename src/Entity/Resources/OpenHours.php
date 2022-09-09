@@ -19,42 +19,42 @@ class OpenHours
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    private int $id;
 
     /**
      * @var int
      *
      * @ORM\Column(name="resourceID", type="integer", nullable=false)
      */
-    private $resourceid;
+    private int $resourceId;
 
     /**
      * @var int
      *
      * @ORM\Column(name="weekday", type="integer", nullable=false)
      */
-    private $weekday;
+    private int $weekday;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="open", type="time", nullable=false)
      */
-    private $open;
+    private \DateTime $open;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="close", type="time", nullable=false)
      */
-    private $close;
+    private \DateTime $close;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
-    private $updatetimestamp;
+    private \DateTime $updateTimestamp;
 
     /**
      * @return int
@@ -75,17 +75,17 @@ class OpenHours
     /**
      * @return int
      */
-    public function getResourceid(): int
+    public function getResourceId(): int
     {
-        return $this->resourceid;
+        return $this->resourceId;
     }
 
     /**
-     * @param int $resourceid
+     * @param int $resourceId
      */
-    public function setResourceid(int $resourceid): void
+    public function setResourceId(int $resourceId): void
     {
-        $this->resourceid = $resourceid;
+        $this->resourceId = $resourceId;
     }
 
     /**
@@ -139,16 +139,16 @@ class OpenHours
     /**
      * @return \DateTime
      */
-    public function getUpdatetimestamp(): \DateTime
+    public function getUpdateTimestamp(): \DateTime
     {
-        return $this->updatetimestamp;
+        return $this->updateTimestamp;
     }
 
     /**
-     * @param \DateTime $updatetimestamp
+     * @param \DateTime $updateTimestamp
      */
-    public function setUpdatetimestamp(\DateTime $updatetimestamp): void
+    public function setUpdateTimestamp(\DateTime $updateTimestamp): void
     {
-        $this->updatetimestamp = $updatetimestamp;
+        $this->updateTimestamp = $updateTimestamp;
     }
 }

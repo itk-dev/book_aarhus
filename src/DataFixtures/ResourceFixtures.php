@@ -67,17 +67,17 @@ class ResourceFixtures extends Fixture
 
         foreach ($resources as $resource) {
             $res = new AAKResource();
-            $res->setResourcemail($resource['resourceEmail']);
-            $res->setResourcename($resource['resourceName']);
-            $res->setResourcedescription($resource['resourceDescription']);
-            $res->setResourceemailtext($resource['resourceEmailText']);
+            $res->setResourceEmail($resource['resourceEmail']);
+            $res->setResourceName($resource['resourceName']);
+            $res->setResourceDescription($resource['resourceDescription']);
+            $res->setResourceEmailText($resource['resourceEmailText']);
             $res->setLocation($resource['location']);
-            $res->setWheelchairaccessible($resource['wheelChairAccessible']);
-            $res->setVideoconferenceequipment($resource['videoConferenceEquipment']);
-            $res->setUpdatetimestamp(new \DateTime());
-            $res->setMonitorequipment($resource['monitorEquipment']);
+            $res->setWheelchairAccessible($resource['wheelChairAccessible']);
+            $res->setVideoConferenceEquipment($resource['videoConferenceEquipment']);
+            $res->setUpdateTimestamp(new \DateTime());
+            $res->setMonitorEquipment($resource['monitorEquipment']);
             $res->setCatering($resource['catering']);
-            $res->setAcceptanceflow($resource['acceptanceFlow']);
+            $res->setAcceptanceFlow($resource['acceptanceFlow']);
             $res->setCapacity($resource['capacity']);
             $manager->persist($res);
         }

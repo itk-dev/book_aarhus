@@ -92,7 +92,7 @@ class WebformSubmitHandler
                 $booking->setBody($bodyString);
                 $booking->setSubject($data['subject'] ?? '');
                 $booking->setResourceEmail($email);
-                $booking->setResourceName($resource->getResourcename());
+                $booking->setResourceName($resource->getResourceName());
                 $booking->setStartTime($this->validationUtils->validateDate($data['startTime']));
                 $booking->setEndTime($this->validationUtils->validateDate($data['endTime']));
 
