@@ -97,7 +97,7 @@ class BookingTest extends AbstractBaseApiTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $resource = new AAKResource();
-        $resource->setResourcename('test3');
+        $resource->setResourceName('test3');
         $aakBookingRepository->method('findOneBy')->willReturn($resource);
 
         $entityManager = self::getContainer()->get('doctrine')->getManager();

@@ -19,154 +19,154 @@ class AAKResource
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    private int $id;
 
     /**
      * @var string
      *
      * @ORM\Column(name="ResourceMail", type="string", length=128, nullable=false)
      */
-    private $resourcemail;
+    private string $resourceMail;
 
     /**
      * @var string
      *
      * @ORM\Column(name="ResourceName", type="string", length=128, nullable=false)
      */
-    private $resourcename;
+    private string $resourceName;
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="ResourceImage", type="text", length=-1, nullable=true)
      */
-    private $resourceimage;
+    private ?string $resourceImage;
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="ResourceEmailText", type="text", length=-1, nullable=true)
      */
-    private $resourceemailtext;
+    private ?string $resourceEmailText;
 
     /**
      * @var string
      *
      * @ORM\Column(name="Location", type="string", length=128, nullable=false)
      */
-    private $location;
+    private string $location;
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="GeoCordinates", type="string", length=128, nullable=true)
      */
-    private $geocordinates;
+    private ?string $geoCoordinates;
 
     /**
      * @var int|null
      *
      * @ORM\Column(name="Capacity", type="bigint", nullable=true)
      */
-    private $capacity;
+    private ?int $capacity;
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="ResourceDescription", type="text", length=-1, nullable=true)
      */
-    private $resourcedescription;
+    private ?string $resourceDescription;
 
     /**
      * @var bool
      *
      * @ORM\Column(name="WheelChairAccessible", type="boolean", nullable=false)
      */
-    private $wheelchairaccessible;
+    private bool $wheelchairAccessible;
 
     /**
      * @var bool
      *
      * @ORM\Column(name="VideoConferenceEquipment", type="boolean", nullable=false)
      */
-    private $videoconferenceequipment;
+    private bool $videoConferenceEquipment;
 
     /**
      * @var bool
      *
      * @ORM\Column(name="MonitorEquipment", type="boolean", nullable=false)
      */
-    private $monitorequipment;
+    private bool $monitorEquipment;
 
     /**
      * @var bool
      *
      * @ORM\Column(name="AcceptanceFlow", type="boolean", nullable=false)
      */
-    private $acceptanceflow;
+    private bool $acceptanceFlow;
 
     /**
      * @var bool
      *
      * @ORM\Column(name="Catering", type="boolean", nullable=false)
      */
-    private $catering;
+    private bool $catering;
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="FormID", type="text", length=-1, nullable=true)
      */
-    private $formid;
+    private ?string $formId;
 
     /**
      * @var bool|null
      *
      * @ORM\Column(name="HasHolidayOpen", type="boolean", nullable=true)
      */
-    private $hasholidayopen;
+    private ?bool $hasHolidayOpen;
 
     /**
      * @var bool|null
      *
      * @ORM\Column(name="HasOpen", type="boolean", nullable=true)
      */
-    private $hasopen;
+    private ?bool $hasOpen;
 
     /**
      * @var bool|null
      *
      * @ORM\Column(name="HasWhiteList", type="boolean", nullable=true)
      */
-    private $haswhitelist;
+    private ?bool $hasWhitelist;
 
     /**
      * @var bool|null
      *
      * @ORM\Column(name="PermissionEmployee", type="boolean", nullable=true)
      */
-    private $permissionemployee;
+    private ?bool $permissionEmployee;
 
     /**
      * @var bool|null
      *
      * @ORM\Column(name="PermissionCitizen", type="boolean", nullable=true)
      */
-    private $permissioncitizen;
+    private ?bool $permissionCitizen;
 
     /**
      * @var bool|null
      *
      * @ORM\Column(name="PermissionBusinessPartner", type="boolean", nullable=true)
      */
-    private $permissionbusinesspartner;
+    private ?bool $permissionBusinessPartner;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
-    private $updatetimestamp;
+    private \DateTime $updateTimestamp;
 
     /**
      * @return int
@@ -187,65 +187,65 @@ class AAKResource
     /**
      * @return string
      */
-    public function getResourcemail(): string
+    public function getResourceMail(): string
     {
-        return $this->resourcemail;
+        return $this->resourceMail;
     }
 
     /**
-     * @param string $resourcemail
+     * @param string $resourceMail
      */
-    public function setResourcemail(string $resourcemail): void
+    public function setResourceMail(string $resourceMail): void
     {
-        $this->resourcemail = $resourcemail;
+        $this->resourceMail = $resourceMail;
     }
 
     /**
      * @return string
      */
-    public function getResourcename(): string
+    public function getResourceName(): string
     {
-        return $this->resourcename;
+        return $this->resourceName;
     }
 
     /**
-     * @param string $resourcename
+     * @param string $resourceName
      */
-    public function setResourcename(string $resourcename): void
+    public function setResourceName(string $resourceName): void
     {
-        $this->resourcename = $resourcename;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getResourceimage(): ?string
-    {
-        return $this->resourceimage;
-    }
-
-    /**
-     * @param string|null $resourceimage
-     */
-    public function setResourceimage(?string $resourceimage): void
-    {
-        $this->resourceimage = $resourceimage;
+        $this->resourceName = $resourceName;
     }
 
     /**
      * @return string|null
      */
-    public function getResourceemailtext(): ?string
+    public function getResourceImage(): ?string
     {
-        return $this->resourceemailtext;
+        return $this->resourceImage;
     }
 
     /**
-     * @param string|null $resourceemailtext
+     * @param string|null $resourceImage
      */
-    public function setResourceemailtext(?string $resourceemailtext): void
+    public function setResourceImage(?string $resourceImage): void
     {
-        $this->resourceemailtext = $resourceemailtext;
+        $this->resourceImage = $resourceImage;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getResourceEmailText(): ?string
+    {
+        return $this->resourceEmailText;
+    }
+
+    /**
+     * @param string|null $resourceEmailText
+     */
+    public function setResourceEmailText(?string $resourceEmailText): void
+    {
+        $this->resourceEmailText = $resourceEmailText;
     }
 
     /**
@@ -267,17 +267,17 @@ class AAKResource
     /**
      * @return string|null
      */
-    public function getGeocordinates(): ?string
+    public function getGeoCoordinates(): ?string
     {
-        return $this->geocordinates;
+        return $this->geoCoordinates;
     }
 
     /**
-     * @param string|null $geocordinates
+     * @param string|null $geoCoordinates
      */
-    public function setGeocordinates(?string $geocordinates): void
+    public function setGeoCoordinates(?string $geoCoordinates): void
     {
-        $this->geocordinates = $geocordinates;
+        $this->geoCoordinates = $geoCoordinates;
     }
 
     /**
@@ -299,81 +299,81 @@ class AAKResource
     /**
      * @return string|null
      */
-    public function getResourcedescription(): ?string
+    public function getResourceDescription(): ?string
     {
-        return $this->resourcedescription;
+        return $this->resourceDescription;
     }
 
     /**
-     * @param string|null $resourcedescription
+     * @param string|null $resourceDescription
      */
-    public function setResourcedescription(?string $resourcedescription): void
+    public function setResourceDescription(?string $resourceDescription): void
     {
-        $this->resourcedescription = $resourcedescription;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isWheelchairaccessible(): bool
-    {
-        return $this->wheelchairaccessible;
-    }
-
-    /**
-     * @param bool $wheelchairaccessible
-     */
-    public function setWheelchairaccessible(bool $wheelchairaccessible): void
-    {
-        $this->wheelchairaccessible = $wheelchairaccessible;
+        $this->resourceDescription = $resourceDescription;
     }
 
     /**
      * @return bool
      */
-    public function isVideoconferenceequipment(): bool
+    public function isWheelchairAccessible(): bool
     {
-        return $this->videoconferenceequipment;
+        return $this->wheelchairAccessible;
     }
 
     /**
-     * @param bool $videoconferenceequipment
+     * @param bool $wheelchairAccessible
      */
-    public function setVideoconferenceequipment(bool $videoconferenceequipment): void
+    public function setWheelchairAccessible(bool $wheelchairAccessible): void
     {
-        $this->videoconferenceequipment = $videoconferenceequipment;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isMonitorequipment(): bool
-    {
-        return $this->monitorequipment;
-    }
-
-    /**
-     * @param bool $monitorequipment
-     */
-    public function setMonitorequipment(bool $monitorequipment): void
-    {
-        $this->monitorequipment = $monitorequipment;
+        $this->wheelchairAccessible = $wheelchairAccessible;
     }
 
     /**
      * @return bool
      */
-    public function isAcceptanceflow(): bool
+    public function isVideoConferenceEquipment(): bool
     {
-        return $this->acceptanceflow;
+        return $this->videoConferenceEquipment;
     }
 
     /**
-     * @param bool $acceptanceflow
+     * @param bool $videoConferenceEquipment
      */
-    public function setAcceptanceflow(bool $acceptanceflow): void
+    public function setVideoConferenceEquipment(bool $videoConferenceEquipment): void
     {
-        $this->acceptanceflow = $acceptanceflow;
+        $this->videoConferenceEquipment = $videoConferenceEquipment;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMonitorEquipment(): bool
+    {
+        return $this->monitorEquipment;
+    }
+
+    /**
+     * @param bool $monitorEquipment
+     */
+    public function setMonitorEquipment(bool $monitorEquipment): void
+    {
+        $this->monitorEquipment = $monitorEquipment;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAcceptanceFlow(): bool
+    {
+        return $this->acceptanceFlow;
+    }
+
+    /**
+     * @param bool $acceptanceFlow
+     */
+    public function setAcceptanceFlow(bool $acceptanceFlow): void
+    {
+        $this->acceptanceFlow = $acceptanceFlow;
     }
 
     /**
@@ -395,128 +395,128 @@ class AAKResource
     /**
      * @return string|null
      */
-    public function getFormid(): ?string
+    public function getFormId(): ?string
     {
-        return $this->formid;
+        return $this->formId;
     }
 
     /**
-     * @param string|null $formid
+     * @param string|null $formId
      */
-    public function setFormid(?string $formid): void
+    public function setFormId(?string $formId): void
     {
-        $this->formid = $formid;
-    }
-
-    /**
-     * @return bool|null
-     */
-    public function getHasholidayopen(): ?bool
-    {
-        return $this->hasholidayopen;
-    }
-
-    /**
-     * @param bool|null $hasholidayopen
-     */
-    public function setHasholidayopen(?bool $hasholidayopen): void
-    {
-        $this->hasholidayopen = $hasholidayopen;
+        $this->formId = $formId;
     }
 
     /**
      * @return bool|null
      */
-    public function getHasopen(): ?bool
+    public function getHasHolidayOpen(): ?bool
     {
-        return $this->hasopen;
+        return $this->hasHolidayOpen;
     }
 
     /**
-     * @param bool|null $hasopen
+     * @param bool|null $hasHolidayOpen
      */
-    public function setHasopen(?bool $hasopen): void
+    public function setHasHolidayOpen(?bool $hasHolidayOpen): void
     {
-        $this->hasopen = $hasopen;
-    }
-
-    /**
-     * @return bool|null
-     */
-    public function getHaswhitelist(): ?bool
-    {
-        return $this->haswhitelist;
-    }
-
-    /**
-     * @param bool|null $haswhitelist
-     */
-    public function setHaswhitelist(?bool $haswhitelist): void
-    {
-        $this->haswhitelist = $haswhitelist;
+        $this->hasHolidayOpen = $hasHolidayOpen;
     }
 
     /**
      * @return bool|null
      */
-    public function getPermissionemployee(): ?bool
+    public function getHasOpen(): ?bool
     {
-        return $this->permissionemployee;
+        return $this->hasOpen;
     }
 
     /**
-     * @param bool|null $permissionemployee
+     * @param bool|null $hasOpen
      */
-    public function setPermissionemployee(?bool $permissionemployee): void
+    public function setHasOpen(?bool $hasOpen): void
     {
-        $this->permissionemployee = $permissionemployee;
-    }
-
-    /**
-     * @return bool|null
-     */
-    public function getPermissioncitizen(): ?bool
-    {
-        return $this->permissioncitizen;
-    }
-
-    /**
-     * @param bool|null $permissioncitizen
-     */
-    public function setPermissioncitizen(?bool $permissioncitizen): void
-    {
-        $this->permissioncitizen = $permissioncitizen;
+        $this->hasOpen = $hasOpen;
     }
 
     /**
      * @return bool|null
      */
-    public function getPermissionbusinesspartner(): ?bool
+    public function getHasWhitelist(): ?bool
     {
-        return $this->permissionbusinesspartner;
+        return $this->hasWhitelist;
     }
 
     /**
-     * @param bool|null $permissionbusinesspartner
+     * @param bool|null $hasWhitelist
      */
-    public function setPermissionbusinesspartner(?bool $permissionbusinesspartner): void
+    public function setHasWhitelist(?bool $hasWhitelist): void
     {
-        $this->permissionbusinesspartner = $permissionbusinesspartner;
+        $this->hasWhitelist = $hasWhitelist;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getPermissionEmployee(): ?bool
+    {
+        return $this->permissionEmployee;
+    }
+
+    /**
+     * @param bool|null $permissionEmployee
+     */
+    public function setPermissionEmployee(?bool $permissionEmployee): void
+    {
+        $this->permissionEmployee = $permissionEmployee;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getPermissionCitizen(): ?bool
+    {
+        return $this->permissionCitizen;
+    }
+
+    /**
+     * @param bool|null $permissionCitizen
+     */
+    public function setPermissionCitizen(?bool $permissionCitizen): void
+    {
+        $this->permissionCitizen = $permissionCitizen;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getPermissionBusinessPartner(): ?bool
+    {
+        return $this->permissionBusinessPartner;
+    }
+
+    /**
+     * @param bool|null $permissionBusinessPartner
+     */
+    public function setPermissionBusinessPartner(?bool $permissionBusinessPartner): void
+    {
+        $this->permissionBusinessPartner = $permissionBusinessPartner;
     }
 
     /**
      * @return \DateTime
      */
-    public function getUpdatetimestamp(): \DateTime
+    public function getUpdateTimestamp(): \DateTime
     {
-        return $this->updatetimestamp;
+        return $this->updateTimestamp;
     }
 
     /**
-     * @param \DateTime $updatetimestamp
+     * @param \DateTime $updateTimestamp
      */
-    public function setUpdatetimestamp(\DateTime $updatetimestamp): void
+    public function setUpdateTimestamp(\DateTime $updateTimestamp): void
     {
-        $this->updatetimestamp = $updatetimestamp;
+        $this->updateTimestamp = $updateTimestamp;
     }
 }

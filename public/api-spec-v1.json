@@ -564,7 +564,7 @@
                         "allowReserved": false
                     },
                     {
-                        "name": "resourcename",
+                        "name": "resourceName",
                         "in": "query",
                         "description": "",
                         "required": false,
@@ -578,7 +578,38 @@
                         "allowReserved": false
                     },
                     {
-                        "name": "wheelchairaccessible",
+                        "name": "resourceMail",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "resourceMail[]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "style": "form",
+                        "explode": true,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "wheelchairAccessible",
                         "in": "query",
                         "description": "",
                         "required": false,
@@ -592,7 +623,7 @@
                         "allowReserved": false
                     },
                     {
-                        "name": "videoconferenceequipment",
+                        "name": "videoConferenceEquipment",
                         "in": "query",
                         "description": "",
                         "required": false,
@@ -606,7 +637,7 @@
                         "allowReserved": false
                     },
                     {
-                        "name": "monitorequipment",
+                        "name": "monitorEquipment",
                         "in": "query",
                         "description": "",
                         "required": false,
@@ -620,7 +651,7 @@
                         "allowReserved": false
                     },
                     {
-                        "name": "acceptanceflow",
+                        "name": "acceptanceFlow",
                         "in": "query",
                         "description": "",
                         "required": false,
@@ -1293,24 +1324,24 @@
                         "readOnly": true,
                         "type": "integer"
                     },
-                    "resourcemail": {
+                    "resourceMail": {
                         "type": "string"
                     },
-                    "resourcename": {
+                    "resourceName": {
                         "type": "string"
                     },
-                    "resourceimage": {
+                    "resourceImage": {
                         "type": "string",
                         "nullable": true
                     },
-                    "resourceemailtext": {
+                    "resourceEmailText": {
                         "type": "string",
                         "nullable": true
                     },
                     "location": {
                         "type": "string"
                     },
-                    "geocordinates": {
+                    "geoCoordinates": {
                         "type": "string",
                         "nullable": true
                     },
@@ -1318,54 +1349,54 @@
                         "type": "string",
                         "nullable": true
                     },
-                    "resourcedescription": {
+                    "resourceDescription": {
                         "type": "string",
                         "nullable": true
                     },
-                    "wheelchairaccessible": {
+                    "wheelchairAccessible": {
                         "type": "boolean"
                     },
-                    "videoconferenceequipment": {
+                    "videoConferenceEquipment": {
                         "type": "boolean"
                     },
-                    "monitorequipment": {
+                    "monitorEquipment": {
                         "type": "boolean"
                     },
-                    "acceptanceflow": {
+                    "acceptanceFlow": {
                         "type": "boolean"
                     },
                     "catering": {
                         "type": "boolean"
                     },
-                    "formid": {
+                    "formId": {
                         "type": "string",
                         "nullable": true
                     },
-                    "hasholidayopen": {
+                    "hasHolidayOpen": {
                         "type": "boolean",
                         "nullable": true
                     },
-                    "hasopen": {
+                    "hasOpen": {
                         "type": "boolean",
                         "nullable": true
                     },
-                    "haswhitelist": {
+                    "hasWhitelist": {
                         "type": "boolean",
                         "nullable": true
                     },
-                    "permissionemployee": {
+                    "permissionEmployee": {
                         "type": "boolean",
                         "nullable": true
                     },
-                    "permissioncitizen": {
+                    "permissionCitizen": {
                         "type": "boolean",
                         "nullable": true
                     },
-                    "permissionbusinesspartner": {
+                    "permissionBusinessPartner": {
                         "type": "boolean",
                         "nullable": true
                     },
-                    "updatetimestamp": {
+                    "updateTimestamp": {
                         "type": "string",
                         "format": "date-time"
                     }
@@ -1414,24 +1445,24 @@
                         "readOnly": true,
                         "type": "integer"
                     },
-                    "resourcemail": {
+                    "resourceMail": {
                         "type": "string"
                     },
-                    "resourcename": {
+                    "resourceName": {
                         "type": "string"
                     },
-                    "resourceimage": {
+                    "resourceImage": {
                         "type": "string",
                         "nullable": true
                     },
-                    "resourceemailtext": {
+                    "resourceEmailText": {
                         "type": "string",
                         "nullable": true
                     },
                     "location": {
                         "type": "string"
                     },
-                    "geocordinates": {
+                    "geoCoordinates": {
                         "type": "string",
                         "nullable": true
                     },
@@ -1439,54 +1470,54 @@
                         "type": "string",
                         "nullable": true
                     },
-                    "resourcedescription": {
+                    "resourceDescription": {
                         "type": "string",
                         "nullable": true
                     },
-                    "wheelchairaccessible": {
+                    "wheelchairAccessible": {
                         "type": "boolean"
                     },
-                    "videoconferenceequipment": {
+                    "videoConferenceEquipment": {
                         "type": "boolean"
                     },
-                    "monitorequipment": {
+                    "monitorEquipment": {
                         "type": "boolean"
                     },
-                    "acceptanceflow": {
+                    "acceptanceFlow": {
                         "type": "boolean"
                     },
                     "catering": {
                         "type": "boolean"
                     },
-                    "formid": {
+                    "formId": {
                         "type": "string",
                         "nullable": true
                     },
-                    "hasholidayopen": {
+                    "hasHolidayOpen": {
                         "type": "boolean",
                         "nullable": true
                     },
-                    "hasopen": {
+                    "hasOpen": {
                         "type": "boolean",
                         "nullable": true
                     },
-                    "haswhitelist": {
+                    "hasWhitelist": {
                         "type": "boolean",
                         "nullable": true
                     },
-                    "permissionemployee": {
+                    "permissionEmployee": {
                         "type": "boolean",
                         "nullable": true
                     },
-                    "permissioncitizen": {
+                    "permissionCitizen": {
                         "type": "boolean",
                         "nullable": true
                     },
-                    "permissionbusinesspartner": {
+                    "permissionBusinessPartner": {
                         "type": "boolean",
                         "nullable": true
                     },
-                    "updatetimestamp": {
+                    "updateTimestamp": {
                         "type": "string",
                         "format": "date-time"
                     }

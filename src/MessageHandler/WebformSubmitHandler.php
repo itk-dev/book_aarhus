@@ -68,7 +68,7 @@ class WebformSubmitHandler
             $email = $this->validationUtils->validateEmail($data['resourceEmail']);
 
             /** @var AAKResource $resource */
-            $resource = $this->aakResourceRepository->findOneBy(['resourcemail' => $email]);
+            $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
 
             if (null == $resource) {
                 throw new UnrecoverableMessageHandlingException("Resource $email not found.", 404);
@@ -92,7 +92,7 @@ class WebformSubmitHandler
                 $booking->setBody($bodyString);
                 $booking->setSubject($data['subject'] ?? '');
                 $booking->setResourceEmail($email);
-                $booking->setResourceName($resource->getResourcename());
+                $booking->setResourceName($resource->getResourceName());
                 $booking->setStartTime($this->validationUtils->validateDate($data['startTime']));
                 $booking->setEndTime($this->validationUtils->validateDate($data['endTime']));
 

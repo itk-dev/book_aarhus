@@ -19,28 +19,28 @@ class LocationType
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    private int $id;
 
     /**
      * @var int
      *
      * @ORM\Column(name="resourceID", type="integer", nullable=false)
      */
-    private $resourceid;
+    private int $resourceId;
 
     /**
      * @var string
      *
      * @ORM\Column(name="locationType", type="string", length=512, nullable=false)
      */
-    private $locationtype;
+    private string $locationType;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
-    private $updatetimestamp;
+    private \DateTime $updateTimestamp;
 
     /**
      * @return int
@@ -61,48 +61,48 @@ class LocationType
     /**
      * @return int
      */
-    public function getResourceid(): int
+    public function getResourceId(): int
     {
-        return $this->resourceid;
+        return $this->resourceId;
     }
 
     /**
-     * @param int $resourceid
+     * @param int $resourceId
      */
-    public function setResourceid(int $resourceid): void
+    public function setResourceId(int $resourceId): void
     {
-        $this->resourceid = $resourceid;
+        $this->resourceId = $resourceId;
     }
 
     /**
      * @return string
      */
-    public function getLocationtype(): string
+    public function getLocationType(): string
     {
-        return $this->locationtype;
+        return $this->locationType;
     }
 
     /**
-     * @param string $locationtype
+     * @param string $locationType
      */
-    public function setLocationtype(string $locationtype): void
+    public function setLocationType(string $locationType): void
     {
-        $this->locationtype = $locationtype;
+        $this->locationType = $locationType;
     }
 
     /**
      * @return \DateTime
      */
-    public function getUpdatetimestamp(): \DateTime
+    public function getUpdateTimestamp(): \DateTime
     {
-        return $this->updatetimestamp;
+        return $this->updateTimestamp;
     }
 
     /**
-     * @param \DateTime $updatetimestamp
+     * @param \DateTime $updateTimestamp
      */
-    public function setUpdatetimestamp(\DateTime $updatetimestamp): void
+    public function setUpdateTimestamp(\DateTime $updateTimestamp): void
     {
-        $this->updatetimestamp = $updatetimestamp;
+        $this->updateTimestamp = $updateTimestamp;
     }
 }
