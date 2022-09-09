@@ -26,7 +26,7 @@ class AAKResource
      *
      * @ORM\Column(name="ResourceMail", type="string", length=128, nullable=false)
      */
-    private string $resourceEmail;
+    private string $resourceMail;
 
     /**
      * @var string
@@ -187,17 +187,17 @@ class AAKResource
     /**
      * @return string
      */
-    public function getResourceEmail(): string
+    public function getResourceMail(): string
     {
-        return $this->resourceEmail;
+        return $this->resourceMail;
     }
 
     /**
-     * @param string $resourceEmail
+     * @param string $resourceMail
      */
-    public function setResourceEmail(string $resourceEmail): void
+    public function setResourceMail(string $resourceMail): void
     {
-        $this->resourceEmail = $resourceEmail;
+        $this->resourceMail = $resourceMail;
     }
 
     /**

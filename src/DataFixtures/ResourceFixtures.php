@@ -67,7 +67,7 @@ class ResourceFixtures extends Fixture
 
         foreach ($resources as $resource) {
             $res = new AAKResource();
-            $res->setResourceEmail($resource['resourceEmail']);
+            $res->setResourceMail($resource['resourceEmail']);
             $res->setResourceName($resource['resourceName']);
             $res->setResourceDescription($resource['resourceDescription']);
             $res->setResourceEmailText($resource['resourceEmailText']);
