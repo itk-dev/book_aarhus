@@ -51,7 +51,7 @@ services:
     resource.search_filter:
         # https://api-platform.com/docs/core/filters/#search-filter
         parent: 'api_platform.doctrine.orm.search_filter'
-        arguments: [ { location: 'exact', resourceName: 'partial', resourceEmail: 'exact' } ]
+        arguments: [ { location: 'exact', resourceName: 'partial', resourceMail: 'exact' } ]
         tags:  [ 'api_platform.filter' ]
         autowire: false
         autoconfigure: false
