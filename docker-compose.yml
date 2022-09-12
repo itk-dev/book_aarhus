@@ -34,7 +34,7 @@ services:
       ACCEPT_EULA: Y
 
   phpfpm:
-    build: ./.docker/development/phpfpm
+    build: itkdev/php8.1-fpm:latest
     networks:
       - app
       - frontend

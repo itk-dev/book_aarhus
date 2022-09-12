@@ -10,7 +10,7 @@ networks:
 
 services:
   phpfpm:
-    build: .docker/server/phpfpm
+    build: itkdev/php8.1-fpm:alpine
     restart: unless-stopped
     networks:
       - app
