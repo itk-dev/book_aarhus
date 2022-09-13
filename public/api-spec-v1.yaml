@@ -461,6 +461,30 @@ paths:
           explode: false
           allowReserved: false
         -
+          name: permissionBusinessPartner
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: boolean
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: permissionCitizen
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: boolean
+          style: form
+          explode: false
+          allowReserved: false
+        -
           name: 'capacity[between]'
           in: query
           description: ''
