@@ -23,6 +23,9 @@ class ResourceFixtures extends Fixture
                 'catering' => false,
                 'acceptanceFlow' => true,
                 'capacity' => 10,
+                'permissionBusinessPartner' => true,
+                'permissionCitizen' => true,
+                'permissionEmployee' => true,
             ],
             [
                 'resourceEmail' => 'dokk1-lokale-test2@aarhus.dk',
@@ -36,6 +39,10 @@ class ResourceFixtures extends Fixture
                 'catering' => false,
                 'acceptanceFlow' => true,
                 'capacity' => 10,
+                'permissionBusinessPartner' => true,
+                'permissionCitizen' => false,
+                'permissionEmployee' => true,
+                'hasWhitelist' => true,
             ],
             [
                 'resourceEmail' => 'MSO-rolator-test1@aarhus.dk',
@@ -49,6 +56,9 @@ class ResourceFixtures extends Fixture
                 'catering' => false,
                 'acceptanceFlow' => true,
                 'capacity' => 10,
+                'permissionBusinessPartner' => false,
+                'permissionCitizen' => true,
+                'permissionEmployee' => true,
             ],
             [
                 'resourceEmail' => 'MSO-bil-test1@aarhus.dk',
@@ -62,6 +72,9 @@ class ResourceFixtures extends Fixture
                 'catering' => false,
                 'acceptanceFlow' => true,
                 'capacity' => 5,
+                'permissionBusinessPartner' => true,
+                'permissionCitizen' => true,
+                'permissionEmployee' => true,
             ],
         ];
 
@@ -79,6 +92,10 @@ class ResourceFixtures extends Fixture
             $res->setCatering($resource['catering']);
             $res->setAcceptanceFlow($resource['acceptanceFlow']);
             $res->setCapacity($resource['capacity']);
+            $res->setPermissionBusinessPartner($resource['permissionBusinessPartner']);
+            $res->setPermissionCitizen($resource['permissionCitizen']);
+            $res->setPermissionEmployee($resource['permissionEmployee']);
+            $res->setHasWhitelist($resource['hasWhitelist'] ?? false);
             $manager->persist($res);
         }
 

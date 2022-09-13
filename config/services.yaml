@@ -60,7 +60,7 @@ services:
     resource.boolean_filter:
         # https://api-platform.com/docs/core/filters/#boolean-filter
         parent: 'api_platform.doctrine.orm.boolean_filter'
-        arguments: [ { wheelchairAccessible: ~, videoConferenceEquipment: ~, monitorEquipment: ~, acceptanceFlow: ~, catering: ~ } ]
+        arguments: [ { wheelchairAccessible: ~, videoConferenceEquipment: ~, monitorEquipment: ~, acceptanceFlow: ~, catering: ~, permissionBusinessPartner: ~, permissionCitizen: ~ } ]
         tags:  [ 'api_platform.filter' ]
         autowire: false
         autoconfigure: false
