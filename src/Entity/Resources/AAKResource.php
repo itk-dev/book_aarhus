@@ -2,7 +2,10 @@
 
 namespace App\Entity\Resources;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Extbooking.aakresources.
@@ -13,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 class AAKResource
 {
     /**
-     * @var int
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -22,151 +25,171 @@ class AAKResource
     private int $id;
 
     /**
-     * @var string
+     * @Groups({"resource"})
+     *
+     * @ORM\OneToMany(targetEntity="OpenHours", mappedBy="resource")
+     */
+    private Collection $openHours;
+
+    /**
+     * @Groups({"resource"})
+     *
+     * @ORM\OneToMany(targetEntity="HolidayOpenHours", mappedBy="resource")
+     */
+    private Collection $holidayOpenHours;
+
+    /**
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="ResourceMail", type="string", length=128, nullable=false)
      */
     private string $resourceMail;
 
     /**
-     * @var string
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="ResourceName", type="string", length=128, nullable=false)
      */
     private string $resourceName;
 
     /**
-     * @var string|null
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="ResourceImage", type="text", length=-1, nullable=true)
      */
     private ?string $resourceImage;
 
     /**
-     * @var string|null
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="ResourceEmailText", type="text", length=-1, nullable=true)
      */
     private ?string $resourceEmailText;
 
     /**
-     * @var string
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="Location", type="string", length=128, nullable=false)
      */
     private string $location;
 
     /**
-     * @var string|null
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="GeoCordinates", type="string", length=128, nullable=true)
      */
     private ?string $geoCoordinates;
 
     /**
-     * @var int|null
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="Capacity", type="bigint", nullable=true)
      */
     private ?int $capacity;
 
     /**
-     * @var string|null
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="ResourceDescription", type="text", length=-1, nullable=true)
      */
     private ?string $resourceDescription;
 
     /**
-     * @var bool
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="WheelChairAccessible", type="boolean", nullable=false)
      */
     private bool $wheelchairAccessible;
 
     /**
-     * @var bool
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="VideoConferenceEquipment", type="boolean", nullable=false)
      */
     private bool $videoConferenceEquipment;
 
     /**
-     * @var bool
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="MonitorEquipment", type="boolean", nullable=false)
      */
     private bool $monitorEquipment;
 
     /**
-     * @var bool
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="AcceptanceFlow", type="boolean", nullable=false)
      */
     private bool $acceptanceFlow;
 
     /**
-     * @var bool
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="Catering", type="boolean", nullable=false)
      */
     private bool $catering;
 
     /**
-     * @var string|null
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="FormID", type="text", length=-1, nullable=true)
      */
     private ?string $formId;
 
     /**
-     * @var bool|null
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="HasHolidayOpen", type="boolean", nullable=true)
      */
     private ?bool $hasHolidayOpen;
 
     /**
-     * @var bool|null
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="HasOpen", type="boolean", nullable=true)
      */
     private ?bool $hasOpen;
 
     /**
-     * @var bool|null
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="HasWhiteList", type="boolean", nullable=true)
      */
     private ?bool $hasWhitelist;
 
     /**
-     * @var bool|null
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="PermissionEmployee", type="boolean", nullable=true)
      */
     private ?bool $permissionEmployee;
 
     /**
-     * @var bool|null
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="PermissionCitizen", type="boolean", nullable=true)
      */
     private ?bool $permissionCitizen;
 
     /**
-     * @var bool|null
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="PermissionBusinessPartner", type="boolean", nullable=true)
      */
     private ?bool $permissionBusinessPartner;
 
     /**
-     * @var \DateTime
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
     private \DateTime $updateTimestamp;
+
+    public function __construct()
+    {
+        $this->openHours = new ArrayCollection();
+        $this->holidayOpenHours = new ArrayCollection();
+    }
 
     /**
      * @return int
@@ -174,6 +197,38 @@ class AAKResource
     public function getId(): int
     {
         return $this->id;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getOpenHours(): Collection
+    {
+        return $this->openHours;
+    }
+
+    /**
+     * @param Collection $openHours
+     */
+    public function setOpenHours(Collection $openHours): void
+    {
+        $this->openHours = $openHours;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getHolidayOpenHours(): Collection
+    {
+        return $this->holidayOpenHours;
+    }
+
+    /**
+     * @param Collection $holidayOpenHours
+     */
+    public function setHolidayOpenHours(Collection $holidayOpenHours): void
+    {
+        $this->holidayOpenHours = $holidayOpenHours;
     }
 
     /**

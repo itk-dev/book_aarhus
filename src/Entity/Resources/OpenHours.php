@@ -3,6 +3,7 @@
 namespace App\Entity\Resources;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Extbooking.openhours.
@@ -13,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 class OpenHours
 {
     /**
-     * @var int
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -22,35 +23,36 @@ class OpenHours
     private int $id;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(name="resourceID", type="integer", nullable=false)
+     * @ORM\ManyToOne(targetEntity="AAKResource", inversedBy="openHours")
+     * @ORM\JoinColumn(name="resourceID", referencedColumnName="ID")
      */
-    private int $resourceId;
+    private AAKResource $resource;
 
     /**
-     * @var int
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="weekday", type="integer", nullable=false)
      */
     private int $weekday;
 
     /**
-     * @var \DateTime
+     * @Groups({"resource"})
      *
-     * @ORM\Column(name="open", type="time", nullable=false)
+     * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/basic-mapping.html#quoting-reserved-words
+     * @ORM\Column(name="`open`", type="time", length=0)
      */
     private \DateTime $open;
 
     /**
-     * @var \DateTime
+     * @Groups({"resource"})
      *
-     * @ORM\Column(name="close", type="time", nullable=false)
+     * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/basic-mapping.html#quoting-reserved-words
+     * @ORM\Column(name="`close`", type="time", length=0)
      */
     private \DateTime $close;
 
     /**
-     * @var \DateTime
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
@@ -70,22 +72,6 @@ class OpenHours
     public function setId(int $id): void
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return int
-     */
-    public function getResourceId(): int
-    {
-        return $this->resourceId;
-    }
-
-    /**
-     * @param int $resourceId
-     */
-    public function setResourceId(int $resourceId): void
-    {
-        $this->resourceId = $resourceId;
     }
 
     /**
@@ -150,5 +136,21 @@ class OpenHours
     public function setUpdateTimestamp(\DateTime $updateTimestamp): void
     {
         $this->updateTimestamp = $updateTimestamp;
+    }
+
+    /**
+     * @return AAKResource
+     */
+    public function getResource(): AAKResource
+    {
+        return $this->resource;
+    }
+
+    /**
+     * @param AAKResource $resource
+     */
+    public function setResource(AAKResource $resource): void
+    {
+        $this->resource = $resource;
     }
 }

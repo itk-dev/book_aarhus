@@ -419,7 +419,7 @@
                                         "hydra:member": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/Resource.jsonld"
+                                                "$ref": "#/components/schemas/Resource.jsonld-resource"
                                             }
                                         },
                                         "hydra:totalItems": {
@@ -499,7 +499,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/Resource"
+                                        "$ref": "#/components/schemas/Resource-resource"
                                     }
                                 }
                             },
@@ -507,7 +507,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/Resource"
+                                        "$ref": "#/components/schemas/Resource-resource"
                                     }
                                 }
                             }
@@ -793,17 +793,17 @@
                         "content": {
                             "application/ld+json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Resource.jsonld"
+                                    "$ref": "#/components/schemas/Resource.jsonld-resource"
                                 }
                             },
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Resource"
+                                    "$ref": "#/components/schemas/Resource-resource"
                                 }
                             },
                             "text/html": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Resource"
+                                    "$ref": "#/components/schemas/Resource-resource"
                                 }
                             }
                         }
@@ -1320,6 +1320,75 @@
                     }
                 }
             },
+            "HolidayOpenHours-resource": {
+                "type": "object",
+                "properties": {
+                    "holidayOpen": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "holidayClose": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updateTimestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "HolidayOpenHours.jsonld-resource": {
+                "type": "object",
+                "properties": {
+                    "@context": {
+                        "readOnly": true,
+                        "oneOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "@vocab": {
+                                        "type": "string"
+                                    },
+                                    "hydra": {
+                                        "type": "string",
+                                        "enum": [
+                                            "http://www.w3.org/ns/hydra/core#"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "@vocab",
+                                    "hydra"
+                                ],
+                                "additionalProperties": true
+                            }
+                        ]
+                    },
+                    "@id": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "@type": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "holidayOpen": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "holidayClose": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updateTimestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
             "Location": {
                 "type": "object",
                 "properties": {
@@ -1344,13 +1413,108 @@
                     }
                 }
             },
-            "Resource": {
+            "OpenHours-resource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
+                    },
+                    "weekday": {
+                        "type": "integer"
+                    },
+                    "open": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "close": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updateTimestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "OpenHours.jsonld-resource": {
+                "type": "object",
+                "properties": {
+                    "@context": {
+                        "readOnly": true,
+                        "oneOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "@vocab": {
+                                        "type": "string"
+                                    },
+                                    "hydra": {
+                                        "type": "string",
+                                        "enum": [
+                                            "http://www.w3.org/ns/hydra/core#"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "@vocab",
+                                    "hydra"
+                                ],
+                                "additionalProperties": true
+                            }
+                        ]
+                    },
+                    "@id": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "@type": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
+                    },
+                    "weekday": {
+                        "type": "integer"
+                    },
+                    "open": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "close": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updateTimestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "Resource-resource": {
                 "type": "object",
                 "description": "Extbooking.aakresources.",
                 "properties": {
                     "id": {
                         "readOnly": true,
                         "type": "integer"
+                    },
+                    "openHours": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OpenHours-resource"
+                        }
+                    },
+                    "holidayOpenHours": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HolidayOpenHours-resource"
+                        }
                     },
                     "resourceMail": {
                         "type": "string"
@@ -1430,7 +1594,7 @@
                     }
                 }
             },
-            "Resource.jsonld": {
+            "Resource.jsonld-resource": {
                 "type": "object",
                 "description": "Extbooking.aakresources.",
                 "properties": {
@@ -1472,6 +1636,18 @@
                     "id": {
                         "readOnly": true,
                         "type": "integer"
+                    },
+                    "openHours": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OpenHours.jsonld-resource"
+                        }
+                    },
+                    "holidayOpenHours": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HolidayOpenHours.jsonld-resource"
+                        }
                     },
                     "resourceMail": {
                         "type": "string"

@@ -1,6 +1,9 @@
 ---
 resources:
   App\Entity\Resources\AAKResource:
+    attributes:
+      normalization_context:
+        groups: ['resource']
     shortName: 'Resource'
     itemOperations:
       get:
