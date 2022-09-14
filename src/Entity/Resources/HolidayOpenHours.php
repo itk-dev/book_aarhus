@@ -3,6 +3,7 @@
 namespace App\Entity\Resources;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Extbooking.holidayopenhours.
@@ -13,8 +14,6 @@ use Doctrine\ORM\Mapping as ORM;
 class HolidayOpenHours
 {
     /**
-     * @var int
-     *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -22,28 +21,27 @@ class HolidayOpenHours
     private int $id;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(name="resourceID", type="integer", nullable=false)
+     * @ORM\ManyToOne(targetEntity="AAKResource", inversedBy="holidayOpenHours")
+     * @ORM\JoinColumn(name="resourceID", referencedColumnName="ID")
      */
-    private int $resourceId;
+    private AAKResource $resource;
 
     /**
-     * @var \DateTime
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="holidayopen", type="time", nullable=false)
      */
     private \DateTime $holidayOpen;
 
     /**
-     * @var \DateTime
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="holidayclose", type="time", nullable=false)
      */
     private \DateTime $holidayClose;
 
     /**
-     * @var \DateTime
+     * @Groups({"resource"})
      *
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */

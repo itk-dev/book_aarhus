@@ -304,7 +304,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Resource.jsonld' } }
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Resource.jsonld-resource' } }
                   'hydra:totalItems': { type: integer, minimum: 0 }
                   'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
                   'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
@@ -314,12 +314,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Resource'
+                  $ref: '#/components/schemas/Resource-resource'
             text/html:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Resource'
+                  $ref: '#/components/schemas/Resource-resource'
       summary: 'Retrieves the collection of Resource resources.'
       description: 'Retrieves the collection of Resource resources.'
       parameters:
@@ -557,13 +557,13 @@ paths:
           content:
             application/ld+json:
               schema:
-                $ref: '#/components/schemas/Resource.jsonld'
+                $ref: '#/components/schemas/Resource.jsonld-resource'
             application/json:
               schema:
-                $ref: '#/components/schemas/Resource'
+                $ref: '#/components/schemas/Resource-resource'
             text/html:
               schema:
-                $ref: '#/components/schemas/Resource'
+                $ref: '#/components/schemas/Resource-resource'
         404:
           description: 'Resource not found'
       summary: 'Retrieves a Resource resource.'
@@ -922,6 +922,53 @@ components:
           type: string
           format: date-time
           nullable: true
+    HolidayOpenHours-resource:
+      type: object
+      properties:
+        holidayOpen:
+          type: string
+          format: date-time
+        holidayClose:
+          type: string
+          format: date-time
+        updateTimestamp:
+          type: string
+          format: date-time
+    HolidayOpenHours.jsonld-resource:
+      type: object
+      properties:
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        holidayOpen:
+          type: string
+          format: date-time
+        holidayClose:
+          type: string
+          format: date-time
+        updateTimestamp:
+          type: string
+          format: date-time
     Location:
       type: object
       properties:
@@ -938,13 +985,78 @@ components:
           type: string
         name:
           type: string
-    Resource:
+    OpenHours-resource:
+      type: object
+      properties:
+        id:
+          readOnly: true
+          type: integer
+        weekday:
+          type: integer
+        open:
+          type: string
+          format: date-time
+        close:
+          type: string
+          format: date-time
+        updateTimestamp:
+          type: string
+          format: date-time
+    OpenHours.jsonld-resource:
+      type: object
+      properties:
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        id:
+          readOnly: true
+          type: integer
+        weekday:
+          type: integer
+        open:
+          type: string
+          format: date-time
+        close:
+          type: string
+          format: date-time
+        updateTimestamp:
+          type: string
+          format: date-time
+    Resource-resource:
       type: object
       description: Extbooking.aakresources.
       properties:
         id:
           readOnly: true
           type: integer
+        openHours:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpenHours-resource'
+        holidayOpenHours:
+          type: array
+          items:
+            $ref: '#/components/schemas/HolidayOpenHours-resource'
         resourceMail:
           type: string
         resourceName:
@@ -1000,7 +1112,7 @@ components:
         updateTimestamp:
           type: string
           format: date-time
-    Resource.jsonld:
+    Resource.jsonld-resource:
       type: object
       description: Extbooking.aakresources.
       properties:
@@ -1030,6 +1142,14 @@ components:
         id:
           readOnly: true
           type: integer
+        openHours:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpenHours.jsonld-resource'
+        holidayOpenHours:
+          type: array
+          items:
+            $ref: '#/components/schemas/HolidayOpenHours.jsonld-resource'
         resourceMail:
           type: string
         resourceName:
