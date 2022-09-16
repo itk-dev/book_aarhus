@@ -54,24 +54,24 @@ class WebformService implements WebformServiceInterface
                         throw new Exception("Webform ($key) subject not set");
                     }
 
-                    if (!isset($data['resourceEmail'])) {
-                        throw new Exception("Webform ($key) resourceEmail not set");
+                    if (!isset($data['resourceId'])) {
+                        throw new Exception("Webform ($key) resourceId not set");
                     }
 
-                    if (!isset($data['startTime'])) {
-                        throw new Exception("Webform ($key) startTime not set");
+                    if (!isset($data['start'])) {
+                        throw new Exception("Webform ($key) start not set");
                     }
 
-                    if (!isset($data['endTime'])) {
-                        throw new Exception("Webform ($key) endTime not set");
+                    if (!isset($data['end'])) {
+                        throw new Exception("Webform ($key) end not set");
                     }
 
-                    if (!isset($data['authorName'])) {
-                        throw new Exception("Webform ($key) authorName not set");
+                    if (!isset($data['name'])) {
+                        throw new Exception("Webform ($key) name not set");
                     }
 
-                    if (!isset($data['authorEmail'])) {
-                        throw new Exception("Webform ($key) authorEmail not set");
+                    if (!isset($data['email'])) {
+                        throw new Exception("Webform ($key) email not set");
                     }
 
                     if (!isset($data['userId'])) {

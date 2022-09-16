@@ -74,13 +74,13 @@ class BookingTest extends AbstractBaseApiTestCase
             'data' => [
                 'booking1' => json_encode([
                     'subject' => 'test1',
-                    'resourceEmail' => 'test@bookaarhus.local.itkdev.dk',
-                    'startTime' => '2022-08-18T10:00:00.000Z',
-                    'endTime' => '2022-08-18T10:30:00.000Z',
+                    'resourceId' => 'test@bookaarhus.local.itkdev.dk',
+                    'start' => '2022-08-18T10:00:00.000Z',
+                    'end' => '2022-08-18T10:30:00.000Z',
                     'userId' => 'test4',
                     'formElement' => 'booking_element',
-                    'authorName' => 'auther1',
-                    'authorEmail' => 'author1@bookaarhus.local.itkdev.dk',
+                    'name' => 'auther1',
+                    'email' => 'author1@bookaarhus.local.itkdev.dk',
                 ]),
             ],
         ]);
@@ -137,7 +137,31 @@ class BookingTest extends AbstractBaseApiTestCase
         $booking->setStartTime(new \DateTime());
         $booking->setEndTime(new \DateTime());
 
-        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger);
+        $res = new AAKResource();
+        $res->setResourceMail('test@bookaarhus.local.itkdev.dk');
+        $res->setResourceName('test');
+        $res->setResourceDescription('desc');
+        $res->setResourceEmailText('emailtext');
+        $res->setLocation('LOCATION1');
+        $res->setWheelchairAccessible(true);
+        $res->setVideoConferenceEquipment(false);
+        $res->setUpdateTimestamp(new \DateTime());
+        $res->setMonitorEquipment(false);
+        $res->setCatering(false);
+        $res->setAcceptanceFlow(false);
+        $res->setCapacity(10);
+        $res->setPermissionBusinessPartner(true);
+        $res->setPermissionCitizen(true);
+        $res->setPermissionEmployee(true);
+        $res->setHasWhitelist(false);
+
+        $aakResourceRepositoryMock = $this->getMockBuilder(AAKResourceRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['findOneByEmail'])
+            ->getMock();
+        $aakResourceRepositoryMock->expects($this->exactly(1))->method('findOneByEmail')->willReturn($res);
+
+        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock);
         $createBookingHandler->__invoke(new CreateBookingMessage($booking));
     }
 
