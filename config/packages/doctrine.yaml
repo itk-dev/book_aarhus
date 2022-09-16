@@ -1,6 +1,9 @@
 doctrine:
     dbal:
         default_connection: default
+        types:
+            # https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/known-vendor-issues.html#microsoft-sql-server
+            time: 'Doctrine\DBAL\Types\VarDateTimeType'
         connections:
             default:
                 url: '%env(resolve:DATABASE_URL)%'
