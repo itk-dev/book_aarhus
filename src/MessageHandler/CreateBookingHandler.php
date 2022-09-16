@@ -27,7 +27,7 @@ class CreateBookingHandler
         $booking = $message->getBooking();
 
         /** @var AAKResource $resource */
-        $email = $booking->getResourceName();
+        $email = $booking->getResourceEmail();
         $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
 
         if (null == $resource) {
