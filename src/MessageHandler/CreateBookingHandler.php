@@ -28,7 +28,7 @@ class CreateBookingHandler
 
         /** @var AAKResource $resource */
         $email = $booking->getResourceEmail();
-        $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
+        $resource = $this->aakResourceRepository->findOneByEmail($email);
 
         if (null == $resource) {
             throw new UnrecoverableMessageHandlingException("Resource $email not found.", 404);

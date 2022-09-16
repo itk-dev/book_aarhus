@@ -30,6 +30,11 @@ class AAKResourceRepository extends ServiceEntityRepository
         }
     }
 
+    public function findOneByEmail(string $email): ?AAKResource
+    {
+        return $this->findOneBy(['resourceMail' => $email]);
+    }
+
     public function findAllLocations(): array
     {
         return $this->createQueryBuilder('res')
