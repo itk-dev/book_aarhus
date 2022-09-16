@@ -64,8 +64,8 @@ class WebformSubmitHandler
         foreach ($dataSubmissions as $data) {
             $body = [];
 
-            $filterKeys = $submissionKeys + ['subject', 'resourceEmail', 'startTime', 'endTime', 'userId'];
-            $email = $this->validationUtils->validateEmail($data['resourceEmail']);
+            $filterKeys = $submissionKeys + ['subject', 'resourceId', 'start', 'end', 'userId'];
+            $email = $this->validationUtils->validateEmail($data['resourceId']);
 
             /** @var AAKResource $resource */
             $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
@@ -93,8 +93,8 @@ class WebformSubmitHandler
                 $booking->setSubject($data['subject'] ?? '');
                 $booking->setResourceEmail($email);
                 $booking->setResourceName($resource->getResourceName());
-                $booking->setStartTime($this->validationUtils->validateDate($data['startTime']));
-                $booking->setEndTime($this->validationUtils->validateDate($data['endTime']));
+                $booking->setStartTime($this->validationUtils->validateDate($data['start']));
+                $booking->setEndTime($this->validationUtils->validateDate($data['end']));
 
                 $this->logger->info('Registering CreateBookingMessage job');
 
