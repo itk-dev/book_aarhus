@@ -43,7 +43,7 @@ class AAKResourceRepository extends ServiceEntityRepository
 
         $qb->select('res.location')
             ->where($qb->expr()->isNotNull('res.location'))
-            ->where($qb->expr()->neq('res.location', "''"))
+            ->andWhere($qb->expr()->neq('res.location', "''"))
             ->andWhere($qb->expr()->neq('res.hasWhitelist', true))
             ->andWhere($qb->expr()->orX(
                 $qb->expr()->eq('res.permissionCitizen', true),
