@@ -24,7 +24,7 @@ final class LocationCollectionDataProvider implements ContextAwareCollectionData
 
         foreach ($locationNames as $entry) {
             $location = new Location();
-            $location->setName($entry['location']);
+            $location->name = $entry['location'];
 
             yield $location;
         }

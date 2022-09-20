@@ -42,7 +42,9 @@ class AAKResourceRepository extends ServiceEntityRepository
         // TODO: Allow locations if whitelistKey is set and set for resource.
 
         $qb->select('res.location')
-            ->where($qb->expr()->neq('res.hasWhitelist', true))
+            ->where($qb->expr()->isNotNull('res.location'))
+            ->andWhere($qb->expr()->neq('res.location', "''"))
+            ->andWhere($qb->expr()->neq('res.hasWhitelist', true))
             ->andWhere($qb->expr()->orX(
                 $qb->expr()->eq('res.permissionCitizen', true),
                 $qb->expr()->eq('res.permissionBusinessPartner', true),
