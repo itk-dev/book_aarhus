@@ -20,7 +20,9 @@ final class LocationCollectionDataProvider implements ContextAwareCollectionData
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
-        $locationNames = $this->AAKResourceRepository->findAllLocations();
+        $whitelistKey = $context['filters']['whitelistKey'] ?? null;
+
+        $locationNames = $this->AAKResourceRepository->findAllLocations($whitelistKey);
 
         foreach ($locationNames as $entry) {
             $location = new Location();

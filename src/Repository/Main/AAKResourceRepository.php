@@ -3,6 +3,7 @@
 namespace App\Repository\Main;
 
 use App\Entity\Resources\AAKResource;
+use App\Repository\Resources\CvrWhitelistRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,7 +17,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class AAKResourceRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private CvrWhitelistRepository $cvrWhitelistRepository)
     {
         parent::__construct($registry, AAKResource::class);
     }
@@ -35,21 +36,33 @@ class AAKResourceRepository extends ServiceEntityRepository
         return $this->findOneBy(['resourceMail' => $email]);
     }
 
-    public function findAllLocations(): array
+    public function findAllLocations(string $whitelistKey = null): array
     {
         $qb = $this->createQueryBuilder('res');
-
-        // TODO: Allow locations if whitelistKey is set and set for resource.
 
         $qb->select('res.location')
             ->where($qb->expr()->isNotNull('res.location'))
             ->andWhere($qb->expr()->neq('res.location', "''"))
-            ->andWhere($qb->expr()->neq('res.hasWhitelist', true))
             ->andWhere($qb->expr()->orX(
                 $qb->expr()->eq('res.permissionCitizen', true),
                 $qb->expr()->eq('res.permissionBusinessPartner', true),
-            ))
-            ->groupBy('res.location');
+            ));
+
+        if (null == $whitelistKey) {
+            $qb->andWhere($qb->expr()->neq('res.hasWhitelist', true));
+        } else {
+            $subQueryBuilder = $this->cvrWhitelistRepository->createQueryBuilder('w');
+            $subQuery = $subQueryBuilder->where('w.cvr = :whitelist')->andWhere('w.resourceId = res.id');
+
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->neq('res.hasWhitelist', true),
+                    $qb->expr()->exists($subQuery),
+                )
+            )->setParameter('whitelist', $whitelistKey);
+        }
+
+        $qb->groupBy('res.location');
 
         return $qb->getQuery()->getArrayResult();
     }

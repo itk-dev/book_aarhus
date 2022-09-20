@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Resources\AAKResource;
+use App\Entity\Resources\CvrWhitelist;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -115,6 +116,14 @@ class ResourceFixtures extends Fixture
             $res->setHasWhitelist($resource['hasWhitelist'] ?? false);
             $manager->persist($res);
         }
+
+        $manager->flush();
+
+        $whitelistEntity = new CvrWhitelist();
+        $whitelistEntity->setCvr('1234567890');
+        $whitelistEntity->setResourceId($res->getId());
+        $whitelistEntity->setUpdateTimestamp(new \DateTime());
+        $manager->persist($whitelistEntity);
 
         $manager->flush();
     }
