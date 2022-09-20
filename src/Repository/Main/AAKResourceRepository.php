@@ -37,9 +37,18 @@ class AAKResourceRepository extends ServiceEntityRepository
 
     public function findAllLocations(): array
     {
-        return $this->createQueryBuilder('res')
-            ->select('res.location')
-            ->groupBy('res.location')
-            ->getQuery()->getArrayResult();
+        $qb = $this->createQueryBuilder('res');
+
+        // TODO: Allow locations if whitelistKey is set and set for resource.
+
+        $qb->select('res.location')
+            ->where($qb->expr()->neq('res.hasWhitelist', true))
+            ->andWhere($qb->expr()->orX(
+                $qb->expr()->eq('res.permissionCitizen', true),
+                $qb->expr()->eq('res.permissionBusinessPartner', true),
+            ))
+            ->groupBy('res.location');
+
+        return $qb->getQuery()->getArrayResult();
     }
 }

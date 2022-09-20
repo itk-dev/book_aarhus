@@ -46,12 +46,12 @@ final class AAKResourceExtension implements QueryCollectionExtensionInterface, Q
 
             $queryBuilder->andWhere(
                 $queryBuilder->expr()->orX(
-                    $queryBuilder->expr()->eq(sprintf('%s.hasWhitelist', $rootAlias), 0),
+                    $queryBuilder->expr()->neq(sprintf('%s.hasWhitelist', $rootAlias), true),
                     $queryBuilder->expr()->exists($subQuery),
                 )
             )->setParameter('whitelist', $whitelistKey);
         } else {
-            $queryBuilder->andWhere($queryBuilder->expr()->eq(sprintf('%s.hasWhitelist', $rootAlias), 0));
+            $queryBuilder->andWhere($queryBuilder->expr()->neq(sprintf('%s.hasWhitelist', $rootAlias), true));
         }
     }
 }
