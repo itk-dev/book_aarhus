@@ -94,6 +94,23 @@ class ResourceFixtures extends Fixture
                 'permissionCitizen' => false,
                 'permissionEmployee' => false,
             ],
+            [
+                'resourceEmail' => 'without_location@bookaarhus.local.itkdev',
+                'resourceName' => 'without_location',
+                'resourceDescription' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                'resourceEmailText' => '',
+                'location' => '',
+                'videoConferenceEquipment' => false,
+                'wheelChairAccessible' => false,
+                'monitorEquipment' => false,
+                'catering' => false,
+                'acceptanceFlow' => true,
+                'capacity' => 5,
+                'hasWhitelist' => false,
+                'permissionBusinessPartner' => true,
+                'permissionCitizen' => true,
+                'permissionEmployee' => true,
+            ],
         ];
 
         foreach ($resources as $resource) {
