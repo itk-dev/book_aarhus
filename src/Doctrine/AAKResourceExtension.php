@@ -19,12 +19,27 @@ final class AAKResourceExtension implements QueryCollectionExtensionInterface, Q
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
+        $this->applyResourceRequireLocation($queryBuilder, $resourceClass);
         $this->applyWhitelistPermission($queryBuilder, $resourceClass);
     }
 
     public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = [])
     {
+        $this->applyResourceRequireLocation($queryBuilder, $resourceClass);
         $this->applyWhitelistPermission($queryBuilder, $resourceClass);
+    }
+
+    private function applyResourceRequireLocation(QueryBuilder $queryBuilder, string $resourceClass): void
+    {
+        if (AAKResource::class !== $resourceClass || null === $this->security->getUser()) {
+            return;
+        }
+
+        $rootAlias = $queryBuilder->getRootAliases()[0];
+
+        $queryBuilder
+            ->andWhere($queryBuilder->expr()->isNotNull(sprintf('%s.location', $rootAlias)))
+            ->andWhere($queryBuilder->expr()->neq(sprintf('%s.location', $rootAlias), "''"));
     }
 
     private function applyWhitelistPermission(QueryBuilder $queryBuilder, string $resourceClass): void
@@ -46,12 +61,12 @@ final class AAKResourceExtension implements QueryCollectionExtensionInterface, Q
 
             $queryBuilder->andWhere(
                 $queryBuilder->expr()->orX(
-                    $queryBuilder->expr()->eq(sprintf('%s.hasWhitelist', $rootAlias), 0),
+                    $queryBuilder->expr()->neq(sprintf('%s.hasWhitelist', $rootAlias), true),
                     $queryBuilder->expr()->exists($subQuery),
                 )
             )->setParameter('whitelist', $whitelistKey);
         } else {
-            $queryBuilder->andWhere($queryBuilder->expr()->eq(sprintf('%s.hasWhitelist', $rootAlias), 0));
+            $queryBuilder->andWhere($queryBuilder->expr()->neq(sprintf('%s.hasWhitelist', $rootAlias), true));
         }
     }
 }

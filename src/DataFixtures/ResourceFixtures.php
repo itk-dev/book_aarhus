@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Resources\AAKResource;
+use App\Entity\Resources\CvrWhitelist;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -76,6 +77,40 @@ class ResourceFixtures extends Fixture
                 'permissionCitizen' => true,
                 'permissionEmployee' => true,
             ],
+            [
+                'resourceEmail' => 'whitelist@bookaarhus.local.itkdev',
+                'resourceName' => 'whitelist',
+                'resourceDescription' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                'resourceEmailText' => '',
+                'location' => 'LOCATION_WHITELIST',
+                'videoConferenceEquipment' => false,
+                'wheelChairAccessible' => false,
+                'monitorEquipment' => false,
+                'catering' => false,
+                'acceptanceFlow' => true,
+                'capacity' => 5,
+                'hasWhitelist' => true,
+                'permissionBusinessPartner' => true,
+                'permissionCitizen' => false,
+                'permissionEmployee' => false,
+            ],
+            [
+                'resourceEmail' => 'without_location@bookaarhus.local.itkdev',
+                'resourceName' => 'without_location',
+                'resourceDescription' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                'resourceEmailText' => '',
+                'location' => '',
+                'videoConferenceEquipment' => false,
+                'wheelChairAccessible' => false,
+                'monitorEquipment' => false,
+                'catering' => false,
+                'acceptanceFlow' => true,
+                'capacity' => 5,
+                'hasWhitelist' => false,
+                'permissionBusinessPartner' => true,
+                'permissionCitizen' => true,
+                'permissionEmployee' => true,
+            ],
         ];
 
         foreach ($resources as $resource) {
@@ -98,6 +133,14 @@ class ResourceFixtures extends Fixture
             $res->setHasWhitelist($resource['hasWhitelist'] ?? false);
             $manager->persist($res);
         }
+
+        $manager->flush();
+
+        $whitelistEntity = new CvrWhitelist();
+        $whitelistEntity->setCvr('1234567890');
+        $whitelistEntity->setResourceId($res->getId());
+        $whitelistEntity->setUpdateTimestamp(new \DateTime());
+        $manager->persist($whitelistEntity);
 
         $manager->flush();
     }
