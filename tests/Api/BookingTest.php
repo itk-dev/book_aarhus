@@ -12,6 +12,7 @@ use App\MessageHandler\WebformSubmitHandler;
 use App\Repository\Main\AAKResourceRepository;
 use App\Repository\Main\ApiKeyUserRepository;
 use App\Service\MicrosoftGraphService;
+use App\Service\BookingServiceInterface;
 use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
 use App\Utils\ValidationUtils;
@@ -91,6 +92,7 @@ class BookingTest extends AbstractBaseApiTestCase
         $bus = $container->get(MessageBusInterface::class);
         $validationUtils = $container->get(ValidationUtils::class);
         $logger = $container->get(LoggerInterface::class);
+        $bookingService = $container->get(BookingServiceInterface::class);
 
         $aakBookingRepository = $this->getMockBuilder(AAKResourceRepository::class)
             ->onlyMethods(['findOneBy'])
@@ -105,7 +107,7 @@ class BookingTest extends AbstractBaseApiTestCase
         /** @var ApiKeyUser $testUser */
         $testUser = $entityManager->getRepository(ApiKeyUser::class)->findOneBy(['name' => 'test']);
 
-        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $apiKeyUserRepository, $bus, $validationUtils, $logger, $aakBookingRepository);
+        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $apiKeyUserRepository, $bus, $validationUtils, $logger, $aakBookingRepository, $bookingService);
         $webformSubmitHandler->__invoke(new WebformSubmitMessage(
             'booking',
             '795f5a1c-a0ac-4f8a-8834-bb71fca8585d',
