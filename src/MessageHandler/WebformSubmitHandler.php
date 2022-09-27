@@ -10,13 +10,14 @@ use App\Message\WebformSubmitMessage;
 use App\Repository\Main\AAKResourceRepository;
 use App\Repository\Main\ApiKeyUserRepository;
 use App\Service\WebformServiceInterface;
+use App\Service\BookingServiceInterface;
 use App\Utils\ValidationUtils;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Twig\Environment;
+
 
 /**
  * @see https://github.com/itk-dev/os2forms_selvbetjening/blob/develop/web/modules/custom/os2forms_rest_api/README.md
@@ -31,7 +32,7 @@ class WebformSubmitHandler
         private ValidationUtils $validationUtils,
         private LoggerInterface $logger,
         private AAKResourceRepository $aakResourceRepository,
-        private Environment $twig,
+        private BookingServiceInterface $bookingService,
     ) {
     }
 
@@ -69,36 +70,17 @@ class WebformSubmitHandler
         $submissionKeys = array_keys($dataSubmissions);
 
         foreach ($dataSubmissions as $data) {
-            $body = [];
-
-            $filterKeys = $submissionKeys + ['subject', 'resourceId', 'start', 'end', 'userId'];
             $email = $this->validationUtils->validateEmail($data['resourceId']);
 
             /** @var AAKResource $resource */
             $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
 
-            if (null == $resource) {
-                throw new UnrecoverableMessageHandlingException("Resource $email not found.", 404);
-            }
-
-            // Add extra fields to body.
-            foreach ($data as $key => $datum) {
-                if (!in_array($key, $filterKeys)) {
-                    $body[$key] = $datum;
-                }
-            }
-
-            // Add userid to bottom of body.
-            $body['userId'] = $data['userId'];
-
-            // TODO: Render booking body html with twig.
-            $htmlContents = $this->twig->render('booking.html.twig', $body);
-
-            $bodyString = implode("\n", $body);
+            $body = $this->bookingService->composeBookingContents($submissionKeys, $data, $email, $resource);
+            $htmlContents = $this->bookingService->renderContentsAsHtml($body);
 
             try {
                 $booking = new Booking();
-                $booking->setBody($bodyString);
+                $booking->setBody($htmlContents);
                 $booking->setSubject($data['subject'] ?? '');
                 $booking->setResourceEmail($email);
                 $booking->setResourceName($resource->getResourceName());
@@ -114,4 +96,5 @@ class WebformSubmitHandler
             }
         }
     }
+
 }

@@ -1,13 +1,177 @@
-<div class="booking">
-    <div class="resource-name">Dokk1 lokale test 1</div>
-    <div class="resource-email">dokk1-lokale-test1@aarhus.dk</div>
-    <div class="subject">Min test booking</div>
-    <div class="start-time" data-format="ISO-8601">2013-05-05T16:34:42+00:00</div>
-    <div class="end-time" data-format="ISO-8601">2013-05-05T16:34:42+00:00</div>
-    <div class="user-id">[userid1234567890]</div>
-    <div class="booker-name">Test Testesen</div>
-    <div class="booker-email">test@testesen.dk</div>
-    <div class="extra-data">
-        <div class="example">Example</div>
-    </div>
-</div>
+{#
+
+#}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" initial-scale="1">
+    <!--[if !mso]>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <![endif]-->
+    <meta name="x-apple-disable-message-reformatting">
+    <title></title>
+    <!--[if mso]>
+    <style>
+        * { font-family: sans-serif !important; }
+    </style>
+    <![endif]-->
+    <!--[if !mso]><!-->
+    <!-- Insert font reference, e.g. <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet"> -->
+    <!--<![endif]-->
+    <style>
+        *,
+        *:after,
+        *:before {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        * {
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
+        html,
+        body,
+        .document {
+            width: 100% !important;
+            height: 100% !important;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        div[style*="margin: 16px 0"] {
+            margin: 0 !important;
+        }
+        table,
+        td {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin: 0 auto;
+        }
+        img {
+            -ms-interpolation-mode: bicubic;
+            max-width: 100%;
+            border: 0;
+        }
+        *[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: none !important;
+        }
+        .x-gmail-data-detectors,
+        .x-gmail-data-detectors *,
+        .aBn {
+            border-bottom: 0 !important;
+            cursor: default !important;
+        }
+        .btn {
+            -webkit-transition: all 200ms ease;
+            transition: all 200ms ease;
+        }
+        .btn:hover {
+            background-color: dodgerblue;
+        }
+        .hidden {
+            display: none;
+        }
+        .vertical-spacing {
+            height:40px;
+        }
+
+        @media screen and (max-width: 750px) {
+            .container {
+                width: 100%;
+                margin: auto;
+            }
+            .stack {
+                display: block;
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" class="document">
+    <tr>
+        <td valign="top">
+            <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="750" class="container">
+                <tr>
+                    <td>
+                        <table class="booking-fields" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="100%">
+                            <tr>
+                                <td>
+                                    <h2>Booking af {{ resource.getResourceName() }} - {{ resource.getLocation() }}</h2>
+                                    <div class="intro"></div>
+                                    <div class="hidden">{content}</div>
+                                    <div class="vertical-spacing"></div>
+                                    <table class="resource" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="left" width="100%">
+                                        <tr><td><h3>Resurse</h3></td></tr>
+                                        <tr class="resource-name">
+                                            <td>Resource navn:</td><td>{{ resource.getResourceName() }}</td>
+                                        </tr>
+                                        <tr class="resource-email">
+                                            <td>Resource email:</td><td>{{ resource.getResourceMail() }}</td>
+                                        </tr>
+                                    </table>
+                                    <div class="vertical-spacing"></div>
+                                    <table class="booking" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="left" width="100%">
+                                        <tr><td><h3>Booking</h3></td></tr>
+                                        <tr class="subject">
+                                            <td>Booking emne:</td><td>Min test booking</td>
+                                        </tr>
+                                        <tr class="start-time" data-format="ISO-8601">
+                                            <td>Booking starttidspunkt:</td><td>{{ submission.fromObj|date("d/m/Y - H:i") }}</td>
+                                        </tr>
+                                        <tr class="end-time" data-format="ISO-8601">
+                                            <td>Booking sluttidspunkt:</td><td>{{ submission.toObj|date("d/m/Y - H:i") }}</td>
+                                        </tr>
+                                        <tr class="example1">
+                                            <td>example1:</td><td>Example1</td>
+                                        </tr>
+                                        <tr class="example2">
+                                            <td>example2:</td><td>Example2</td>
+                                        </tr>
+                                    </table>
+                                    <div class="vertical-spacing"></div>
+                                    <table class="user" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="left" width="100%">
+                                        <tr><td><h3>Bruger</h3></td></tr>
+                                        <tr class="booker-name">
+                                            <td>Booking bruger navn:</td><td>{{ name }}</td>
+                                        </tr>
+                                        <tr class="booker-email">
+                                            <td>Booking bruger email:</td><td>{{ email }}</td>
+                                        </tr>
+                                        <tr class="user-id">
+                                            <td>Booking bruger id:</td><td>{{ userId }}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <div class="vertical-spacing"></div>
+            <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="750" class="container">
+                <tr>
+                    <td>
+                        Denne mail er sendt fra ---Book Aarhus---.
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
