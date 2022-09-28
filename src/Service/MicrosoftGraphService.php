@@ -127,6 +127,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
 
     /**
      * @throws GuzzleException|GraphException
+     * @throws \Exception
      *
      * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
      */
@@ -134,10 +135,17 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     {
         $token = $this->authenticateAsServiceAccount();
 
+        // Search interval for existing bookings. Report error if interval is booked already.
+        $busyIntervals = $this->getBusyIntervals([$resourceEmail], $startTime, $endTime, $token);
+
+        if (!empty($busyIntervals[$resourceEmail])) {
+            throw new \Exception('Booking interval conflict.', 409);
+        }
+
         $body = [
             'subject' => $subject,
             'body' => [
-                'contentType' => 'text',
+                'contentType' => 'HTML',
                 'content' => $body,
             ],
             'end' => [
@@ -168,6 +176,21 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
 
         $response = $this->request("/users/$resourceEmail/events", $token, 'POST', $body);
 
+        // Make sure only the new booking exists in the interval.
+        $busyIntervals = $this->getBusyIntervals([$resourceEmail], $startTime, $endTime, $token);
+
+        if (empty($busyIntervals[$resourceEmail])) {
+            throw new \Exception('Booking not created.', 500);
+        }
+
+        // TODO: Decide if this should be added.
+        /*
+        if (count($busyIntervals[$resourceEmail]) > 1) {
+            // TODO: Remove booking again.
+            throw new \Exception('Booking interval conflict.', 409);
+        }
+        */
+
         return $response->getBody();
     }
 
@@ -183,7 +206,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
         $body = [
             'subject' => $subject,
             'body' => [
-                'contentType' => 'text',
+                'contentType' => 'HTML',
                 'content' => $body,
             ],
             'end' => [
