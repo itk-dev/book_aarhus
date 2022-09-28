@@ -44,7 +44,7 @@ class CreateBookingHandler
                     $booking->getStartTime(),
                     $booking->getEndTime(),
                 );
-                // TODO: Send booking "sent to acceptance" notification.
+            // TODO: Send booking "sent to acceptance" notification.
             } else {
                 $this->microsoftGraphService->createBookingForResource(
                     $booking->getResourceEmail(),
