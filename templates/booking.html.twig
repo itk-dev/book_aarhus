@@ -1,13 +1,249 @@
-<div class="booking">
-    <div class="resource-name">Dokk1 lokale test 1</div>
-    <div class="resource-email">dokk1-lokale-test1@aarhus.dk</div>
-    <div class="subject">Min test booking</div>
-    <div class="start-time" data-format="ISO-8601">2013-05-05T16:34:42+00:00</div>
-    <div class="end-time" data-format="ISO-8601">2013-05-05T16:34:42+00:00</div>
-    <div class="user-id">[userid1234567890]</div>
-    <div class="booker-name">Test Testesen</div>
-    <div class="booker-email">test@testesen.dk</div>
-    <div class="extra-data">
-        <div class="example">Example</div>
-    </div>
-</div>
+{#
+# Variables
+#  - submission: A webform submission.
+#  - resource: A resource entity.
+#  - metaData: Additional data from os2forms
+#
+# Content that should be searched automatically is wrapped in a html container that has a unique id and the class "hasData"
+# i.e
+# <td id="userId" class="hasData">{{ submission.userId }}</td>
+# <span id="start" class="hidden hasData">{{ submission.start }}</span>
+#
+# Static data field ids:
+# - resource_name
+# - resource_mail
+# - subject
+# - start
+# - end
+# - name
+# - email
+# - userId
+#
+# Os2forms may provide additional meta data fields to a booking. The id of these fields is provided by the webform,
+# but maintain the same html structure as above.
+#}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" initial-scale="1">
+    <!--[if !mso]>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <![endif]-->
+    <meta name="x-apple-disable-message-reformatting">
+    <title></title>
+    <!--[if mso]>
+    <style>
+        * { font-family: Roboto, sans-serif !important; }
+    </style>
+    <![endif]-->
+    <!--[if !mso]><!-->
+    <!-- Insert font reference, e.g. <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet"> -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+    <!--<![endif]-->
+    <style>
+        *,
+        *:after,
+        *:before {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        * {
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        html,
+        body,
+        .document {
+            width: 100% !important;
+            height: 100% !important;
+            margin: 0;
+            padding: 0;
+            font-family: "Roboto", sans-serif !important;
+            background-color: #F8F9FA;
+        }
+
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        div[style*="margin: 16px 0"] {
+            margin: 0 !important;
+        }
+
+        table,
+        td {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin: 0 auto;
+        }
+
+        table tr:nth-child(2n) td {
+            background-color: #E9ECEF;
+        }
+
+        img {
+            -ms-interpolation-mode: bicubic;
+            max-width: 100%;
+            border: 0;
+        }
+
+        *[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: none !important;
+        }
+
+        .x-gmail-data-detectors,
+        .x-gmail-data-detectors *,
+        .aBn {
+            border-bottom: 0 !important;
+            cursor: default !important;
+        }
+
+        .btn {
+            -webkit-transition: all 200ms ease;
+            transition: all 200ms ease;
+        }
+
+        .btn:hover {
+            background-color: dodgerblue;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .vertical-spacing {
+            height: 40px;
+        }
+
+        @media screen and (max-width: 750px) {
+            .container {
+                width: 100%;
+                margin: auto;
+            }
+
+            .stack {
+                display: block;
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<table role="presentation" cellspacing="0" cellpadding="24" border="0" align="center" class="document">
+    <tr>
+        <td valign="top">
+            <table role="presentation" cellspacing="0" cellpadding="24" border="0" align="center" width="750" class="container" style="background-color: #ffffff;">
+                <tr>
+                    <td>
+                        <table class="booking-fields" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="100%">
+                            <tr>
+                                <td>
+                                    <table class="header" role="presentation" cellspacing="0" cellpadding="6" border="0" align="left" width="100%">
+                                        <tr>
+                                            <td>
+                                                <h2>Ny booking af {{ resource.resourceName }} - {{ resource.location }}</h2>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <!-- TODO: Fjern intro og hidden når vi er færdige med at teste i HL -->
+                                    <div class="intro"></div>
+                                    <div class="hidden">{content}</div>
+                                    <table class="resource" cellspacing="0" cellpadding="6" border="0" align="left" width="100%" style="border-bottom: 1px solid #E9ECEF;">
+                                        <tr>
+                                            <td>
+                                                <h3>Resourse</h3>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Resource navn:</td>
+                                            <td class="hasData" id="resourceName">{{ resource.resourceName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Resource email:</td>
+                                            <td class="hasData" id="resourceMail">{{ resource.resourceMail }}</td>
+                                        </tr>
+                                    </table>
+                                    <table class="container" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="12" border="0" align="center" width="750"><tr><td><!-- vertical spacing --></td></tr></table>
+                                    <table class="booking" cellspacing="0" cellpadding="6" border="0" align="left" width="100%"style="border-bottom: 1px solid #E9ECEF;">
+                                        <tr>
+                                            <td>
+                                                <h3>Booking</h3>
+                                            </td>
+                                        </tr>
+                                        <tr class="subject">
+                                            <td>Booking emne:</td>
+                                            <td class="hasData" id="subject">{{ submission.subject }}</td>
+                                        </tr>
+                                        <tr class="start-time">
+                                            <td>Booking starttidspunkt:</td>
+                                            <td>{{ submission.fromObj|date("d/m/Y - H:i") }}<span id="start" class="hidden hasData" data-format="ISO-8601">{{ submission.start }}</span></td>
+                                        </tr>
+                                        <tr class="end-time">
+                                            <td>Booking sluttidspunkt:</td>
+                                            <td>{{ submission.toObj|date("d/m/Y - H:i") }}<span id="end" class="hidden hasData" data-format="ISO-8601">{{ submission.end }}</span></td>
+                                        </tr>
+                                        {# Metadata fields #}
+                                        {% for key, value in metaData %}
+                                            <tr class="{{ key }}">
+                                                <td>{{ key }}</td><td id="{{ key }}" class="metaData hasData">{{ value }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        {# /END/ Metadata fields /END/ #}
+                                    </table>
+                                    <table class="container" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="12" border="0" align="center" width="750"><tr><td><!-- vertical spacing --></td></tr></table>
+                                    <table class="user" cellspacing="0" cellpadding="6" border="0" align="left" width="100%"style="border-bottom: 1px solid #E9ECEF;">
+                                        <tr>
+                                            <td>
+                                                <h3>Bruger</h3>
+                                            </td>
+                                        </tr>
+                                        <tr class="booker-name">
+                                            <td>Booking bruger navn:</td>
+                                            <td id="name" class="hasData">{{ submission.name }}</td>
+                                        </tr>
+                                        <tr class="booker-email">
+                                            <td>Booking bruger email:</td>
+                                            <td><a id="email" class="hasData" href="mailto:{{ submission.email }}?subject=Vdr. Booking af {{ resource.resourceName }} - {{ resource.location }}">{{ submission.email }}</a></td>
+                                        </tr>
+                                        <tr class="user-id">
+                                            <td>Booking bruger id:</td>
+                                            <td id="userId" class="hasData">{{ submission.userId }}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="container" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="12" border="0" align="center" width="750"><tr><td><!-- vertical spacing --></td></tr></table>
+                        <table class="container" role="presentation" cellspacing="0" cellpadding="6" border="0" align="center" width="750">
+                            <tr>
+                                <td>
+                                    Denne mail er sendt fra <a href="https://booking.aarhus.dk">Book Aarhus.</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+
+</html>

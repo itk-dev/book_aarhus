@@ -17,6 +17,7 @@ use App\Tests\AbstractBaseApiTestCase;
 use App\Utils\ValidationUtils;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Twig\Environment;
 use Zenstruck\Messenger\Test\InteractsWithMessenger;
 
 class BookingTest extends AbstractBaseApiTestCase
@@ -67,7 +68,7 @@ class BookingTest extends AbstractBaseApiTestCase
         $this->messenger('async')->queue()->assertEmpty();
 
         $webformServiceMock = $this->getMockBuilder(WebformService::class)
-            ->onlyMethods(['getWebformSubmission'])
+            ->onlyMethods(['getWebformSubmission', 'getData'])
             ->disableOriginalConstructor()
             ->getMock();
         $webformServiceMock->method('getWebformSubmission')->willReturn([
@@ -82,22 +83,60 @@ class BookingTest extends AbstractBaseApiTestCase
                     'name' => 'auther1',
                     'email' => 'author1@bookaarhus.local.itkdev.dk',
                 ]),
+                'meta_data_1' => 'This is a metadata field',
+                'meta_data_2' => 'This is also metadata',
+                'meta_data_3' => 'Lorem ipsum metadata',
+                'meta_data_4' => ['a' => 1, 'b' => 2, 'c' => 3],
+                'meta_data_5' => ['a1', 'b2', 'c3'],
             ],
         ]);
 
-        $container = self::getContainer();
+        $webformServiceMock->method('getData')->willReturn([
+          'bookingData' => [
+            'booking1' => [
+              'subject' => 'test1',
+              'resourceId' => 'test@bookaarhus.local.itkdev.dk',
+              'start' => '2022-08-18T10:00:00.000Z',
+              'end' => '2022-08-18T10:30:00.000Z',
+              'userId' => 'test4',
+              'formElement' => 'booking_element',
+              'name' => 'auther1',
+              'email' => 'author1@bookaarhus.local.itkdev.dk',
+            ],
+          ],
+          'metaData' => [
+            'meta_data_4' => '1, 2, 3',
+            'meta_data_5' => 'a1, b2, c3',
+            'meta_data_1' => 'This is a metadata field',
+            'meta_data_2' => 'This is also metadata',
+            'meta_data_3' => 'Lorem ipsum metadata',
+          ],
+        ]);
+
+        $validationUtilsMock = $this->getMockBuilder(ValidationUtils::class)
+          ->onlyMethods(['validateEmail', 'validateDate'])
+          ->disableOriginalConstructor()
+          ->getMock();
+
+        $validationUtilsMock->method('validateDate')->willReturn(new \DateTime('2022-08-18T10:00:00.000Z'));
+        $validationUtilsMock->method('validateEmail')->willReturn('test@bookaarhus.local.itkdev.dk');
+
         /** @var ApiKeyUserRepository $apiKeyUserRepository */
-        $apiKeyUserRepository = $container->get(ApiKeyUserRepository::class);
+        $apiKeyUserRepository = $this->createMock(ApiKeyUserRepository::class);
+        $logger = $this->createMock(LoggerInterface::class);
+
+        $container = self::getContainer();
+        $twig = $container->get(Environment::class);
         $bus = $container->get(MessageBusInterface::class);
-        $validationUtils = $container->get(ValidationUtils::class);
-        $logger = $container->get(LoggerInterface::class);
 
         $aakBookingRepository = $this->getMockBuilder(AAKResourceRepository::class)
             ->onlyMethods(['findOneBy'])
             ->disableOriginalConstructor()
             ->getMock();
         $resource = new AAKResource();
-        $resource->setResourceName('test3');
+        $resource->setResourceName('DOKK1-Lokale-Test1');
+        $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
+        $resource->setLocation('Dokk1');
         $aakBookingRepository->method('findOneBy')->willReturn($resource);
 
         $entityManager = self::getContainer()->get('doctrine')->getManager();
@@ -105,7 +144,7 @@ class BookingTest extends AbstractBaseApiTestCase
         /** @var ApiKeyUser $testUser */
         $testUser = $entityManager->getRepository(ApiKeyUser::class)->findOneBy(['name' => 'test']);
 
-        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $apiKeyUserRepository, $bus, $validationUtils, $logger, $aakBookingRepository);
+        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $apiKeyUserRepository, $bus, $validationUtilsMock, $logger, $aakBookingRepository, $twig);
         $webformSubmitHandler->__invoke(new WebformSubmitMessage(
             'booking',
             '795f5a1c-a0ac-4f8a-8834-bb71fca8585d',

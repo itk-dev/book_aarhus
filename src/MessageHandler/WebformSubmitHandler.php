@@ -10,12 +10,17 @@ use App\Message\WebformSubmitMessage;
 use App\Repository\Main\AAKResourceRepository;
 use App\Repository\Main\ApiKeyUserRepository;
 use App\Service\WebformServiceInterface;
-use App\Utils\ValidationUtils;
+use App\Utils\ValidationUtilsInterface;
+use DateTime;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 /**
  * @see https://github.com/itk-dev/os2forms_selvbetjening/blob/develop/web/modules/custom/os2forms_rest_api/README.md
@@ -27,69 +32,36 @@ class WebformSubmitHandler
         private WebformServiceInterface $webformService,
         private ApiKeyUserRepository $apiKeyUserRepository,
         private MessageBusInterface $bus,
-        private ValidationUtils $validationUtils,
+        private ValidationUtilsInterface $validationUtils,
         private LoggerInterface $logger,
         private AAKResourceRepository $aakResourceRepository,
+        private Environment $twig,
     ) {
     }
 
+    /**
+     * @param WebformSubmitMessage $message
+     *
+     * @throws \Exception
+     */
     public function __invoke(WebformSubmitMessage $message): void
     {
-        $this->logger->info('WebformSubmitHandler invoked.');
-
-        $submissionUrl = $message->getSubmissionUrl();
-        $userId = $message->getApiKeyUserId();
-
-        $user = $this->apiKeyUserRepository->find($userId);
-
-        if (!$user) {
-            throw new UnrecoverableMessageHandlingException('ApiKeyUser not set.');
-        }
-
-        $this->logger->info("Fetching $submissionUrl");
-
-        $webformSubmission = $this->webformService->getWebformSubmission($submissionUrl, $user->getWebformApiKey());
-
-        try {
-            $dataSubmissions = $this->webformService->getValidatedData($webformSubmission);
-        } catch (Exception $e) {
-            throw new UnrecoverableMessageHandlingException($e->getMessage());
-        }
-
-        $submissionsCount = count($dataSubmissions);
+        $dataSubmission = $this->webformService->getData($message);
+        $submissionsCount = count($dataSubmission['bookingData']);
         $this->logger->info("Webform submission data fetched. Setting up $submissionsCount CreateBooking jobs.");
 
-        $submissionKeys = array_keys($dataSubmissions);
-
-        foreach ($dataSubmissions as $data) {
-            $body = [];
-
-            $filterKeys = $submissionKeys + ['subject', 'resourceId', 'start', 'end', 'userId'];
+        foreach ($dataSubmission['bookingData'] as $data) {
             $email = $this->validationUtils->validateEmail($data['resourceId']);
 
             /** @var AAKResource $resource */
             $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
 
-            if (null == $resource) {
-                throw new UnrecoverableMessageHandlingException("Resource $email not found.", 404);
-            }
-
-            // Add extra fields to body.
-            foreach ($data as $key => $datum) {
-                if (!in_array($key, $filterKeys)) {
-                    $body[] = "$key: $datum";
-                }
-            }
-
-            // Add userid to bottom of body.
-            $userId = $data['userId'];
-            $body[] = "[userid-$userId]";
-
-            $bodyString = implode("\n", $body);
-
             try {
+                $body = $this->composeBookingContents($data, $email, $resource, $dataSubmission['metaData']);
+                $htmlContents = $this->renderContentsAsHtml($body);
+
                 $booking = new Booking();
-                $booking->setBody($bodyString);
+                $booking->setBody($htmlContents);
                 $booking->setSubject($data['subject'] ?? '');
                 $booking->setResourceEmail($email);
                 $booking->setResourceName($resource->getResourceName());
@@ -104,5 +76,46 @@ class WebformSubmitHandler
                 throw new UnrecoverableMessageHandlingException($e->getMessage());
             }
         }
+    }
+
+    /**
+     * @param $data
+     * @param $email
+     * @param $resource
+     * @param $metaData
+     *
+     * @return array
+     *
+     * @throws Exception|\Exception
+     */
+    private function composeBookingContents($data, $email, $resource, $metaData): array
+    {
+        $body = [];
+
+        if (null == $resource) {
+            throw new UnrecoverableMessageHandlingException("Resource $email not found.", 404);
+        }
+
+        $body['resource'] = $resource;
+        $body['submission'] = $data;
+        $body['submission']['fromObj'] = new DateTime($data['start']);
+        $body['submission']['toObj'] = new DateTime($data['end']);
+        $body['metaData'] = $metaData;
+
+        return $body;
+    }
+
+    /**
+     * @param $body
+     *
+     * @return string
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    private function renderContentsAsHtml($body): string
+    {
+        return $this->twig->render('booking.html.twig', $body);
     }
 }

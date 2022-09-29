@@ -6,7 +6,7 @@ use ApiPlatform\Core\Exception\InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final class ValidationUtils
+class ValidationUtils implements ValidationUtilsInterface
 {
     public function __construct(private ValidatorInterface $validator, private string $bindDefaultDateFormat)
     {
