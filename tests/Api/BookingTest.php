@@ -12,11 +12,9 @@ use App\MessageHandler\WebformSubmitHandler;
 use App\Repository\Main\AAKResourceRepository;
 use App\Repository\Main\ApiKeyUserRepository;
 use App\Service\MicrosoftGraphService;
-use App\Service\BookingServiceInterface;
 use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
 use App\Utils\ValidationUtils;
-use App\Utils\ValidationUtilsInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Twig\Environment;
@@ -104,7 +102,7 @@ class BookingTest extends AbstractBaseApiTestCase
               'formElement' => 'booking_element',
               'name' => 'auther1',
               'email' => 'author1@bookaarhus.local.itkdev.dk',
-            ]
+            ],
           ],
           'metaData' => [
             'meta_data_4' => '1, 2, 3',

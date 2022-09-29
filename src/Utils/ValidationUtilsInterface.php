@@ -4,7 +4,7 @@ namespace App\Utils;
 
 interface ValidationUtilsInterface
 {
-  public function validateDate(string $dateString, string $format = null): \DateTime;
+    public function validateDate(string $dateString, string $format = null): \DateTime;
 
-  public function validateEmail(string $email): string;
+    public function validateEmail(string $email): string;
 }

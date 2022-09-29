@@ -22,7 +22,6 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-
 /**
  * @see https://github.com/itk-dev/os2forms_selvbetjening/blob/develop/web/modules/custom/os2forms_rest_api/README.md
  */
@@ -40,79 +39,83 @@ class WebformSubmitHandler
     ) {
     }
 
-  /**
-   * @param WebformSubmitMessage $message
-   * @throws \Exception
-   */
+    /**
+     * @param WebformSubmitMessage $message
+     *
+     * @throws \Exception
+     */
     public function __invoke(WebformSubmitMessage $message): void
     {
-      $dataSubmission = $this->webformService->getData($message);
-      $submissionsCount = count($dataSubmission['bookingData']);
-      $this->logger->info("Webform submission data fetched. Setting up $submissionsCount CreateBooking jobs.");
+        $dataSubmission = $this->webformService->getData($message);
+        $submissionsCount = count($dataSubmission['bookingData']);
+        $this->logger->info("Webform submission data fetched. Setting up $submissionsCount CreateBooking jobs.");
 
-      foreach ($dataSubmission['bookingData'] as $data) {
-        $email = $this->validationUtils->validateEmail($data['resourceId']);
+        foreach ($dataSubmission['bookingData'] as $data) {
+            $email = $this->validationUtils->validateEmail($data['resourceId']);
 
-        /** @var AAKResource $resource */
-        $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
+            /** @var AAKResource $resource */
+            $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
 
-        try {
-          $body = $this->composeBookingContents($data, $email, $resource, $dataSubmission['metaData']);
-          $htmlContents = $this->renderContentsAsHtml($body);
+            try {
+                $body = $this->composeBookingContents($data, $email, $resource, $dataSubmission['metaData']);
+                $htmlContents = $this->renderContentsAsHtml($body);
 
-          $booking = new Booking();
-          $booking->setBody($htmlContents);
-          $booking->setSubject($data['subject'] ?? '');
-          $booking->setResourceEmail($email);
-          $booking->setResourceName($resource->getResourceName());
-          $booking->setStartTime($this->validationUtils->validateDate($data['start']));
-          $booking->setEndTime($this->validationUtils->validateDate($data['end']));
+                $booking = new Booking();
+                $booking->setBody($htmlContents);
+                $booking->setSubject($data['subject'] ?? '');
+                $booking->setResourceEmail($email);
+                $booking->setResourceName($resource->getResourceName());
+                $booking->setStartTime($this->validationUtils->validateDate($data['start']));
+                $booking->setEndTime($this->validationUtils->validateDate($data['end']));
 
-          $this->logger->info('Registering CreateBookingMessage job');
+                $this->logger->info('Registering CreateBookingMessage job');
 
-          // Register job.
-          $this->bus->dispatch(new CreateBookingMessage($booking) );
-        } catch (InvalidArgumentException $e) {
-            throw new UnrecoverableMessageHandlingException($e->getMessage());
+                // Register job.
+                $this->bus->dispatch(new CreateBookingMessage($booking));
+            } catch (InvalidArgumentException $e) {
+                throw new UnrecoverableMessageHandlingException($e->getMessage());
+            }
         }
-      }
     }
 
-  /**
-   * @param $data
-   * @param $email
-   * @param $resource
-   * @param $metaData
-   * @return array
-   * @throws Exception|\Exception
-   */
-  private function composeBookingContents($data, $email, $resource, $metaData): array
-  {
-    $body = [];
+    /**
+     * @param $data
+     * @param $email
+     * @param $resource
+     * @param $metaData
+     *
+     * @return array
+     *
+     * @throws Exception|\Exception
+     */
+    private function composeBookingContents($data, $email, $resource, $metaData): array
+    {
+        $body = [];
 
-    if (null == $resource) {
-      throw new UnrecoverableMessageHandlingException("Resource $email not found.", 404);
+        if (null == $resource) {
+            throw new UnrecoverableMessageHandlingException("Resource $email not found.", 404);
+        }
+
+        $body['resource'] = $resource;
+        $body['submission'] = $data;
+        $body['submission']['fromObj'] = new DateTime($data['start']);
+        $body['submission']['toObj'] = new DateTime($data['end']);
+        $body['metaData'] = $metaData;
+
+        return $body;
     }
 
-    $body['resource'] = $resource;
-    $body['submission'] = $data;
-    $body['submission']['fromObj'] = new DateTime($data['start']);
-    $body['submission']['toObj'] = new DateTime($data['end']);
-    $body['metaData'] = $metaData;
-
-    return $body;
-  }
-
-  /**
-   * @param $body
-   * @return string
-   * @throws LoaderError
-   * @throws RuntimeError
-   * @throws SyntaxError
-   */
-  private function renderContentsAsHtml($body): string
-  {
-    return $this->twig->render('booking.html.twig', $body);
-  }
-
+    /**
+     * @param $body
+     *
+     * @return string
+     *
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    private function renderContentsAsHtml($body): string
+    {
+        return $this->twig->render('booking.html.twig', $body);
+    }
 }
