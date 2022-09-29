@@ -22,7 +22,7 @@ class ResourceFixtures extends Fixture
                 'videoConferenceEquipment' => false,
                 'monitorEquipment' => false,
                 'catering' => false,
-                'acceptanceFlow' => true,
+                'acceptanceFlow' => false,
                 'capacity' => 10,
                 'permissionBusinessPartner' => true,
                 'permissionCitizen' => true,
