@@ -34,24 +34,30 @@ class CreateBookingHandler
             throw new UnrecoverableMessageHandlingException("Resource $email not found.", 404);
         }
 
-        if ($resource->isAcceptanceFlow()) {
-            $this->microsoftGraphService->createBookingInviteResource(
-                $booking->getResourceEmail(),
-                $booking->getResourceName(),
-                $booking->getSubject(),
-                $booking->getBody(),
-                $booking->getStartTime(),
-                $booking->getEndTime(),
-            );
-        } else {
-            $this->microsoftGraphService->createBookingForResource(
-                $booking->getResourceEmail(),
-                $booking->getResourceName(),
-                $booking->getSubject(),
-                $booking->getBody(),
-                $booking->getStartTime(),
-                $booking->getEndTime(),
-            );
+        try {
+            if ($resource->isAcceptanceFlow()) {
+                $this->microsoftGraphService->createBookingInviteResource(
+                    $booking->getResourceEmail(),
+                    $booking->getResourceName(),
+                    $booking->getSubject(),
+                    $booking->getBody(),
+                    $booking->getStartTime(),
+                    $booking->getEndTime(),
+                );
+            // TODO: Send booking "sent to acceptance" notification.
+            } else {
+                $this->microsoftGraphService->createBookingForResource(
+                    $booking->getResourceEmail(),
+                    $booking->getResourceName(),
+                    $booking->getSubject(),
+                    $booking->getBody(),
+                    $booking->getStartTime(),
+                    $booking->getEndTime(),
+                );
+                // TODO: Send booking success notification.
+            }
+        } catch (\Exception $exception) {
+            // TODO: Send booking failed notification.
         }
     }
 }
