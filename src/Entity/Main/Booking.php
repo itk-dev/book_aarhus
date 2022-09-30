@@ -22,6 +22,8 @@ class Booking
 
     private \DateTime $endTime;
 
+    private string $webformSubmission;
+
     public function __construct()
     {
         $this->id = Ulid::generate();
@@ -96,4 +98,15 @@ class Booking
     {
         $this->endTime = $endTime;
     }
+
+    public function getWebformSubmission(): string
+    {
+      return $this->webformSubmission;
+    }
+
+    public function setWebformSubmission(string $webformSubmission): void
+    {
+      $this->webformSubmission = $webformSubmission;
+    }
+
 }

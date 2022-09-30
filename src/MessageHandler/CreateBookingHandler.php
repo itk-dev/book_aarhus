@@ -6,6 +6,8 @@ use App\Entity\Resources\AAKResource;
 use App\Message\CreateBookingMessage;
 use App\Repository\Main\AAKResourceRepository;
 use App\Service\MicrosoftGraphServiceInterface;
+use App\Service\NotificationService;
+use App\Service\NotificationServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -16,7 +18,7 @@ use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 #[AsMessageHandler]
 class CreateBookingHandler
 {
-    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService, private LoggerInterface $logger, private AAKResourceRepository $aakResourceRepository)
+    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService, private LoggerInterface $logger, private AAKResourceRepository $aakResourceRepository, private NotificationServiceInterface $notificationService)
     {
     }
 
@@ -44,7 +46,6 @@ class CreateBookingHandler
                     $booking->getStartTime(),
                     $booking->getEndTime(),
                 );
-            // TODO: Send booking "sent to acceptance" notification.
             } else {
                 $this->microsoftGraphService->createBookingForResource(
                     $booking->getResourceEmail(),
@@ -54,7 +55,9 @@ class CreateBookingHandler
                     $booking->getStartTime(),
                     $booking->getEndTime(),
                 );
-                // TODO: Send booking success notification.
+                // Send booking success notification.
+                $this->notificationService->sendBookingNotification($booking, $resource, 'success');
+
             }
         } catch (\Exception $exception) {
             // TODO: Send booking failed notification.
