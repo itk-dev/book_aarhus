@@ -101,12 +101,11 @@ class Booking
 
     public function getWebformSubmission(): string
     {
-      return $this->webformSubmission;
+        return $this->webformSubmission;
     }
 
     public function setWebformSubmission(string $webformSubmission): void
     {
-      $this->webformSubmission = $webformSubmission;
+        $this->webformSubmission = $webformSubmission;
     }
-
 }

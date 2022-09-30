@@ -64,7 +64,7 @@ class WebformSubmitHandler
                 $booking->setBody($htmlContents);
                 $booking->setWebformSubmission(json_encode([
                   'submissiondata' => $data,
-                  'metaData' => $dataSubmission['metaData']
+                  'metaData' => $dataSubmission['metaData'],
                 ]));
                 $booking->setSubject($data['subject'] ?? '');
                 $booking->setResourceEmail($email);

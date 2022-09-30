@@ -6,7 +6,6 @@ use App\Entity\Resources\AAKResource;
 use App\Message\CreateBookingMessage;
 use App\Repository\Main\AAKResourceRepository;
 use App\Service\MicrosoftGraphServiceInterface;
-use App\Service\NotificationService;
 use App\Service\NotificationServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -57,7 +56,6 @@ class CreateBookingHandler
                 );
                 // Send booking success notification.
                 $this->notificationService->sendBookingNotification($booking, $resource, 'success');
-
             }
         } catch (\Exception $exception) {
             // TODO: Send booking failed notification.

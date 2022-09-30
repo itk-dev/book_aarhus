@@ -714,6 +714,8 @@ components:
         endTime:
           type: string
           format: date-time
+        webformSubmission:
+          type: string
     Booking.BookingInput:
       type: object
       properties:
@@ -886,6 +888,8 @@ components:
         endTime:
           type: string
           format: date-time
+        webformSubmission:
+          type: string
     BusyInterval:
       type: object
       properties:
