@@ -7,6 +7,7 @@ $finder = (new PhpCsFixer\Finder())
 return (new PhpCsFixer\Config())
     ->setRules([
         '@Symfony' => true,
+        'array_indentation' => true,
         'phpdoc_align' => false,
         'no_superfluous_phpdoc_tags' => false,
         'array_syntax' => ['syntax' => 'short'],
