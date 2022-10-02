@@ -93,25 +93,25 @@ class BookingTest extends AbstractBaseApiTestCase
         ]);
 
         $webformServiceMock->method('getData')->willReturn([
-          'bookingData' => [
-            'booking1' => [
-              'subject' => 'test1',
-              'resourceId' => 'test@bookaarhus.local.itkdev.dk',
-              'start' => '2022-08-18T10:00:00.000Z',
-              'end' => '2022-08-18T10:30:00.000Z',
-              'userId' => 'test4',
-              'formElement' => 'booking_element',
-              'name' => 'auther1',
-              'email' => 'author1@bookaarhus.local.itkdev.dk',
+            'bookingData' => [
+                'booking1' => [
+                    'subject' => 'test1',
+                    'resourceId' => 'test@bookaarhus.local.itkdev.dk',
+                    'start' => '2022-08-18T10:00:00.000Z',
+                    'end' => '2022-08-18T10:30:00.000Z',
+                    'userId' => 'test4',
+                    'formElement' => 'booking_element',
+                    'name' => 'auther1',
+                    'email' => 'author1@bookaarhus.local.itkdev.dk',
+                ],
             ],
-          ],
-          'metaData' => [
-            'meta_data_4' => '1, 2, 3',
-            'meta_data_5' => 'a1, b2, c3',
-            'meta_data_1' => 'This is a metadata field',
-            'meta_data_2' => 'This is also metadata',
-            'meta_data_3' => 'Lorem ipsum metadata',
-          ],
+            'metaData' => [
+                'meta_data_4' => '1, 2, 3',
+                'meta_data_5' => 'a1, b2, c3',
+                'meta_data_1' => 'This is a metadata field',
+                'meta_data_2' => 'This is also metadata',
+                'meta_data_3' => 'Lorem ipsum metadata',
+            ],
         ]);
 
         $validationUtilsMock = $this->getMockBuilder(ValidationUtils::class)
