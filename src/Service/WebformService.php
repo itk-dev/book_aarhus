@@ -62,10 +62,10 @@ class WebformService implements WebformServiceInterface
     public function sortWebformSubmissionDataByType(array $webformSubmission): array
     {
         $sortedData = [
-        'bookingData' => [],
-        'stringData' => [],
-        'arrayData' => [],
-      ];
+            'bookingData' => [],
+            'stringData' => [],
+            'arrayData' => [],
+        ];
 
         foreach ($webformSubmission['data'] as $key => $entry) {
             if (is_string($entry)) {
