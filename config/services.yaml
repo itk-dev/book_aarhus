@@ -45,16 +45,11 @@ services:
             - '%microsoft_graph_service_account_password%'
             - '%microsoft_graph_service_account_name%'
 
-    App\Repository\Main\AAKResourceRepository:
-        public: true
-
     App\Service\MicrosoftGraphServiceInterface:
         alias: 'App\Service\MicrosoftGraphService'
-        public: true
 
     App\Service\WebformServiceInterface:
         alias: 'App\Service\WebformService'
-        public: true
 
     resource.search_filter:
         # https://api-platform.com/docs/core/filters/#search-filter

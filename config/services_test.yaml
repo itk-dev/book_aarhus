@@ -1,0 +1,13 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    App\Repository\Main\AAKResourceRepository: ~
+
+    App\Service\MicrosoftGraphServiceInterface:
+        alias: 'App\Service\MicrosoftGraphService'
+
+    App\Service\WebformServiceInterface:
+        alias: 'App\Service\WebformService'
