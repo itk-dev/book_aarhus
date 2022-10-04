@@ -48,6 +48,7 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
         $dateEnd = new \DateTime($filters['dateEnd']);
         $resources = explode(',', $filters['resources']);
 
+        // TODO: Make sure resource is registered as an AAKResource.
         // TODO: Apply whitelist filter to resources where busyIntervals are requested. See LocationCollectionDataProvider.
 
         $busyIntervals = $this->microsoftGraphService->getBusyIntervals($resources, $dateStart, $dateEnd);
@@ -60,6 +61,7 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
 
                 $busyInterval->startTime = new \DateTime($entry['startTime']['dateTime'], new \DateTimeZone($entry['startTime']['timeZone']));
                 $busyInterval->endTime = new \DateTime($entry['endTime']['dateTime'], new \DateTimeZone($entry['endTime']['timeZone']));
+
                 yield $busyInterval;
             }
         }
