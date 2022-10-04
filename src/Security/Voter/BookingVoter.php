@@ -6,7 +6,6 @@ use App\Entity\Main\Booking;
 use App\Repository\Main\AAKResourceRepository;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @see https://symfony.com/doc/current/security/voters.html
@@ -29,9 +28,7 @@ class BookingVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
-        $user = $token->getUser();
-
-        if (!$user instanceof UserInterface || !($subject instanceof Booking)) {
+        if (!($subject instanceof Booking)) {
             return false;
         }
 

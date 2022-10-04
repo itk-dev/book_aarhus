@@ -45,6 +45,9 @@ services:
             - '%microsoft_graph_service_account_password%'
             - '%microsoft_graph_service_account_name%'
 
+    App\Repository\Main\AAKResourceRepository:
+        public: true
+
     App\Service\MicrosoftGraphServiceInterface:
         alias: 'App\Service\MicrosoftGraphService'
         public: true
