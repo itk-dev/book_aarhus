@@ -24,8 +24,6 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
     }
 
     /**
-     * @throws GuzzleException
-     * @throws GraphException
      * @throws Exception
      */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
@@ -51,6 +49,8 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
         $dateStart = new \DateTime($filters['dateStart']);
         $dateEnd = new \DateTime($filters['dateEnd']);
         $resources = explode(',', $filters['resources']);
+
+        // TODO: Apply whitelist filter to resources where busyIntervals are requested. See LocationCollectionDataProvider.
 
         $busyIntervals = $this->microsoftGraphService->getBusyIntervals($resources, $dateStart, $dateEnd);
 

@@ -5,16 +5,18 @@ namespace App\DataProvider;
 use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
+use App\Security\Voter\UserBookingVoter;
 use App\Service\MicrosoftGraphServiceInterface;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Microsoft\Graph\Exception\GraphException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Uid\Ulid;
 
 final class UserBookingCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService)
+    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService, private Security $security)
     {
     }
 
@@ -44,27 +46,33 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
 
         $userBookings = $this->microsoftGraphService->getUserBookings($userId);
         $userBookingsHits = $userBookings['value'][0]['hitsContainers'][0]['hits'] ?? null;
+
         if (null === $userBookingsHits) {
             return 'no results';
         }
+
         foreach ($userBookingsHits as $hit) {
             $userBooking = new UserBooking();
             $userBooking->id = Ulid::generate();
             $userBooking->hitId = $hit['hitId'] ?? '';
-            $userBooking->summary = $hit['summary'] ?? '';
             $userBooking->subject = $hit['resource']['subject'] ?? '';
             $userBooking->start = new \DateTime($hit['resource']['start']['dateTime'], new \DateTimeZone($hit['resource']['start']['timeZone'])) ?? null;
             $userBooking->end = new \DateTime($hit['resource']['end']['dateTime'], new \DateTimeZone($hit['resource']['end']['timeZone'])) ?? null;
+            // TODO: Is the summary needed? Atm. it is hidden.
+            // $userBooking->summary = $hit['summary'] ?? '';
 
-            $bookingDetailsData = [$this->microsoftGraphService->getBookingDetails($hit['hitId'])];
+            $bookingDetailsData = $this->microsoftGraphService->getBookingDetails($hit['hitId']);
 
-            foreach ($bookingDetailsData as $bookingDetail) {
-                $userBooking->displayName = $bookingDetail['location']['displayName'];
-                $userBooking->body = $bookingDetail['body']['content'];
-                continue;
+            $userBooking->displayName = $bookingDetailsData['location']['displayName'];
+            $userBooking->body = $bookingDetailsData['body']['content'];
+
+            if ($this->security->isGranted(UserBookingVoter::VIEW, $userBooking)) {
+                // TODO: Is the body needed? Atm. it is hidden.
+                // The body is needed for the security voter, but should not be delivered to the user.
+                // TODO: Handle this with a DTO and data transformer.
+                unset($userBooking->body);
+                yield $userBooking;
             }
-
-            yield $userBooking;
         }
     }
 }
