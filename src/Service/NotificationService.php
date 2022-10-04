@@ -110,7 +110,7 @@ class NotificationService implements NotificationServiceInterface
 
       // Add ics attachment to mail.
       if ($notification['fileAttachments']['ics']) {
-        foreach ($notification['fileAttachments']['ics'] as $ics) {
+        foreach ($notification['fileAttachments']['ics'] as $key => $ics) {
           try {
             $tempDir = sys_get_temp_dir();
             $bookingId = $notification['data']['booking']->getId();
@@ -122,7 +122,7 @@ class NotificationService implements NotificationServiceInterface
             $mimeTypes = new MimeTypes();
             $mimeType = $mimeTypes->guessMimeType($filePath);
 
-            $email->attach(fopen($filePath, 'r'), $fileName, $mimeType);
+            $email->attach(fopen($filePath, 'r'), 'booking-'. $key .'.ics', $mimeType);
           }
           finally {
             if (file_exists($filePath)) {
