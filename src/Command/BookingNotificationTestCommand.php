@@ -81,14 +81,14 @@ class BookingNotificationTestCommand extends Command
     $booking->setSubject('test');
     $booking->setResourceName('test');
     $booking->setResourceEmail('test@bookaarhus.local.itkdev.dk');
-    $booking->setStartTime(new \DateTime());
-    $booking->setEndTime(new \DateTime());
+    $booking->setStartTime(new \DateTime('2022-12-24 20:00:00'));
+    $booking->setEndTime(new \DateTime('2022-12-24 23:00:00'));
 
     $submissionData = [
       'subject' => 'test1',
       'resourceId' => 'test@bookaarhus.local.itkdev.dk',
-      'start' => '2022-08-18T10:00:00.000Z',
-      'end' => '2022-08-18T10:30:00.000Z',
+      'start' => '2022-12-24T20:00:00.000Z',
+      'end' => '2022-12-24T23:00:00.000Z',
       'userId' => 'test4',
       'formElement' => 'booking_element',
       'name' => 'auther1',
