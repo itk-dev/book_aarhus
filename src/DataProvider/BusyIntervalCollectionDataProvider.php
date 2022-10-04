@@ -7,8 +7,6 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\BusyInterval;
 use App\Service\MicrosoftGraphServiceInterface;
 use Exception;
-use GuzzleHttp\Exception\GuzzleException;
-use Microsoft\Graph\Exception\GraphException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Uid\Ulid;
 
