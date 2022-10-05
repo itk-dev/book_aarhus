@@ -32,14 +32,13 @@ class AuthListApikeyCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $apiKeys = $this->apiKeyUserRepository->findAll();
-
         $message = ['Listing apikeys...', '', '<id>. <name>'];
 
         foreach ($apiKeys as $apiKey) {
             $id = $apiKey->getId();
             $name = $apiKey->getName();
 
-            $message[] = "$id. $name";
+            $message[] = $id.'. '. $name;
         }
 
         $io->info(implode("\n", $message));

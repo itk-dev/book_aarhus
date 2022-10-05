@@ -23,11 +23,7 @@ class GraphFreeBusyCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument(
-            'schedules',
-            InputArgument::IS_ARRAY,
-            'Array of emails to get busy intervals for.'
-        );
+        $this->addArgument('schedules', InputArgument::IS_ARRAY, 'Array of emails to get busy intervals for.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -45,7 +41,6 @@ class GraphFreeBusyCommand extends Command
 
         $now = new \DateTime();
         $nowPlusOneDay = (new \DateTime())->add(new \DateInterval('P1D'));
-
         $busyIntervals = $this->microsoftGraphService->getBusyIntervals($schedules, $now, $nowPlusOneDay);
 
         $io->info(json_encode($busyIntervals));

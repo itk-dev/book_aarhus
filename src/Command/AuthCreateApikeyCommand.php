@@ -32,11 +32,9 @@ class AuthCreateApikeyCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $name = $io->ask('Enter name for ApiKeyUser');
-
         $webformApiKey = $io->ask('Enter webform api-key');
 
         $apiKeyUser = $this->apiKeyUserService->createApiKey($name, $webformApiKey);
-
         $apiKey = $apiKeyUser->getApiKey();
 
         $io->writeln('------------');

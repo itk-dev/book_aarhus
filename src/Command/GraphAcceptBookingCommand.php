@@ -23,11 +23,7 @@ class GraphAcceptBookingCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument(
-            'id',
-            InputArgument::REQUIRED,
-            'Id of booking to accept.'
-        );
+        $this->addArgument('id', InputArgument::REQUIRED, 'Id of booking to accept.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

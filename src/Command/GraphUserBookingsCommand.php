@@ -23,22 +23,17 @@ class GraphUserBookingsCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument(
-            'userId',
-            InputArgument::REQUIRED,
-            'User id to get bookings for.'
-        );
+        $this->addArgument('userId', InputArgument::REQUIRED, 'User id to get bookings for.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $userId = $input->getArgument('userId');
 
+        $userId = $input->getArgument('userId');
         $io->note(sprintf('You request bookings for userId: %s', $userId));
 
         $data = $this->microsoftGraphService->getUserBookings($userId);
-
         $io->info(json_encode($data));
 
         return Command::SUCCESS;

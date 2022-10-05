@@ -26,18 +26,8 @@ class GraphTestCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument(
-            'endpoint',
-            InputArgument::REQUIRED,
-            'Microsoft graph endpoint to call. For example /me'
-        );
-
-        $this->addOption(
-            'ask-for-credentials',
-            null,
-            InputOption::VALUE_NONE,
-            'Set to ask for username/password. Otherwise the service account will be used.'
-        );
+        $this->addArgument('endpoint', InputArgument::REQUIRED, 'Microsoft graph endpoint to call. For example /me');
+        $this->addOption('ask-for-credentials', null, InputOption::VALUE_NONE, 'Set to ask for username/password. Otherwise the service account will be used.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -47,10 +37,8 @@ class GraphTestCommand extends Command
         $endpoint = $input->getArgument('endpoint');
 
         $askFormCredentials = $input->getOption('ask-for-credentials');
-
         if ($askFormCredentials) {
             $username = $io->ask('Enter username');
-
             if (null == $username) {
                 $io->error('Username is required');
 
@@ -58,7 +46,6 @@ class GraphTestCommand extends Command
             }
 
             $password = $io->askHidden('Enter password');
-
             if (null == $password) {
                 $io->error('Password is required');
 
