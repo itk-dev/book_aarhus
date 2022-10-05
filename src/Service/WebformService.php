@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Message\WebformSubmitMessage;
 use App\Repository\Main\ApiKeyUserRepository;
-use JetBrains\PhpStorm\ArrayShape;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Messenger\Exception\RecoverableMessageHandlingException;
@@ -58,7 +57,6 @@ class WebformService implements WebformServiceInterface
      *
      * @return array[]
      */
-    #[ArrayShape(['bookingData' => 'array', 'stringData' => 'array', 'arrayData' => 'array'])]
     public function sortWebformSubmissionDataByType(array $webformSubmission): array
     {
         $sortedData = [
@@ -129,7 +127,9 @@ class WebformService implements WebformServiceInterface
             throw new Exception('Webform data not set');
         }
         $sortedData = $this->sortWebformSubmissionDataByType($webformSubmission);
-        $acceptedSubmissions = [];
+        $acceptedSubmissions = [
+            'bookingData' => [],
+        ];
 
         foreach ($sortedData['bookingData'] as $key => $entry) {
             if (!isset($entry['subject'])) {

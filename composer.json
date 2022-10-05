@@ -121,7 +121,7 @@
             "composer normalize"
         ],
         "psalm": [
-            "./vendor/bin/psalm"
+            "./vendor/bin/psalm --no-cache"
         ],
         "queues": [
             "bin/console messenger:consume async --failure-limit=1 -vvv"

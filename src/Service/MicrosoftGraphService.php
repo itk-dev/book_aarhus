@@ -5,12 +5,13 @@ namespace App\Service;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use JsonException;
 use Microsoft\Graph\Exception\GraphException;
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Http\GraphResponse;
+use Psr\Cache\CacheItemInterface;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @see https://github.com/microsoftgraph/msgraph-sdk-php
@@ -37,21 +38,20 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      */
     public function authenticateAsServiceAccount(): string
     {
-        $tokenEntry = $this->cache->get('serviceAccountToken', function (ItemInterface $item) {
+        return $this->cache->get('serviceAccountToken', function (CacheItemInterface $item) {
             $tokenEntry = $this->authenticateAsUser($this->serviceAccountUsername, $this->serviceAccountPassword);
 
-            $item->expiresAfter($token->expires_in ?? 3600);
+            $item->expiresAfter($tokenEntry['expires_in'] ?? 3600);
 
-            return $tokenEntry;
+            return $tokenEntry['access_token'];
         });
-
-        return $tokenEntry->access_token;
     }
 
     /**
      * @throws GuzzleException
+     * @throws JsonException
      */
-    public function authenticateAsUser(string $username, string $password): string
+    public function authenticateAsUser(string $username, string $password): array
     {
         $guzzle = new Client();
         $url = 'https://login.microsoftonline.com/'.$this->tenantId.'/oauth2/v2.0/token';
@@ -66,7 +66,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
             ],
         ]);
 
-        return json_decode($response->getBody()->getContents());
+        return json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
     }
 
     /**

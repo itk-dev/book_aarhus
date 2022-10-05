@@ -64,19 +64,19 @@ class HolidayOpenHours
     }
 
     /**
-     * @return int
+     * @return AAKResource
      */
-    public function getResourceId(): int
+    public function getResource(): AAKResource
     {
-        return $this->resourceId;
+        return $this->resource;
     }
 
     /**
-     * @param int $resourceId
+     * @param AAKResource $resource
      */
-    public function setResourceId(int $resourceId): void
+    public function setResource(AAKResource $resource): void
     {
-        $this->resourceId = $resourceId;
+        $this->resource = $resource;
     }
 
     /**

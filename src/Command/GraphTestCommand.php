@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Service\MicrosoftGraphServiceInterface;
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Microsoft\Graph\Exception\GraphException;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -31,6 +32,9 @@ class GraphTestCommand extends Command
         $this->addOption('ask-for-credentials', null, InputOption::VALUE_NONE, 'Set to ask for username/password. Otherwise the service account will be used.');
     }
 
+    /**
+     * @throws Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -56,7 +60,13 @@ class GraphTestCommand extends Command
 
         try {
             if ($askFormCredentials && !empty($username) && !empty($password)) {
-                $accessToken = $this->microsoftGraphService->authenticateAsUser($username, $password);
+                $token = $this->microsoftGraphService->authenticateAsUser($username, $password);
+
+                if (!isset($token['access_token'])) {
+                    throw new Exception('Access token not available.');
+                }
+
+                $accessToken = $token['access_token'];
             } else {
                 $accessToken = $this->microsoftGraphService->authenticateAsServiceAccount();
             }
