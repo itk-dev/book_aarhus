@@ -48,12 +48,16 @@ class WebformSubmitHandler
         $this->logger->info("Webform submission data fetched. Setting up $submissionsCount CreateBooking jobs.");
 
         foreach ($dataSubmission['bookingData'] as $data) {
-            $email = $this->validationUtils->validateEmail($data['resourceId']);
-
-            /** @var AAKResource $resource */
-            $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
-
             try {
+                $email = $this->validationUtils->validateEmail($data['resourceId']);
+
+                /** @var AAKResource $resource */
+                $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
+
+                if (is_null($resource)) {
+                    throw new UnrecoverableMessageHandlingException('Resource does not exist');
+                }
+
                 $body = $this->composeBookingContents($data, $email, $resource, $dataSubmission['metaData']);
                 $htmlContents = $this->renderContentsAsHtml($body);
 
@@ -64,6 +68,8 @@ class WebformSubmitHandler
                 $booking->setResourceName($resource->getResourceName());
                 $booking->setStartTime($this->validationUtils->validateDate($data['start']));
                 $booking->setEndTime($this->validationUtils->validateDate($data['end']));
+                $booking->setUserId($data['userId']);
+                $booking->setUserPermission($data['userPermission']);
 
                 $this->logger->info('Registering CreateBookingMessage job');
 

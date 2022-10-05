@@ -22,6 +22,10 @@ class Booking
 
     private \DateTime $endTime;
 
+    private string $userId;
+
+    private string $userPermission;
+
     public function __construct()
     {
         $this->id = Ulid::generate();
@@ -95,5 +99,25 @@ class Booking
     public function setEndTime(\DateTime $endTime): void
     {
         $this->endTime = $endTime;
+    }
+
+    public function getUserId(): string
+    {
+        return $this->userId;
+    }
+
+    public function setUserId(string $userId): void
+    {
+        $this->userId = $userId;
+    }
+
+    public function getUserPermission(): string
+    {
+        return $this->userPermission;
+    }
+
+    public function setUserPermission(string $userPermission): void
+    {
+        $this->userPermission = $userPermission;
     }
 }

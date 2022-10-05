@@ -10,13 +10,15 @@ use App\Message\WebformSubmitMessage;
 use App\MessageHandler\CreateBookingHandler;
 use App\MessageHandler\WebformSubmitHandler;
 use App\Repository\Main\AAKResourceRepository;
-use App\Repository\Main\ApiKeyUserRepository;
+use App\Security\Voter\BookingVoter;
 use App\Service\MicrosoftGraphService;
 use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
 use App\Utils\ValidationUtils;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Twig\Environment;
 use Zenstruck\Messenger\Test\InteractsWithMessenger;
@@ -26,8 +28,49 @@ class BookingTest extends AbstractBaseApiTestCase
     use InteractsWithMessenger;
 
     /**
-     * @throws TransportExceptionInterface
+     * @throws TransportExceptionInterface|Exception
      */
+    public function testBookingVoter(): void
+    {
+        $res = new AAKResource();
+        $res->setResourceMail('test@bookaarhus.local.itkdev.dk');
+        $res->setResourceName('test');
+        $res->setPermissionBusinessPartner(true);
+        $res->setPermissionCitizen(false);
+
+        $container = self::getContainer();
+        $security = $container->get(Security::class);
+
+        $aakResourceRepositoryMock = $this->getMockBuilder(AAKResourceRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['findOneByEmail'])
+            ->getMock();
+        $aakResourceRepositoryMock->expects($this->exactly(2))->method('findOneByEmail')->willReturn($res);
+
+        $container->set(AAKResourceRepository::class, $aakResourceRepositoryMock);
+
+        $booking = new Booking();
+        $booking->setResourceEmail('test@bookaarhus.local.itkdev.dk');
+        $booking->setUserId('');
+        $booking->setUserPermission(BookingVoter::PERMISSION_BUSINESS_PARTNER);
+
+        $this->assertEquals(false, $security->isGranted(BookingVoter::CREATE, $booking));
+
+        $booking = new Booking();
+        $booking->setResourceEmail('test@bookaarhus.local.itkdev.dk');
+        $booking->setUserId('1234567890');
+        $booking->setUserPermission(BookingVoter::PERMISSION_BUSINESS_PARTNER);
+
+        $this->assertEquals(true, $security->isGranted(BookingVoter::CREATE, $booking));
+
+        $booking = new Booking();
+        $booking->setResourceEmail('test@bookaarhus.local.itkdev.dk');
+        $booking->setUserId('1234567890');
+        $booking->setUserPermission(BookingVoter::PERMISSION_CITIZEN);
+
+        $this->assertEquals(false, $security->isGranted(BookingVoter::CREATE, $booking));
+    }
+
     public function testBookingWebform(): void
     {
         $this->messenger('async')->queue()->assertEmpty();
@@ -68,7 +111,7 @@ class BookingTest extends AbstractBaseApiTestCase
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function testWebformSubmitMessageHandler(): void
     {
@@ -86,6 +129,7 @@ class BookingTest extends AbstractBaseApiTestCase
                     'start' => '2022-08-18T10:00:00.000Z',
                     'end' => '2022-08-18T10:30:00.000Z',
                     'userId' => 'test4',
+                    'userPermission' => 'citizen',
                     'formElement' => 'booking_element',
                     'name' => 'auther1',
                     'email' => 'author1@bookaarhus.local.itkdev.dk',
@@ -106,6 +150,7 @@ class BookingTest extends AbstractBaseApiTestCase
                     'start' => '2022-08-18T10:00:00.000Z',
                     'end' => '2022-08-18T10:30:00.000Z',
                     'userId' => 'test4',
+                    'userPermission' => 'citizen',
                     'formElement' => 'booking_element',
                     'name' => 'auther1',
                     'email' => 'author1@bookaarhus.local.itkdev.dk',
@@ -181,6 +226,8 @@ class BookingTest extends AbstractBaseApiTestCase
         $booking->setResourceEmail('test@bookaarhus.local.itkdev.dk');
         $booking->setStartTime(new \DateTime());
         $booking->setEndTime(new \DateTime());
+        $booking->setUserPermission(BookingVoter::PERMISSION_CITIZEN);
+        $booking->setUserId('1234567890');
 
         $res = new AAKResource();
         $res->setResourceMail('test@bookaarhus.local.itkdev.dk');
@@ -204,9 +251,13 @@ class BookingTest extends AbstractBaseApiTestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['findOneByEmail'])
             ->getMock();
-        $aakResourceRepositoryMock->expects($this->exactly(1))->method('findOneByEmail')->willReturn($res);
+        $aakResourceRepositoryMock->expects($this->exactly(2))->method('findOneByEmail')->willReturn($res);
 
-        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock);
+        $security = $container->get(Security::class);
+
+        $container->set(AAKResourceRepository::class, $aakResourceRepositoryMock);
+
+        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock, $security);
         $createBookingHandler->__invoke(new CreateBookingMessage($booking));
     }
 

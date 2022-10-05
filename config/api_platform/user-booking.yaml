@@ -1,6 +1,9 @@
 ---
 resources:
   App\Entity\Main\UserBooking:
+    attributes:
+      normalization_context:
+        groups: ['userBooking']
     itemOperations:
       get: 
         openapi_context:
@@ -71,5 +74,4 @@ resources:
                 application/ld+json:
                   examples:
               headers: { }
-      
       

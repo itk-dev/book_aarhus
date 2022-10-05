@@ -9,8 +9,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidationUtils implements ValidationUtilsInterface
 {
-    public function __construct(private ValidatorInterface $validator, private string $bindDefaultDateFormat)
-    {
+    public function __construct(
+        private readonly ValidatorInterface $validator,
+        private readonly string $bindDefaultDateFormat
+    ) {
     }
 
     /**

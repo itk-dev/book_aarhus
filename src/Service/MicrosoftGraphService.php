@@ -323,7 +323,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      * @throws GuzzleException
      * @throws InvalidArgumentException
      */
-    public function getUserBooking(string $userId, string $bookingId): array
+    public function getUserBooking(string $bookingId): array
     {
         $token = $this->authenticateAsServiceAccount();
 

@@ -10,9 +10,11 @@ interface MicrosoftGraphServiceInterface
 
     public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, string $accessToken = null): array;
 
-    public function getUserBookings(string $userId, string $bookingId = ''): array;
-
     public function deleteUserBooking(string $bookingId, string $ownerEmail): ?string;
+
+    public function getUserBooking(string $bookingId): array;
+
+    public function getUserBookings(string $userId): array;
 
     public function getBookingDetails(string $bookingId): array;
 
