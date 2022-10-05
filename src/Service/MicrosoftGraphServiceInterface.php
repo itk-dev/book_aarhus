@@ -8,6 +8,8 @@ interface MicrosoftGraphServiceInterface
 {
     public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, string $accessToken = null): array;
 
+    public function getUserBooking(string $bookingId): array;
+
     public function getUserBookings(string $userId): array;
 
     public function getBookingDetails(string $bookingId): array;

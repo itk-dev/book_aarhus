@@ -1,53 +1,12 @@
 ---
 resources:
   App\Entity\Main\UserBooking:
+    attributes:
+      normalization_context:
+        groups: ['userBooking']
     itemOperations:
-      get: 
-        openapi_context:
-          path: '/user-bookings/{id}'
-          operationId: get-v1-booking
-          description: Retrieves a specific booking from a specific user.
-          summary: Retrieves a specific booking from a specific user.
-          tags:
-          parameters:
-            - schema:
-                type: string
-                format: string
-                example: "AAMkADA2YjNjYzNjLThjMjAtNDA3MS05NWEwLTZhZjM2MzYxZjZmNwBGAAAAAADPMx9il%2Fl3TpK5N7vcXYJbBwCTGBSNlZNgQKMu0%2BOa3o5eAAAAAAENAACTGBSNlZNgQKMu0%2BOa3o5eAABLCAbAAAA%3D"
-              in: path
-              name: id
-              required: true
-              description: "urlencoded ID of the booking to get"
-          responses:
-            '200':
-              description: OK
-              content:
-                application/ld+json:
-                  examples:
-              headers: { }
-      delete: 
-        openapi_context:
-            path: '/user-bookings/{id}'
-            operationId: delete-v1-booking
-            description: Requests deletion for a specific booking.
-            summary: Requests deletion for a specific booking.
-            tags:
-            parameters:
-              - schema:
-                  type: string
-                  format: string
-                  example: ""
-                in: path
-                name: id
-                required: true
-                description: "urlencoded ID of the booking to delete"
-            responses:
-              '200':
-                description: OK
-                content:
-                  application/ld+json:
-                    examples:
-                headers: { }
+      get: ~
+      delete: ~
     collectionOperations:
       get:
         openapi_context:
@@ -71,5 +30,4 @@ resources:
                 application/ld+json:
                   examples:
               headers: { }
-      
       

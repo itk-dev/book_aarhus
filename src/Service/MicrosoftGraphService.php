@@ -266,9 +266,11 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
 
         $urlEncodedId = urlencode($id);
 
-        $response = $this->request("/me/events/$urlEncodedId", $token, 'PATCH', $newData);
+        return "yes";
 
-        return $response->getStatus();
+        //$response = $this->request("/me/events/$urlEncodedId", $token, 'PATCH', $newData);
+
+        //return $response->getStatus();
     }
 
     /**
@@ -280,6 +282,8 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     {
         $token = $this->authenticateAsServiceAccount();
 
+        return "TODO: Delete in graph.";
+/*
         // Formatting the urldecode(d) booking hitId, replacing "/" with "-" as this is graph-compatible, and replacing " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
         $bookingId = urldecode($bookingId);
         $bookingId = str_replace(['/', ' '], ['-', '+'], $bookingId);
@@ -292,7 +296,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
 
         $response = $this->request("/me/events/$bookingId", $token, 'DELETE');
 
-        return $response->getStatus();
+        return $response->getStatus();*/
     }
 
     /**
@@ -300,7 +304,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/search-concept-events
      */
-    public function getUserBooking(string $userId, string $bookingId): array
+    public function getUserBooking(string $bookingId): array
     {
         $token = $this->authenticateAsServiceAccount();
 
@@ -320,6 +324,8 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     public function getUserBookings(string $userId): array
     {
         $token = $this->authenticateAsServiceAccount();
+
+        // TODO: Adjust queryString when booking body is changed.
 
         $body = [
             'requests' => [
