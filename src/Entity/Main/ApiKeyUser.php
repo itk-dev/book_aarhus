@@ -42,6 +42,9 @@ class ApiKeyUser implements UserInterface
         return self::ROLES;
     }
 
+    /**
+     * @return void
+     */
     public function eraseCredentials()
     {
     }

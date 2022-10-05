@@ -11,6 +11,7 @@ use App\Service\MicrosoftGraphServiceInterface;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Microsoft\Graph\Exception\GraphException;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Uid\Ulid;
 
@@ -27,8 +28,9 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
     }
 
     /**
-     * @throws GuzzleException
      * @throws GraphException
+     * @throws GuzzleException
+     * @throws InvalidArgumentException
      * @throws Exception
      */
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): UserBooking|false|null

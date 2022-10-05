@@ -77,16 +77,9 @@ class WebformSubmitHandler
     }
 
     /**
-     * @param $data
-     * @param $email
-     * @param $resource
-     * @param $metaData
-     *
-     * @return array
-     *
-     * @throws Exception|\Exception
+     * @throws \Exception
      */
-    private function composeBookingContents($data, $email, $resource, $metaData): array
+    private function composeBookingContents($data, string $email, $resource, $metaData): array
     {
         $body = [];
 
@@ -104,15 +97,11 @@ class WebformSubmitHandler
     }
 
     /**
-     * @param $body
-     *
-     * @return string
-     *
-     * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
+     * @throws LoaderError
      */
-    private function renderContentsAsHtml($body): string
+    private function renderContentsAsHtml(array $body): string
     {
         return $this->twig->render('booking.html.twig', $body);
     }

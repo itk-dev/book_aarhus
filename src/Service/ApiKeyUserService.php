@@ -34,7 +34,7 @@ class ApiKeyUserService
         return $apiKeyUser;
     }
 
-    public function removeApiKey($id): void
+    public function removeApiKey(string $id): void
     {
         $apiKeyUser = $this->apiKeyUserRepository->find($id);
 

@@ -18,7 +18,7 @@ interface MicrosoftGraphServiceInterface
 
     public function request(string $endpoint, string $accessToken, string $requestType = 'GET', array $body = null): GraphResponse;
 
-    public function authenticateAsUser($username, $password): \stdClass;
+    public function authenticateAsUser(string $username, string $password): \stdClass;
 
     public function authenticateAsServiceAccount(): string;
 }

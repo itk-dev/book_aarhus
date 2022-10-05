@@ -51,7 +51,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     /**
      * @throws GuzzleException
      */
-    public function authenticateAsUser($username, $password): \stdClass
+    public function authenticateAsUser(string $username, string $password): \stdClass
     {
         $guzzle = new Client();
         $url = 'https://login.microsoftonline.com/'.$this->tenantId.'/oauth2/v2.0/token';

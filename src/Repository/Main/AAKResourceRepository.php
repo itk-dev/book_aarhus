@@ -33,7 +33,7 @@ class AAKResourceRepository extends ServiceEntityRepository
         }
     }
 
-    public function findOneByEmail(string $email): ?AAKResource
+    public function findOneByEmail(string $email): null|AAKResourceRepository
     {
         return $this->findOneBy(['resourceMail' => $email]);
     }

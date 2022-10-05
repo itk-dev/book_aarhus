@@ -20,13 +20,13 @@ final class AAKResourceExtension implements QueryCollectionExtensionInterface, Q
     ) {
     }
 
-    public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null): void
     {
         $this->applyResourceRequireLocation($queryBuilder, $resourceClass);
         $this->applyWhitelistPermission($queryBuilder, $resourceClass);
     }
 
-    public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = [])
+    public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = []): void
     {
         $this->applyResourceRequireLocation($queryBuilder, $resourceClass);
         $this->applyWhitelistPermission($queryBuilder, $resourceClass);
