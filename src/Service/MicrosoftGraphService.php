@@ -20,8 +20,14 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     // example 2019-03-15T09:00:00
     public const DATE_FORMAT = 'Y-m-d\TH:i:s';
 
-    public function __construct(private string $tenantId, private string $clientId, private string $serviceAccountUsername, private string $serviceAccountPassword, private string $serviceAccountName, private CacheInterface $cache)
-    {
+    public function __construct(
+        private readonly string $tenantId,
+        private readonly string $clientId,
+        private readonly string $serviceAccountUsername,
+        private readonly string $serviceAccountPassword,
+        private readonly string $serviceAccountName,
+        private readonly CacheInterface $cache
+    ) {
     }
 
     /**
@@ -300,7 +306,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/search-concept-events
      */
-    public function getUserBooking(string $userId, string $bookingId): array
+    public function getUserBooking(string $bookingId): array
     {
         $token = $this->authenticateAsServiceAccount();
 

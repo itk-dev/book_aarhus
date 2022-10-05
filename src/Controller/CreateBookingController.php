@@ -13,7 +13,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[AsController]
 class CreateBookingController extends AbstractController
 {
-    public function __construct(private MessageBusInterface $bus, private ValidationUtils $validationUtils)
+    public function __construct(private readonly MessageBusInterface $bus, private readonly ValidationUtils $validationUtils)
     {
     }
 

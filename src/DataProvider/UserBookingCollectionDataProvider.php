@@ -5,17 +5,20 @@ namespace App\DataProvider;
 use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
+use App\Security\Voter\UserBookingVoter;
 use App\Service\MicrosoftGraphServiceInterface;
-use Exception;
-use GuzzleHttp\Exception\GuzzleException;
-use Microsoft\Graph\Exception\GraphException;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Uid\Ulid;
 
 final class UserBookingCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService)
-    {
+    public function __construct(
+        private readonly MicrosoftGraphServiceInterface $microsoftGraphService,
+        private readonly Security $security,
+        private readonly RequestStack $requestStack
+    ) {
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -24,47 +27,47 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
     }
 
     /**
-     * @throws GuzzleException
-     * @throws GraphException
-     * @throws Exception
+     * @throws \Exception
      */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
-        if (!isset($context['filters'])) {
-            throw new BadRequestHttpException('Required filters not set.');
+        $request = $this->requestStack->getCurrentRequest();
+
+        if (is_null($request)) {
+            throw new BadRequestHttpException('Request not set.');
         }
 
-        $filters = $context['filters'];
+        $userId = $request->headers->get('Authorization-UserId') ?? null;
 
-        if (!isset($filters['userId'])) {
-            throw new BadRequestHttpException('Required userId filter not set.');
+        if (is_null($userId)) {
+            throw new BadRequestHttpException('Required Authorization-UserId header is not set.');
         }
-
-        $userId = $filters['userId'];
 
         $userBookings = $this->microsoftGraphService->getUserBookings($userId);
+
         $userBookingsHits = $userBookings['value'][0]['hitsContainers'][0]['hits'] ?? null;
+
         if (null === $userBookingsHits) {
             return 'no results';
         }
+
         foreach ($userBookingsHits as $hit) {
             $userBooking = new UserBooking();
             $userBooking->id = Ulid::generate();
             $userBooking->hitId = $hit['hitId'] ?? '';
-            $userBooking->summary = $hit['summary'] ?? '';
             $userBooking->subject = $hit['resource']['subject'] ?? '';
             $userBooking->start = new \DateTime($hit['resource']['start']['dateTime'], new \DateTimeZone($hit['resource']['start']['timeZone'])) ?? null;
             $userBooking->end = new \DateTime($hit['resource']['end']['dateTime'], new \DateTimeZone($hit['resource']['end']['timeZone'])) ?? null;
+            $userBooking->summary = $hit['summary'] ?? '';
 
-            $bookingDetailsData = [$this->microsoftGraphService->getBookingDetails($hit['hitId'])];
+            $bookingDetailsData = $this->microsoftGraphService->getBookingDetails($hit['hitId']);
 
-            foreach ($bookingDetailsData as $bookingDetail) {
-                $userBooking->displayName = $bookingDetail['location']['displayName'];
-                $userBooking->body = $bookingDetail['body']['content'];
-                continue;
+            $userBooking->displayName = $bookingDetailsData['location']['displayName'];
+            $userBooking->body = $bookingDetailsData['body']['content'];
+
+            if ($this->security->isGranted(UserBookingVoter::VIEW, $userBooking)) {
+                yield $userBooking;
             }
-
-            yield $userBooking;
         }
     }
 }

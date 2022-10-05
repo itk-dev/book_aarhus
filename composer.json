@@ -4,7 +4,7 @@
     "license": "proprietary",
     "type": "project",
     "require": {
-        "php": ">=8.0.2",
+        "php": ">=8.1",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "api-platform/core": "^2.6",
@@ -21,6 +21,7 @@
         "symfony/cache": "6.1.*",
         "symfony/console": "6.1.*",
         "symfony/doctrine-messenger": "6.1.*",
+        "symfony/dom-crawler": "6.1.*",
         "symfony/dotenv": "6.1.*",
         "symfony/expression-language": "6.1.*",
         "symfony/flex": "^2",
@@ -113,9 +114,10 @@
             "vendor/bin/php-cs-fixer fix --dry-run"
         ],
         "prepare-code": [
-            "@apply-coding-standards",
+            "@coding-standards-apply",
             "@tests",
             "@update-api-spec",
+            "@psalm",
             "composer normalize"
         ],
         "psalm": [

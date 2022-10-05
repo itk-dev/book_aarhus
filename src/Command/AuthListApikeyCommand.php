@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class AuthListApikeyCommand extends Command
 {
-    public function __construct(private ApiKeyUserRepository $apiKeyUserRepository)
+    public function __construct(private readonly ApiKeyUserRepository $apiKeyUserRepository)
     {
         parent::__construct();
     }

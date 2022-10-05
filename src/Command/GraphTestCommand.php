@@ -19,7 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class GraphTestCommand extends Command
 {
-    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService)
+    public function __construct(private readonly MicrosoftGraphServiceInterface $microsoftGraphService)
     {
         parent::__construct();
     }

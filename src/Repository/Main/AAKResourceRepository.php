@@ -17,8 +17,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class AAKResourceRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, private CvrWhitelistRepository $cvrWhitelistRepository)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly CvrWhitelistRepository $cvrWhitelistRepository
+    ) {
         parent::__construct($registry, AAKResource::class);
     }
 

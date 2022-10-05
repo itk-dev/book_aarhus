@@ -24,9 +24,9 @@ class WebformService implements WebformServiceInterface
      * @param ApiKeyUserRepository $apiKeyUserRepository
      */
     public function __construct(
-        private HttpClientInterface $client,
-        private LoggerInterface $logger,
-        private ApiKeyUserRepository $apiKeyUserRepository,
+        private readonly HttpClientInterface $client,
+        private readonly LoggerInterface $logger,
+        private readonly ApiKeyUserRepository $apiKeyUserRepository
     ) {
     }
 
@@ -97,9 +97,9 @@ class WebformService implements WebformServiceInterface
         $this->logger->info('WebformSubmitHandler invoked.');
 
         $submissionUrl = $message->getSubmissionUrl();
-        $userId = $message->getApiKeyUserId();
+        $apiKeyUserId = $message->getApiKeyUserId();
 
-        $user = $this->apiKeyUserRepository->find($userId);
+        $user = $this->apiKeyUserRepository->find($apiKeyUserId);
 
         if (!$user) {
             throw new UnrecoverableMessageHandlingException('ApiKeyUser not set.');
@@ -158,6 +158,10 @@ class WebformService implements WebformServiceInterface
 
             if (!isset($entry['userId'])) {
                 throw new Exception("Webform ($key) userId not set");
+            }
+
+            if (!isset($entry['userPermission'])) {
+                throw new Exception("Webform ($key) userPermission not set");
             }
 
             $acceptedSubmissions['bookingData'][$key] = $entry;

@@ -1006,6 +1006,12 @@
                     "endTime": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "userId": {
+                        "type": "string"
+                    },
+                    "userPermission": {
+                        "type": "string"
                     }
                 }
             },
@@ -1267,6 +1273,12 @@
                     "endTime": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "userId": {
+                        "type": "string"
+                    },
+                    "userPermission": {
+                        "type": "string"
                     }
                 }
             },
@@ -1727,7 +1739,7 @@
                     }
                 }
             },
-            "UserBooking": {
+            "UserBooking-userBooking": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -1736,19 +1748,10 @@
                     "hitId": {
                         "type": "string"
                     },
-                    "iCalUId": {
-                        "type": "string"
-                    },
-                    "summary": {
-                        "type": "string"
-                    },
                     "subject": {
                         "type": "string"
                     },
                     "displayName": {
-                        "type": "string"
-                    },
-                    "body": {
                         "type": "string"
                     },
                     "status": {
@@ -1766,7 +1769,7 @@
                     }
                 }
             },
-            "UserBooking.jsonld": {
+            "UserBooking.jsonld-userBooking": {
                 "type": "object",
                 "properties": {
                     "@id": {
@@ -1810,19 +1813,10 @@
                     "hitId": {
                         "type": "string"
                     },
-                    "iCalUId": {
-                        "type": "string"
-                    },
-                    "summary": {
-                        "type": "string"
-                    },
                     "subject": {
                         "type": "string"
                     },
                     "displayName": {
-                        "type": "string"
-                    },
-                    "body": {
                         "type": "string"
                     },
                     "status": {
