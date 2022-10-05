@@ -4,12 +4,14 @@ namespace App\MessageHandler;
 
 use App\Entity\Resources\AAKResource;
 use App\Message\CreateBookingMessage;
+use App\Message\SendBookingNotificationMessage;
 use App\Repository\Main\AAKResourceRepository;
 use App\Service\MicrosoftGraphServiceInterface;
 use App\Service\NotificationServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @see https://github.com/itk-dev/os2forms_selvbetjening/blob/develop/web/modules/custom/os2forms_rest_api/README.md
@@ -17,7 +19,7 @@ use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 #[AsMessageHandler]
 class CreateBookingHandler
 {
-    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService, private LoggerInterface $logger, private AAKResourceRepository $aakResourceRepository, private NotificationServiceInterface $notificationService)
+    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService, private LoggerInterface $logger, private AAKResourceRepository $aakResourceRepository, private NotificationServiceInterface $notificationService, private MessageBusInterface $bus)
     {
     }
 
@@ -54,8 +56,12 @@ class CreateBookingHandler
                     $booking->getStartTime(),
                     $booking->getEndTime(),
                 );
-                // Send booking success notification.
-                $this->notificationService->sendBookingNotification($booking, $resource, 'success');
+
+                // Register notification job.
+                $this->bus->dispatch(new SendBookingNotificationMessage(
+                    $booking,
+                    'success'
+                ));
             }
         } catch (\Exception $exception) {
             // TODO: Send booking failed notification.

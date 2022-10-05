@@ -2,49 +2,50 @@
 
 namespace App\Command;
 
+use App\Service\NotificationServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use App\Service\NotificationServiceInterface;
 
 #[AsCommand(
-  name: 'app:bookingnotification:create-ical',
-  description: 'Create example ical file',
+    name: 'app:bookingnotification:create-ical',
+    description: 'Create example ical file',
 )]
 class BookingNotificationCreateIcalCommand extends Command
 {
-  public function __construct(private NotificationServiceInterface $notificationService)
-  {
-    parent::__construct();
-  }
-  protected function configure(): void
-  {
-  }
+    public function __construct(private NotificationServiceInterface $notificationService)
+    {
+        parent::__construct();
+    }
 
-  protected function execute(InputInterface $input, OutputInterface $output): int
-  {
-    $io = new SymfonyStyle($input, $output);
+    protected function configure(): void
+    {
+    }
 
-    $events = $this->getEvents();
-    $calendarComponent = $this->notificationService->createCalendarComponent($events);
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $io = new SymfonyStyle($input, $output);
 
-    file_put_contents('resources/calendar.ics', (string)$calendarComponent);
+        $events = $this->getEvents();
+        $calendarComponent = $this->notificationService->createCalendarComponent($events);
 
-    $io->success('Ics file created. (resources/calendar.ics)');
+        file_put_contents('resources/calendar.ics', (string) $calendarComponent);
 
-    return Command::SUCCESS;
-  }
+        $io->success('Ics file created. (resources/calendar.ics)');
 
-  /**
-   * @return array
-   */
-  public function getEvents()
-  {
-    $json = file_get_contents('resources/exampleIcalEventData.json');
-    $events = json_decode($json, true);
+        return Command::SUCCESS;
+    }
 
-    return $events['data'];
-  }
+    /**
+     * @return array
+     */
+    public function getEvents()
+    {
+        $json = file_get_contents('resources/exampleIcalEventData.json');
+        $events = json_decode($json, true);
+
+        return $events['data'];
+    }
 }
