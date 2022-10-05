@@ -67,6 +67,9 @@ class BookingTest extends AbstractBaseApiTestCase
         $this->messenger('async')->queue()->assertContains(WebformSubmitMessage::class);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testWebformSubmitMessageHandler(): void
     {
         $this->messenger('async')->queue()->assertEmpty();
@@ -125,8 +128,6 @@ class BookingTest extends AbstractBaseApiTestCase
         $validationUtilsMock->method('validateDate')->willReturn(new \DateTime('2022-08-18T10:00:00.000Z'));
         $validationUtilsMock->method('validateEmail')->willReturn('test@bookaarhus.local.itkdev.dk');
 
-        /** @var ApiKeyUserRepository $apiKeyUserRepository */
-        $apiKeyUserRepository = $this->createMock(ApiKeyUserRepository::class);
         $logger = $this->createMock(LoggerInterface::class);
 
         $container = self::getContainer();
@@ -148,7 +149,8 @@ class BookingTest extends AbstractBaseApiTestCase
         /** @var ApiKeyUser $testUser */
         $testUser = $entityManager->getRepository(ApiKeyUser::class)->findOneBy(['name' => 'test']);
 
-        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $apiKeyUserRepository, $bus, $validationUtilsMock, $logger, $aakBookingRepository, $twig);
+        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $bus, $validationUtilsMock, $logger, $aakBookingRepository, $twig);
+
         $webformSubmitHandler->__invoke(new WebformSubmitMessage(
             'booking',
             '795f5a1c-a0ac-4f8a-8834-bb71fca8585d',
