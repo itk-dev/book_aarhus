@@ -35,7 +35,7 @@ class CreateBookingWebformSubmitController extends AbstractController
         $submissionUuid = $webformContent['data']['submission']['uuid'] ?? null;
         $sender = $webformContent['links']['sender'] ?? null;
         $getSubmissionUrl = $webformContent['links']['get_submission_url'] ?? null;
-        $apiKeyUserId = $userId ?? $user->getUserIdentifier() ?? null;
+        $apiKeyUserId = $userId ?? $user?->getUserIdentifier();
 
         if (null === $webformId) {
             throw new BadRequestException('data->webform->id should not be null');
@@ -58,7 +58,7 @@ class CreateBookingWebformSubmitController extends AbstractController
             $submissionUuid,
             $sender,
             $getSubmissionUrl,
-            $apiKeyUserId,
+            $apiKeyUserId ?? '',
         ));
 
         return new Response(null, 201);

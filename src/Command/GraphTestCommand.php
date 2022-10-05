@@ -55,7 +55,7 @@ class GraphTestCommand extends Command
         }
 
         try {
-            if ($askFormCredentials) {
+            if ($askFormCredentials && !empty($username) && !empty($password)) {
                 $accessToken = $this->microsoftGraphService->authenticateAsUser($username, $password);
             } else {
                 $accessToken = $this->microsoftGraphService->authenticateAsServiceAccount();

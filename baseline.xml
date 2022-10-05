@@ -1,67 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="4.27.0@faf106e717c37b8c81721845dba9de3d8deed8ff">
-  <file src="src/Command/AuthDeleteApikeyCommand.php">
-    <RedundantCondition occurrences="1">
-      <code>$input-&gt;getOption('force')</code>
-    </RedundantCondition>
-    <TypeDoesNotContainNull occurrences="1">
-      <code>false</code>
-    </TypeDoesNotContainNull>
-  </file>
-  <file src="src/Command/GraphAcceptBookingCommand.php">
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>acceptBooking</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="src/Command/GraphTestCommand.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$accessToken</code>
-    </PossiblyInvalidArgument>
-    <PossiblyUndefinedVariable occurrences="2">
-      <code>$password</code>
-      <code>$username</code>
-    </PossiblyUndefinedVariable>
-  </file>
-  <file src="src/Controller/CreateBookingWebformSubmitController.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$apiKeyUserId</code>
-    </PossiblyNullArgument>
-    <PossiblyNullReference occurrences="1">
-      <code>getUserIdentifier</code>
-    </PossiblyNullReference>
-    <RedundantCondition occurrences="1">
-      <code>$user-&gt;getUserIdentifier()</code>
-    </RedundantCondition>
-    <TypeDoesNotContainNull occurrences="1">
-      <code>null</code>
-    </TypeDoesNotContainNull>
-  </file>
-  <file src="src/DataFixtures/ResourceFixtures.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>'1234567890'</code>
-    </InvalidScalarArgument>
-  </file>
-  <file src="src/DataProvider/UserBookingCollectionDataProvider.php">
-    <InvalidReturnStatement occurrences="1">
-      <code>'no results'</code>
-    </InvalidReturnStatement>
-  </file>
   <file src="src/DataProvider/UserBookingItemDataProvider.php">
-    <FalsableReturnStatement occurrences="1">
-      <code>false</code>
-    </FalsableReturnStatement>
-    <UndefinedInterfaceMethod occurrences="2">
-      <code>deleteUserBooking</code>
+    <PossiblyInvalidCast occurrences="1">
+      <code>$id</code>
+    </PossiblyInvalidCast>
+    <UndefinedInterfaceMethod occurrences="1">
       <code>getUserBooking</code>
     </UndefinedInterfaceMethod>
-  </file>
-  <file src="src/Doctrine/AAKResourceExtension.php">
-    <PossiblyNullPropertyFetch occurrences="1">
-      <code>$currentRequest-&gt;query</code>
-    </PossiblyNullPropertyFetch>
-    <PossiblyNullReference occurrences="1">
-      <code>get</code>
-    </PossiblyNullReference>
   </file>
   <file src="src/Entity/Resources/HolidayOpenHours.php">
     <UndefinedThisPropertyAssignment occurrences="1">
@@ -70,6 +15,11 @@
     <UndefinedThisPropertyFetch occurrences="1">
       <code>$this-&gt;resourceId</code>
     </UndefinedThisPropertyFetch>
+  </file>
+  <file src="src/MessageHandler/CreateBookingHandler.php">
+    <UndefinedMagicMethod occurrences="1">
+      <code>isAcceptanceFlow</code>
+    </UndefinedMagicMethod>
   </file>
   <file src="src/Repository/Main/AAKResourceRepository.php">
     <ImplementedReturnTypeMismatch occurrences="2">
@@ -80,7 +30,7 @@
       <code>$this-&gt;findOneBy(['resourceMail' =&gt; $email])</code>
     </InvalidReturnStatement>
     <InvalidReturnType occurrences="1">
-      <code>?AAKResource</code>
+      <code>null|AAKResourceRepository</code>
     </InvalidReturnType>
   </file>
   <file src="src/Repository/Main/ApiKeyUserRepository.php">
@@ -105,6 +55,9 @@
   </file>
   <file src="src/Service/MicrosoftGraphService.php">
     <ArgumentTypeCoercion occurrences="1"/>
+    <InvalidPropertyFetch occurrences="1">
+      <code>$tokenEntry-&gt;access_token</code>
+    </InvalidPropertyFetch>
     <UndefinedVariable occurrences="1">
       <code>$token</code>
     </UndefinedVariable>

@@ -3,6 +3,9 @@
 namespace App\Command;
 
 use App\Service\MicrosoftGraphServiceInterface;
+use GuzzleHttp\Exception\GuzzleException;
+use Microsoft\Graph\Exception\GraphException;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -27,6 +30,11 @@ class GraphAcceptBookingCommand extends Command
         $this->addArgument('id', InputArgument::REQUIRED, 'Id of booking to accept.');
     }
 
+    /**
+     * @throws GraphException
+     * @throws GuzzleException
+     * @throws InvalidArgumentException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);

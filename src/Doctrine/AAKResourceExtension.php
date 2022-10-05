@@ -55,7 +55,7 @@ final class AAKResourceExtension implements QueryCollectionExtensionInterface, Q
 
         // Extract whitelistKey from request.
         $currentRequest = $this->requestStack->getCurrentRequest();
-        $whitelistKey = $currentRequest->query->get('whitelistKey');
+        $whitelistKey = $currentRequest?->query->get('whitelistKey');
 
         // If whitelistKey is set, check if the whitelistKey exists in cvrWhitelist for the given resource.
         if (null !== $whitelistKey) {

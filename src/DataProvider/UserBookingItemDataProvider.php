@@ -33,16 +33,16 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
      * @throws InvalidArgumentException
      * @throws Exception
      */
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): UserBooking|false|null
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): UserBooking|null
     {
+        // @TODO: Should be rewritten to match statement as it returns stuff.
         switch ($context['item_operation_name']) {
             case 'get':
                 if (!isset($id)) {
                     throw new BadRequestHttpException('Required booking id is not set');
                 }
 
-                $userId = ' ';
-                $userBookingResults = $this->microsoftGraphService->getUserBooking($userId, $id);
+                $userBookingResults = $this->microsoftGraphService->getUserBooking('', $id);
                 $userBooking = new UserBooking();
 
                 $userBooking->id = Ulid::generate();
@@ -59,23 +59,24 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
                 $userBooking->body = $bookingDetailsData['body']['content'];
 
                 return $userBooking;
+
             case 'delete':
                 if (!isset($id)) {
                     throw new BadRequestHttpException('Required booking id is not set');
                 }
 
-                $userId = ' ';
                 try {
                     $userBooking = new UserBooking();
-                    $userBookingResult = $this->microsoftGraphService->deleteUserBooking($id, $userId);
-                    $userBooking->status = $userBookingResult;
+                    $userBookingResult = $this->microsoftGraphService->deleteUserBooking((string) $id, '');
+                    $userBooking->status = $userBookingResult ?? '';
                 } catch (Exception $e) {
                     exit($e->getMessage());
                 }
 
                 return $userBooking;
+
             default:
-                return false;
+                return null;
         }
     }
 }
