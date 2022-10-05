@@ -16,7 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class GraphFreeBusyCommand extends Command
 {
-    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService)
+    public function __construct(private readonly MicrosoftGraphServiceInterface $microsoftGraphService)
     {
         parent::__construct();
     }

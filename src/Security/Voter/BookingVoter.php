@@ -16,7 +16,7 @@ class BookingVoter extends Voter
     public const PERMISSION_CITIZEN = 'citizen';
     public const PERMISSION_BUSINESS_PARTNER = 'businessPartner';
 
-    public function __construct(private AAKResourceRepository $aakResourceRepository)
+    public function __construct(private readonly AAKResourceRepository $aakResourceRepository)
     {
     }
 

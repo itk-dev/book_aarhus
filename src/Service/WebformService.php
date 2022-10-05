@@ -24,9 +24,9 @@ class WebformService implements WebformServiceInterface
      * @param ApiKeyUserRepository $apiKeyUserRepository
      */
     public function __construct(
-        private HttpClientInterface $client,
-        private LoggerInterface $logger,
-        private ApiKeyUserRepository $apiKeyUserRepository,
+        private readonly HttpClientInterface $client,
+        private readonly LoggerInterface $logger,
+        private readonly ApiKeyUserRepository $apiKeyUserRepository
     ) {
     }
 

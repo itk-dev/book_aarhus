@@ -12,7 +12,7 @@ use Symfony\Component\Uid\Ulid;
 
 final class BusyIntervalCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService)
+    public function __construct(private readonly MicrosoftGraphServiceInterface $microsoftGraphService)
     {
     }
 

@@ -19,10 +19,10 @@ use Symfony\Component\Security\Core\Security;
 class CreateBookingHandler
 {
     public function __construct(
-        private MicrosoftGraphServiceInterface $microsoftGraphService,
-        private LoggerInterface $logger,
-        private AAKResourceRepository $aakResourceRepository,
-        private Security $security,
+        private readonly MicrosoftGraphServiceInterface $microsoftGraphService,
+        private readonly LoggerInterface $logger,
+        private readonly AAKResourceRepository $aakResourceRepository,
+        private readonly Security $security,
     ) {
     }
 

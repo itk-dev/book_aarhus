@@ -17,8 +17,11 @@ use Symfony\Component\Uid\Ulid;
 
 final class UserBookingItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService, private Security $security, private RequestStack $requestStack)
-    {
+    public function __construct(
+        private readonly MicrosoftGraphServiceInterface $microsoftGraphService,
+        private readonly Security $security,
+        private readonly RequestStack $requestStack
+    ) {
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool

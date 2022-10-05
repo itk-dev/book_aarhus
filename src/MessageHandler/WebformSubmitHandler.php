@@ -28,12 +28,12 @@ use Twig\Error\SyntaxError;
 class WebformSubmitHandler
 {
     public function __construct(
-        private WebformServiceInterface $webformService,
-        private MessageBusInterface $bus,
-        private ValidationUtilsInterface $validationUtils,
-        private LoggerInterface $logger,
-        private AAKResourceRepository $aakResourceRepository,
-        private Environment $twig,
+        private readonly WebformServiceInterface $webformService,
+        private readonly MessageBusInterface $bus,
+        private readonly ValidationUtilsInterface $validationUtils,
+        private readonly LoggerInterface $logger,
+        private readonly AAKResourceRepository $aakResourceRepository,
+        private readonly Environment $twig,
     ) {
     }
 

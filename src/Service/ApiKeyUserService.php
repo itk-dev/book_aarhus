@@ -9,8 +9,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiKeyUserService
 {
-    public function __construct(private EntityManagerInterface $entityManager, private ApiKeyUserRepository $apiKeyUserRepository)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ApiKeyUserRepository $apiKeyUserRepository
+    ) {
     }
 
     /**

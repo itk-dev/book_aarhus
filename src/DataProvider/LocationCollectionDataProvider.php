@@ -9,7 +9,7 @@ use App\Repository\Main\AAKResourceRepository;
 
 final class LocationCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    public function __construct(private AAKResourceRepository $AAKResourceRepository)
+    public function __construct(private readonly AAKResourceRepository $AAKResourceRepository)
     {
     }
 

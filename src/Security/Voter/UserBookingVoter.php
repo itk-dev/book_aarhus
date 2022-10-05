@@ -17,7 +17,7 @@ class UserBookingVoter extends Voter
     public const EDIT = 'USER_BOOKING_EDIT';
     public const DELETE = 'USER_BOOKING_DELETE';
 
-    public function __construct(private RequestStack $requestStack)
+    public function __construct(private readonly RequestStack $requestStack)
     {
     }
 
