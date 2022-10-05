@@ -43,10 +43,14 @@
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "ergebnis/composer-normalize": "^2.27",
         "friendsofphp/php-cs-fixer": "^3.8",
+        "hectorj/safe-php-psalm-plugin": "^1.4",
         "phpunit/phpunit": "^9.5",
+        "psalm/plugin-symfony": "^3.1",
         "symfony/browser-kit": "6.1.*",
         "symfony/maker-bundle": "^1.43",
         "symfony/phpunit-bridge": "^6.0",
+        "vimeo/psalm": "^4.27",
+        "weirdan/doctrine-psalm-plugin": "^2.3",
         "zenstruck/messenger-test": "^1.4"
     },
     "replace": {
@@ -98,15 +102,18 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "apply-coding-standards": [
-            "vendor/bin/php-cs-fixer fix"
-        ],
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
-        "check-coding-standards": [
+        "coding-standards-check": [
             "vendor/bin/php-cs-fixer fix --dry-run"
+        ],
+        "coding-standards-apply": [
+            "vendor/bin/php-cs-fixer fix"
+        ],
+        "psalm": [
+            "./vendor/bin/psalm"
         ],
         "prepare-code": [
             "@apply-coding-standards",
@@ -115,7 +122,7 @@
             "composer normalize"
         ],
         "queues": [
-            "bin/console messenger:consume async -vvv"
+            "bin/console messenger:consume async --failure-limit=1 -vvv"
         ],
         "tests": [
             "bin/console --env=test doctrine:database:drop --if-exists --force --quiet",
