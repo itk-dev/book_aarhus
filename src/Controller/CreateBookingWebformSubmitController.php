@@ -24,13 +24,11 @@ class CreateBookingWebformSubmitController extends AbstractController
         $this->logger->info('CreateBookingWebformSubmitController invoked.');
 
         $user = $this->getUser();
-
         if ($user instanceof ApiKeyUser) {
             $userId = $user->getId();
         }
 
         $webformContent = $request->toArray();
-
         $webformId = $webformContent['data']['webform']['id'] ?? null;
         $submissionUuid = $webformContent['data']['submission']['uuid'] ?? null;
         $sender = $webformContent['links']['sender'] ?? null;
