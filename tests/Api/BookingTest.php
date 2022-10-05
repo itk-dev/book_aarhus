@@ -168,6 +168,7 @@ class BookingTest extends AbstractBaseApiTestCase
 
         $container = self::getContainer();
         $logger = $container->get(LoggerInterface::class);
+        $bus = $container->get(MessageBusInterface::class);
         $notificationServiceInterface = $container->get(NotificationServiceInterface::class);
 
         $booking = new Booking();
@@ -203,7 +204,7 @@ class BookingTest extends AbstractBaseApiTestCase
             ->getMock();
         $aakResourceRepositoryMock->expects($this->exactly(1))->method('findOneByEmail')->willReturn($res);
 
-        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock, $notificationServiceInterface);
+        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock, $notificationServiceInterface, $bus);
         $createBookingHandler->__invoke(new CreateBookingMessage($booking));
     }
 
