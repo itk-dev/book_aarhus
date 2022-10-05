@@ -106,20 +106,20 @@
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
-        "coding-standards-check": [
-            "vendor/bin/php-cs-fixer fix --dry-run"
-        ],
         "coding-standards-apply": [
             "vendor/bin/php-cs-fixer fix"
         ],
-        "psalm": [
-            "./vendor/bin/psalm"
+        "coding-standards-check": [
+            "vendor/bin/php-cs-fixer fix --dry-run"
         ],
         "prepare-code": [
             "@apply-coding-standards",
             "@tests",
             "@update-api-spec",
             "composer normalize"
+        ],
+        "psalm": [
+            "./vendor/bin/psalm"
         ],
         "queues": [
             "bin/console messenger:consume async --failure-limit=1 -vvv"
