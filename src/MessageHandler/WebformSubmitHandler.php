@@ -12,7 +12,6 @@ use App\Service\WebformServiceInterface;
 use App\Utils\ValidationUtilsInterface;
 use DateTime;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
