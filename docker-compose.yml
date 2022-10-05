@@ -97,19 +97,6 @@ services:
       - RABBITMQ_DEFAULT_PASS=password
       - RABBITMQ_ERLANG_COOKIE='d53f319cd7376f8f840aaf9889f315ab'
 
-#  mailhog:
-#    image: mailhog/mailhog
-#    networks:
-#      - app
-#      - frontend
-#    ports:
-#      - "1025"
-#      - "8025"
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.docker.network=frontend"
-#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.rule=Host(`${COMPOSE_DOMAIN}`)"
-
 volumes:
   # Named volume requires that you have NFS shares enabled (performance boost on Macs).
   # Use `itkdev-docker-compose nfs:enable` to enable NFS shares. If you don't want to use it remove it from here and
