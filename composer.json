@@ -117,6 +117,7 @@
             "@coding-standards-apply",
             "@tests",
             "@update-api-spec",
+            "@psalm",
             "composer normalize"
         ],
         "psalm": [

@@ -256,13 +256,13 @@ the coding standard for the project.
 * PHP files [PHP Coding Standards Fixer](https://cs.symfony.com/)
 
 ```shell
-docker compose exec phpfpm composer check-coding-standards
+docker compose exec phpfpm composer coding-standards-check
 ```
 
 To attempt to automatically fix coding style issues
 
 ```shell
-docker compose exec phpfpm composer apply-coding-standards
+docker compose exec phpfpm composer coding-standards-apply
 ```
 
 ## CI
