@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Service\ApiKeyUserService;
+use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -17,8 +18,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class AuthDeleteApikeyCommand extends Command
 {
-    public function __construct(private ApiKeyUserService $apiKeyUserService)
-    {
+    public function __construct(
+        private readonly ApiKeyUserService $apiKeyUserService
+    ) {
         parent::__construct();
     }
 
@@ -29,7 +31,7 @@ class AuthDeleteApikeyCommand extends Command
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

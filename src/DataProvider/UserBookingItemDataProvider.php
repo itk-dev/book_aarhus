@@ -9,13 +9,16 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
 use App\Service\MicrosoftGraphServiceInterface;
 use Exception;
+use GuzzleHttp\Exception\GuzzleException;
+use Microsoft\Graph\Exception\GraphException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Uid\Ulid;
 
 final class UserBookingItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService)
-    {
+    public function __construct(
+        private readonly MicrosoftGraphServiceInterface $microsoftGraphService
+    ) {
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -23,7 +26,12 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
         return UserBooking::class === $resourceClass;
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?UserBooking
+    /**
+     * @throws GuzzleException
+     * @throws GraphException
+     * @throws Exception
+     */
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): UserBooking|false|null
     {
         switch ($context['item_operation_name']) {
             case 'get':

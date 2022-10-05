@@ -17,6 +17,7 @@ use App\Tests\AbstractBaseApiTestCase;
 use App\Utils\ValidationUtils;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Twig\Environment;
 use Zenstruck\Messenger\Test\InteractsWithMessenger;
 
@@ -24,6 +25,9 @@ class BookingTest extends AbstractBaseApiTestCase
 {
     use InteractsWithMessenger;
 
+    /**
+     * @throws TransportExceptionInterface
+     */
     public function testBookingWebform(): void
     {
         $this->messenger('async')->queue()->assertEmpty();
@@ -265,6 +269,9 @@ class BookingTest extends AbstractBaseApiTestCase
         $this->assertEquals('2022-06-25T10:30:00+00:00', $booking->getEndTime()->format('c'));
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
     public function testInvalidBooking(): void
     {
         $this->messenger('async')->queue()->assertEmpty();

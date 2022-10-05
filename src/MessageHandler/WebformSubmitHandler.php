@@ -8,7 +8,6 @@ use App\Entity\Resources\AAKResource;
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
 use App\Repository\Main\AAKResourceRepository;
-use App\Repository\Main\ApiKeyUserRepository;
 use App\Service\WebformServiceInterface;
 use App\Utils\ValidationUtilsInterface;
 use DateTime;
@@ -29,13 +28,12 @@ use Twig\Error\SyntaxError;
 class WebformSubmitHandler
 {
     public function __construct(
-        private WebformServiceInterface $webformService,
-        private ApiKeyUserRepository $apiKeyUserRepository,
-        private MessageBusInterface $bus,
-        private ValidationUtilsInterface $validationUtils,
-        private LoggerInterface $logger,
-        private AAKResourceRepository $aakResourceRepository,
-        private Environment $twig,
+        private readonly WebformServiceInterface $webformService,
+        private readonly MessageBusInterface $bus,
+        private readonly ValidationUtilsInterface $validationUtils,
+        private readonly LoggerInterface $logger,
+        private readonly AAKResourceRepository $aakResourceRepository,
+        private readonly Environment $twig,
     ) {
     }
 

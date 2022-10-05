@@ -16,8 +16,11 @@ use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 #[AsMessageHandler]
 class CreateBookingHandler
 {
-    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService, private LoggerInterface $logger, private AAKResourceRepository $aakResourceRepository)
-    {
+    public function __construct(
+        private readonly MicrosoftGraphServiceInterface $microsoftGraphService,
+        private readonly LoggerInterface $logger,
+        private readonly AAKResourceRepository $aakResourceRepository
+    ) {
     }
 
     public function __invoke(CreateBookingMessage $message): void

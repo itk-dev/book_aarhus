@@ -15,8 +15,10 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[AsController]
 class CreateBookingWebformSubmitController extends AbstractController
 {
-    public function __construct(private MessageBusInterface $bus, private LoggerInterface $logger)
-    {
+    public function __construct(
+        private readonly MessageBusInterface $bus,
+        private readonly LoggerInterface $logger
+    ) {
     }
 
     public function __invoke(Request $request): Response

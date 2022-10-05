@@ -7,15 +7,14 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\BusyInterval;
 use App\Service\MicrosoftGraphServiceInterface;
 use Exception;
-use GuzzleHttp\Exception\GuzzleException;
-use Microsoft\Graph\Exception\GraphException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Uid\Ulid;
 
 final class BusyIntervalCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService)
-    {
+    public function __construct(
+        private readonly MicrosoftGraphServiceInterface $microsoftGraphService
+    ) {
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -24,8 +23,6 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
     }
 
     /**
-     * @throws GuzzleException
-     * @throws GraphException
      * @throws Exception
      */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
