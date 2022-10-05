@@ -306,7 +306,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/search-concept-events
      */
-    public function getUserBooking(string $userId, string $bookingId): array
+    public function getUserBooking(string $bookingId): array
     {
         $token = $this->authenticateAsServiceAccount();
 

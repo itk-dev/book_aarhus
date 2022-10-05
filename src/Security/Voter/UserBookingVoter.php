@@ -3,7 +3,6 @@
 namespace App\Security\Voter;
 
 use App\Entity\Main\UserBooking;
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -35,7 +34,11 @@ class UserBookingVoter extends Voter
 
         $request = $this->requestStack->getCurrentRequest();
 
-        $userId = $request->headers->get('Authorization-UserId');
+        if (is_null($request)) {
+            return false;
+        }
+
+        $userId = $request->headers->get('Authorization-UserId') ?? null;
 
         if (is_null($userId)) {
             return false;

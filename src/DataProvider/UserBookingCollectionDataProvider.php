@@ -32,7 +32,12 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         $request = $this->requestStack->getCurrentRequest();
-        $userId = $request->headers->get('Authorization-UserId');
+
+        if (is_null($request)) {
+            throw new BadRequestHttpException('Request not set.');
+        }
+
+        $userId = $request->headers->get('Authorization-UserId') ?? null;
 
         if (is_null($userId)) {
             throw new BadRequestHttpException('Required Authorization-UserId header is not set.');

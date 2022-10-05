@@ -33,12 +33,11 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
     {
         switch ($context['item_operation_name']) {
             case 'get':
-                if (!isset($id)) {
+                if (!isset($id) || !is_string($id)) {
                     throw new BadRequestHttpException('Required booking id is not set');
                 }
 
-                $userId = ' ';
-                $userBookingResults = $this->microsoftGraphService->getUserBooking($userId, $id);
+                $userBookingResults = $this->microsoftGraphService->getUserBooking($id);
                 $userBooking = new UserBooking();
 
                 $userBooking->id = Ulid::generate();
@@ -65,14 +64,23 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
             case 'delete':
                 // TODO: Refactor to move into DataPersister instead of being in DataProvider.
 
-                if (!isset($id)) {
+                if (!isset($id) || !is_string($id)) {
                     throw new BadRequestHttpException('Required booking id is not set');
                 }
 
                 $request = $this->requestStack->getCurrentRequest();
-                $userId = $request->headers->get('Authentication-UserId');
 
-                $userBookingResults = $this->microsoftGraphService->getUserBooking($userId, $id);
+                if (is_null($request)) {
+                    throw new BadRequestHttpException('Request not set.');
+                }
+
+                $userId = $request->headers->get('Authentication-UserId') ?? null;
+
+                if (is_null($userId)) {
+                    throw new BadRequestHttpException('Required Authentication-UserId header not set.');
+                }
+
+                $userBookingResults = $this->microsoftGraphService->getUserBooking($id);
 
                 $userBooking = new UserBooking();
                 $userBooking->id = Ulid::generate();
