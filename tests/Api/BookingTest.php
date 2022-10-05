@@ -10,15 +10,16 @@ use App\Message\WebformSubmitMessage;
 use App\MessageHandler\CreateBookingHandler;
 use App\MessageHandler\WebformSubmitHandler;
 use App\Repository\Main\AAKResourceRepository;
-use App\Repository\Main\ApiKeyUserRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\MicrosoftGraphService;
 use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
 use App\Utils\ValidationUtils;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Twig\Environment;
 use Zenstruck\Messenger\Test\InteractsWithMessenger;
 
@@ -26,6 +27,9 @@ class BookingTest extends AbstractBaseApiTestCase
 {
     use InteractsWithMessenger;
 
+    /**
+     * @throws TransportExceptionInterface|Exception
+     */
     public function testBookingVoter(): void
     {
         $res = new AAKResource();
@@ -106,6 +110,9 @@ class BookingTest extends AbstractBaseApiTestCase
         $this->messenger('async')->queue()->assertContains(WebformSubmitMessage::class);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testWebformSubmitMessageHandler(): void
     {
         $this->messenger('async')->queue()->assertEmpty();
@@ -166,8 +173,6 @@ class BookingTest extends AbstractBaseApiTestCase
         $validationUtilsMock->method('validateDate')->willReturn(new \DateTime('2022-08-18T10:00:00.000Z'));
         $validationUtilsMock->method('validateEmail')->willReturn('test@bookaarhus.local.itkdev.dk');
 
-        /** @var ApiKeyUserRepository $apiKeyUserRepository */
-        $apiKeyUserRepository = $this->createMock(ApiKeyUserRepository::class);
         $logger = $this->createMock(LoggerInterface::class);
 
         $container = self::getContainer();
@@ -190,6 +195,7 @@ class BookingTest extends AbstractBaseApiTestCase
         $testUser = $entityManager->getRepository(ApiKeyUser::class)->findOneBy(['name' => 'test']);
 
         $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $bus, $validationUtilsMock, $logger, $aakBookingRepository, $twig);
+
         $webformSubmitHandler->__invoke(new WebformSubmitMessage(
             'booking',
             '795f5a1c-a0ac-4f8a-8834-bb71fca8585d',
@@ -316,6 +322,9 @@ class BookingTest extends AbstractBaseApiTestCase
         $this->assertEquals('2022-06-25T10:30:00+00:00', $booking->getEndTime()->format('c'));
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
     public function testInvalidBooking(): void
     {
         $this->messenger('async')->queue()->assertEmpty();

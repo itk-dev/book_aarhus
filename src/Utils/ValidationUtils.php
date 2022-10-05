@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 use ApiPlatform\Core\Exception\InvalidArgumentException;
+use Exception;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -14,6 +15,9 @@ class ValidationUtils implements ValidationUtilsInterface
     ) {
     }
 
+    /**
+     * @throws Exception
+     */
     public function validateDate(string $dateString, string $format = null): \DateTime
     {
         $format = $format ?? $this->bindDefaultDateFormat;
@@ -33,7 +37,7 @@ class ValidationUtils implements ValidationUtilsInterface
         $errors = $this->validator->validate($email, new Assert\Email());
 
         if (0 !== count($errors)) {
-            throw new InvalidArgumentException("$email is not a valid email format, valid format is e.g. test@bookaarhus.local.itkdev.dk");
+            throw new InvalidArgumentException($email.'is not a valid email format, valid format is e.g. test@bookaarhus.local.itkdev.dk');
         }
 
         return $email;

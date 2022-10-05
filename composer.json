@@ -4,7 +4,7 @@
     "license": "proprietary",
     "type": "project",
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.1.0",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "api-platform/core": "^2.6",
@@ -121,7 +121,7 @@
             "composer normalize"
         ],
         "psalm": [
-            "./vendor/bin/psalm"
+            "./vendor/bin/psalm --no-cache"
         ],
         "queues": [
             "bin/console messenger:consume async --failure-limit=1 -vvv"

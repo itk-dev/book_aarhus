@@ -116,8 +116,9 @@ jobs:
         run: |
           composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
           bin/console cache:clear
+
       - name: Psalm
-        run: ./vendor/bin/psalm
+        run: ./vendor/bin/psalm --no-cache
 
   markdownlint:
     name: Markdown Lint

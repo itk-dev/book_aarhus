@@ -13,8 +13,10 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[AsController]
 class CreateBookingController extends AbstractController
 {
-    public function __construct(private readonly MessageBusInterface $bus, private readonly ValidationUtils $validationUtils)
-    {
+    public function __construct(
+        private readonly MessageBusInterface $bus,
+        private readonly ValidationUtils $validationUtils
+    ) {
     }
 
     public function __invoke(Booking $data): Response

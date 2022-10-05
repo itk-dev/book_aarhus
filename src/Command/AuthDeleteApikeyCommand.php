@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Service\ApiKeyUserService;
+use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -17,36 +18,30 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class AuthDeleteApikeyCommand extends Command
 {
-    public function __construct(private readonly ApiKeyUserService $apiKeyUserService)
-    {
+    public function __construct(
+        private readonly ApiKeyUserService $apiKeyUserService
+    ) {
         parent::__construct();
     }
 
     protected function configure(): void
     {
-        $this->addArgument(
-            'id',
-            InputArgument::REQUIRED,
-            'Id of apikey to remove'
-        );
-
-        $this->addOption('force', 'f', InputOption::VALUE_NONE, 'Delete without confirm');
+        $this->addArgument('id', InputArgument::REQUIRED, 'Id of apikey to remove');
+        $this->addOption('force', 'f', InputOption::VALUE_NONE, 'Delete without confirm', false);
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
         $id = $input->getArgument('id');
-
-        $force = $input->getOption('force') ?? false;
+        $force = $input->getOption('force');
 
         if (!$force) {
-            $confirmed = $io->confirm("Remove ApiKeyUser with id: $id?", false);
-
+            $confirmed = $io->confirm('Remove ApiKeyUser with id: '.$id.'?', false);
             if (!$confirmed) {
                 $io->error('Aborted');
 

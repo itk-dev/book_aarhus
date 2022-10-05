@@ -6,9 +6,17 @@ use App\Service\MicrosoftGraphService;
 use App\Tests\AbstractBaseApiTestCase;
 use Microsoft\Graph\Http\GraphRequest;
 use Microsoft\Graph\Http\GraphResponse;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class BusyIntervalTest extends AbstractBaseApiTestCase
 {
+    /**
+     * @throws TransportExceptionInterface
+     */
     public function testNoFilters(): void
     {
         $client = self::getAuthenticatedClient();
@@ -17,6 +25,13 @@ class BusyIntervalTest extends AbstractBaseApiTestCase
         $this->assertResponseStatusCodeSame(400);
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
     public function testValidRequest(): void
     {
         $client = self::getAuthenticatedClient();

@@ -1,7 +1,5 @@
 <?php
 
-// api/src/DataProvider/BlogPostItemDataProvider.php
-
 namespace App\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
@@ -9,6 +7,10 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\MicrosoftGraphServiceInterface;
+use Exception;
+use GuzzleHttp\Exception\GuzzleException;
+use Microsoft\Graph\Exception\GraphException;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -29,8 +31,15 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
         return UserBooking::class === $resourceClass;
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?UserBooking
+    /**
+     * @throws GraphException
+     * @throws GuzzleException
+     * @throws InvalidArgumentException
+     * @throws Exception
+     */
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): UserBooking|null
     {
+        // @TODO: Should be rewritten to match statement as it returns stuff.
         switch ($context['item_operation_name']) {
             case 'get':
                 if (!isset($id) || !is_string($id)) {
@@ -38,6 +47,7 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
                 }
 
                 $userBookingResults = $this->microsoftGraphService->getUserBooking($id);
+
                 $userBooking = new UserBooking();
 
                 $userBooking->id = Ulid::generate();
@@ -61,6 +71,7 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
                 unset($userBooking->body);
 
                 return $userBooking;
+
             case 'delete':
                 // TODO: Refactor to move into DataPersister instead of being in DataProvider.
 

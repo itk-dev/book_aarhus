@@ -3,6 +3,9 @@
 namespace App\Command;
 
 use App\Service\MicrosoftGraphServiceInterface;
+use GuzzleHttp\Exception\GuzzleException;
+use Microsoft\Graph\Exception\GraphException;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,20 +19,22 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class GraphAcceptBookingCommand extends Command
 {
-    public function __construct(private readonly MicrosoftGraphServiceInterface $microsoftGraphService)
-    {
+    public function __construct(
+        private readonly MicrosoftGraphServiceInterface $microsoftGraphService
+    ) {
         parent::__construct();
     }
 
     protected function configure(): void
     {
-        $this->addArgument(
-            'id',
-            InputArgument::REQUIRED,
-            'Id of booking to accept.'
-        );
+        $this->addArgument('id', InputArgument::REQUIRED, 'Id of booking to accept.');
     }
 
+    /**
+     * @throws GraphException
+     * @throws GuzzleException
+     * @throws InvalidArgumentException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
