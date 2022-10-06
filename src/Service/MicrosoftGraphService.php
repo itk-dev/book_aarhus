@@ -192,7 +192,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
         $busyIntervals = $this->getBusyIntervals([$resourceEmail], $startTime, $endTime, $token);
 
         if (empty($busyIntervals[$resourceEmail])) {
-            throw new Exception('Booking not created.', 500);
+            throw new Exception('Booking not created.', 404);
         }
 
         // TODO: Decide if this should be added.
