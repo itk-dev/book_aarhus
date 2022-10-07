@@ -22,6 +22,12 @@ class Booking
 
     private \DateTime $endTime;
 
+    private string $userMail;
+
+    private string $userName;
+
+    private array $metaData;
+
     private string $webformSubmission;
 
     public function __construct()
@@ -99,13 +105,33 @@ class Booking
         $this->endTime = $endTime;
     }
 
-    public function getWebformSubmission(): string
+    public function getUserMail(): string
     {
-        return $this->webformSubmission;
+        return $this->userMail;
     }
 
-    public function setWebformSubmission(string $webformSubmission): void
+    public function setUserMail(string $userMail): void
     {
-        $this->webformSubmission = $webformSubmission;
+        $this->userMail = $userMail;
+    }
+
+    public function getUserName(): string
+    {
+        return $this->userName;
+    }
+
+    public function setUserName(string $userName): void
+    {
+        $this->userName = $userName;
+    }
+
+    public function getMetaData(): array
+    {
+        return $this->metaData;
+    }
+
+    public function setMetaData(array $metaData): void
+    {
+        $this->metaData = $metaData;
     }
 }

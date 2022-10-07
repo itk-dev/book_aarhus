@@ -31,12 +31,14 @@ class NotificationService implements NotificationServiceInterface
     public function sendBookingNotification($booking, $resource, string $type)
     {
         try {
-            $webformSubmission = json_decode($booking->getWebformSubmission(), associative: true, flags: JSON_THROW_ON_ERROR);
-
             $data = [
                 'booking' => $booking,
                 'resource' => $resource,
-                'webformSubmission' => $webformSubmission,
+                'user' => [
+                    'name' => $booking->getUserName(),
+                    'mail' => $booking->getUserMail(),
+                ],
+                'metaData' => $booking->getMetaData(),
             ];
 
             $notification = $this->buildNotification($type, $data);
@@ -58,8 +60,7 @@ class NotificationService implements NotificationServiceInterface
       try {
           $template = null;
           $fileAttachments = [];
-          // @todo Set from email.
-          $to = $data['webformSubmission']['submissionData']['email'];
+          $to = $data['user']['mail'];
           $subject = 'Booking bekræftigelse: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
           switch ($type) {
               case 'success':

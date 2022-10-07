@@ -178,7 +178,15 @@ class BookingTest extends AbstractBaseApiTestCase
         $booking->setResourceEmail('test@bookaarhus.local.itkdev.dk');
         $booking->setStartTime(new \DateTime());
         $booking->setEndTime(new \DateTime());
-        $booking->setWebformSubmission('{"submissiondata":{"subject":"test1","resourceId":"test@bookaarhus.local.itkdev.dk","start":"2022-08-18T10:00:00.000Z","end":"2022-08-18T10:30:00.000Z","userId":"test4","formElement":"booking_element","name":"auther1","email":"author1@bookaarhus.local.itkdev.dk"},"metaData":{"meta_data_4":"1, 2, 3","meta_data_5":"a1, b2, c3","meta_data_1":"This is a metadata field","meta_data_2":"This is also metadata","meta_data_3":"Lorem ipsum metadata"}}');
+        $booking->setUserName('auther1');
+        $booking->setUserMail('author1@bookaarhus.local.itkdev.dk');
+        $booking->setMetaData([
+            'meta_data_4' => '1, 2, 3',
+            'meta_data_5' => 'a1, b2, c3',
+            'meta_data_1' => 'This is a metadata field',
+            'meta_data_2' => 'This is also metadata',
+            'meta_data_3' => 'Lorem ipsum metadata',
+        ]);
 
         $res = new AAKResource();
         $res->setResourceMail('test@bookaarhus.local.itkdev.dk');

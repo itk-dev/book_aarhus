@@ -103,10 +103,9 @@ class BookingNotificationTestCommand extends Command
             'meta_data_3' => 'Lorem ipsum metadata',
         ];
 
-        $booking->setWebformSubmission(json_encode([
-            'submissionData' => $submissionData,
-            'metaData' => $metaData,
-        ]));
+        $booking->setUserName($submissionData['name']);
+        $booking->setUserMail($submissionData['email']);
+        $booking->setMetaData($metaData);
 
         return $booking;
     }
