@@ -2,13 +2,16 @@
 
 namespace App\Service;
 
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use JsonException;
 use Microsoft\Graph\Exception\GraphException;
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Http\GraphResponse;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @see https://github.com/microsoftgraph/msgraph-sdk-php
@@ -20,30 +23,35 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     // example 2019-03-15T09:00:00
     public const DATE_FORMAT = 'Y-m-d\TH:i:s';
 
-    public function __construct(private string $tenantId, private string $clientId, private string $serviceAccountUsername, private string $serviceAccountPassword, private string $serviceAccountName, private CacheInterface $cache)
-    {
+    public function __construct(
+        private readonly string $tenantId,
+        private readonly string $clientId,
+        private readonly string $serviceAccountUsername,
+        private readonly string $serviceAccountPassword,
+        private readonly string $serviceAccountName,
+        private readonly CacheInterface $cache
+    ) {
     }
 
     /**
-     * @throws GuzzleException
+     * @throws InvalidArgumentException
      */
     public function authenticateAsServiceAccount(): string
     {
-        $tokenEntry = $this->cache->get('serviceAccountToken', function (ItemInterface $item) {
+        return $this->cache->get('serviceAccountToken', function (CacheItemInterface $item) {
             $tokenEntry = $this->authenticateAsUser($this->serviceAccountUsername, $this->serviceAccountPassword);
 
-            $item->expiresAfter($token->expires_in ?? 3600);
+            $item->expiresAfter($tokenEntry['expires_in'] ?? 3600);
 
-            return $tokenEntry;
+            return $tokenEntry['access_token'];
         });
-
-        return $tokenEntry->access_token;
     }
 
     /**
      * @throws GuzzleException
+     * @throws JsonException
      */
-    public function authenticateAsUser($username, $password): \stdClass
+    public function authenticateAsUser(string $username, string $password): array
     {
         $guzzle = new Client();
         $url = 'https://login.microsoftonline.com/'.$this->tenantId.'/oauth2/v2.0/token';
@@ -58,7 +66,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
             ],
         ]);
 
-        return json_decode($response->getBody()->getContents());
+        return json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -80,9 +88,11 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
-     * @throws GuzzleException|GraphException
-     *
      * @see https://docs.microsoft.com/en-us/graph/api/calendar-getschedule?view=graph-rest-1.0&tabs=http
+     *
+     * @throws GraphException
+     * @throws GuzzleException
+     * @throws InvalidArgumentException
      */
     public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, string $accessToken = null): array
     {
@@ -126,10 +136,12 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
-     * @throws GuzzleException|GraphException
-     * @throws \Exception
-     *
      * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
+     *
+     * @throws GraphException
+     * @throws GuzzleException
+     * @throws InvalidArgumentException
+     * @throws Exception
      */
     public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array
     {
@@ -139,7 +151,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
         $busyIntervals = $this->getBusyIntervals([$resourceEmail], $startTime, $endTime, $token);
 
         if (!empty($busyIntervals[$resourceEmail])) {
-            throw new \Exception('Booking interval conflict.', 409);
+            throw new Exception('Booking interval conflict.', 409);
         }
 
         $body = [
@@ -180,7 +192,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
         $busyIntervals = $this->getBusyIntervals([$resourceEmail], $startTime, $endTime, $token);
 
         if (empty($busyIntervals[$resourceEmail])) {
-            throw new \Exception('Booking not created.', 500);
+            throw new Exception('Booking not created.', 500);
         }
 
         // TODO: Decide if this should be added.
@@ -195,9 +207,11 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
-     * @throws GuzzleException|GraphException
-     *
      * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
+     *
+     * @throws GraphException
+     * @throws GuzzleException
+     * @throws InvalidArgumentException
      */
     public function createBookingInviteResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array
     {
@@ -240,7 +254,9 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
-     * @throws GuzzleException|GraphException
+     * @throws GraphException
+     * @throws GuzzleException
+     * @throws InvalidArgumentException
      */
     public function acceptBooking(string $id): ?string
     {
@@ -258,7 +274,9 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     /**
      * @see https://docs.microsoft.com/en-us/graph/api/event-update?view=graph-rest-1.0&tabs=http
      *
-     * @throws GuzzleException|GraphException
+     * @throws GraphException
+     * @throws GuzzleException
+     * @throws InvalidArgumentException
      */
     public function updateBooking(string $id, array $newData = []): ?string
     {
@@ -274,13 +292,16 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     /**
      * @see https://docs.microsoft.com/en-us/graph/api/event-delete?view=graph-rest-1.0&tabs=http
      *
-     * @throws GuzzleException|GraphException
+     * @throws GraphException
+     * @throws GuzzleException
+     * @throws InvalidArgumentException
      */
     public function deleteUserBooking(string $bookingId, string $ownerEmail): ?string
     {
         $token = $this->authenticateAsServiceAccount();
 
-        // Formatting the urldecode(d) booking hitId, replacing "/" with "-" as this is graph-compatible, and replacing " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
+        // Formatting the urldecode(d) booking hitId, replacing "/" with "-" as this is graph-compatible, and replacing
+        // " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
         $bookingId = urldecode($bookingId);
         $bookingId = str_replace(['/', ' '], ['-', '+'], $bookingId);
 
@@ -296,11 +317,13 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
-     * @throws GuzzleException|GraphException
-     *
      * @see https://docs.microsoft.com/en-us/graph/search-concept-events
+     *
+     * @throws GraphException
+     * @throws GuzzleException
+     * @throws InvalidArgumentException
      */
-    public function getUserBooking(string $userId, string $bookingId): array
+    public function getUserBooking(string $bookingId): array
     {
         $token = $this->authenticateAsServiceAccount();
 
@@ -313,11 +336,13 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
-     * @throws GuzzleException|GraphException
-     *
      * @see https://docs.microsoft.com/en-us/graph/search-concept-events
+     *
+     * @throws GraphException
+     * @throws GuzzleException
+     * @throws InvalidArgumentException
      */
-    public function getUserBookings(string $userId): array
+    public function getUserBookings(string $userId, string $bookingId = ''): array
     {
         $token = $this->authenticateAsServiceAccount();
 
@@ -340,9 +365,11 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
-     * @throws GuzzleException|GraphException
-     *
      * @see https://docs.microsoft.com/en-us/graph/search-concept-events
+     *
+     * @throws GraphException
+     * @throws GuzzleException
+     * @throws InvalidArgumentException
      */
     public function getBookingDetails(string $bookingId): array
     {

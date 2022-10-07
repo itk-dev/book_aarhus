@@ -6,5 +6,5 @@ interface NotificationServiceInterface
 {
     public function sendBookingNotification($booking, $resource, string $type);
 
-    public function createCalendarComponent($events);
+    public function createCalendarComponent(array $events);
 }

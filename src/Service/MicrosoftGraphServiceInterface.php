@@ -6,7 +6,13 @@ use Microsoft\Graph\Http\GraphResponse;
 
 interface MicrosoftGraphServiceInterface
 {
+    public function acceptBooking(string $id): ?string;
+
     public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, string $accessToken = null): array;
+
+    public function deleteUserBooking(string $bookingId, string $ownerEmail): ?string;
+
+    public function getUserBooking(string $bookingId): array;
 
     public function getUserBookings(string $userId): array;
 
@@ -18,7 +24,7 @@ interface MicrosoftGraphServiceInterface
 
     public function request(string $endpoint, string $accessToken, string $requestType = 'GET', array $body = null): GraphResponse;
 
-    public function authenticateAsUser($username, $password): \stdClass;
+    public function authenticateAsUser(string $username, string $password): array;
 
     public function authenticateAsServiceAccount(): string;
 }

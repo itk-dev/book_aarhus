@@ -28,7 +28,9 @@ class Booking
 
     private array $metaData;
 
-    private string $webformSubmission;
+    private string $userId;
+
+    private string $userPermission;
 
     public function __construct()
     {
@@ -133,5 +135,25 @@ class Booking
     public function setMetaData(array $metaData): void
     {
         $this->metaData = $metaData;
+    }
+
+    public function getUserId(): string
+    {
+        return $this->userId;
+    }
+
+    public function setUserId(string $userId): void
+    {
+        $this->userId = $userId;
+    }
+
+    public function getUserPermission(): string
+    {
+        return $this->userPermission;
+    }
+
+    public function setUserPermission(string $userPermission): void
+    {
+        $this->userPermission = $userPermission;
     }
 }

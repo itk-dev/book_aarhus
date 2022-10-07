@@ -5,16 +5,19 @@ namespace App\Service;
 use App\Entity\Main\ApiKeyUser;
 use App\Repository\Main\ApiKeyUserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiKeyUserService
 {
-    public function __construct(private EntityManagerInterface $entityManager, private ApiKeyUserRepository $apiKeyUserRepository)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ApiKeyUserRepository $apiKeyUserRepository
+    ) {
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function createApiKey($name, $webformApiKey = null): ApiKeyUser
     {
@@ -31,7 +34,7 @@ class ApiKeyUserService
         return $apiKeyUser;
     }
 
-    public function removeApiKey($id): void
+    public function removeApiKey(string $id): void
     {
         $apiKeyUser = $this->apiKeyUserRepository->find($id);
 

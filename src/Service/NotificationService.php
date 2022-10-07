@@ -9,7 +9,6 @@ use Eluceo\iCal\Domain\ValueObject\TimeSpan;
 use Eluceo\iCal\Presentation\Component;
 use Eluceo\iCal\Presentation\Factory;
 use Exception;
-use JetBrains\PhpStorm\ArrayShape;
 use JsonException;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -27,6 +26,8 @@ class NotificationService implements NotificationServiceInterface
      * @param $booking
      * @param $resource
      * @param string $type
+     *
+     * @return void
      */
     public function sendBookingNotification($booking, $resource, string $type)
     {
@@ -49,56 +50,59 @@ class NotificationService implements NotificationServiceInterface
     }
 
     /**
-     * @param $type
-     * @param $data
+     * @param string $type
+     * @param array $data
      *
      * @return array
      */
-    #[ArrayShape(['from' => 'string', 'to' => 'mixed', 'subject' => 'string', 'template' => 'null|string', 'data' => '', 'fileAttachments' => 'array'])]
-  private function buildNotification($type, $data): array
-  {
-      try {
-          $template = null;
-          $fileAttachments = [];
-          $to = $data['user']['mail'];
-          $subject = 'Booking bekræftigelse: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
-          switch ($type) {
-              case 'success':
-                  $template = 'emailBookingSuccess.html.twig';
+    private function buildNotification(string $type, array $data): array
+    {
+        $notificationData = [];
+        try {
+            $template = null;
+            $fileAttachments = [];
+            $to = $data['user']['mail'];
+            $subject = 'Booking bekræftigelse: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
+            switch ($type) {
+                case 'success':
+                    $template = 'emailBookingSuccess.html.twig';
 
-                  $events = $this->prepareIcalEvents($data);
-                  $iCalendarComponent = $this->createCalendarComponent($events);
+                    $events = $this->prepareIcalEvents($data);
+                    $iCalendarComponent = $this->createCalendarComponent($events);
 
-                  $fileAttachments = [
-                      'ics' => [$iCalendarComponent],
-                  ];
-                  break;
-              case 'booking_changed':
-                  $template = 'emailBookingChanged.html.twig';
-                  $subject = 'Booking ændret: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
-                  break;
-              case 'booking_failed':
-                  $template = 'emailBookingFailed.html.twig';
-                  $subject = 'Booking lykkedes ikke: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
-                  break;
-          }
+                    $fileAttachments = [
+                        'ics' => [$iCalendarComponent],
+                    ];
+                    break;
+                case 'booking_changed':
+                    $template = 'emailBookingChanged.html.twig';
+                    $subject = 'Booking ændret: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
+                    break;
+                case 'booking_failed':
+                    $template = 'emailBookingFailed.html.twig';
+                    $subject = 'Booking lykkedes ikke: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
+                    break;
+            }
+            $notificationData = [
+                'from' => $this->emailFromAddress,
+                'to' => $to,
+                'subject' => $subject,
+                'template' => $template,
+                'data' => $data,
+                'fileAttachments' => $fileAttachments,
+            ];
+        } catch (Exception $e) {
+        }
 
-          return [
-              'from' => $this->emailFromAddress,
-              'to' => $to,
-              'subject' => $subject,
-              'template' => $template,
-              'data' => $data,
-              'fileAttachments' => $fileAttachments,
-          ];
-      } catch (Exception $e) {
-      }
-  }
+        return $notificationData;
+    }
 
     /**
-     * @param $notification
+     * @param array $notification
+     *
+     * @return void
      */
-    private function sendNotification($notification)
+    private function sendNotification(array $notification): void
     {
         try {
             $email = (new TemplatedEmail())
@@ -107,16 +111,14 @@ class NotificationService implements NotificationServiceInterface
         ->subject($notification['subject'])
         ->htmlTemplate($notification['template'])
         ->context($notification);
-
+            $tempDir = sys_get_temp_dir();
+            $bookingId = $notification['data']['booking']->getId();
+            $fileName = 'booking-'.$bookingId.'.ics';
+            $filePath = $tempDir.'/'.$fileName;
             // Add ics attachment to mail.
             if ($notification['fileAttachments']['ics']) {
                 foreach ($notification['fileAttachments']['ics'] as $key => $ics) {
                     try {
-                        $tempDir = sys_get_temp_dir();
-                        $bookingId = $notification['data']['booking']->getId();
-                        $fileName = 'booking-'.$bookingId.'.ics';
-                        $filePath = $tempDir.'/'.$fileName;
-
                         file_put_contents($filePath, (string) $ics);
 
                         $mimeTypes = new MimeTypes();
@@ -137,11 +139,11 @@ class NotificationService implements NotificationServiceInterface
     }
 
     /**
-     * @param $data
+     * @param array $data
      *
-     * @return \array[][]
+     * @return array[]
      */
-    private function prepareIcalEvents($data): array
+    private function prepareIcalEvents(array $data): array
     {
         return [
             [
@@ -154,11 +156,11 @@ class NotificationService implements NotificationServiceInterface
     }
 
     /**
-     * @param $events
+     * @param array $events
      *
      * @return Component
      */
-    public function createCalendarComponent($events): Component
+    public function createCalendarComponent(array $events): Component
     {
         $iCalEvents = [];
 

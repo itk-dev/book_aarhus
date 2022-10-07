@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Service\MicrosoftGraphServiceInterface;
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Microsoft\Graph\Exception\GraphException;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -19,27 +20,21 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class GraphTestCommand extends Command
 {
-    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService)
-    {
+    public function __construct(
+        private readonly MicrosoftGraphServiceInterface $microsoftGraphService
+    ) {
         parent::__construct();
     }
 
     protected function configure(): void
     {
-        $this->addArgument(
-            'endpoint',
-            InputArgument::REQUIRED,
-            'Microsoft graph endpoint to call. For example /me'
-        );
-
-        $this->addOption(
-            'ask-for-credentials',
-            null,
-            InputOption::VALUE_NONE,
-            'Set to ask for username/password. Otherwise the service account will be used.'
-        );
+        $this->addArgument('endpoint', InputArgument::REQUIRED, 'Microsoft graph endpoint to call. For example /me');
+        $this->addOption('ask-for-credentials', null, InputOption::VALUE_NONE, 'Set to ask for username/password. Otherwise the service account will be used.');
     }
 
+    /**
+     * @throws Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -47,10 +42,8 @@ class GraphTestCommand extends Command
         $endpoint = $input->getArgument('endpoint');
 
         $askFormCredentials = $input->getOption('ask-for-credentials');
-
         if ($askFormCredentials) {
             $username = $io->ask('Enter username');
-
             if (null == $username) {
                 $io->error('Username is required');
 
@@ -58,7 +51,6 @@ class GraphTestCommand extends Command
             }
 
             $password = $io->askHidden('Enter password');
-
             if (null == $password) {
                 $io->error('Password is required');
 
@@ -67,8 +59,14 @@ class GraphTestCommand extends Command
         }
 
         try {
-            if ($askFormCredentials) {
-                $accessToken = $this->microsoftGraphService->authenticateAsUser($username, $password);
+            if ($askFormCredentials && !empty($username) && !empty($password)) {
+                $token = $this->microsoftGraphService->authenticateAsUser($username, $password);
+
+                if (!isset($token['access_token'])) {
+                    throw new Exception('Access token not available.');
+                }
+
+                $accessToken = $token['access_token'];
             } else {
                 $accessToken = $this->microsoftGraphService->authenticateAsServiceAccount();
             }

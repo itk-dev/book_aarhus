@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Service\MicrosoftGraphServiceInterface;
+use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,21 +16,20 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class GraphCreateBookingCommand extends Command
 {
-    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService)
-    {
+    public function __construct(
+        private readonly MicrosoftGraphServiceInterface $microsoftGraphService
+    ) {
         parent::__construct();
     }
 
-    protected function configure(): void
-    {
-    }
-
+    /**
+     * @throws Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
         $resourceEmail = $io->ask('Resource email');
-
         if (empty($resourceEmail)) {
             $io->error('Resource email must be set.');
 
@@ -37,7 +37,6 @@ class GraphCreateBookingCommand extends Command
         }
 
         $resourceName = $io->ask('Resource name');
-
         if (empty($resourceName)) {
             $io->error('Resource name must be set.');
 
@@ -45,9 +44,7 @@ class GraphCreateBookingCommand extends Command
         }
 
         $startOffset = $io->ask('Start offset from now (DateInterval, e.g. PT1H (see https://www.php.net/manual/en/dateinterval.construct.php))', 'PT1H');
-
         $endOffset = $io->ask('End offset from now (DateInterval, e.g. PT1H (see https://www.php.net/manual/en/dateinterval.construct.php))', 'PT2H');
-
         $subject = $io->ask('Subject');
 
         if (empty($subject)) {
@@ -57,7 +54,6 @@ class GraphCreateBookingCommand extends Command
         }
 
         $body = $io->ask('body', '');
-
         $invitation = $io->confirm('Create as invitation?', false);
         $invitationString = $invitation ? 'yes' : 'no';
 
@@ -69,13 +65,13 @@ class GraphCreateBookingCommand extends Command
 
         $confirmText = [
             'Create booking with the following data?',
-            "Resource email: $resourceEmail",
-            "Resource name: $resourceName",
-            "Start time: $startString",
-            "End time: $endString",
-            "Subject: $subject",
-            "Body: $body",
-            "Send as invitation: $invitationString",
+            'Resource email: '.$resourceEmail,
+            'Resource name: '.$resourceName,
+            'Start time: '.$startString,
+            'End time: '.$endString,
+            'Subject: '.$subject,
+            'Body: '.$body,
+            'Send as invitation: '.$invitationString,
             "\n\n",
         ];
 

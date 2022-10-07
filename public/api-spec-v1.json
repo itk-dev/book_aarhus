@@ -1007,7 +1007,22 @@
                         "type": "string",
                         "format": "date-time"
                     },
-                    "webformSubmission": {
+                    "userMail": {
+                        "type": "string"
+                    },
+                    "userName": {
+                        "type": "string"
+                    },
+                    "metaData": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "userId": {
+                        "type": "string"
+                    },
+                    "userPermission": {
                         "type": "string"
                     }
                 }
@@ -1271,7 +1286,22 @@
                         "type": "string",
                         "format": "date-time"
                     },
-                    "webformSubmission": {
+                    "userMail": {
+                        "type": "string"
+                    },
+                    "userName": {
+                        "type": "string"
+                    },
+                    "metaData": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "userId": {
+                        "type": "string"
+                    },
+                    "userPermission": {
                         "type": "string"
                     }
                 }
@@ -1733,7 +1763,7 @@
                     }
                 }
             },
-            "UserBooking": {
+            "UserBooking-userBooking": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -1742,19 +1772,10 @@
                     "hitId": {
                         "type": "string"
                     },
-                    "iCalUId": {
-                        "type": "string"
-                    },
-                    "summary": {
-                        "type": "string"
-                    },
                     "subject": {
                         "type": "string"
                     },
                     "displayName": {
-                        "type": "string"
-                    },
-                    "body": {
                         "type": "string"
                     },
                     "status": {
@@ -1772,7 +1793,7 @@
                     }
                 }
             },
-            "UserBooking.jsonld": {
+            "UserBooking.jsonld-userBooking": {
                 "type": "object",
                 "properties": {
                     "@id": {
@@ -1816,19 +1837,10 @@
                     "hitId": {
                         "type": "string"
                     },
-                    "iCalUId": {
-                        "type": "string"
-                    },
-                    "summary": {
-                        "type": "string"
-                    },
                     "subject": {
                         "type": "string"
                     },
                     "displayName": {
-                        "type": "string"
-                    },
-                    "body": {
                         "type": "string"
                     },
                     "status": {
