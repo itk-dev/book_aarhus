@@ -159,6 +159,8 @@ class NotificationService implements NotificationServiceInterface
      * @param array $events
      *
      * @return Component
+     *
+     * @throws Exception
      */
     public function createCalendarComponent(array $events): Component
     {
@@ -170,8 +172,14 @@ class NotificationService implements NotificationServiceInterface
             $event->setSummary($eventData['summary']);
             $event->setDescription($eventData['description']);
 
-            $start = new DateTime(DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']), false);
-            $end = new DateTime(DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['to']), false);
+            $immutableFrom = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
+            $immutableTo = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
+            if (false === $immutableFrom || false === $immutableTo) {
+                throw new Exception('DateTimeImmutable cannot be false');
+            }
+
+            $start = new DateTime($immutableFrom, false);
+            $end = new DateTime($immutableTo, false);
             $occurrence = new TimeSpan($start, $end);
             $event->setOccurrence($occurrence);
 
