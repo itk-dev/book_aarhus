@@ -16,18 +16,15 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class GraphFreeBusyCommand extends Command
 {
-    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService)
-    {
+    public function __construct(
+        private readonly MicrosoftGraphServiceInterface $microsoftGraphService
+    ) {
         parent::__construct();
     }
 
     protected function configure(): void
     {
-        $this->addArgument(
-            'schedules',
-            InputArgument::IS_ARRAY,
-            'Array of emails to get busy intervals for.'
-        );
+        $this->addArgument('schedules', InputArgument::IS_ARRAY, 'Array of emails to get busy intervals for.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -45,7 +42,6 @@ class GraphFreeBusyCommand extends Command
 
         $now = new \DateTime();
         $nowPlusOneDay = (new \DateTime())->add(new \DateInterval('P1D'));
-
         $busyIntervals = $this->microsoftGraphService->getBusyIntervals($schedules, $now, $nowPlusOneDay);
 
         $io->info(json_encode($busyIntervals));

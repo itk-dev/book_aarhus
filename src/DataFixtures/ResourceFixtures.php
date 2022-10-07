@@ -137,7 +137,7 @@ class ResourceFixtures extends Fixture
         $manager->flush();
 
         $whitelistEntity = new CvrWhitelist();
-        $whitelistEntity->setCvr('1234567890');
+        $whitelistEntity->setCvr(1234567890);
         $whitelistEntity->setResourceId($res->getId());
         $whitelistEntity->setUpdateTimestamp(new \DateTime());
         $manager->persist($whitelistEntity);

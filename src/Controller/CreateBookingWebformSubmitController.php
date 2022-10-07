@@ -15,8 +15,10 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[AsController]
 class CreateBookingWebformSubmitController extends AbstractController
 {
-    public function __construct(private MessageBusInterface $bus, private LoggerInterface $logger)
-    {
+    public function __construct(
+        private readonly MessageBusInterface $bus,
+        private readonly LoggerInterface $logger
+    ) {
     }
 
     public function __invoke(Request $request): Response
@@ -24,18 +26,16 @@ class CreateBookingWebformSubmitController extends AbstractController
         $this->logger->info('CreateBookingWebformSubmitController invoked.');
 
         $user = $this->getUser();
-
         if ($user instanceof ApiKeyUser) {
             $userId = $user->getId();
         }
 
         $webformContent = $request->toArray();
-
         $webformId = $webformContent['data']['webform']['id'] ?? null;
         $submissionUuid = $webformContent['data']['submission']['uuid'] ?? null;
         $sender = $webformContent['links']['sender'] ?? null;
         $getSubmissionUrl = $webformContent['links']['get_submission_url'] ?? null;
-        $apiKeyUserId = $userId ?? $user->getUserIdentifier() ?? null;
+        $apiKeyUserId = $userId ?? $user?->getUserIdentifier();
 
         if (null === $webformId) {
             throw new BadRequestException('data->webform->id should not be null');
@@ -58,7 +58,7 @@ class CreateBookingWebformSubmitController extends AbstractController
             $submissionUuid,
             $sender,
             $getSubmissionUrl,
-            $apiKeyUserId,
+            $apiKeyUserId ?? '',
         ));
 
         return new Response(null, 201);

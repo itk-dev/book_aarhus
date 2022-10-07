@@ -7,6 +7,8 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\MicrosoftGraphServiceInterface;
+
+use Exception;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Security;
@@ -14,8 +16,10 @@ use Symfony\Component\Uid\Ulid;
 
 final class UserBookingItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    public function __construct(private MicrosoftGraphServiceInterface $microsoftGraphService, private Security $security)
-    {
+    public function __construct(
+        private readonly MicrosoftGraphServiceInterface $microsoftGraphService,
+        private readonly Security $security
+    ) {
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -23,7 +27,10 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
         return UserBooking::class === $resourceClass;
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?UserBooking
+    /**
+     * @throws Exception
+     */
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): UserBooking|null
     {
         if (!isset($id)) {
             throw new BadRequestHttpException('Required booking id is not set');

@@ -1213,22 +1213,16 @@ components:
         updateTimestamp:
           type: string
           format: date-time
-    UserBooking:
+    UserBooking-userBooking:
       type: object
       properties:
         id:
           type: string
         hitId:
           type: string
-        iCalUId:
-          type: string
-        summary:
-          type: string
         subject:
           type: string
         displayName:
-          type: string
-        body:
           type: string
         status:
           type: string
@@ -1240,7 +1234,7 @@ components:
           type: string
           format: date-time
           nullable: true
-    UserBooking.jsonld:
+    UserBooking.jsonld-userBooking:
       type: object
       properties:
         '@id':
@@ -1270,15 +1264,9 @@ components:
           type: string
         hitId:
           type: string
-        iCalUId:
-          type: string
-        summary:
-          type: string
         subject:
           type: string
         displayName:
-          type: string
-        body:
           type: string
         status:
           type: string
