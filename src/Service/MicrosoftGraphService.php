@@ -284,11 +284,11 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
 
         $urlEncodedId = urlencode($id);
 
-        return "yes";
+        return 'yes';
 
-        //$response = $this->request("/me/events/$urlEncodedId", $token, 'PATCH', $newData);
+        // $response = $this->request("/me/events/$urlEncodedId", $token, 'PATCH', $newData);
 
-        //return $response->getStatus();
+        // return $response->getStatus();
     }
 
     /**
@@ -302,23 +302,24 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     {
         $token = $this->authenticateAsServiceAccount();
 
-        return "TODO: Delete in graph.";
+        return 'TODO: Delete in graph.';
+        /*
+                // Formatting the urldecode(d) booking hitId, replacing "/" with "-" as this is graph-compatible, and replacing
+                // " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
 
-        // Formatting the urldecode(d) booking hitId, replacing "/" with "-" as this is graph-compatible, and replacing
-        // " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
+                $bookingId = urldecode($bookingId);
+                $bookingId = str_replace(['/', ' '], ['-', '+'], $bookingId);
 
-        $bookingId = urldecode($bookingId);
-        $bookingId = str_replace(['/', ' '], ['-', '+'], $bookingId);
+                // TODO: Handle request for deletion of resource-event
+                // We need the HitId from the resource-event, to request the deletion of that event.
+                // $urlEncodedId = urlencode($id);
+                // $encodedOwnerEmail = urlencode($ownerEmail);
+                // $response = $this->request("/users/$encodedOwnerEmail/events/$urlEncodedId", $token, 'DELETE');
 
-        // TODO: Handle request for deletion of resource-event
-        // We need the HitId from the resource-event, to request the deletion of that event.
-        // $urlEncodedId = urlencode($id);
-        // $encodedOwnerEmail = urlencode($ownerEmail);
-        // $response = $this->request("/users/$encodedOwnerEmail/events/$urlEncodedId", $token, 'DELETE');
+                $response = $this->request("/me/events/$bookingId", $token, 'DELETE');
 
-        $response = $this->request("/me/events/$bookingId", $token, 'DELETE');
-
-        return $response->getStatus();*/
+                return $response->getStatus();
+        */
     }
 
     /**
