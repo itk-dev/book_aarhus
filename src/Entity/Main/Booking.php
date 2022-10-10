@@ -22,6 +22,12 @@ class Booking
 
     private \DateTime $endTime;
 
+    private string $userMail;
+
+    private string $userName;
+
+    private array $metaData;
+
     private string $userId;
 
     private string $userPermission;
@@ -99,6 +105,36 @@ class Booking
     public function setEndTime(\DateTime $endTime): void
     {
         $this->endTime = $endTime;
+    }
+
+    public function getUserMail(): string
+    {
+        return $this->userMail;
+    }
+
+    public function setUserMail(string $userMail): void
+    {
+        $this->userMail = $userMail;
+    }
+
+    public function getUserName(): string
+    {
+        return $this->userName;
+    }
+
+    public function setUserName(string $userName): void
+    {
+        $this->userName = $userName;
+    }
+
+    public function getMetaData(): array
+    {
+        return $this->metaData;
+    }
+
+    public function setMetaData(array $metaData): void
+    {
+        $this->metaData = $metaData;
     }
 
     public function getUserId(): string

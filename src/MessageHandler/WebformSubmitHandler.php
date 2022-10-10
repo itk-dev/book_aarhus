@@ -58,11 +58,14 @@ class WebformSubmitHandler
                     throw new UnrecoverableMessageHandlingException('Resource does not exist');
                 }
 
-                $body = $this->composeBookingContents($data, $email, $resource, $dataSubmission['metaData']);
+                $body = $this->composeBookingContents($data, $resource, $dataSubmission['metaData']);
                 $htmlContents = $this->renderContentsAsHtml($body);
 
                 $booking = new Booking();
                 $booking->setBody($htmlContents);
+                $booking->setUserName($data['name']);
+                $booking->setUserMail($data['email']);
+                $booking->setMetaData($dataSubmission['metaData']);
                 $booking->setSubject($data['subject'] ?? '');
                 $booking->setResourceEmail($email);
                 $booking->setResourceName($resource->getResourceName());
@@ -84,14 +87,9 @@ class WebformSubmitHandler
     /**
      * @throws \Exception
      */
-    private function composeBookingContents($data, string $email, $resource, $metaData): array
+    private function composeBookingContents($data, AAKResource $resource, $metaData): array
     {
         $body = [];
-
-        if (null == $resource) {
-            throw new UnrecoverableMessageHandlingException("Resource $email not found.", 404);
-        }
-
         $body['resource'] = $resource;
         $body['submission'] = $data;
         $body['submission']['fromObj'] = new DateTime($data['start']);

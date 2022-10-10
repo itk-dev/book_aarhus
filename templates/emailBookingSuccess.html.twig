@@ -1,0 +1,127 @@
+{#
+# Variables
+#  - data: Data related to booking and resource.
+#}
+
+<!DOCTYPE html>
+<html>
+{% include 'inline-email-head.html.twig' %}
+<body>
+<table role="presentation" cellspacing="0" cellpadding="24" border="0" align="center" class="document">
+    <tr>
+        <td valign="top">
+            <table role="presentation" cellspacing="0" cellpadding="24" border="0" align="center" width="750" class="container" style="background-color: #ffffff;">
+                <tr>
+                    <td>
+                        <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="100%">
+                            <tr>
+                                <td>
+                                    <table class="top" role="presentation" cellspacing="0" cellpadding="6" border="0" align="right" width="100%">
+                                        <tr>
+                                            <td>
+                                               <div><img align="right" height="50" alt="logo" src="{{ absolute_url(asset('images/logo.png')) }}" ></div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table class="header" role="presentation" cellspacing="0" cellpadding="6" border="0" align="left" width="100%">
+                                        <tr>
+                                            <td>
+                                                <h2>{{ 'Booking godkendt' }}</h2>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                {{ 'Kære' }} {{ data.user.name }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                {{ 'Følgende booking er nu registreret i vores system.' }}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table class="booking zebra" cellspacing="0" cellpadding="6" border="0" align="left" width="100%"style="border-bottom: 1px solid #E9ECEF;">
+                                        <tr>
+                                            <td>
+                                                <h3>{{ 'Booking' }}</h3>
+                                            </td>
+                                        </tr>
+                                        <tr class="subject">
+                                            <td>{{ 'Booking emne:' }}</td>
+                                            <td>{{ data.booking.subject }}</td>
+                                        </tr>
+                                        <tr class="start-time">
+                                            <td>{{ 'Booking starttidspunkt:' }}</td>
+                                            <td>{{ data.booking.startTime|date("d/m/Y - H:i") }}</td>
+                                        </tr>
+                                        <tr class="end-time">
+                                            <td>{{ 'Booking sluttidspunkt:' }}</td>
+                                            <td>{{ data.booking.endTime|date("d/m/Y - H:i") }}</td>
+                                        </tr>
+                                        {# Metadata fields #}
+                                        {% for key, value in data.metaData %}
+                                            <tr class="{{ key }}">
+                                                <td>{{ key }}</td><td>{{ value }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        {# /END/ Metadata fields /END/ #}
+                                    </table>
+                                    <table class="resource zebra" cellspacing="0" cellpadding="6" border="0" align="left" width="100%" style="border-bottom: 1px solid #E9ECEF;">
+                                        <tr>
+                                            <td>
+                                                <h3>{{ 'Resource / Lokale' }}</h3>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>{{ 'Lokation:' }}</td>
+                                            <td>{{ data.resource.location }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{{ 'Resource / Lokale:' }}</td>
+                                            <td>{{ data.resource.resourceName }}</td>
+                                        </tr>
+                                    </table>
+                                    <table class="container" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="12" border="0" align="center" width="750"><tr><td><!-- vertical spacing --></td></tr></table>
+                                    <table class="text" role="presentation" cellspacing="0" cellpadding="6" border="0" align="left" width="100%">
+                                        <tr>
+                                            <td>
+                                                {{ data.resource.resourceDescription }}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table class="container" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="12" border="0" align="center" width="750"><tr><td><!-- vertical spacing --></td></tr></table>
+                                    {% if data.resource.resourceEmailText %}
+                                        <table class="text" role="presentation" cellspacing="0" cellpadding="6" border="0" align="left" width="100%">
+                                            <tr>
+                                                <td>
+                                                    <strong>{{ 'Bemærk!' }}</strong>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    {{ data.resource.resourceEmailText }}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="container" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="12" border="0" align="center" width="750"><tr><td><!-- vertical spacing --></td></tr></table>
+                        <table class="container" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="12" border="0" align="center" width="750"><tr><td><!-- vertical spacing --></td></tr></table>
+                        <table class="container" role="presentation" cellspacing="0" cellpadding="6" border="0" align="center" width="750">
+                            <tr>
+                                <td>
+                                    Dette er en automatisk mail sendt fra <a href="https://booking.aarhus.dk">Book Aarhus</a> og kan ikke besvares.
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+
+</html>

@@ -714,6 +714,14 @@ components:
         endTime:
           type: string
           format: date-time
+        userMail:
+          type: string
+        userName:
+          type: string
+        metaData:
+          type: array
+          items:
+            type: string
         userId:
           type: string
         userPermission:
@@ -890,6 +898,14 @@ components:
         endTime:
           type: string
           format: date-time
+        userMail:
+          type: string
+        userName:
+          type: string
+        metaData:
+          type: array
+          items:
+            type: string
         userId:
           type: string
         userPermission:
