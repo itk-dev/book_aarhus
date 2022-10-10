@@ -21,6 +21,7 @@ final class FailedMessageEventListener
             $booking = $message->getBooking();
 
             // TODO: Get user's email and send notification to mail.
+
             // TODO: Save user's email in booking entity instead of only in body.
 
 

@@ -18,7 +18,7 @@ use Symfony\Component\Mime\MimeTypes;
 
 class NotificationService implements NotificationServiceInterface
 {
-    public function __construct(private string $emailFromAddress, private MailerInterface $mailer)
+    public function __construct(private readonly string $emailFromAddress, private readonly MailerInterface $mailer)
     {
     }
 
@@ -29,7 +29,7 @@ class NotificationService implements NotificationServiceInterface
      *
      * @return void
      */
-    public function sendBookingNotification($booking, $resource, string $type)
+    public function sendBookingNotification($booking, $resource, string $type): void
     {
         try {
             $data = [
