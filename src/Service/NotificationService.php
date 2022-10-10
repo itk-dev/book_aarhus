@@ -106,11 +106,11 @@ class NotificationService implements NotificationServiceInterface
     {
         try {
             $email = (new TemplatedEmail())
-        ->from($notification['from'])
-        ->to(new Address($notification['to']))
-        ->subject($notification['subject'])
-        ->htmlTemplate($notification['template'])
-        ->context($notification);
+                ->from($notification['from'])
+                ->to(new Address($notification['to']))
+                ->subject($notification['subject'])
+                ->htmlTemplate($notification['template'])
+                ->context($notification);
             $tempDir = sys_get_temp_dir();
             $bookingId = $notification['data']['booking']->getId();
             $fileName = 'booking-'.$bookingId.'.ics';
@@ -174,6 +174,7 @@ class NotificationService implements NotificationServiceInterface
 
             $immutableFrom = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
             $immutableTo = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
+
             if (false === $immutableFrom || false === $immutableTo) {
                 throw new Exception('DateTimeImmutable cannot be false');
             }

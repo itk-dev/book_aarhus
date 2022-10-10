@@ -167,9 +167,9 @@ class BookingTest extends AbstractBaseApiTestCase
         ]);
 
         $validationUtilsMock = $this->getMockBuilder(ValidationUtils::class)
-          ->onlyMethods(['validateEmail', 'validateDate'])
-          ->disableOriginalConstructor()
-          ->getMock();
+            ->onlyMethods(['validateEmail', 'validateDate'])
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $validationUtilsMock->method('validateDate')->willReturn(new \DateTime('2022-08-18T10:00:00.000Z'));
         $validationUtilsMock->method('validateEmail')->willReturn('test@bookaarhus.local.itkdev.dk');

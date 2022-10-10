@@ -24,7 +24,6 @@ final class FailedMessageEventListener
 
             // TODO: Save user's email in booking entity instead of only in body.
 
-
             // TODO: Send notification to service mailbox?
         }
     }
