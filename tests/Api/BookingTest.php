@@ -12,6 +12,7 @@ use App\MessageHandler\WebformSubmitHandler;
 use App\Repository\Main\AAKResourceRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\MicrosoftGraphService;
+use App\Service\NotificationServiceInterface;
 use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
 use App\Utils\ValidationUtils;
@@ -218,6 +219,8 @@ class BookingTest extends AbstractBaseApiTestCase
 
         $container = self::getContainer();
         $logger = $container->get(LoggerInterface::class);
+        $bus = $container->get(MessageBusInterface::class);
+        $notificationServiceInterface = $container->get(NotificationServiceInterface::class);
 
         $booking = new Booking();
         $booking->setBody('test');
@@ -226,6 +229,15 @@ class BookingTest extends AbstractBaseApiTestCase
         $booking->setResourceEmail('test@bookaarhus.local.itkdev.dk');
         $booking->setStartTime(new \DateTime());
         $booking->setEndTime(new \DateTime());
+        $booking->setUserName('auther1');
+        $booking->setUserMail('author1@bookaarhus.local.itkdev.dk');
+        $booking->setMetaData([
+            'meta_data_4' => '1, 2, 3',
+            'meta_data_5' => 'a1, b2, c3',
+            'meta_data_1' => 'This is a metadata field',
+            'meta_data_2' => 'This is also metadata',
+            'meta_data_3' => 'Lorem ipsum metadata',
+        ]);
         $booking->setUserPermission(BookingVoter::PERMISSION_CITIZEN);
         $booking->setUserId('1234567890');
 
@@ -251,13 +263,13 @@ class BookingTest extends AbstractBaseApiTestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['findOneByEmail'])
             ->getMock();
-        $aakResourceRepositoryMock->expects($this->exactly(2))->method('findOneByEmail')->willReturn($res);
+        $aakResourceRepositoryMock->expects($this->exactly(3))->method('findOneByEmail')->willReturn($res);
 
         $security = $container->get(Security::class);
 
         $container->set(AAKResourceRepository::class, $aakResourceRepositoryMock);
 
-        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock, $security);
+        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock, $security, $notificationServiceInterface, $bus);
         $createBookingHandler->__invoke(new CreateBookingMessage($booking));
     }
 

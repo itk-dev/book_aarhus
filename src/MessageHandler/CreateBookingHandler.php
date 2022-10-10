@@ -4,12 +4,15 @@ namespace App\MessageHandler;
 
 use App\Entity\Resources\AAKResource;
 use App\Message\CreateBookingMessage;
+use App\Message\SendBookingNotificationMessage;
 use App\Repository\Main\AAKResourceRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\MicrosoftGraphServiceInterface;
+use App\Service\NotificationServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -19,10 +22,12 @@ use Symfony\Component\Security\Core\Security;
 class CreateBookingHandler
 {
     public function __construct(
-        private readonly MicrosoftGraphServiceInterface $microsoftGraphService,
-        private readonly LoggerInterface $logger,
-        private readonly AAKResourceRepository $aakResourceRepository,
-        private readonly Security $security,
+        private MicrosoftGraphServiceInterface $microsoftGraphService,
+        private LoggerInterface $logger,
+        private AAKResourceRepository $aakResourceRepository,
+        private Security $security,
+        private NotificationServiceInterface $notificationService,
+        private MessageBusInterface $bus
     ) {
     }
 
@@ -54,7 +59,6 @@ class CreateBookingHandler
                     $booking->getStartTime(),
                     $booking->getEndTime(),
                 );
-            // TODO: Send booking "sent to acceptance" notification.
             } else {
                 $this->microsoftGraphService->createBookingForResource(
                     $booking->getResourceEmail(),
@@ -64,7 +68,12 @@ class CreateBookingHandler
                     $booking->getStartTime(),
                     $booking->getEndTime(),
                 );
-                // TODO: Send booking success notification.
+
+                // Register notification job.
+                $this->bus->dispatch(new SendBookingNotificationMessage(
+                    $booking,
+                    'success'
+                ));
             }
         } catch (\Exception $exception) {
             // TODO: Send booking failed notification.
