@@ -4,27 +4,34 @@ namespace App\EventListener;
 
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
+use App\Repository\Main\AAKResourceRepository;
+use App\Service\NotificationServiceInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
 
 #[AsEventListener]
 final class FailedMessageEventListener
 {
+    public function __construct(
+        private readonly AAKResourceRepository $AAKResourceRepository,
+        private readonly NotificationServiceInterface $notificationService,
+    ) {
+    }
+
     public function __invoke(WorkerMessageFailedEvent $event): void
     {
         $envelope = $event->getEnvelope();
         $message = $envelope->getMessage();
 
         if ($message instanceof WebformSubmitMessage) {
-            // TODO: How should it be handled that the message cannot be retrieved from the webform?
+            // TODO: Notify an administrative mailbox of error.
         } elseif ($message instanceof CreateBookingMessage) {
             $booking = $message->getBooking();
+            $resource = $this->AAKResourceRepository->findOneByEmail($booking->getResourceEmail());
 
-            // TODO: Get user's email and send notification to mail.
+            $this->notificationService->sendBookingNotification($booking, $resource, NotificationServiceInterface::BOOKING_TYPE_FAILED);
 
-            // TODO: Save user's email in booking entity instead of only in body.
-
-            // TODO: Send notification to service mailbox?
+            // TODO: Notify an administrative mailbox of error.
         }
     }
 }

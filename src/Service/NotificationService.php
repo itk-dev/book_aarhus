@@ -46,6 +46,7 @@ class NotificationService implements NotificationServiceInterface
 
             $this->sendNotification($notification);
         } catch (JsonException $e) {
+            // TODO: Handle error.
         }
     }
 
@@ -58,13 +59,15 @@ class NotificationService implements NotificationServiceInterface
     private function buildNotification(string $type, array $data): array
     {
         $notificationData = [];
+
         try {
             $template = null;
             $fileAttachments = [];
             $to = $data['user']['mail'];
             $subject = 'Booking bekræftigelse: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
+
             switch ($type) {
-                case 'success':
+                case NotificationServiceInterface::BOOKING_TYPE_SUCCESS:
                     $template = 'emailBookingSuccess.html.twig';
 
                     $events = $this->prepareIcalEvents($data);
@@ -74,15 +77,16 @@ class NotificationService implements NotificationServiceInterface
                         'ics' => [$iCalendarComponent],
                     ];
                     break;
-                case 'booking_changed':
+                case NotificationServiceInterface::BOOKING_TYPE_CHANGED:
                     $template = 'emailBookingChanged.html.twig';
                     $subject = 'Booking ændret: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
                     break;
-                case 'booking_failed':
+                case NotificationServiceInterface::BOOKING_TYPE_FAILED:
                     $template = 'emailBookingFailed.html.twig';
                     $subject = 'Booking lykkedes ikke: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
                     break;
             }
+
             $notificationData = [
                 'from' => $this->emailFromAddress,
                 'to' => $to,
@@ -92,6 +96,7 @@ class NotificationService implements NotificationServiceInterface
                 'fileAttachments' => $fileAttachments,
             ];
         } catch (Exception $e) {
+            // TODO: Handle error.
         }
 
         return $notificationData;

@@ -49,18 +49,18 @@ class BookingNotificationTestCommand extends Command
 
         switch ($type) {
             case 'New booking success':
-                $this->notificationService->sendBookingNotification($this->createBooking($email), $this->createResource(), 'success');
+                $this->notificationService->sendBookingNotification($this->createBooking($email), $this->createResource(), NotificationServiceInterface::BOOKING_TYPE_SUCCESS);
                 $output->writeln('Sent "'.$type.'" mail to '.$email);
                 break;
 
             case 'Booking changed':
-                $this->notificationService->sendBookingNotification($this->createBooking($email), $this->createResource(), 'booking_changed');
+                $this->notificationService->sendBookingNotification($this->createBooking($email), $this->createResource(), NotificationServiceInterface::BOOKING_TYPE_CHANGED);
                 $output->writeln('Sent "'.$type.'" mail to '.$email);
 
                 break;
 
             case 'Booking failed':
-                $this->notificationService->sendBookingNotification($this->createBooking($email), $this->createResource(), 'booking_failed');
+                $this->notificationService->sendBookingNotification($this->createBooking($email), $this->createResource(), NotificationServiceInterface::BOOKING_TYPE_FAILED);
                 $output->writeln('Sent "'.$type.'" mail to '.$email);
 
                 break;

@@ -8,6 +8,7 @@ use App\Message\SendBookingNotificationMessage;
 use App\Repository\Main\AAKResourceRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\MicrosoftGraphServiceInterface;
+use App\Service\NotificationServiceInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Microsoft\Graph\Exception\GraphException;
 use Psr\Log\LoggerInterface;
@@ -75,7 +76,7 @@ class CreateBookingHandler
                 // Register notification job.
                 $this->bus->dispatch(new SendBookingNotificationMessage(
                     $booking,
-                    'success'
+                    NotificationServiceInterface::BOOKING_TYPE_SUCCESS
                 ));
             }
         } catch (\Exception $exception) {
