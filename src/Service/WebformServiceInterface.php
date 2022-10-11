@@ -21,8 +21,8 @@ interface WebformServiceInterface
     /**
      * Get webform submission data from the given submissionUrl and webformApiKey.
      *
-     * @param string $submissionUrl Url to retrieve
-     * @param string $webformApiKey Apikey for the Drupal user
+     * @param string $submissionUrl url to retrieve
+     * @param string $webformApiKey api key for the Drupal user
      *
      * @return array
      *
@@ -33,7 +33,7 @@ interface WebformServiceInterface
     /**
      * Sort webform submission data by type.
      *
-     * @param array $webformSubmission
+     * @param array $webformSubmission the webform submission data
      *
      * @return array
      */
