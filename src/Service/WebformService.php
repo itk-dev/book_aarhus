@@ -2,15 +2,11 @@
 
 namespace App\Service;
 
+use App\Exception\WebformSubmissionRetrievalException;
 use App\Message\WebformSubmitMessage;
 use App\Repository\Main\ApiKeyUserRepository;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Config\Definition\Exception\Exception;
-use Symfony\Component\Messenger\Exception\RecoverableMessageHandlingException;
-use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
-use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class WebformService implements WebformServiceInterface
@@ -30,10 +26,30 @@ class WebformService implements WebformServiceInterface
     }
 
     /**
-     * @param string $submissionUrl
-     * @param string $webformApiKey
-     *
-     * @return array
+     * {@inheritdoc}
+     */
+    public function getData(WebformSubmitMessage $message): array
+    {
+        $this->logger->info('WebformSubmitHandler invoked.');
+
+        $submissionUrl = $message->getSubmissionUrl();
+        $apiKeyUserId = $message->getApiKeyUserId();
+
+        $user = $this->apiKeyUserRepository->find($apiKeyUserId);
+
+        if (!$user) {
+            throw new WebformSubmissionRetrievalException('ApiKeyUser not set.');
+        }
+
+        $this->logger->info("Fetching $submissionUrl");
+
+        $webformSubmission = $this->getWebformSubmission($submissionUrl, $user->getWebformApiKey());
+
+        return $this->getValidatedData($webformSubmission);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getWebformSubmission(string $submissionUrl, string $webformApiKey): array
     {
@@ -45,17 +61,13 @@ class WebformService implements WebformServiceInterface
             ]);
 
             return $response->toArray();
-        } catch (HttpExceptionInterface|TransportExceptionInterface) {
-            throw new RecoverableMessageHandlingException();
-        } catch (DecodingExceptionInterface) {
-            throw new UnrecoverableMessageHandlingException();
+        } catch (ExceptionInterface $exception) {
+            throw new WebformSubmissionRetrievalException($exception->getMessage(), $exception->getCode());
         }
     }
 
     /**
-     * @param array $webformSubmission
-     *
-     * @return array[]
+     * {@inheritdoc}
      */
     public function sortWebformSubmissionDataByType(array $webformSubmission): array
     {
@@ -86,46 +98,14 @@ class WebformService implements WebformServiceInterface
     }
 
     /**
-     * @param WebformSubmitMessage $message
-     *
-     * @return array
-     */
-    public function getData(WebformSubmitMessage $message): array
-    {
-        $this->logger->info('WebformSubmitHandler invoked.');
-
-        $submissionUrl = $message->getSubmissionUrl();
-        $apiKeyUserId = $message->getApiKeyUserId();
-
-        $user = $this->apiKeyUserRepository->find($apiKeyUserId);
-
-        if (!$user) {
-            throw new UnrecoverableMessageHandlingException('ApiKeyUser not set.');
-        }
-
-        $this->logger->info("Fetching $submissionUrl");
-
-        $webformSubmission = $this->getWebformSubmission($submissionUrl, $user->getWebformApiKey());
-
-        try {
-            $dataSubmission = $this->getValidatedData($webformSubmission);
-        } catch (Exception $e) {
-            throw new UnrecoverableMessageHandlingException($e->getMessage());
-        }
-
-        return $dataSubmission;
-    }
-
-    /**
-     * @param array $webformSubmission
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getValidatedData(array $webformSubmission): array
     {
         if (empty($webformSubmission['data'])) {
-            throw new Exception('Webform data not set');
+            throw new WebformSubmissionRetrievalException('Webform data not set');
         }
+
         $sortedData = $this->sortWebformSubmissionDataByType($webformSubmission);
         $acceptedSubmissions = [
             'bookingData' => [],
@@ -133,35 +113,35 @@ class WebformService implements WebformServiceInterface
 
         foreach ($sortedData['bookingData'] as $key => $entry) {
             if (!isset($entry['subject'])) {
-                throw new Exception("Webform ($key) subject not set");
+                throw new WebformSubmissionRetrievalException("Webform ($key) subject not set");
             }
 
             if (!isset($entry['resourceId'])) {
-                throw new Exception("Webform ($key) resourceId not set");
+                throw new WebformSubmissionRetrievalException("Webform ($key) resourceId not set");
             }
 
             if (!isset($entry['start'])) {
-                throw new Exception("Webform ($key) start not set");
+                throw new WebformSubmissionRetrievalException("Webform ($key) start not set");
             }
 
             if (!isset($entry['end'])) {
-                throw new Exception("Webform ($key) end not set");
+                throw new WebformSubmissionRetrievalException("Webform ($key) end not set");
             }
 
             if (!isset($entry['name'])) {
-                throw new Exception("Webform ($key) name not set");
+                throw new WebformSubmissionRetrievalException("Webform ($key) name not set");
             }
 
             if (!isset($entry['email'])) {
-                throw new Exception("Webform ($key) email not set");
+                throw new WebformSubmissionRetrievalException("Webform ($key) email not set");
             }
 
             if (!isset($entry['userId'])) {
-                throw new Exception("Webform ($key) userId not set");
+                throw new WebformSubmissionRetrievalException("Webform ($key) userId not set");
             }
 
             if (!isset($entry['userPermission'])) {
-                throw new Exception("Webform ($key) userPermission not set");
+                throw new WebformSubmissionRetrievalException("Webform ($key) userPermission not set");
             }
 
             $acceptedSubmissions['bookingData'][$key] = $entry;
@@ -176,7 +156,7 @@ class WebformService implements WebformServiceInterface
         }
 
         if (0 == count($acceptedSubmissions['bookingData'])) {
-            throw new Exception('No submission data found.');
+            throw new WebformSubmissionRetrievalException('No submission data found.');
         }
 
         return $acceptedSubmissions;
