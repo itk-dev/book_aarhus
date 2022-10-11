@@ -6,6 +6,7 @@ use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
 use App\Repository\Main\AAKResourceRepository;
 use App\Service\NotificationServiceInterface;
+use App\Service\NotificationTypeEnum;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
 
@@ -29,7 +30,7 @@ final class FailedMessageEventListener
             $booking = $message->getBooking();
             $resource = $this->AAKResourceRepository->findOneByEmail($booking->getResourceEmail());
 
-            $this->notificationService->sendBookingNotification($booking, $resource, NotificationServiceInterface::BOOKING_TYPE_FAILED);
+            $this->notificationService->sendBookingNotification($booking, $resource, NotificationTypeEnum::FAILED);
 
             // TODO: Notify an administrative mailbox of error.
         }

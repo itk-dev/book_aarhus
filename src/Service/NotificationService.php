@@ -25,11 +25,11 @@ class NotificationService implements NotificationServiceInterface
     /**
      * @param $booking
      * @param $resource
-     * @param string $type
+     * @param NotificationTypeEnum $type
      *
      * @return void
      */
-    public function sendBookingNotification($booking, $resource, string $type): void
+    public function sendBookingNotification($booking, $resource, NotificationTypeEnum $type): void
     {
         try {
             $data = [
@@ -51,12 +51,12 @@ class NotificationService implements NotificationServiceInterface
     }
 
     /**
-     * @param string $type
+     * @param NotificationTypeEnum $type
      * @param array $data
      *
      * @return array
      */
-    private function buildNotification(string $type, array $data): array
+    private function buildNotification(NotificationTypeEnum $type, array $data): array
     {
         $notificationData = [];
 
@@ -67,7 +67,7 @@ class NotificationService implements NotificationServiceInterface
             $subject = 'Booking bekræftigelse: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
 
             switch ($type) {
-                case NotificationServiceInterface::BOOKING_TYPE_SUCCESS:
+                case NotificationTypeEnum::SUCCESS:
                     $template = 'emailBookingSuccess.html.twig';
 
                     $events = $this->prepareIcalEvents($data);
@@ -77,11 +77,11 @@ class NotificationService implements NotificationServiceInterface
                         'ics' => [$iCalendarComponent],
                     ];
                     break;
-                case NotificationServiceInterface::BOOKING_TYPE_CHANGED:
+                case NotificationTypeEnum::CHANGED:
                     $template = 'emailBookingChanged.html.twig';
                     $subject = 'Booking ændret: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
                     break;
-                case NotificationServiceInterface::BOOKING_TYPE_FAILED:
+                case NotificationTypeEnum::FAILED:
                     $template = 'emailBookingFailed.html.twig';
                     $subject = 'Booking lykkedes ikke: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
                     break;

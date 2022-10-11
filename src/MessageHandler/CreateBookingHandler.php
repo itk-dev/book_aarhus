@@ -9,7 +9,7 @@ use App\Message\SendBookingNotificationMessage;
 use App\Repository\Main\AAKResourceRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\MicrosoftGraphServiceInterface;
-use App\Service\NotificationServiceInterface;
+use App\Service\NotificationTypeEnum;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -75,7 +75,7 @@ class CreateBookingHandler
                 // Register notification job.
                 $this->bus->dispatch(new SendBookingNotificationMessage(
                     $booking,
-                    NotificationServiceInterface::BOOKING_TYPE_SUCCESS
+                    NotificationTypeEnum::SUCCESS
                 ));
             }
         } catch (\Exception $exception) {
