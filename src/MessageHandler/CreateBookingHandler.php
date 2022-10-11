@@ -10,8 +10,6 @@ use App\Repository\Main\AAKResourceRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\MicrosoftGraphServiceInterface;
 use App\Service\NotificationServiceInterface;
-use GuzzleHttp\Exception\GuzzleException;
-use Microsoft\Graph\Exception\GraphException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
