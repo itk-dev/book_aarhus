@@ -8,9 +8,11 @@ services:
       - PHP_MAILHOG_SERVER=mailhog
       - PHP_MAILHOG_PORT=1025
 
-  nginx:
-    labels:
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=ITKBasicAuth@file"
+  # Disable basic authentication for traefik since it's not possible to include multiple Authorization Headers
+  # in an HTTP message. https://stackoverflow.com/questions/29282578/multiple-http-authorization-headers.
+  #  nginx:
+  #    labels:
+  #      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=ITKBasicAuth@file"
 
   mailhog:
     image: mailhog/mailhog
