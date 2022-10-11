@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Exception\BookingCreateException;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -151,7 +152,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
         $busyIntervals = $this->getBusyIntervals([$resourceEmail], $startTime, $endTime, $token);
 
         if (!empty($busyIntervals[$resourceEmail])) {
-            throw new Exception('Booking interval conflict.', 409);
+            throw new BookingCreateException('Booking interval conflict.', 409);
         }
 
         $body = [
@@ -192,7 +193,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
         $busyIntervals = $this->getBusyIntervals([$resourceEmail], $startTime, $endTime, $token);
 
         if (empty($busyIntervals[$resourceEmail])) {
-            throw new Exception('Booking not created.', 404);
+            throw new BookingCreateException('Booking was not created.', 404);
         }
 
         // TODO: Decide if this should be added.

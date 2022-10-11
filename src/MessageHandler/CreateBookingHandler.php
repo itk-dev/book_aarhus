@@ -3,6 +3,7 @@
 namespace App\MessageHandler;
 
 use App\Entity\Resources\AAKResource;
+use App\Exception\BookingCreateException;
 use App\Message\CreateBookingMessage;
 use App\Message\SendBookingNotificationMessage;
 use App\Repository\Main\AAKResourceRepository;
@@ -80,14 +81,10 @@ class CreateBookingHandler
                 ));
             }
         } catch (\Exception $exception) {
-            $exceptionCode = (int) $exception->getCode();
-
             // Differentiate between errors:
-            // If it is a conflict it should be rejected.
-            // If guzzle error it is Graph related and should be retried.
-            // If the booking has not been found after response from Graph, it should be retried.
-            if (in_array($exceptionCode, [409, 404]) || !($exception instanceof GuzzleException) && !($exception instanceof GraphException)) {
-                throw new UnrecoverableMessageHandlingException($exception->getMessage(), $exceptionCode);
+            // If it is a BookingCreateException it should be rejected otherwise it should be retried.
+            if ($exception instanceof BookingCreateException) {
+                throw new UnrecoverableMessageHandlingException($exception->getMessage(), (int) $exception->getCode());
             } else {
                 throw $exception;
             }
