@@ -268,6 +268,9 @@ class BookingTest extends AbstractBaseApiTestCase
 
         $container->set(AAKResourceRepository::class, $aakResourceRepositoryMock);
 
+        $notificationServiceMock = $this->createMock(NotificationServiceInterface::class);
+        $container->set(NotificationServiceInterface::class, $notificationServiceMock);
+
         $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock, $security, $bus);
         $createBookingHandler->__invoke(new CreateBookingMessage($booking));
     }

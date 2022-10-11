@@ -46,15 +46,18 @@ services:
             - '%microsoft_graph_service_account_password%'
             - '%microsoft_graph_service_account_name%'
 
+    App\Service\NotificationService:
+        arguments:
+            - '%email_from_address%'
+
     App\Service\MicrosoftGraphServiceInterface:
         alias: 'App\Service\MicrosoftGraphService'
 
     App\Service\WebformServiceInterface:
         alias: 'App\Service\WebformService'
 
-    App\Service\NotificationService:
-        arguments:
-            - '%email_from_address%'
+    App\Service\NotificationServiceInterface:
+        alias: 'App\Service\NotificationService'
 
     resource.search_filter:
         # https://api-platform.com/docs/core/filters/#search-filter
