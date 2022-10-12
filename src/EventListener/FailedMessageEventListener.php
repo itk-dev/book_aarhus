@@ -3,6 +3,7 @@
 namespace App\EventListener;
 
 use App\Message\CreateBookingMessage;
+use App\Message\SendBookingNotificationMessage;
 use App\Message\WebformSubmitMessage;
 use App\Repository\Main\AAKResourceRepository;
 use App\Service\NotificationServiceInterface;
@@ -33,6 +34,9 @@ final class FailedMessageEventListener
             $this->notificationService->sendBookingNotification($booking, $resource, NotificationTypeEnum::FAILED);
 
             // TODO: Notify an administrative mailbox of error.
+
+        } elseif ($message instanceof SendBookingNotificationMessage) {
+            // TODO: Handle notification message errors.
         }
     }
 }

@@ -2,6 +2,9 @@
 
 namespace App\Service;
 
+use App\Entity\Main\Booking;
+use App\Entity\Resources\AAKResource;
+use App\Utils\ValidationUtils;
 use DateTimeImmutable;
 use Eluceo\iCal\Domain\Entity;
 use Eluceo\iCal\Domain\ValueObject\DateTime;
@@ -10,6 +13,7 @@ use Eluceo\iCal\Presentation\Component;
 use Eluceo\iCal\Presentation\Factory;
 use Exception;
 use JsonException;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -18,9 +22,21 @@ use Symfony\Component\Mime\MimeTypes;
 
 class NotificationService implements NotificationServiceInterface
 {
-    public function __construct(private readonly string $emailFromAddress, private readonly MailerInterface $mailer)
-    {
-    }
+    private ?string $validatedAdminNotificationEmail;
+
+    public function __construct(
+        private readonly string $emailFromAddress,
+        private readonly string $emailAdminNotification,
+        private readonly ValidationUtils $validationUtils,
+        private readonly LoggerInterface $logger,
+        private readonly MailerInterface $mailer
+    ) {
+        try {
+            $this->validatedAdminNotificationEmail = $this->validationUtils->validateEmail($this->emailAdminNotification);
+        } catch (Exception) {
+            $this->logger->warning("No admin notification email set.");
+        }
+   }
 
     /**
      * @param $booking
@@ -195,5 +211,30 @@ class NotificationService implements NotificationServiceInterface
         $calendar = new Entity\Calendar($iCalEvents);
 
         return (new Factory\CalendarFactory())->createCalendar($calendar);
+    }
+
+    public function notifyAdmin(string $subject, string $message, ?Booking $booking, ?AAKResource $resource)
+    {
+        if ($this->validatedAdminNotificationEmail) {
+            $to = $this->validatedAdminNotificationEmail;
+            $template = 'email-notify-admin.html.twig';
+
+            $data = [
+                'subject' => $subject,
+                'message' => $message,
+                'booking' => $booking,
+                'resource' => $resource,
+            ];
+
+            $notificationData = [
+                'from' => $this->emailFromAddress,
+                'to' => $to,
+                'subject' => $subject,
+                'template' => $template,
+                'data' => $data,
+            ];
+
+            $this->sendNotification($notificationData);
+        }
     }
 }
