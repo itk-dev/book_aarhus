@@ -25,16 +25,16 @@ class DispatchBookingMessageTestCommand extends Command
 
     protected function configure(): void
     {
-
     }
 
-  /**
-   * @param InputInterface $input
-   * @param OutputInterface $output
-   *
-   * @return int
-   * @throws \Exception
-   */
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     *
+     * @throws \Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -53,29 +53,31 @@ class DispatchBookingMessageTestCommand extends Command
 
         switch ($type) {
             case 'Instant booking':
-              $this->bus->dispatch(new CreateBookingMessage($this->createBooking($email, 'instant', $from, $to)));
-              break;
+                $this->bus->dispatch(new CreateBookingMessage($this->createBooking($email, 'instant', $from, $to)));
+                break;
 
             case 'Acceptance flow booking':
-              $this->bus->dispatch(new CreateBookingMessage($this->createBooking($email, 'acceptance_flow', $from, $to)));
-              break;
+                $this->bus->dispatch(new CreateBookingMessage($this->createBooking($email, 'acceptance_flow', $from, $to)));
+                break;
         }
         $output->writeln('Added booking to message queue');
 
         return Command::SUCCESS;
     }
 
-  /**
-   * @param $email
-   * @param $type
-   * @param $from
-   * @param $to
-   * @return Booking
-   * @throws \Exception
-   */
+    /**
+     * @param $email
+     * @param $type
+     * @param $from
+     * @param $to
+     *
+     * @return Booking
+     *
+     * @throws \Exception
+     */
     private function createBooking($email, $type, $from, $to): Booking
     {
-        $resourceEmail = $type === 'instant' ? 'DOKK1-Lokale-Test1@aarhus.dk' : 'dokk1-lokale-test2@aarhus.dk';
+        $resourceEmail = 'instant' === $type ? 'DOKK1-Lokale-Test1@aarhus.dk' : 'dokk1-lokale-test2@aarhus.dk';
         $booking = new Booking();
         $booking->setBody('test');
         $booking->setSubject('test');
@@ -84,7 +86,6 @@ class DispatchBookingMessageTestCommand extends Command
         $booking->setStartTime(new \DateTime($from));
         $booking->setEndTime(new \DateTime($to));
         $booking->setUserPermission('citizen');
-
 
         $metaData = [
             'meta_data_4' => '1, 2, 3',
@@ -101,5 +102,4 @@ class DispatchBookingMessageTestCommand extends Command
 
         return $booking;
     }
-
 }
