@@ -7,8 +7,8 @@ services:
     ports:
       - "15672"
     environment:
-      - RABBITMQ_DEFAULT_USER="${RABBITMQ_USER}"
-      - RABBITMQ_DEFAULT_PASS="${RABBITMQ_PASSWORD}"
+      - "RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}"
+      - "RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}"
       - RABBITMQ_ERLANG_COOKIE="asdfghjkl"
 
   supervisor:
