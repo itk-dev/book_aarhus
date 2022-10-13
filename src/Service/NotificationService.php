@@ -34,18 +34,14 @@ class NotificationService implements NotificationServiceInterface
         try {
             $this->validatedAdminNotificationEmail = $this->validationUtils->validateEmail($this->emailAdminNotification);
         } catch (Exception) {
-            $this->logger->warning("No admin notification email set.");
+            $this->logger->warning('No admin notification email set.');
         }
-   }
+    }
 
     /**
-     * @param $booking
-     * @param $resource
-     * @param NotificationTypeEnum $type
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function sendBookingNotification($booking, $resource, NotificationTypeEnum $type): void
+    public function sendBookingNotification(Booking $booking, ?AAKResource $resource, NotificationTypeEnum $type): void
     {
         try {
             $data = [
@@ -63,6 +59,67 @@ class NotificationService implements NotificationServiceInterface
             $this->sendNotification($notification);
         } catch (JsonException $e) {
             // TODO: Handle error.
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createCalendarComponent(array $events): Component
+    {
+        $iCalEvents = [];
+
+        foreach ($events as $eventData) {
+            $event = new Entity\Event();
+
+            $event->setSummary($eventData['summary']);
+            $event->setDescription($eventData['description']);
+
+            $immutableFrom = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
+            $immutableTo = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
+
+            if (false === $immutableFrom || false === $immutableTo) {
+                throw new Exception('DateTimeImmutable cannot be false');
+            }
+
+            $start = new DateTime($immutableFrom, false);
+            $end = new DateTime($immutableTo, false);
+            $occurrence = new TimeSpan($start, $end);
+            $event->setOccurrence($occurrence);
+
+            $iCalEvents[] = $event;
+        }
+
+        $calendar = new Entity\Calendar($iCalEvents);
+
+        return (new Factory\CalendarFactory())->createCalendar($calendar);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function notifyAdmin(string $subject, string $message, ?Booking $booking, ?AAKResource $resource): void
+    {
+        if ($this->validatedAdminNotificationEmail) {
+            $to = $this->validatedAdminNotificationEmail;
+            $template = 'email-notify-admin.html.twig';
+
+            $data = [
+                'subject' => $subject,
+                'message' => $message,
+                'booking' => $booking,
+                'resource' => $resource,
+            ];
+
+            $notificationData = [
+                'from' => $this->emailFromAddress,
+                'to' => $to,
+                'subject' => $subject,
+                'template' => $template,
+                'data' => $data,
+            ];
+
+            $this->sendNotification($notificationData);
         }
     }
 
@@ -174,67 +231,5 @@ class NotificationService implements NotificationServiceInterface
                 'to' => $data['booking']->getEndTime()->format('Y-m-d H:i:s'),
             ],
         ];
-    }
-
-    /**
-     * @param array $events
-     *
-     * @return Component
-     *
-     * @throws Exception
-     */
-    public function createCalendarComponent(array $events): Component
-    {
-        $iCalEvents = [];
-
-        foreach ($events as $eventData) {
-            $event = new Entity\Event();
-
-            $event->setSummary($eventData['summary']);
-            $event->setDescription($eventData['description']);
-
-            $immutableFrom = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
-            $immutableTo = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
-
-            if (false === $immutableFrom || false === $immutableTo) {
-                throw new Exception('DateTimeImmutable cannot be false');
-            }
-
-            $start = new DateTime($immutableFrom, false);
-            $end = new DateTime($immutableTo, false);
-            $occurrence = new TimeSpan($start, $end);
-            $event->setOccurrence($occurrence);
-
-            $iCalEvents[] = $event;
-        }
-
-        $calendar = new Entity\Calendar($iCalEvents);
-
-        return (new Factory\CalendarFactory())->createCalendar($calendar);
-    }
-
-    public function notifyAdmin(string $subject, string $message, ?Booking $booking, ?AAKResource $resource)
-    {
-        if ($this->validatedAdminNotificationEmail) {
-            $to = $this->validatedAdminNotificationEmail;
-            $template = 'email-notify-admin.html.twig';
-
-            $data = [
-                'subject' => $subject,
-                'message' => $message,
-                'booking' => $booking,
-                'resource' => $resource,
-            ];
-
-            $notificationData = [
-                'from' => $this->emailFromAddress,
-                'to' => $to,
-                'subject' => $subject,
-                'template' => $template,
-                'data' => $data,
-            ];
-
-            $this->sendNotification($notificationData);
-        }
     }
 }

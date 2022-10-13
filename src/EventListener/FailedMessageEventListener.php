@@ -26,17 +26,34 @@ final class FailedMessageEventListener
         $message = $envelope->getMessage();
 
         if ($message instanceof WebformSubmitMessage) {
-            // TODO: Notify an administrative mailbox of error.
+            $this->notificationService->notifyAdmin(
+                'Webform data retrieval failed.',
+                'Failed to extract data from webform.',
+                null,
+                null
+            );
         } elseif ($message instanceof CreateBookingMessage) {
             $booking = $message->getBooking();
             $resource = $this->AAKResourceRepository->findOneByEmail($booking->getResourceEmail());
 
             $this->notificationService->sendBookingNotification($booking, $resource, NotificationTypeEnum::FAILED);
 
-            // TODO: Notify an administrative mailbox of error.
-
+            $this->notificationService->notifyAdmin(
+                'Create booking failed.',
+                'Failed to create the booking in Exchange.',
+                $booking,
+                $resource
+            );
         } elseif ($message instanceof SendBookingNotificationMessage) {
-            // TODO: Handle notification message errors.
+            $booking = $message->getBooking();
+            $resource = $this->AAKResourceRepository->findOneByEmail($booking->getResourceEmail());
+
+            $this->notificationService->notifyAdmin(
+                'Booking notification to user failed.',
+                'Failed to send notification message to user.',
+                $booking,
+                $resource
+            );
         }
     }
 }
