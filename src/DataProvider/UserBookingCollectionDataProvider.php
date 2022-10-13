@@ -7,9 +7,7 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\MicrosoftGraphServiceInterface;
-use GuzzleHttp\Exception\GuzzleException;
-use Microsoft\Graph\Exception\GraphException;
-use Psr\Cache\InvalidArgumentException;
+use Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Security;
@@ -29,10 +27,7 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
     }
 
     /**
-     * @throws GraphException
-     * @throws InvalidArgumentException
-     * @throws GuzzleException
-     * @throws \Exception
+     * @throws Exception
      */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
@@ -50,11 +45,7 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
 
         $userBookings = $this->microsoftGraphService->getUserBookings($userId);
 
-        $userBookingsHits = $userBookings['value'][0]['hitsContainers'][0]['hits'] ?? null;
-
-        if (null === $userBookingsHits) {
-            return;
-        }
+        $userBookingsHits = $userBookings['value'][0]['hitsContainers'][0]['hits'] ?? [];
 
         foreach ($userBookingsHits as $hit) {
             $userBooking = new UserBooking();
