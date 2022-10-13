@@ -11,3 +11,5 @@ services:
 
     App\Service\WebformServiceInterface:
         alias: 'App\Service\WebformService'
+
+    App\Service\NotificationServiceInterface: ~

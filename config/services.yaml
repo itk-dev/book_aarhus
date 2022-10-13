@@ -10,6 +10,7 @@ parameters:
     microsoft_graph_service_account_username: '%env(string:MICROSOFT_GRAPH_SERVICE_ACCOUNT_USERNAME)%'
     microsoft_graph_service_account_password: '%env(string:MICROSOFT_GRAPH_SERVICE_ACCOUNT_PASSWORD)%'
     email_from_address: '%env(string:EMAIL_FROM_ADDRESS)%'
+    email_admin_notification: '%env(string:ADMIN_NOTIFICATION_EMAIL)%'
 
 services:
     # default configuration for services in *this* file
@@ -46,15 +47,19 @@ services:
             - '%microsoft_graph_service_account_password%'
             - '%microsoft_graph_service_account_name%'
 
+    App\Service\NotificationService:
+        arguments:
+            - '%email_from_address%'
+            - '%email_admin_notification%'
+
     App\Service\MicrosoftGraphServiceInterface:
         alias: 'App\Service\MicrosoftGraphService'
 
     App\Service\WebformServiceInterface:
         alias: 'App\Service\WebformService'
 
-    App\Service\NotificationService:
-        arguments:
-            - '%email_from_address%'
+    App\Service\NotificationServiceInterface:
+        alias: 'App\Service\NotificationService'
 
     resource.search_filter:
         # https://api-platform.com/docs/core/filters/#search-filter

@@ -12,11 +12,14 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 class SendBookingNotificationHandler
 {
-    public function __construct(private LoggerInterface $logger, private AAKResourceRepository $aakResourceRepository, private NotificationServiceInterface $notificationService)
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly AAKResourceRepository $aakResourceRepository,
+        private readonly NotificationServiceInterface $notificationService)
     {
     }
 
-    public function __invoke(SendBookingNotificationMessage $message)
+    public function __invoke(SendBookingNotificationMessage $message): void
     {
         $this->logger->info('SendBookingNotificationHandler invoked.');
 

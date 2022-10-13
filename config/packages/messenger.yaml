@@ -1,14 +1,20 @@
 framework:
     messenger:
-        # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
+        # Send failed messages to this transport for later handling.
         failure_transport: failed
 
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
-            async: "%env(MESSENGER_TRANSPORT_DSN)%"
+            async:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                retry_strategy:
+                    # 1, 3, 9, 27
+                    max_retries: 4
+                    delay: 60000 # 1 minutes
+                    multiplier: 3
+                    max_delay: 3600000 # 1 hour
             # @see https://symfony.com/doc/current/messenger.html#saving-retrying-failed-messages
             failed: '%env(MESSENGER_TRANSPORT_DSN_FAILED)%'
-
         routing:
             # Route your messages to the transports
             'App\Message\WebformSubmitMessage': async
