@@ -232,6 +232,14 @@ To consume messages run the following command
 docker compose exec phpfpm composer queues
 ```
 
+To debug the queue find the address to the rabbitmq container with
+
+```shell
+docker compose ps
+```
+
+and open it in a browser.
+
 ### Production
 
 Make sure proper production handling is set up.
