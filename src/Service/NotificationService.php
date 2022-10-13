@@ -141,7 +141,7 @@ class NotificationService implements NotificationServiceInterface
 
             switch ($type) {
                 case NotificationTypeEnum::SUCCESS:
-                    $template = 'emailBookingSuccess.html.twig';
+                    $template = 'email-booking-success.html.twig';
 
                     $events = $this->prepareIcalEvents($data);
                     $iCalendarComponent = $this->createCalendarComponent($events);
@@ -151,11 +151,11 @@ class NotificationService implements NotificationServiceInterface
                     ];
                     break;
                 case NotificationTypeEnum::CHANGED:
-                    $template = 'emailBookingChanged.html.twig';
+                    $template = 'email-booking-changed.html.twig';
                     $subject = 'Booking ændret: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
                     break;
                 case NotificationTypeEnum::FAILED:
-                    $template = 'emailBookingFailed.html.twig';
+                    $template = 'email-booking-failed.html.twig';
                     $subject = 'Booking lykkedes ikke: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
                     break;
             }
@@ -194,7 +194,7 @@ class NotificationService implements NotificationServiceInterface
             $fileName = 'booking-'.$bookingId.'.ics';
             $filePath = $tempDir.'/'.$fileName;
             // Add ics attachment to mail.
-            if ($notification['fileAttachments']['ics']) {
+            if (!empty($notification['fileAttachments']['ics'])) {
                 foreach ($notification['fileAttachments']['ics'] as $key => $ics) {
                     try {
                         file_put_contents($filePath, (string) $ics);
