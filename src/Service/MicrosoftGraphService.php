@@ -255,11 +255,11 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function acceptBooking(string $id): ?string
+    public function acceptBooking(string $bookingId): ?string
     {
         $token = $this->authenticateAsServiceAccount();
 
-        $urlEncodedId = urlencode($id);
+        $urlEncodedId = urlencode($bookingId);
 
         $response = $this->request("/me/events/$urlEncodedId/accept", $token, 'POST', [
             'sendResponse' => false,
@@ -273,11 +273,11 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/api/event-update?view=graph-rest-1.0&tabs=http
      */
-    public function updateBooking(string $id, array $newData = []): ?string
+    public function updateBooking(string $bookingId, array $newData = []): ?string
     {
         $token = $this->authenticateAsServiceAccount();
 
-        $urlEncodedId = urlencode($id);
+        $urlEncodedId = urlencode($bookingId);
 
         return 'yes';
 
@@ -291,7 +291,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/api/event-delete?view=graph-rest-1.0&tabs=http
      */
-    public function deleteUserBooking(string $bookingId, string $ownerEmail): ?string
+    public function deleteBooking(string $bookingId, string $ownerEmail): ?string
     {
         $token = $this->authenticateAsServiceAccount();
 
@@ -322,14 +322,14 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/search-concept-events
      */
-    public function getUserBooking(string $bookingId): array
+    public function getBooking(string $bookingId): array
     {
         $token = $this->authenticateAsServiceAccount();
 
         $bookingId = urldecode($bookingId);
         $bookingId = str_replace(['/', ' '], ['-', '+'], $bookingId);
 
-        $response = $this->request('/me/events/'.$bookingId, $token, 'GET', null);
+        $response = $this->request('/me/events/'.$bookingId, $token);
 
         return $response->getBody();
     }
@@ -339,18 +339,16 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/search-concept-events
      */
-    public function getUserBookings(string $userId, string $bookingId = ''): array
+    public function getUserBookings(string $userId): array
     {
         $token = $this->authenticateAsServiceAccount();
-
-        // TODO: Adjust queryString when booking body is changed.
 
         $body = [
             'requests' => [
                 [
                     'entityTypes' => ['event'],
                     'query' => [
-                        'queryString' => "[userid-$userId]",
+                        'queryString' => 'USERID-'.$userId.'-USERID',
                     ],
                     'from' => 0,
                     'to' => 100,
@@ -359,23 +357,6 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
         ];
 
         $response = $this->request('/search/query', $token, 'POST', $body);
-
-        return $response->getBody();
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @see https://docs.microsoft.com/en-us/graph/search-concept-events
-     */
-    public function getBookingDetails(string $bookingId): array
-    {
-        $token = $this->authenticateAsServiceAccount();
-
-        // TODO: Handle this differently.
-        $bookingId_formatted = str_replace(['/', ' '], ['-', '+'], $bookingId);
-
-        $response = $this->request('/me/events/'.$bookingId_formatted, $token);
 
         return $response->getBody();
     }

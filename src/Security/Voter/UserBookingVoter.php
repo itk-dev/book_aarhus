@@ -46,24 +46,6 @@ class UserBookingVoter extends Voter
 
         $body = $subject->body;
 
-        return str_contains($body, "[userid-$userId]");
-
-        /* TODO: Use this method when proper html body is added to bookings in exchange.
-        $crawler = new Crawler($body);
-
-        $node = $crawler->filterXPath('//*[@id="userId"]')->getNode(0);
-
-        if (is_null($node)) {
-            return false;
-        }
-
-        $userIdInBooking = $node->nodeValue;
-
-        if ($userId == $userIdInBooking) {
-            return true;
-        }
-
-        return false;
-        */
+        return str_contains($body, "USERID-$userId-USERID");
     }
 }

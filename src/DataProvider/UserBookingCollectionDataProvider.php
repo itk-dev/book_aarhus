@@ -13,7 +13,6 @@ use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Uid\Ulid;
 
 final class UserBookingCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -33,6 +32,7 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
      * @throws GraphException
      * @throws InvalidArgumentException
      * @throws GuzzleException
+     * @throws \Exception
      */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
@@ -58,17 +58,16 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
 
         foreach ($userBookingsHits as $hit) {
             $userBooking = new UserBooking();
-            $userBooking->id = Ulid::generate();
-            $userBooking->hitId = $hit['hitId'] ?? '';
-            $userBooking->subject = $hit['resource']['subject'] ?? '';
-            $userBooking->start = new \DateTime($hit['resource']['start']['dateTime'], new \DateTimeZone($hit['resource']['start']['timeZone'])) ?? null;
-            $userBooking->end = new \DateTime($hit['resource']['end']['dateTime'], new \DateTimeZone($hit['resource']['end']['timeZone'])) ?? null;
-            $userBooking->summary = $hit['summary'] ?? '';
+            $userBooking->hitId = urlencode($hit['hitId']);
 
-            $bookingDetailsData = $this->microsoftGraphService->getBookingDetails($hit['hitId']);
+            $bookingDetailsData = $this->microsoftGraphService->getBooking($userBooking->hitId);
 
+            $userBooking->subject = $bookingDetailsData['subject'] ?? '';
+            $userBooking->start = new \DateTime($bookingDetailsData['start']['dateTime'], new \DateTimeZone($bookingDetailsData['start']['timeZone'])) ?? null;
+            $userBooking->end = new \DateTime($bookingDetailsData['end']['dateTime'], new \DateTimeZone($bookingDetailsData['end']['timeZone'])) ?? null;
             $userBooking->displayName = $bookingDetailsData['location']['displayName'];
             $userBooking->body = $bookingDetailsData['body']['content'];
+            $userBooking->id = urlencode($bookingDetailsData['id']);
 
             if ($this->security->isGranted(UserBookingVoter::VIEW, $userBooking)) {
                 yield $userBooking;

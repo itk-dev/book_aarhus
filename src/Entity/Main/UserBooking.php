@@ -20,8 +20,6 @@ class UserBooking
 
     public string $iCalUId;
 
-    public string $summary;
-
     /**
      * @Groups({"userBooking"})
      */

@@ -10,27 +10,61 @@ use Microsoft\Graph\Http\GraphResponse;
 interface MicrosoftGraphServiceInterface
 {
     /**
-     * Accept a booking.
+     * Get a booking.
      *
-     * @param string $id
+     * @param string $bookingId
      *
-     * @return string|null
+     * @return array
      *
      * @throws MicrosoftGraphCommunicationException
      */
-    public function acceptBooking(string $id): ?string;
+    public function getBooking(string $bookingId): array;
 
     /**
      * Update a booking.
      *
-     * @param string $id
+     * @param string $bookingId
      * @param array $newData
      *
      * @return string|null
      *
      * @throws MicrosoftGraphCommunicationException
      */
-    public function updateBooking(string $id, array $newData): ?string;
+    public function updateBooking(string $bookingId, array $newData): ?string;
+
+    /**
+     * Delete a booking.
+     *
+     * @param string $bookingId
+     * @param string $ownerEmail
+     *
+     * @return string|null
+     *
+     * @throws MicrosoftGraphCommunicationException
+     */
+    public function deleteBooking(string $bookingId, string $ownerEmail): ?string;
+
+    /**
+     * Accept a booking.
+     *
+     * @param string $bookingId
+     *
+     * @return string|null
+     *
+     * @throws MicrosoftGraphCommunicationException
+     */
+    public function acceptBooking(string $bookingId): ?string;
+
+    /**
+     * Get bookings containing userId.
+     *
+     * @param string $userId
+     *
+     * @return array array of search hits
+     *
+     * @throws MicrosoftGraphCommunicationException
+     */
+    public function getUserBookings(string $userId): array;
 
     /**
      * Get busy intervals for a given number of schedules.
@@ -45,49 +79,6 @@ interface MicrosoftGraphServiceInterface
      * @throws MicrosoftGraphCommunicationException
      */
     public function getBusyIntervals(array $schedules, DateTime $startTime, DateTime $endTime, string $accessToken = null): array;
-
-    /**
-     * Delete a booking.
-     *
-     * @param string $bookingId
-     * @param string $ownerEmail
-     *
-     * @return string|null
-     *
-     * @throws MicrosoftGraphCommunicationException
-     */
-    public function deleteUserBooking(string $bookingId, string $ownerEmail): ?string;
-
-    /**
-     * Get a booking.
-     *
-     * @param string $bookingId
-     *
-     * @return array
-     *
-     * @throws MicrosoftGraphCommunicationException
-     */
-    public function getUserBooking(string $bookingId): array;
-
-    /**
-     * Get bookings containing userId.
-     *
-     * @param string $userId
-     *
-     * @return array
-     *
-     * @throws MicrosoftGraphCommunicationException
-     */
-    public function getUserBookings(string $userId): array;
-
-    /**
-     * @param string $bookingId
-     *
-     * @return array
-     *
-     * @throws MicrosoftGraphCommunicationException
-     */
-    public function getBookingDetails(string $bookingId): array;
 
     /**
      * @param string $resourceEmail

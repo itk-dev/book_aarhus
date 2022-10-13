@@ -35,20 +35,17 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
             throw new BadRequestHttpException('Required booking id is not set');
         }
 
-        $userBookingData = $this->microsoftGraphService->getUserBooking($id);
-
-        $bookingDetailsData = $this->microsoftGraphService->getBookingDetails($userBookingData['id']);
+        $userBookingData = $this->microsoftGraphService->getBooking($id);
 
         $userBooking = new UserBooking();
-        $userBooking->id = Ulid::generate();
+        $userBooking->id = urlencode($userBookingData['id']);
         $userBooking->hitId = $userBookingData['id'] ?? '';
         $userBooking->start = new \DateTime($userBookingData['start']['dateTime'], new \DateTimeZone($userBookingData['start']['timeZone'])) ?? null;
         $userBooking->end = new \DateTime($userBookingData['end']['dateTime'], new \DateTimeZone($userBookingData['end']['timeZone'])) ?? null;
         $userBooking->iCalUId = $userBookingData['iCalUId'];
         $userBooking->subject = $userBookingData['resource']['subject'] ?? '';
-        $userBooking->summary = $userBookingData['summary'] ?? '';
-        $userBooking->displayName = $bookingDetailsData['location']['displayName'];
-        $userBooking->body = $bookingDetailsData['body']['content'];
+        $userBooking->displayName = $userBookingData['location']['displayName'];
+        $userBooking->body = $userBookingData['body']['content'];
 
         if (!$this->security->isGranted(UserBookingVoter::VIEW, $userBooking)) {
             throw new AccessDeniedHttpException('Access denied');
