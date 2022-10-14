@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Main\UserBooking;
 use App\Exception\BookingCreateException;
 use App\Exception\MicrosoftGraphCommunicationException;
 use DateTime;
@@ -23,37 +24,35 @@ interface MicrosoftGraphServiceInterface
     /**
      * Update a booking.
      *
-     * @param string $bookingId
-     * @param array $newData
+     * @param UserBooking $booking
      *
      * @return string|null
      *
      * @throws MicrosoftGraphCommunicationException
      */
-    public function updateBooking(string $bookingId, array $newData): ?string;
+    public function updateBooking(UserBooking $booking): ?string;
 
     /**
      * Delete a booking.
      *
-     * @param string $bookingId
-     * @param string $ownerEmail
+     * @param UserBooking $booking
      *
      * @return string|null
      *
      * @throws MicrosoftGraphCommunicationException
      */
-    public function deleteBooking(string $bookingId, string $ownerEmail): ?string;
+    public function deleteBooking(UserBooking $booking): ?string;
 
     /**
      * Accept a booking.
      *
-     * @param string $bookingId
+     * @param UserBooking $booking
      *
      * @return string|null
      *
      * @throws MicrosoftGraphCommunicationException
      */
-    public function acceptBooking(string $bookingId): ?string;
+    public function acceptBooking(UserBooking $booking): ?string;
 
     /**
      * Get bookings containing userId.
