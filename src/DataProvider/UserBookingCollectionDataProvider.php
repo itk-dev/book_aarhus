@@ -6,6 +6,7 @@ use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
 use App\Security\Voter\UserBookingVoter;
+use App\Service\BookingServiceInterface;
 use App\Service\MicrosoftGraphServiceInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -17,7 +18,8 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
     public function __construct(
         private readonly MicrosoftGraphServiceInterface $microsoftGraphService,
         private readonly Security $security,
-        private readonly RequestStack $requestStack
+        private readonly RequestStack $requestStack,
+        private readonly BookingServiceInterface $bookingService,
     ) {
     }
 
@@ -43,22 +45,16 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
             throw new BadRequestHttpException('Required Authorization-UserId header is not set.');
         }
 
-        $userBookings = $this->microsoftGraphService->getUserBookings($userId);
+        $userBookingData = $this->microsoftGraphService->getUserBookings($userId);
 
-        $userBookingsHits = $userBookings['value'][0]['hitsContainers'][0]['hits'] ?? [];
+        $userBookingsHits = $userBookingData['value'][0]['hitsContainers'][0]['hits'] ?? [];
 
         foreach ($userBookingsHits as $hit) {
-            $userBooking = new UserBooking();
-            $userBooking->hitId = urlencode($hit['hitId']);
+            $id = urlencode($hit['hitId']);
 
-            $bookingDetailsData = $this->microsoftGraphService->getBooking($userBooking->hitId);
+            $userBookingGraphData = $this->microsoftGraphService->getBooking($id);
 
-            $userBooking->subject = $bookingDetailsData['subject'] ?? '';
-            $userBooking->start = new \DateTime($bookingDetailsData['start']['dateTime'], new \DateTimeZone($bookingDetailsData['start']['timeZone'])) ?? null;
-            $userBooking->end = new \DateTime($bookingDetailsData['end']['dateTime'], new \DateTimeZone($bookingDetailsData['end']['timeZone'])) ?? null;
-            $userBooking->displayName = $bookingDetailsData['location']['displayName'];
-            $userBooking->body = $bookingDetailsData['body']['content'];
-            $userBooking->id = urlencode($bookingDetailsData['id']);
+            $userBooking = $this->bookingService->getUserBookingFromGraphData($userBookingGraphData);
 
             if ($this->security->isGranted(UserBookingVoter::VIEW, $userBooking)) {
                 yield $userBooking;

@@ -30,7 +30,8 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
         private readonly string $serviceAccountUsername,
         private readonly string $serviceAccountPassword,
         private readonly string $serviceAccountName,
-        private readonly CacheInterface $cache
+        private readonly CacheInterface $cache,
+        private readonly BookingServiceInterface $bookingService,
     ) {
     }
 
@@ -258,7 +259,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      */
     public function acceptBooking(UserBooking $booking): ?string
     {
-        return "";
+        return '';
         /*
         $token = $this->authenticateAsServiceAccount();
 
@@ -353,7 +354,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
                 [
                     'entityTypes' => ['event'],
                     'query' => [
-                        'queryString' => 'USERID-'.$userId.'-USERID',
+                        'queryString' => $this->bookingService->createBodyUserId($userId),
                     ],
                     'from' => 0,
                     'to' => 100,

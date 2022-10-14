@@ -3,6 +3,8 @@
 namespace App\Security\Voter;
 
 use App\Entity\Main\UserBooking;
+use App\Service\BookingServiceInterface;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -16,8 +18,10 @@ class UserBookingVoter extends Voter
     public const EDIT = 'USER_BOOKING_EDIT';
     public const DELETE = 'USER_BOOKING_DELETE';
 
-    public function __construct(private readonly RequestStack $requestStack)
-    {
+    public function __construct(
+        private readonly RequestStack $requestStack,
+        private readonly BookingServiceInterface $bookingService,
+    ) {
     }
 
     protected function supports(string $attribute, $subject): bool
@@ -46,6 +50,20 @@ class UserBookingVoter extends Voter
 
         $body = $subject->body;
 
-        return str_contains($body, "USERID-$userId-USERID");
+        $crawler = new Crawler($body);
+
+        $node = $crawler->filterXPath('//*[@id="userId"]')->getNode(0);
+
+        if (is_null($node)) {
+            return false;
+        }
+
+        $userIdInBooking = $node->nodeValue;
+
+        if ($this->bookingService->createBodyUserId($userId) == $userIdInBooking) {
+            return true;
+        }
+
+        return false;
     }
 }

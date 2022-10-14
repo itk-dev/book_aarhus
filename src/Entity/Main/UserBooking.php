@@ -46,4 +46,6 @@ class UserBooking
      * @Groups({"userBooking"})
      */
     public ?\DateTimeInterface $end;
+
+    public string $bookingUniqueId;
 }

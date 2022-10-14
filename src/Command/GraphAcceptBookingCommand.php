@@ -2,10 +2,10 @@
 
 namespace App\Command;
 
+use App\Exception\MicrosoftGraphCommunicationException;
+use App\Exception\UserBookingException;
+use App\Service\BookingServiceInterface;
 use App\Service\MicrosoftGraphServiceInterface;
-use GuzzleHttp\Exception\GuzzleException;
-use Microsoft\Graph\Exception\GraphException;
-use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -20,7 +20,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class GraphAcceptBookingCommand extends Command
 {
     public function __construct(
-        private readonly MicrosoftGraphServiceInterface $microsoftGraphService
+        private readonly MicrosoftGraphServiceInterface $microsoftGraphService,
+        private readonly BookingServiceInterface $bookingService,
     ) {
         parent::__construct();
     }
@@ -31,9 +32,8 @@ class GraphAcceptBookingCommand extends Command
     }
 
     /**
-     * @throws GraphException
-     * @throws GuzzleException
-     * @throws InvalidArgumentException
+     * @throws MicrosoftGraphCommunicationException
+     * @throws UserBookingException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -42,7 +42,11 @@ class GraphAcceptBookingCommand extends Command
 
         $io->note(sprintf('Accepting booking with id: %s', $id));
 
-        $data = $this->microsoftGraphService->acceptBooking($id);
+        $userBookingData = $this->microsoftGraphService->getBooking($id);
+
+        $userBooking = $this->bookingService->getUserBookingFromGraphData($userBookingData);
+
+        $data = $this->microsoftGraphService->acceptBooking($userBooking);
 
         $io->info(json_encode($data));
 

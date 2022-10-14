@@ -11,6 +11,7 @@ use App\MessageHandler\CreateBookingHandler;
 use App\MessageHandler\WebformSubmitHandler;
 use App\Repository\Main\AAKResourceRepository;
 use App\Security\Voter\BookingVoter;
+use App\Service\BookingServiceInterface;
 use App\Service\MicrosoftGraphService;
 use App\Service\NotificationServiceInterface;
 use App\Service\WebformService;
@@ -179,6 +180,7 @@ class BookingTest extends AbstractBaseApiTestCase
         $container = self::getContainer();
         $twig = $container->get(Environment::class);
         $bus = $container->get(MessageBusInterface::class);
+        $bookingService = $container->get(BookingServiceInterface::class);
 
         $aakBookingRepository = $this->getMockBuilder(AAKResourceRepository::class)
             ->onlyMethods(['findOneBy'])
@@ -195,7 +197,7 @@ class BookingTest extends AbstractBaseApiTestCase
         /** @var ApiKeyUser $testUser */
         $testUser = $entityManager->getRepository(ApiKeyUser::class)->findOneBy(['name' => 'test']);
 
-        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $bus, $validationUtilsMock, $logger, $aakBookingRepository, $twig);
+        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $bus, $validationUtilsMock, $logger, $aakBookingRepository, $twig, $bookingService);
 
         $webformSubmitHandler->__invoke(new WebformSubmitMessage(
             'booking',
