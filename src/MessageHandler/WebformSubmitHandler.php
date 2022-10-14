@@ -2,15 +2,16 @@
 
 namespace App\MessageHandler;
 
-use ApiPlatform\Core\Exception\InvalidArgumentException;
 use App\Entity\Main\Booking;
 use App\Entity\Resources\AAKResource;
+use App\Exception\WebformSubmissionRetrievalException;
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
 use App\Repository\Main\AAKResourceRepository;
 use App\Service\WebformServiceInterface;
 use App\Utils\ValidationUtilsInterface;
 use DateTime;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -36,26 +37,21 @@ class WebformSubmitHandler
     ) {
     }
 
-    /**
-     * @param WebformSubmitMessage $message
-     *
-     * @throws \Exception
-     */
     public function __invoke(WebformSubmitMessage $message): void
     {
-        $dataSubmission = $this->webformService->getData($message);
-        $submissionsCount = count($dataSubmission['bookingData']);
-        $this->logger->info("Webform submission data fetched. Setting up $submissionsCount CreateBooking jobs.");
+        try {
+            $dataSubmission = $this->webformService->getData($message);
+            $submissionsCount = count($dataSubmission['bookingData']);
+            $this->logger->info("Webform submission data fetched. Setting up $submissionsCount CreateBooking jobs.");
 
-        foreach ($dataSubmission['bookingData'] as $data) {
-            try {
+            foreach ($dataSubmission['bookingData'] as $data) {
                 $email = $this->validationUtils->validateEmail($data['resourceId']);
 
                 /** @var AAKResource $resource */
                 $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
 
                 if (is_null($resource)) {
-                    throw new UnrecoverableMessageHandlingException('Resource does not exist');
+                    throw new WebformSubmissionRetrievalException('Resource does not exist', 404);
                 }
 
                 $body = $this->composeBookingContents($data, $resource, $dataSubmission['metaData']);
@@ -78,34 +74,40 @@ class WebformSubmitHandler
 
                 // Register job.
                 $this->bus->dispatch(new CreateBookingMessage($booking));
-            } catch (InvalidArgumentException $e) {
-                throw new UnrecoverableMessageHandlingException($e->getMessage());
             }
+        } catch (WebformSubmissionRetrievalException $e) {
+            throw new UnrecoverableMessageHandlingException($e->getMessage());
         }
     }
 
     /**
-     * @throws \Exception
+     * @throws WebformSubmissionRetrievalException
      */
     private function composeBookingContents($data, AAKResource $resource, $metaData): array
     {
-        $body = [];
-        $body['resource'] = $resource;
-        $body['submission'] = $data;
-        $body['submission']['fromObj'] = new DateTime($data['start']);
-        $body['submission']['toObj'] = new DateTime($data['end']);
-        $body['metaData'] = $metaData;
+        try {
+            $body = [];
+            $body['resource'] = $resource;
+            $body['submission'] = $data;
+            $body['submission']['fromObj'] = new DateTime($data['start']);
+            $body['submission']['toObj'] = new DateTime($data['end']);
+            $body['metaData'] = $metaData;
 
-        return $body;
+            return $body;
+        } catch (Exception $exception) {
+            throw new WebformSubmissionRetrievalException($exception->getMessage());
+        }
     }
 
     /**
-     * @throws RuntimeError
-     * @throws SyntaxError
-     * @throws LoaderError
+     * @throws WebformSubmissionRetrievalException
      */
     private function renderContentsAsHtml(array $body): string
     {
-        return $this->twig->render('booking.html.twig', $body);
+        try {
+            return $this->twig->render('booking.html.twig', $body);
+        } catch (RuntimeError|SyntaxError|LoaderError $error) {
+            throw new WebformSubmissionRetrievalException($error->getMessage());
+        }
     }
 }

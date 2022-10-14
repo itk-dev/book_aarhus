@@ -2,7 +2,8 @@
 
 namespace App\Service;
 
-use Exception;
+use App\Exception\BookingCreateException;
+use App\Exception\MicrosoftGraphCommunicationException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use JsonException;
@@ -10,7 +11,6 @@ use Microsoft\Graph\Exception\GraphException;
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Http\GraphResponse;
 use Psr\Cache\CacheItemInterface;
-use Psr\Cache\InvalidArgumentException;
 use Symfony\Contracts\Cache\CacheInterface;
 
 /**
@@ -34,7 +34,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
-     * @throws InvalidArgumentException
+     * {@inheritdoc}
      */
     public function authenticateAsServiceAccount(): string
     {
@@ -48,51 +48,55 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
-     * @throws GuzzleException
-     * @throws JsonException
+     * {@inheritdoc}
      */
     public function authenticateAsUser(string $username, string $password): array
     {
-        $guzzle = new Client();
-        $url = 'https://login.microsoftonline.com/'.$this->tenantId.'/oauth2/v2.0/token';
+        try {
+            $guzzle = new Client();
+            $url = 'https://login.microsoftonline.com/'.$this->tenantId.'/oauth2/v2.0/token';
 
-        $response = $guzzle->post($url, [
-            'form_params' => [
-                'client_id' => $this->clientId,
-                'scope' => 'https://graph.microsoft.com/.default',
-                'username' => $username,
-                'password' => $password,
-                'grant_type' => 'password',
-            ],
-        ]);
+            $response = $guzzle->post($url, [
+                'form_params' => [
+                    'client_id' => $this->clientId,
+                    'scope' => 'https://graph.microsoft.com/.default',
+                    'username' => $username,
+                    'password' => $password,
+                    'grant_type' => 'password',
+                ],
+            ]);
 
-        return json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-    }
-
-    /**
-     * @throws GraphException
-     * @throws GuzzleException
-     */
-    public function request(string $endpoint, string $accessToken, string $requestType = 'GET', array $body = null): GraphResponse
-    {
-        $graph = new Graph();
-        $graph->setAccessToken($accessToken);
-
-        $graphRequest = $graph->createRequest($requestType, $endpoint);
-
-        if ($body) {
-            $graphRequest->attachBody($body);
+            return json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException|GuzzleException $exception) {
+            throw new MicrosoftGraphCommunicationException($exception->getMessage(), $exception->getCode());
         }
-
-        return $graphRequest->execute();
     }
 
     /**
-     * @see https://docs.microsoft.com/en-us/graph/api/calendar-getschedule?view=graph-rest-1.0&tabs=http
+     * {@inheritdoc}
+     */
+    public function request(string $path, string $accessToken, string $requestType = 'GET', array $body = null): GraphResponse
+    {
+        try {
+            $graph = new Graph();
+            $graph->setAccessToken($accessToken);
+
+            $graphRequest = $graph->createRequest($requestType, $path);
+
+            if ($body) {
+                $graphRequest->attachBody($body);
+            }
+
+            return $graphRequest->execute();
+        } catch (GuzzleException|GraphException $e) {
+            throw new MicrosoftGraphCommunicationException($e->getMessage(), $e->getCode());
+        }
+    }
+
+    /**
+     * {@inheritdoc}
      *
-     * @throws GraphException
-     * @throws GuzzleException
-     * @throws InvalidArgumentException
+     * @see https://docs.microsoft.com/en-us/graph/api/calendar-getschedule?view=graph-rest-1.0&tabs=http
      */
     public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, string $accessToken = null): array
     {
@@ -136,12 +140,9 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
-     * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
+     * {@inheritdoc}
      *
-     * @throws GraphException
-     * @throws GuzzleException
-     * @throws InvalidArgumentException
-     * @throws Exception
+     * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
      */
     public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array
     {
@@ -151,7 +152,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
         $busyIntervals = $this->getBusyIntervals([$resourceEmail], $startTime, $endTime, $token);
 
         if (!empty($busyIntervals[$resourceEmail])) {
-            throw new Exception('Booking interval conflict.', 409);
+            throw new BookingCreateException('Booking interval conflict.', 409);
         }
 
         $body = [
@@ -192,7 +193,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
         $busyIntervals = $this->getBusyIntervals([$resourceEmail], $startTime, $endTime, $token);
 
         if (empty($busyIntervals[$resourceEmail])) {
-            throw new Exception('Booking not created.', 500);
+            throw new BookingCreateException('Booking was not created.', 404);
         }
 
         // TODO: Decide if this should be added.
@@ -207,11 +208,9 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
-     * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
+     * {@inheritdoc}
      *
-     * @throws GraphException
-     * @throws GuzzleException
-     * @throws InvalidArgumentException
+     * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
      */
     public function createBookingInviteResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array
     {
@@ -254,9 +253,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
-     * @throws GraphException
-     * @throws GuzzleException
-     * @throws InvalidArgumentException
+     * {@inheritdoc}
      */
     public function acceptBooking(string $id): ?string
     {
@@ -272,11 +269,9 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
-     * @see https://docs.microsoft.com/en-us/graph/api/event-update?view=graph-rest-1.0&tabs=http
+     * {@inheritdoc}
      *
-     * @throws GraphException
-     * @throws GuzzleException
-     * @throws InvalidArgumentException
+     * @see https://docs.microsoft.com/en-us/graph/api/event-update?view=graph-rest-1.0&tabs=http
      */
     public function updateBooking(string $id, array $newData = []): ?string
     {
@@ -290,15 +285,15 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
-     * @see https://docs.microsoft.com/en-us/graph/api/event-delete?view=graph-rest-1.0&tabs=http
+     * {@inheritdoc}
      *
-     * @throws GraphException
-     * @throws GuzzleException
-     * @throws InvalidArgumentException
+     * @see https://docs.microsoft.com/en-us/graph/api/event-delete?view=graph-rest-1.0&tabs=http
      */
     public function deleteUserBooking(string $bookingId, string $ownerEmail): ?string
     {
         $token = $this->authenticateAsServiceAccount();
+
+        // TODO: Make sure the user is the owner.
 
         // Formatting the urldecode(d) booking hitId, replacing "/" with "-" as this is graph-compatible, and replacing
         // " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
@@ -317,11 +312,9 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
-     * @see https://docs.microsoft.com/en-us/graph/search-concept-events
+     * {@inheritdoc}
      *
-     * @throws GraphException
-     * @throws GuzzleException
-     * @throws InvalidArgumentException
+     * @see https://docs.microsoft.com/en-us/graph/search-concept-events
      */
     public function getUserBooking(string $bookingId): array
     {
@@ -336,11 +329,9 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
-     * @see https://docs.microsoft.com/en-us/graph/search-concept-events
+     * {@inheritdoc}
      *
-     * @throws GraphException
-     * @throws GuzzleException
-     * @throws InvalidArgumentException
+     * @see https://docs.microsoft.com/en-us/graph/search-concept-events
      */
     public function getUserBookings(string $userId, string $bookingId = ''): array
     {
@@ -365,19 +356,18 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     }
 
     /**
-     * @see https://docs.microsoft.com/en-us/graph/search-concept-events
+     * {@inheritdoc}
      *
-     * @throws GraphException
-     * @throws GuzzleException
-     * @throws InvalidArgumentException
+     * @see https://docs.microsoft.com/en-us/graph/search-concept-events
      */
     public function getBookingDetails(string $bookingId): array
     {
         $token = $this->authenticateAsServiceAccount();
 
+        // TODO: Handle this differently.
         $bookingId_formatted = str_replace(['/', ' '], ['-', '+'], $bookingId);
 
-        $response = $this->request('/me/events/'.$bookingId_formatted, $token, 'GET', null);
+        $response = $this->request('/me/events/'.$bookingId_formatted, $token);
 
         return $response->getBody();
     }

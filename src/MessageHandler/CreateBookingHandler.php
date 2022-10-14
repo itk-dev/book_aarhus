@@ -3,12 +3,13 @@
 namespace App\MessageHandler;
 
 use App\Entity\Resources\AAKResource;
+use App\Exception\BookingCreateException;
 use App\Message\CreateBookingMessage;
 use App\Message\SendBookingNotificationMessage;
 use App\Repository\Main\AAKResourceRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\MicrosoftGraphServiceInterface;
-use App\Service\NotificationServiceInterface;
+use App\Service\NotificationTypeEnum;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -22,15 +23,17 @@ use Symfony\Component\Security\Core\Security;
 class CreateBookingHandler
 {
     public function __construct(
-        private MicrosoftGraphServiceInterface $microsoftGraphService,
-        private LoggerInterface $logger,
-        private AAKResourceRepository $aakResourceRepository,
-        private Security $security,
-        private NotificationServiceInterface $notificationService,
-        private MessageBusInterface $bus
+        private readonly MicrosoftGraphServiceInterface $microsoftGraphService,
+        private readonly LoggerInterface $logger,
+        private readonly AAKResourceRepository $aakResourceRepository,
+        private readonly Security $security,
+        private readonly MessageBusInterface $bus
     ) {
     }
 
+    /**
+     * @throws \Exception
+     */
     public function __invoke(CreateBookingMessage $message): void
     {
         $this->logger->info('CreateBookingHandler invoked.');
@@ -72,11 +75,17 @@ class CreateBookingHandler
                 // Register notification job.
                 $this->bus->dispatch(new SendBookingNotificationMessage(
                     $booking,
-                    'success'
+                    NotificationTypeEnum::SUCCESS
                 ));
             }
         } catch (\Exception $exception) {
-            // TODO: Send booking failed notification.
+            // Differentiate between errors:
+            // If it is a BookingCreateException it should be rejected otherwise it should be retried.
+            if ($exception instanceof BookingCreateException) {
+                throw new UnrecoverableMessageHandlingException($exception->getMessage(), (int) $exception->getCode());
+            } else {
+                throw $exception;
+            }
         }
     }
 }
