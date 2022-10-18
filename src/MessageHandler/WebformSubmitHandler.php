@@ -94,7 +94,6 @@ class WebformSubmitHandler
             $body['submission']['fromObj'] = new DateTime($data['start']);
             $body['submission']['toObj'] = new DateTime($data['end']);
             $body['metaData'] = $metaData;
-            $body['bookingUniqueId'] = $this->microsoftGraphService->createBodyBookingId();
             $body['userUniqueId'] = $this->microsoftGraphService->createBodyUserId($data['userId']);
 
             return $body;

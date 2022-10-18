@@ -412,17 +412,6 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
             $userBooking->resourceMail = $attendeeResource['emailAddress']['address'];
             $userBooking->resourceName = $attendeeResource['emailAddress']['name'];
 
-            // Find bookingUniqueId in booking body.
-            $crawler = new Crawler($userBooking->body);
-
-            $node = $crawler->filterXPath('//*[@id="bookingUniqueId"]')->getNode(0);
-
-            if (is_null($node) || empty($node->nodeValue)) {
-                throw new Exception('bookingUuid not set for booking', 400);
-            }
-
-            $userBooking->bookingUniqueId = $node->nodeValue;
-
             return $userBooking;
         } catch (Exception $exception) {
             throw new UserBookingException($exception->getMessage(), (int) $exception->getCode());

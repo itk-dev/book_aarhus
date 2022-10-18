@@ -48,8 +48,6 @@ class UserBooking
      */
     public DateTimeInterface $end;
 
-    public string $bookingUniqueId;
-
     /**
      * @Groups({"userBooking"})
      */
