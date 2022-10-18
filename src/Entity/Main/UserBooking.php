@@ -3,6 +3,7 @@
 namespace App\Entity\Main;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
+use DateTimeInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 class UserBooking
@@ -40,12 +41,24 @@ class UserBooking
     /**
      * @Groups({"userBooking"})
      */
-    public ?\DateTimeInterface $start;
+    public DateTimeInterface $start;
 
     /**
      * @Groups({"userBooking"})
      */
-    public ?\DateTimeInterface $end;
+    public DateTimeInterface $end;
 
     public string $bookingUniqueId;
+
+    /**
+     * @Groups({"userBooking"})
+     */
+    public string $resourceMail;
+
+    /**
+     * @Groups({"userBooking"})
+     */
+    public string $resourceName;
+
+    public bool $ownedByServiceAccount;
 }

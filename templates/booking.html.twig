@@ -83,10 +83,6 @@
                                                 <td>{{ key }}</td><td id="{{ key }}" class="metaData hasData">{{ value }}</td>
                                             </tr>
                                         {% endfor %}
-                                        <tr class="booking-uuid">
-                                            <td>Booking uuid:</td>
-                                            <td id="bookingUniqueId" class="hasData">{{ bookingUniqueId }}</td>
-                                        </tr>
                                     </table>
                                     <table class="container" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="12" border="0" align="center" width="750"><tr><td><!-- vertical spacing --></td></tr></table>
                                     <table class="user zebra" cellspacing="0" cellpadding="6" border="0" align="left" width="100%"style="border-bottom: 1px solid #E9ECEF;">
@@ -103,9 +99,21 @@
                                             <td>Booking bruger email:</td>
                                             <td><a id="email" class="hasData" href="mailto:{{ submission.email }}?subject=Vdr. Booking af {{ resource.resourceName }} - {{ resource.location }}">{{ submission.email }}</a></td>
                                         </tr>
+                                    </table>
+                                    <table class="container" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="12" border="0" align="center" width="750"><tr><td><!-- vertical spacing --></td></tr></table>
+                                    <table class="user zebra" cellspacing="0" cellpadding="6" border="0" align="left" width="100%"style="border-bottom: 1px solid #E9ECEF;">
+                                        <tr>
+                                            <td>
+                                                <h3>Metadata</h3>
+                                            </td>
+                                        </tr>
                                         <tr class="user-id">
                                             <td>Booking bruger id:</td>
                                             <td id="userId" class="hasData">{{ userUniqueId }}</td>
+                                        </tr>
+                                        <tr class="booking-uuid">
+                                            <td>Booking uuid:</td>
+                                            <td id="bookingUniqueId" class="hasData">{{ bookingUniqueId }}</td>
                                         </tr>
                                     </table>
                                 </td>

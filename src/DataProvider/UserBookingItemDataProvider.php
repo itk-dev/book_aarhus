@@ -6,7 +6,6 @@ use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
 use App\Security\Voter\UserBookingVoter;
-use App\Service\BookingServiceInterface;
 use App\Service\MicrosoftGraphServiceInterface;
 use Exception;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -18,7 +17,6 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
     public function __construct(
         private readonly MicrosoftGraphServiceInterface $microsoftGraphService,
         private readonly Security $security,
-        private readonly BookingServiceInterface $bookingService,
     ) {
     }
 
@@ -38,7 +36,7 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
 
         $userBookingGraphData = $this->microsoftGraphService->getBooking($id);
 
-        $userBooking = $this->bookingService->getUserBookingFromGraphData($userBookingGraphData);
+        $userBooking = $this->microsoftGraphService->getUserBookingFromGraphData($userBookingGraphData);
 
         if (!$this->security->isGranted(UserBookingVoter::VIEW, $userBooking)) {
             throw new AccessDeniedHttpException('Access denied');

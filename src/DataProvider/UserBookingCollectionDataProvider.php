@@ -6,7 +6,6 @@ use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
 use App\Security\Voter\UserBookingVoter;
-use App\Service\BookingServiceInterface;
 use App\Service\MicrosoftGraphServiceInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -19,7 +18,6 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
         private readonly MicrosoftGraphServiceInterface $microsoftGraphService,
         private readonly Security $security,
         private readonly RequestStack $requestStack,
-        private readonly BookingServiceInterface $bookingService,
     ) {
     }
 
@@ -54,7 +52,7 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
 
             $userBookingGraphData = $this->microsoftGraphService->getBooking($id);
 
-            $userBooking = $this->bookingService->getUserBookingFromGraphData($userBookingGraphData);
+            $userBooking = $this->microsoftGraphService->getUserBookingFromGraphData($userBookingGraphData);
 
             if ($this->security->isGranted(UserBookingVoter::VIEW, $userBooking)) {
                 yield $userBooking;

@@ -3,7 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Main\UserBooking;
-use App\Service\BookingServiceInterface;
+use App\Service\MicrosoftGraphServiceInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -20,7 +20,7 @@ class UserBookingVoter extends Voter
 
     public function __construct(
         private readonly RequestStack $requestStack,
-        private readonly BookingServiceInterface $bookingService,
+        private readonly MicrosoftGraphServiceInterface $microsoftGraphService,
     ) {
     }
 
@@ -60,7 +60,7 @@ class UserBookingVoter extends Voter
 
         $userIdInBooking = $node->nodeValue;
 
-        if ($this->bookingService->createBodyUserId($userId) == $userIdInBooking) {
+        if ($this->microsoftGraphService->createBodyUserId($userId) == $userIdInBooking) {
             return true;
         }
 
