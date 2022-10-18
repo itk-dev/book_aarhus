@@ -9,7 +9,7 @@ use App\Exception\UserBookingException;
 use DateTime;
 use Microsoft\Graph\Http\GraphResponse;
 
-interface MicrosoftGraphServiceInterface
+interface BookingServiceInterface
 {
     /**
      * Get a booking.
@@ -153,7 +153,7 @@ interface MicrosoftGraphServiceInterface
      *
      * @throws UserBookingException
      */
-    public function getUserBookingFromGraphData(array $data): UserBooking;
+    public function getUserBookingFromApiData(array $data): UserBooking;
 
     /**
      * Create booking id string for booking body.

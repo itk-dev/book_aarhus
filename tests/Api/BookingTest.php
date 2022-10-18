@@ -12,7 +12,7 @@ use App\MessageHandler\WebformSubmitHandler;
 use App\Repository\Main\AAKResourceRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
-use App\Service\MicrosoftGraphService;
+use App\Service\MicrosoftGraphBookingService;
 use App\Service\NotificationServiceInterface;
 use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
@@ -213,7 +213,7 @@ class BookingTest extends AbstractBaseApiTestCase
 
     public function testCreateBookingHandler(): void
     {
-        $microsoftGraphServiceMock = $this->getMockBuilder(MicrosoftGraphService::class)
+        $microsoftGraphServiceMock = $this->getMockBuilder(MicrosoftGraphBookingService::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['createBookingForResource'])
             ->getMock();

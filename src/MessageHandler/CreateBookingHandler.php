@@ -8,7 +8,7 @@ use App\Message\CreateBookingMessage;
 use App\Message\SendBookingNotificationMessage;
 use App\Repository\Main\AAKResourceRepository;
 use App\Security\Voter\BookingVoter;
-use App\Service\MicrosoftGraphServiceInterface;
+use App\Service\BookingServiceInterface;
 use App\Service\NotificationTypeEnum;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -23,7 +23,7 @@ use Symfony\Component\Security\Core\Security;
 class CreateBookingHandler
 {
     public function __construct(
-        private readonly MicrosoftGraphServiceInterface $microsoftGraphService,
+        private readonly BookingServiceInterface $bookingService,
         private readonly LoggerInterface $logger,
         private readonly AAKResourceRepository $aakResourceRepository,
         private readonly Security $security,
@@ -54,7 +54,7 @@ class CreateBookingHandler
 
         try {
             if ($resource->isAcceptanceFlow()) {
-                $this->microsoftGraphService->createBookingInviteResource(
+                $this->bookingService->createBookingInviteResource(
                     $booking->getResourceEmail(),
                     $booking->getResourceName(),
                     $booking->getSubject(),
@@ -63,7 +63,7 @@ class CreateBookingHandler
                     $booking->getEndTime(),
                 );
             } else {
-                $this->microsoftGraphService->createBookingForResource(
+                $this->bookingService->createBookingForResource(
                     $booking->getResourceEmail(),
                     $booking->getResourceName(),
                     $booking->getSubject(),

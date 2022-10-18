@@ -5,11 +5,11 @@ namespace App\DataPersister;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Entity\Main\UserBooking;
 use App\Exception\MicrosoftGraphCommunicationException;
-use App\Service\MicrosoftGraphServiceInterface;
+use App\Service\BookingServiceInterface;
 
 class UserBookingDataPersister implements ContextAwareDataPersisterInterface
 {
-    public function __construct(private readonly MicrosoftGraphServiceInterface $microsoftGraphService)
+    public function __construct(private readonly BookingServiceInterface $bookingService)
     {
     }
 
@@ -24,7 +24,7 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
     public function remove($data, array $context = [])
     {
         if ($data instanceof UserBooking) {
-            $this->microsoftGraphService->deleteBooking($data);
+            $this->bookingService->deleteBooking($data);
         }
     }
 
@@ -34,7 +34,7 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
     public function persist($data, array $context = [])
     {
         if ($data instanceof UserBooking) {
-            $this->microsoftGraphService->updateBooking($data);
+            $this->bookingService->updateBooking($data);
         }
 
         return $data;

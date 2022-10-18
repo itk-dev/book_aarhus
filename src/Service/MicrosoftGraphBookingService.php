@@ -15,7 +15,6 @@ use Microsoft\Graph\Exception\GraphException;
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Http\GraphResponse;
 use Psr\Cache\CacheItemInterface;
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -23,7 +22,7 @@ use Symfony\Contracts\Cache\CacheInterface;
  * @see https://github.com/microsoftgraph/msgraph-sdk-php
  * @see https://docs.microsoft.com/en-us/graph/use-the-api
  */
-class MicrosoftGraphService implements MicrosoftGraphServiceInterface
+class MicrosoftGraphBookingService implements BookingServiceInterface
 {
     // see https://docs.microsoft.com/en-us/graph/api/resources/datetimetimezone?view=graph-rest-1.0
     // example 2019-03-15T09:00:00
@@ -112,11 +111,11 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
         $body = [
             'schedules' => $schedules,
             'startTime' => [
-                'dateTime' => $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
+                'dateTime' => $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
                 'timeZone' => 'UTC',
             ],
             'endTime' => [
-                'dateTime' => $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
+                'dateTime' => $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
                 'timeZone' => 'UTC',
             ],
         ];
@@ -168,11 +167,11 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
                 'content' => $body,
             ],
             'end' => [
-                'dateTime' => $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
+                'dateTime' => $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
                 'timeZone' => 'UTC',
             ],
             'start' => [
-                'dateTime' => $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
+                'dateTime' => $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
                 'timeZone' => 'UTC',
             ],
             'allowNewTimeProposals' => false,
@@ -229,11 +228,11 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
                 'content' => $body,
             ],
             'end' => [
-                'dateTime' => $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
+                'dateTime' => $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
                 'timeZone' => 'UTC',
             ],
             'start' => [
-                'dateTime' => $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
+                'dateTime' => $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
                 'timeZone' => 'UTC',
             ],
             'allowNewTimeProposals' => false,
@@ -377,7 +376,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getUserBookingFromGraphData(array $data): UserBooking
+    public function getUserBookingFromApiData(array $data): UserBooking
     {
         try {
             $userBooking = new UserBooking();

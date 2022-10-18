@@ -6,7 +6,7 @@ use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
 use App\Security\Voter\UserBookingVoter;
-use App\Service\MicrosoftGraphServiceInterface;
+use App\Service\BookingServiceInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Security;
 final class UserBookingCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     public function __construct(
-        private readonly MicrosoftGraphServiceInterface $microsoftGraphService,
+        private readonly BookingServiceInterface $bookingService,
         private readonly Security $security,
         private readonly RequestStack $requestStack,
     ) {
@@ -43,16 +43,16 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
             throw new BadRequestHttpException('Required Authorization-UserId header is not set.');
         }
 
-        $userBookingData = $this->microsoftGraphService->getUserBookings($userId);
+        $userBookingData = $this->bookingService->getUserBookings($userId);
 
         $userBookingsHits = $userBookingData['value'][0]['hitsContainers'][0]['hits'] ?? [];
 
         foreach ($userBookingsHits as $hit) {
             $id = urlencode($hit['hitId']);
 
-            $userBookingGraphData = $this->microsoftGraphService->getBooking($id);
+            $userBookingGraphData = $this->bookingService->getBooking($id);
 
-            $userBooking = $this->microsoftGraphService->getUserBookingFromGraphData($userBookingGraphData);
+            $userBooking = $this->bookingService->getUserBookingFromApiData($userBookingGraphData);
 
             if ($this->security->isGranted(UserBookingVoter::VIEW, $userBooking)) {
                 yield $userBooking;

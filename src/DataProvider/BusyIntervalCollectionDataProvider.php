@@ -5,7 +5,7 @@ namespace App\DataProvider;
 use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\BusyInterval;
-use App\Service\MicrosoftGraphServiceInterface;
+use App\Service\BookingServiceInterface;
 use Exception;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Uid\Ulid;
@@ -13,7 +13,7 @@ use Symfony\Component\Uid\Ulid;
 final class BusyIntervalCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     public function __construct(
-        private readonly MicrosoftGraphServiceInterface $microsoftGraphService
+        private readonly BookingServiceInterface $bookingService
     ) {
     }
 
@@ -52,7 +52,7 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
         // TODO: Make sure resource is registered as an AAKResource.
         // TODO: Apply whitelist filter to resources where busyIntervals are requested. See LocationCollectionDataProvider.
 
-        $busyIntervals = $this->microsoftGraphService->getBusyIntervals($resources, $dateStart, $dateEnd);
+        $busyIntervals = $this->bookingService->getBusyIntervals($resources, $dateStart, $dateEnd);
 
         foreach ($busyIntervals as $resourceName => $resourceEntry) {
             foreach ($resourceEntry as $entry) {

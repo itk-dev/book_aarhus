@@ -1781,13 +1781,17 @@
                     },
                     "start": {
                         "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "format": "date-time"
                     },
                     "end": {
                         "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "format": "date-time"
+                    },
+                    "resourceMail": {
+                        "type": "string"
+                    },
+                    "resourceName": {
+                        "type": "string"
                     }
                 }
             },
@@ -1846,13 +1850,17 @@
                     },
                     "start": {
                         "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "format": "date-time"
                     },
                     "end": {
                         "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "format": "date-time"
+                    },
+                    "resourceMail": {
+                        "type": "string"
+                    },
+                    "resourceName": {
+                        "type": "string"
                     }
                 }
             }

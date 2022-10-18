@@ -8,7 +8,7 @@ use App\Exception\WebformSubmissionRetrievalException;
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
 use App\Repository\Main\AAKResourceRepository;
-use App\Service\MicrosoftGraphServiceInterface;
+use App\Service\BookingServiceInterface;
 use App\Service\WebformServiceInterface;
 use App\Utils\ValidationUtilsInterface;
 use DateTime;
@@ -35,7 +35,7 @@ class WebformSubmitHandler
         private readonly LoggerInterface $logger,
         private readonly AAKResourceRepository $aakResourceRepository,
         private readonly Environment $twig,
-        private readonly MicrosoftGraphServiceInterface $microsoftGraphService,
+        private readonly BookingServiceInterface $bookingService,
     ) {
     }
 
@@ -94,7 +94,7 @@ class WebformSubmitHandler
             $body['submission']['fromObj'] = new DateTime($data['start']);
             $body['submission']['toObj'] = new DateTime($data['end']);
             $body['metaData'] = $metaData;
-            $body['userUniqueId'] = $this->microsoftGraphService->createBodyUserId($data['userId']);
+            $body['userUniqueId'] = $this->bookingService->createBodyUserId($data['userId']);
 
             return $body;
         } catch (Exception $exception) {

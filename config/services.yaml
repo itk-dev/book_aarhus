@@ -39,7 +39,7 @@ services:
             - { name: api_platform.doctrine.orm.query_extension.collection }
             - { name: api_platform.doctrine.orm.query_extension.item }
 
-    App\Service\MicrosoftGraphService:
+    App\Service\MicrosoftGraphBookingService:
         arguments:
             - '%microsoft_graph_tenant_id%'
             - '%microsoft_graph_client_id%'
@@ -52,8 +52,8 @@ services:
             - '%email_from_address%'
             - '%email_admin_notification%'
 
-    App\Service\MicrosoftGraphServiceInterface:
-        alias: 'App\Service\MicrosoftGraphService'
+    App\Service\BookingServiceInterface:
+        alias: 'App\Service\MicrosoftGraphBookingService'
 
     App\Service\WebformServiceInterface:
         alias: 'App\Service\WebformService'

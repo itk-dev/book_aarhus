@@ -1241,11 +1241,13 @@ components:
         start:
           type: string
           format: date-time
-          nullable: true
         end:
           type: string
           format: date-time
-          nullable: true
+        resourceMail:
+          type: string
+        resourceName:
+          type: string
     UserBooking.jsonld-userBooking:
       type: object
       properties:
@@ -1285,11 +1287,13 @@ components:
         start:
           type: string
           format: date-time
-          nullable: true
         end:
           type: string
           format: date-time
-          nullable: true
+        resourceMail:
+          type: string
+        resourceName:
+          type: string
   responses: {  }
   parameters: {  }
   examples: {  }
