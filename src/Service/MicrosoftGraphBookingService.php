@@ -306,27 +306,29 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     {
         $token = $this->authenticateAsServiceAccount();
 
-        if ($booking->ownedByServiceAccount) {
-            $bookingId = $booking->id;
+        $bookingId = $booking->id;
 
-            // Remove from service account.
-            $response = $this->request("/me/events/$bookingId", $token, 'DELETE');
+        // Remove from service account.
+        $response = $this->request("/me/events/$bookingId", $token, 'DELETE');
 
-        // TODO: Remove from resource.
-        } else {
-            $eventInResource = $this->getEventFromResourceByICalUid($booking->resourceMail, $booking->iCalUId);
+        if (204 !== $response->getStatus()) {
+            throw new UserBookingException('Booking could not be removed', (int) $response->getStatus());
+        }
 
-            if (is_null($eventInResource)) {
-                throw new UserBookingException('Booking not found in resource calendar', 404);
-            }
+        $eventInResource = $this->getEventFromResourceByICalUid($booking->resourceMail, $booking->iCalUId);
 
-            $bookingId = urlencode($eventInResource['id']);
-            $userId = $booking->resourceMail;
+        if (is_null($eventInResource)) {
+            throw new UserBookingException('Booking not found in resource', 404);
+        }
 
-            // Remove from resource.
-            $response = $this->request("/users/$userId/events/$bookingId", $token, 'DELETE');
+        $bookingId = urlencode($eventInResource['id']);
+        $userId = $booking->resourceMail;
 
-            // TODO: Remove from service account.
+        // Remove from resource.
+        $response = $this->request("/users/$userId/events/$bookingId", $token, 'DELETE');
+
+        if (204 !== $response->getStatus()) {
+            throw new UserBookingException('Booking could not be removed from resource', (int) $response->getStatus());
         }
 
         return $response->getStatus();
