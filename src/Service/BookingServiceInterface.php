@@ -156,13 +156,6 @@ interface BookingServiceInterface
     public function getUserBookingFromApiData(array $data): UserBooking;
 
     /**
-     * Create booking id string for booking body.
-     *
-     * @return string
-     */
-    public function createBodyBookingId(): string;
-
-    /**
      * Create user id string for booking body.
      *
      * @param string $id user id

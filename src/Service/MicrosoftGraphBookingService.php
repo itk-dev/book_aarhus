@@ -15,7 +15,6 @@ use Microsoft\Graph\Exception\GraphException;
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Http\GraphResponse;
 use Psr\Cache\CacheItemInterface;
-use Symfony\Component\Uid\Ulid;
 use Symfony\Contracts\Cache\CacheInterface;
 
 /**
@@ -310,7 +309,10 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         if ($booking->ownedByServiceAccount) {
             $bookingId = $booking->id;
 
+            // Remove from service account.
             $response = $this->request("/me/events/$bookingId", $token, 'DELETE');
+
+        // TODO: Remove from resource.
         } else {
             $eventInResource = $this->getEventFromResourceByICalUid($booking->resourceMail, $booking->iCalUId);
 
@@ -321,7 +323,10 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             $bookingId = urlencode($eventInResource['id']);
             $userId = $booking->resourceMail;
 
+            // Remove from resource.
             $response = $this->request("/users/$userId/events/$bookingId", $token, 'DELETE');
+
+            // TODO: Remove from service account.
         }
 
         return $response->getStatus();
@@ -415,16 +420,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         } catch (Exception $exception) {
             throw new UserBookingException($exception->getMessage(), (int) $exception->getCode());
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function createBodyBookingId(): string
-    {
-        $bookingId = sha1(Ulid::generate());
-
-        return "BID-$bookingId-BID";
     }
 
     /**
