@@ -3,13 +3,13 @@
 namespace App\MessageHandler;
 
 use App\Entity\Resources\AAKResource;
+use App\Enum\NotificationTypeEnum;
 use App\Exception\BookingCreateException;
 use App\Message\CreateBookingMessage;
 use App\Message\SendBookingNotificationMessage;
 use App\Repository\Main\AAKResourceRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
-use App\Service\NotificationTypeEnum;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;

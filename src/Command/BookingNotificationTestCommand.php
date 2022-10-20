@@ -4,8 +4,8 @@ namespace App\Command;
 
 use App\Entity\Main\Booking;
 use App\Entity\Resources\AAKResource;
+use App\Enum\NotificationTypeEnum;
 use App\Service\NotificationServiceInterface;
-use App\Service\NotificationTypeEnum;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
