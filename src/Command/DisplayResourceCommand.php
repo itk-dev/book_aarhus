@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DisplayResourceCommand extends Command
 {
     public function __construct(
-      private readonly AAKResourceRepository $aakResourceRepository,
+        private readonly AAKResourceRepository $aakResourceRepository,
     ) {
         parent::__construct();
     }
