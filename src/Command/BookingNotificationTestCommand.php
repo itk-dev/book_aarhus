@@ -40,7 +40,7 @@ class BookingNotificationTestCommand extends Command
         $helper = $this->getHelper('question');
         $question = new ChoiceQuestion(
             'Select the type of booking notification to test',
-            ['New booking success', 'Booking changed', 'Booking failed'],
+            ['New booking success', 'Booking request received', 'Booking changed', 'Booking failed'],
             0
         );
         $question->setErrorMessage('Selection %s is invalid.');
@@ -51,6 +51,11 @@ class BookingNotificationTestCommand extends Command
         switch ($type) {
             case 'New booking success':
                 $this->notificationService->sendBookingNotification($this->createBooking($email), $this->createResource(), NotificationTypeEnum::SUCCESS);
+                $output->writeln('Sent "'.$type.'" mail to '.$email);
+                break;
+
+            case 'Booking request received':
+                $this->notificationService->sendBookingNotification($this->createBooking($email), $this->createResource(), NotificationTypeEnum::REQUEST_RECEIVED);
                 $output->writeln('Sent "'.$type.'" mail to '.$email);
                 break;
 
