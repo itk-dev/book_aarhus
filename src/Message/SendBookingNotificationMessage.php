@@ -3,7 +3,7 @@
 namespace App\Message;
 
 use App\Entity\Main\Booking;
-use App\Service\NotificationTypeEnum;
+use App\Enum\NotificationTypeEnum;
 
 class SendBookingNotificationMessage
 {

@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.0.0
 info:
   title: 'Book Aarhus API Service'
   description: 'API Service for Book Aarhus'
@@ -10,52 +10,6 @@ servers:
     url: /
     description: ''
 paths:
-  /v1/bookings:
-    post:
-      operationId: postBookingCollection
-      tags:
-        - Booking
-      responses:
-        201:
-          description: 'Booking resource created'
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/Booking.jsonld'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Booking'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/Booking'
-          links:
-            GetBookingItem:
-              operationId: getBookingItem
-              parameters:
-                id: '$response.body#/id'
-              description: 'The `id` value returned in the response can be used as the `id` parameter in `GET /v1/bookings/{id}`.'
-        400:
-          description: 'Invalid input'
-        422:
-          description: 'Unprocessable entity'
-      summary: 'Creates a Booking resource.'
-      description: 'Creates a Booking resource.'
-      parameters: []
-      requestBody:
-        description: 'The new Booking resource'
-        content:
-          application/ld+json:
-            schema:
-              $ref: '#/components/schemas/Booking.BookingInput.jsonld'
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Booking.BookingInput'
-          text/html:
-            schema:
-              $ref: '#/components/schemas/Booking.BookingInput'
-        required: true
-      deprecated: false
-    parameters: []
   /v1/bookings-webform:
     post:
       operationId: post-v1-create-booking-webform-submit
@@ -84,40 +38,6 @@ paths:
             schema:
               $ref: '#/components/schemas/Booking.WebformBookingInput'
         required: true
-      deprecated: false
-    parameters: []
-  '/v1/bookings/{id}':
-    get:
-      operationId: getBookingItem
-      tags:
-        - Booking
-      responses:
-        204:
-          description: 'Booking resource'
-          content:
-            application/ld+json:
-              schema: {  }
-            application/json:
-              schema: {  }
-            text/html:
-              schema: {  }
-        404:
-          description: 'Resource not found'
-      summary: 'Unsupported action.'
-      description: 'Unsupported action.'
-      parameters:
-        -
-          name: id
-          in: path
-          description: 'Resource identifier'
-          required: true
-          deprecated: false
-          allowEmptyValue: false
-          schema:
-            type: string
-          style: simple
-          explode: false
-          allowReserved: false
       deprecated: false
     parameters: []
   /v1/busy-intervals:
@@ -193,40 +113,6 @@ paths:
           allowReserved: false
       deprecated: false
     parameters: []
-  '/v1/busy-intervals/{id}':
-    get:
-      operationId: getBusyIntervalItem
-      tags:
-        - BusyInterval
-      responses:
-        204:
-          description: 'BusyInterval resource'
-          content:
-            application/ld+json:
-              schema: {  }
-            application/json:
-              schema: {  }
-            text/html:
-              schema: {  }
-        404:
-          description: 'Resource not found'
-      summary: 'Unsupported action.'
-      description: 'Unsupported action.'
-      parameters:
-        -
-          name: id
-          in: path
-          description: 'Resource identifier'
-          required: true
-          deprecated: false
-          allowEmptyValue: false
-          schema:
-            type: string
-          style: simple
-          explode: false
-          allowReserved: false
-      deprecated: false
-    parameters: []
   /v1/locations:
     get:
       operationId: get-v1-locations
@@ -257,40 +143,6 @@ paths:
           allowReserved: false
       deprecated: false
     parameters: []
-  '/v1/locations/{name}':
-    get:
-      operationId: getLocationItem
-      tags:
-        - Location
-      responses:
-        204:
-          description: 'Location resource'
-          content:
-            application/ld+json:
-              schema: {  }
-            application/json:
-              schema: {  }
-            text/html:
-              schema: {  }
-        404:
-          description: 'Resource not found'
-      summary: 'Unsupported action.'
-      description: 'Unsupported action.'
-      parameters:
-        -
-          name: name
-          in: path
-          description: 'Resource identifier'
-          required: true
-          deprecated: false
-          allowEmptyValue: false
-          schema:
-            type: string
-          style: simple
-          explode: false
-          allowReserved: false
-      deprecated: false
-    parameters: []
   /v1/resources:
     get:
       operationId: getResourceCollection
@@ -306,7 +158,7 @@ paths:
                 properties:
                   'hydra:member': { type: array, items: { $ref: '#/components/schemas/Resource.jsonld-resource' } }
                   'hydra:totalItems': { type: integer, minimum: 0 }
-                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } } }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } }, example: { '@id': string, type: string, 'hydra:first': string, 'hydra:last': string, 'hydra:previous': string, 'hydra:next': string } }
                   'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
                 required:
                   - 'hydra:member'
@@ -629,38 +481,42 @@ paths:
     parameters: []
   '/v1/user-bookings/{id}':
     get:
-      operationId: get-v1-booking
+      operationId: getUserBookingItem
       tags:
         - UserBooking
       responses:
         200:
-          description: OK
+          description: 'UserBooking resource'
           content:
             application/ld+json:
-              examples: null
-          headers: {  }
+              schema:
+                $ref: '#/components/schemas/UserBooking.jsonld-userBooking'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserBooking-userBooking'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/UserBooking-userBooking'
         404:
           description: 'Resource not found'
-      summary: 'Retrieves a specific booking from a specific user.'
-      description: 'Retrieves a specific booking from a specific user.'
+      summary: 'Retrieves a UserBooking resource.'
+      description: 'Retrieves a UserBooking resource.'
       parameters:
         -
           name: id
           in: path
-          description: 'urlencoded ID of the booking to get'
+          description: 'Resource identifier'
           required: true
           deprecated: false
           allowEmptyValue: false
           schema:
             type: string
-            format: string
-            example: AAMkADA2YjNjYzNjLThjMjAtNDA3MS05NWEwLTZhZjM2MzYxZjZmNwBGAAAAAADPMx9il%2Fl3TpK5N7vcXYJbBwCTGBSNlZNgQKMu0%2BOa3o5eAAAAAAENAACTGBSNlZNgQKMu0%2BOa3o5eAABLCAbAAAA%3D
           style: simple
           explode: false
           allowReserved: false
       deprecated: false
     delete:
-      operationId: delete-v1-booking
+      operationId: deleteUserBookingItem
       tags:
         - UserBooking
       responses:
@@ -668,26 +524,18 @@ paths:
           description: 'UserBooking resource deleted'
         404:
           description: 'Resource not found'
-        200:
-          description: OK
-          content:
-            application/ld+json:
-              examples: null
-          headers: {  }
-      summary: 'Requests deletion for a specific booking.'
-      description: 'Requests deletion for a specific booking.'
+      summary: 'Removes the UserBooking resource.'
+      description: 'Removes the UserBooking resource.'
       parameters:
         -
           name: id
           in: path
-          description: 'urlencoded ID of the booking to delete'
+          description: 'Resource identifier'
           required: true
           deprecated: false
           allowEmptyValue: false
           schema:
             type: string
-            format: string
-            example: ''
           style: simple
           explode: false
           allowReserved: false
@@ -697,6 +545,7 @@ components:
   schemas:
     Booking:
       type: object
+      description: ''
       properties:
         id:
           type: string
@@ -726,61 +575,9 @@ components:
           type: string
         userPermission:
           type: string
-    Booking.BookingInput:
-      type: object
-      properties:
-        resourceEmail:
-          type: string
-        resourceName:
-          type: string
-        subject:
-          type: string
-        body:
-          type: string
-        startTime:
-          type: string
-        endTime:
-          type: string
-    Booking.BookingInput.jsonld:
-      type: object
-      properties:
-        '@context':
-          readOnly: true
-          oneOf:
-            -
-              type: string
-            -
-              type: object
-              properties:
-                '@vocab':
-                  type: string
-                hydra:
-                  type: string
-                  enum: ['http://www.w3.org/ns/hydra/core#']
-              required:
-                - '@vocab'
-                - hydra
-              additionalProperties: true
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
-        resourceEmail:
-          type: string
-        resourceName:
-          type: string
-        subject:
-          type: string
-        body:
-          type: string
-        startTime:
-          type: string
-        endTime:
-          type: string
     Booking.WebformBookingInput:
       type: object
+      description: ''
       properties:
         data:
           default:
@@ -808,6 +605,7 @@ components:
             type: string
     Booking.WebformBookingInput.jsonld:
       type: object
+      description: ''
       properties:
         '@context':
           readOnly: true
@@ -858,6 +656,7 @@ components:
             type: string
     Booking.jsonld:
       type: object
+      description: ''
       properties:
         '@context':
           readOnly: true
@@ -912,6 +711,7 @@ components:
           type: string
     BusyInterval:
       type: object
+      description: ''
       properties:
         id:
           type: string
@@ -927,6 +727,7 @@ components:
           nullable: true
     BusyInterval.jsonld:
       type: object
+      description: ''
       properties:
         '@id':
           readOnly: true
@@ -948,6 +749,7 @@ components:
           nullable: true
     HolidayOpenHours-resource:
       type: object
+      description: ''
       properties:
         holidayOpen:
           type: string
@@ -960,6 +762,7 @@ components:
           format: date-time
     HolidayOpenHours.jsonld-resource:
       type: object
+      description: ''
       properties:
         '@context':
           readOnly: true
@@ -995,11 +798,13 @@ components:
           format: date-time
     Location:
       type: object
+      description: ''
       properties:
         name:
           type: string
     Location.jsonld:
       type: object
+      description: ''
       properties:
         '@id':
           readOnly: true
@@ -1011,6 +816,7 @@ components:
           type: string
     OpenHours-resource:
       type: object
+      description: ''
       properties:
         id:
           readOnly: true
@@ -1028,6 +834,7 @@ components:
           format: date-time
     OpenHours.jsonld-resource:
       type: object
+      description: ''
       properties:
         '@context':
           readOnly: true
@@ -1231,6 +1038,7 @@ components:
           format: date-time
     UserBooking-userBooking:
       type: object
+      description: ''
       properties:
         id:
           type: string
@@ -1245,13 +1053,16 @@ components:
         start:
           type: string
           format: date-time
-          nullable: true
         end:
           type: string
           format: date-time
-          nullable: true
+        resourceMail:
+          type: string
+        resourceName:
+          type: string
     UserBooking.jsonld-userBooking:
       type: object
+      description: ''
       properties:
         '@id':
           readOnly: true
@@ -1289,11 +1100,13 @@ components:
         start:
           type: string
           format: date-time
-          nullable: true
         end:
           type: string
           format: date-time
-          nullable: true
+        resourceMail:
+          type: string
+        resourceName:
+          type: string
   responses: {  }
   parameters: {  }
   examples: {  }

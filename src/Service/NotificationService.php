@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Main\Booking;
 use App\Entity\Resources\AAKResource;
+use App\Enum\NotificationTypeEnum;
 use App\Utils\ValidationUtils;
 use DateTimeImmutable;
 use Eluceo\iCal\Domain\Entity;
