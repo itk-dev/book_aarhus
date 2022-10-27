@@ -17,7 +17,6 @@ class AAKResource
 {
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -26,161 +25,138 @@ class AAKResource
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\OneToMany(targetEntity="OpenHours", mappedBy="resource")
      */
     private Collection $openHours;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\OneToMany(targetEntity="HolidayOpenHours", mappedBy="resource")
      */
     private Collection $holidayOpenHours;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="ResourceMail", type="string", length=128, nullable=false)
      */
     private string $resourceMail;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="ResourceName", type="string", length=128, nullable=false)
      */
     private string $resourceName;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="ResourceImage", type="text", length=-1, nullable=true)
      */
     private ?string $resourceImage;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="ResourceEmailText", type="text", length=-1, nullable=true)
      */
     private ?string $resourceEmailText;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="Location", type="string", length=128, nullable=false)
      */
     private string $location;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="GeoCordinates", type="string", length=128, nullable=true)
      */
     private ?string $geoCoordinates;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="Capacity", type="bigint", nullable=true)
      */
     private ?int $capacity;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="ResourceDescription", type="text", length=-1, nullable=true)
      */
     private ?string $resourceDescription;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="WheelChairAccessible", type="boolean", nullable=false)
      */
     private bool $wheelchairAccessible;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="VideoConferenceEquipment", type="boolean", nullable=false)
      */
     private bool $videoConferenceEquipment;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="MonitorEquipment", type="boolean", nullable=false)
      */
     private bool $monitorEquipment;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="AcceptanceFlow", type="boolean", nullable=false)
      */
     private bool $acceptanceFlow;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="Catering", type="boolean", nullable=false)
      */
     private bool $catering;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="FormID", type="text", length=-1, nullable=true)
      */
     private ?string $formId;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="HasHolidayOpen", type="boolean", nullable=true)
      */
     private ?bool $hasHolidayOpen;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="HasOpen", type="boolean", nullable=true)
      */
     private ?bool $hasOpen;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="HasWhiteList", type="boolean", nullable=true)
      */
     private ?bool $hasWhitelist;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="PermissionEmployee", type="boolean", nullable=true)
      */
     private ?bool $permissionEmployee;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="PermissionCitizen", type="boolean", nullable=true)
      */
     private ?bool $permissionCitizen;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="PermissionBusinessPartner", type="boolean", nullable=true)
      */
     private ?bool $permissionBusinessPartner;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
     private \DateTime $updateTimestamp;

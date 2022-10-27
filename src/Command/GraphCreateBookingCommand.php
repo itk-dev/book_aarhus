@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Service\MicrosoftGraphServiceInterface;
+use App\Service\BookingServiceInterface;
 use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -17,7 +17,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class GraphCreateBookingCommand extends Command
 {
     public function __construct(
-        private readonly MicrosoftGraphServiceInterface $microsoftGraphService
+        private readonly BookingServiceInterface $bookingService
     ) {
         parent::__construct();
     }
@@ -84,7 +84,7 @@ class GraphCreateBookingCommand extends Command
         }
 
         if ($invitation) {
-            $data = $this->microsoftGraphService->createBookingInviteResource(
+            $data = $this->bookingService->createBookingInviteResource(
                 $resourceEmail,
                 $resourceName,
                 $subject,
@@ -93,7 +93,7 @@ class GraphCreateBookingCommand extends Command
                 $end
             );
         } else {
-            $data = $this->microsoftGraphService->createBookingForResource(
+            $data = $this->bookingService->createBookingForResource(
                 $resourceEmail,
                 $resourceName,
                 $subject,

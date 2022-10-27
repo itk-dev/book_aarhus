@@ -36,10 +36,10 @@ docker compose exec phpfpm bin/console doctrine:migrations:migrate
 docker compose exec phpfpm bin/console doctrine:database:create --connection=azure_sql
 
 # Run migrations for resource database
-bin/console doctrine:migrations:migrate --em=resources --configuration=config/config-migrations/doctrine-migrations-resources.yaml
+docker compose exec phpfpm bin/console doctrine:migrations:migrate --em=resources --configuration=config/config-migrations/doctrine-migrations-resources.yaml
 
 # Load resource fixtures
-bin/console doctrine:fixtures:load --em=resources --group=ResourceFixtures
+docker compose exec phpfpm bin/console doctrine:fixtures:load --em=resources --group=ResourceFixtures
 ```
 
 The api can be accessed at `/`.

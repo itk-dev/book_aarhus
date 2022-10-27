@@ -124,9 +124,6 @@
     "ergebnis/json-schema-validator": {
         "version": "2.0.0"
     },
-    "fig/link-util": {
-        "version": "1.2.0"
-    },
     "friendsofphp/php-cs-fixer": {
         "version": "3.8",
         "recipe": {
@@ -190,9 +187,6 @@
     "phar-io/version": {
         "version": "3.2.1"
     },
-    "php-cs-fixer/diff": {
-        "version": "v2.0.2"
-    },
     "phpdocumentor/reflection-common": {
         "version": "2.2.0"
     },
@@ -201,9 +195,6 @@
     },
     "phpdocumentor/type-resolver": {
         "version": "1.6.1"
-    },
-    "phpspec/prophecy": {
-        "version": "v1.15.0"
     },
     "phpstan/phpdoc-parser": {
         "version": "1.5.1"

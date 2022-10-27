@@ -6,21 +6,18 @@ use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
 use App\Security\Voter\UserBookingVoter;
-use App\Service\MicrosoftGraphServiceInterface;
-use GuzzleHttp\Exception\GuzzleException;
-use Microsoft\Graph\Exception\GraphException;
-use Psr\Cache\InvalidArgumentException;
+use App\Service\BookingServiceInterface;
+use Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Uid\Ulid;
 
 final class UserBookingCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     public function __construct(
-        private readonly MicrosoftGraphServiceInterface $microsoftGraphService,
+        private readonly BookingServiceInterface $bookingService,
         private readonly Security $security,
-        private readonly RequestStack $requestStack
+        private readonly RequestStack $requestStack,
     ) {
     }
 
@@ -30,9 +27,7 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
     }
 
     /**
-     * @throws GraphException
-     * @throws InvalidArgumentException
-     * @throws GuzzleException
+     * @throws Exception
      */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
@@ -48,27 +43,16 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
             throw new BadRequestHttpException('Required Authorization-UserId header is not set.');
         }
 
-        $userBookings = $this->microsoftGraphService->getUserBookings($userId);
+        $userBookingData = $this->bookingService->getUserBookings($userId);
 
-        $userBookingsHits = $userBookings['value'][0]['hitsContainers'][0]['hits'] ?? null;
-
-        if (null === $userBookingsHits) {
-            return;
-        }
+        $userBookingsHits = $userBookingData['value'][0]['hitsContainers'][0]['hits'] ?? [];
 
         foreach ($userBookingsHits as $hit) {
-            $userBooking = new UserBooking();
-            $userBooking->id = Ulid::generate();
-            $userBooking->hitId = $hit['hitId'] ?? '';
-            $userBooking->subject = $hit['resource']['subject'] ?? '';
-            $userBooking->start = new \DateTime($hit['resource']['start']['dateTime'], new \DateTimeZone($hit['resource']['start']['timeZone'])) ?? null;
-            $userBooking->end = new \DateTime($hit['resource']['end']['dateTime'], new \DateTimeZone($hit['resource']['end']['timeZone'])) ?? null;
-            $userBooking->summary = $hit['summary'] ?? '';
+            $id = urlencode($hit['hitId']);
 
-            $bookingDetailsData = $this->microsoftGraphService->getBookingDetails($hit['hitId']);
+            $userBookingGraphData = $this->bookingService->getBooking($id);
 
-            $userBooking->displayName = $bookingDetailsData['location']['displayName'];
-            $userBooking->body = $bookingDetailsData['body']['content'];
+            $userBooking = $this->bookingService->getUserBookingFromApiData($userBookingGraphData);
 
             if ($this->security->isGranted(UserBookingVoter::VIEW, $userBooking)) {
                 yield $userBooking;

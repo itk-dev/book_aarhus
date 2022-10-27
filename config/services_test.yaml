@@ -6,8 +6,8 @@ services:
 
     App\Repository\Main\AAKResourceRepository: ~
 
-    App\Service\MicrosoftGraphServiceInterface:
-        alias: 'App\Service\MicrosoftGraphService'
+    App\Service\BookingServiceInterface:
+        alias: 'App\Service\MicrosoftGraphBookingService'
 
     App\Service\WebformServiceInterface:
         alias: 'App\Service\WebformService'

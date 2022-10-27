@@ -12,8 +12,6 @@ resources:
           description: Unsupported action.
           summary: Unsupported action.
     collectionOperations:
-      post:
-        controller: App\Controller\CreateBookingController
       create_booking_os2forms:
         input: App\Dto\WebformBookingInput
         method: POST

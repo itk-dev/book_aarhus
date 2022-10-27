@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Service\MicrosoftGraphServiceInterface;
+use App\Service\BookingServiceInterface;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Microsoft\Graph\Exception\GraphException;
@@ -21,7 +21,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class GraphTestCommand extends Command
 {
     public function __construct(
-        private readonly MicrosoftGraphServiceInterface $microsoftGraphService
+        private readonly BookingServiceInterface $bookingService
     ) {
         parent::__construct();
     }
@@ -60,7 +60,7 @@ class GraphTestCommand extends Command
 
         try {
             if ($askFormCredentials && !empty($username) && !empty($password)) {
-                $token = $this->microsoftGraphService->authenticateAsUser($username, $password);
+                $token = $this->bookingService->authenticateAsUser($username, $password);
 
                 if (!isset($token['access_token'])) {
                     throw new Exception('Access token not available.');
@@ -68,10 +68,10 @@ class GraphTestCommand extends Command
 
                 $accessToken = $token['access_token'];
             } else {
-                $accessToken = $this->microsoftGraphService->authenticateAsServiceAccount();
+                $accessToken = $this->bookingService->authenticateAsServiceAccount();
             }
 
-            $graphResponse = $this->microsoftGraphService->request($endpoint, $accessToken);
+            $graphResponse = $this->bookingService->request($endpoint, $accessToken);
             $body = $graphResponse->getBody();
 
             $io->info(json_encode($body));

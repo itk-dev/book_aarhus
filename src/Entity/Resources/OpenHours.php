@@ -15,7 +15,6 @@ class OpenHours
 {
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -30,7 +29,6 @@ class OpenHours
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="weekday", type="integer", nullable=false)
      */
     private int $weekday;
@@ -39,6 +37,7 @@ class OpenHours
      * @Groups({"resource"})
      *
      * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/basic-mapping.html#quoting-reserved-words
+     *
      * @ORM\Column(name="`open`", type="time", length=0)
      */
     private \DateTime $open;
@@ -47,13 +46,13 @@ class OpenHours
      * @Groups({"resource"})
      *
      * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/basic-mapping.html#quoting-reserved-words
+     *
      * @ORM\Column(name="`close`", type="time", length=0)
      */
     private \DateTime $close;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
     private \DateTime $updateTimestamp;

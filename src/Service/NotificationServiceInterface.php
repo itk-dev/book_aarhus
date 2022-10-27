@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Main\Booking;
 use App\Entity\Resources\AAKResource;
+use App\Enum\NotificationTypeEnum;
 use Eluceo\iCal\Presentation\Component;
 use Exception;
 

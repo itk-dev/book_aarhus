@@ -28,21 +28,18 @@ class HolidayOpenHours
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="holidayopen", type="time", nullable=false)
      */
     private \DateTime $holidayOpen;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="holidayclose", type="time", nullable=false)
      */
     private \DateTime $holidayClose;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
     private \DateTime $updateTimestamp;
