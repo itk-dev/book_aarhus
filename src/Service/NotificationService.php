@@ -151,6 +151,10 @@ class NotificationService implements NotificationServiceInterface
                         'ics' => [$iCalendarComponent],
                     ];
                     break;
+                case NotificationTypeEnum::REQUEST_RECEIVED:
+                    $template = 'email-booking-request-received-receipt.html.twig';
+                    $subject = 'Booking anmodning modtaget: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
+                    break;
                 case NotificationTypeEnum::CHANGED:
                     $template = 'email-booking-changed.html.twig';
                     $subject = 'Booking ændret: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
