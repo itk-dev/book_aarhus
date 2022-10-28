@@ -6,11 +6,14 @@ use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Entity\Main\UserBooking;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Service\BookingServiceInterface;
+use Psr\Log\LoggerInterface;
 
 class UserBookingDataPersister implements ContextAwareDataPersisterInterface
 {
-    public function __construct(private readonly BookingServiceInterface $bookingService)
-    {
+    public function __construct(
+        private readonly BookingServiceInterface $bookingService,
+        private readonly LoggerInterface $logger,
+    ) {
     }
 
     public function supports($data, array $context = []): bool
@@ -28,14 +31,10 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
         }
     }
 
-    /**
-     * @throws MicrosoftGraphCommunicationException
-     */
     public function persist($data, array $context = [])
     {
-        if ($data instanceof UserBooking) {
-            $this->bookingService->updateBooking($data);
-        }
+        $p = 1;
+        $this->logger->info('HERE!!!!');
 
         return $data;
     }

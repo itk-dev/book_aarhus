@@ -281,18 +281,35 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function updateBooking(UserBooking $booking): ?string
     {
-        /*
         $token = $this->authenticateAsServiceAccount();
 
-        // Formatting the url decoded booking id, replacing "/" with "-" as this is graph-compatible, and replacing
-        // " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
-        $cleanedBookingId = str_replace(['/', ' '], ['-', '+'], urldecode($bookingId));
+        // Only allow changing start and end times.
+        $newData = [
+            'end' => [
+                'dateTime' => $booking->start->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
+                'timeZone' => 'UTC',
+            ],
+            'start' => [
+                'dateTime' => $booking->end->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
+                'timeZone' => 'UTC',
+            ],
+        ];
 
-        $response = $this->request("/me/events/$cleanedBookingId", $token, 'PATCH', $newData);
+        if ($booking->ownedByServiceAccount) {
+            $bookingId = $booking->id;
+        } else {
+            $eventInResource = $this->getEventFromResourceByICalUid($booking->resourceMail, $booking->iCalUId);
+
+            if (is_null($eventInResource)) {
+                throw new UserBookingException('Could not find booking in resource.');
+            }
+
+            $bookingId = urlencode($eventInResource['id']);
+        }
+
+        $response = $this->request("/me/events/$bookingId", $token, 'PATCH', $newData);
 
         return $response->getStatus();
-        */
-        return '';
     }
 
     /**
@@ -386,9 +403,14 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     public function getUserBookingFromApiData(array $data): UserBooking
     {
         try {
+            // Formatting the url decoded booking id, replacing "/" with "-" as this is graph-compatible, and replacing
+            // " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
+            $cleanedBookingId = str_replace(['/', ' '], ['-', '+'], $data['id']);
+
             $userBooking = new UserBooking();
-            $userBooking->id = urlencode($data['id']);
-            $userBooking->hitId = $data['id'] ?? '';
+            $userBooking->id = $cleanedBookingId;
+            $userBooking->urlencodedId = $cleanedBookingId;
+            $userBooking->hitId = $data['id'];
             $userBooking->start = new \DateTime($data['start']['dateTime'], new \DateTimeZone($data['start']['timeZone']));
             $userBooking->end = new \DateTime($data['end']['dateTime'], new \DateTimeZone($data['end']['timeZone']));
             $userBooking->iCalUId = $data['iCalUId'];

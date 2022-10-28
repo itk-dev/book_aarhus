@@ -3,7 +3,7 @@
 namespace App\Entity\Main;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
-use DateTimeInterface;
+use DateTime;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 class UserBooking
@@ -13,6 +13,11 @@ class UserBooking
      */
     #[ApiProperty(identifier: true)]
     public string $id;
+
+    /**
+     * @Groups({"userBooking"})
+     */
+    public string $urlencodedId;
 
     /**
      * @Groups({"userBooking"})
@@ -41,12 +46,12 @@ class UserBooking
     /**
      * @Groups({"userBooking"})
      */
-    public DateTimeInterface $start;
+    public DateTime $start;
 
     /**
      * @Groups({"userBooking"})
      */
-    public DateTimeInterface $end;
+    public DateTime $end;
 
     /**
      * @Groups({"userBooking"})
