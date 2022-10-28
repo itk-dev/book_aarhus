@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Service\MicrosoftGraphServiceInterface;
+use App\Service\BookingServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -17,7 +17,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class GraphFreeBusyCommand extends Command
 {
     public function __construct(
-        private readonly MicrosoftGraphServiceInterface $microsoftGraphService
+        private readonly BookingServiceInterface $bookingService
     ) {
         parent::__construct();
     }
@@ -42,7 +42,7 @@ class GraphFreeBusyCommand extends Command
 
         $now = new \DateTime();
         $nowPlusOneDay = (new \DateTime())->add(new \DateInterval('P1D'));
-        $busyIntervals = $this->microsoftGraphService->getBusyIntervals($schedules, $now, $nowPlusOneDay);
+        $busyIntervals = $this->bookingService->getBusyIntervals($schedules, $now, $nowPlusOneDay);
 
         $io->info(json_encode($busyIntervals));
 

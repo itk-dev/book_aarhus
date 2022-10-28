@@ -2,8 +2,12 @@
 
 namespace App\Service;
 
+use App\Entity\Main\UserBooking;
 use App\Exception\BookingCreateException;
 use App\Exception\MicrosoftGraphCommunicationException;
+use App\Exception\UserBookingException;
+use DateTime;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use JsonException;
@@ -17,7 +21,7 @@ use Symfony\Contracts\Cache\CacheInterface;
  * @see https://github.com/microsoftgraph/msgraph-sdk-php
  * @see https://docs.microsoft.com/en-us/graph/use-the-api
  */
-class MicrosoftGraphService implements MicrosoftGraphServiceInterface
+class MicrosoftGraphBookingService implements BookingServiceInterface
 {
     // see https://docs.microsoft.com/en-us/graph/api/resources/datetimetimezone?view=graph-rest-1.0
     // example 2019-03-15T09:00:00
@@ -29,7 +33,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
         private readonly string $serviceAccountUsername,
         private readonly string $serviceAccountPassword,
         private readonly string $serviceAccountName,
-        private readonly CacheInterface $cache
+        private readonly CacheInterface $cache,
     ) {
     }
 
@@ -98,7 +102,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/api/calendar-getschedule?view=graph-rest-1.0&tabs=http
      */
-    public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, string $accessToken = null): array
+    public function getBusyIntervals(array $schedules, DateTime $startTime, DateTime $endTime, string $accessToken = null): array
     {
         // Use service account if accessToken is not set.
         $token = $accessToken ?: $this->authenticateAsServiceAccount();
@@ -106,11 +110,11 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
         $body = [
             'schedules' => $schedules,
             'startTime' => [
-                'dateTime' => $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
+                'dateTime' => $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
                 'timeZone' => 'UTC',
             ],
             'endTime' => [
-                'dateTime' => $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
+                'dateTime' => $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
                 'timeZone' => 'UTC',
             ],
         ];
@@ -144,7 +148,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
      */
-    public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array
+    public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, DateTime $startTime, DateTime $endTime): array
     {
         $token = $this->authenticateAsServiceAccount();
 
@@ -162,11 +166,11 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
                 'content' => $body,
             ],
             'end' => [
-                'dateTime' => $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
+                'dateTime' => $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
                 'timeZone' => 'UTC',
             ],
             'start' => [
-                'dateTime' => $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
+                'dateTime' => $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
                 'timeZone' => 'UTC',
             ],
             'allowNewTimeProposals' => false,
@@ -212,7 +216,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
      */
-    public function createBookingInviteResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array
+    public function createBookingInviteResource(string $resourceEmail, string $resourceName, string $subject, string $body, DateTime $startTime, DateTime $endTime): array
     {
         $token = $this->authenticateAsServiceAccount();
 
@@ -223,11 +227,11 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
                 'content' => $body,
             ],
             'end' => [
-                'dateTime' => $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
+                'dateTime' => $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
                 'timeZone' => 'UTC',
             ],
             'start' => [
-                'dateTime' => $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphService::DATE_FORMAT),
+                'dateTime' => $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
                 'timeZone' => 'UTC',
             ],
             'allowNewTimeProposals' => false,
@@ -255,13 +259,15 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function acceptBooking(string $id): ?string
+    public function acceptBooking(UserBooking $booking): ?string
     {
         $token = $this->authenticateAsServiceAccount();
 
-        $urlEncodedId = urlencode($id);
+        // Formatting the url decoded booking id, replacing "/" with "-" as this is graph-compatible, and replacing
+        // " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
+        $cleanedBookingId = str_replace(['/', ' '], ['-', '+'], urldecode($booking->id));
 
-        $response = $this->request("/me/events/$urlEncodedId/accept", $token, 'POST', [
+        $response = $this->request("/me/events/$cleanedBookingId/accept", $token, 'POST', [
             'sendResponse' => false,
         ]);
 
@@ -273,40 +279,57 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/api/event-update?view=graph-rest-1.0&tabs=http
      */
-    public function updateBooking(string $id, array $newData = []): ?string
+    public function updateBooking(UserBooking $booking): ?string
     {
+        /*
         $token = $this->authenticateAsServiceAccount();
 
-        $urlEncodedId = urlencode($id);
+        // Formatting the url decoded booking id, replacing "/" with "-" as this is graph-compatible, and replacing
+        // " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
+        $cleanedBookingId = str_replace(['/', ' '], ['-', '+'], urldecode($bookingId));
 
-        $response = $this->request("/me/events/$urlEncodedId", $token, 'PATCH', $newData);
+        $response = $this->request("/me/events/$cleanedBookingId", $token, 'PATCH', $newData);
 
         return $response->getStatus();
+        */
+        return '';
     }
 
     /**
      * {@inheritdoc}
      *
      * @see https://docs.microsoft.com/en-us/graph/api/event-delete?view=graph-rest-1.0&tabs=http
+     *
+     * @throws UserBookingException
      */
-    public function deleteUserBooking(string $bookingId, string $ownerEmail): ?string
+    public function deleteBooking(UserBooking $booking): ?string
     {
         $token = $this->authenticateAsServiceAccount();
 
-        // TODO: Make sure the user is the owner.
+        $bookingId = $booking->id;
 
-        // Formatting the urldecode(d) booking hitId, replacing "/" with "-" as this is graph-compatible, and replacing
-        // " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
-        $bookingId = urldecode($bookingId);
-        $bookingId = str_replace(['/', ' '], ['-', '+'], $bookingId);
-
-        // TODO: Handle request for deletion of resource-event
-        // We need the HitId from the resource-event, to request the deletion of that event.
-        // $urlEncodedId = urlencode($id);
-        // $encodedOwnerEmail = urlencode($ownerEmail);
-        // $response = $this->request("/users/$encodedOwnerEmail/events/$urlEncodedId", $token, 'DELETE');
-
+        // Remove from service account.
         $response = $this->request("/me/events/$bookingId", $token, 'DELETE');
+
+        if (204 !== $response->getStatus()) {
+            throw new UserBookingException('Booking could not be removed', (int) $response->getStatus());
+        }
+
+        $eventInResource = $this->getEventFromResourceByICalUid($booking->resourceMail, $booking->iCalUId);
+
+        if (is_null($eventInResource)) {
+            throw new UserBookingException('Booking not found in resource', 404);
+        }
+
+        $bookingId = urlencode($eventInResource['id']);
+        $userId = $booking->resourceMail;
+
+        // Remove from resource.
+        $response = $this->request("/users/$userId/events/$bookingId", $token, 'DELETE');
+
+        if (204 !== $response->getStatus()) {
+            throw new UserBookingException('Booking could not be removed from resource', (int) $response->getStatus());
+        }
 
         return $response->getStatus();
     }
@@ -316,14 +339,16 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/search-concept-events
      */
-    public function getUserBooking(string $bookingId): array
+    public function getBooking(string $bookingId): array
     {
         $token = $this->authenticateAsServiceAccount();
 
-        $bookingId = urldecode($bookingId);
-        $bookingId = str_replace(['/', ' '], ['-', '+'], $bookingId);
+        // TODO: Move this out of the service an in to the code receiving the request.
+        // Formatting the url decoded booking id, replacing "/" with "-" as this is graph-compatible, and replacing
+        // " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
+        $cleanedBookingId = str_replace(['/', ' '], ['-', '+'], urldecode($bookingId));
 
-        $response = $this->request('/me/events/'.$bookingId, $token, 'GET', null);
+        $response = $this->request('/me/events/'.$cleanedBookingId, $token);
 
         return $response->getBody();
     }
@@ -333,7 +358,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/search-concept-events
      */
-    public function getUserBookings(string $userId, string $bookingId = ''): array
+    public function getUserBookings(string $userId): array
     {
         $token = $this->authenticateAsServiceAccount();
 
@@ -342,7 +367,7 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
                 [
                     'entityTypes' => ['event'],
                     'query' => [
-                        'queryString' => "[userid-$userId]",
+                        'queryString' => $this->createBodyUserId($userId),
                     ],
                     'from' => 0,
                     'to' => 100,
@@ -357,18 +382,83 @@ class MicrosoftGraphService implements MicrosoftGraphServiceInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @see https://docs.microsoft.com/en-us/graph/search-concept-events
      */
-    public function getBookingDetails(string $bookingId): array
+    public function getUserBookingFromApiData(array $data): UserBooking
+    {
+        try {
+            $userBooking = new UserBooking();
+            $userBooking->id = urlencode($data['id']);
+            $userBooking->hitId = $data['id'] ?? '';
+            $userBooking->start = new \DateTime($data['start']['dateTime'], new \DateTimeZone($data['start']['timeZone']));
+            $userBooking->end = new \DateTime($data['end']['dateTime'], new \DateTimeZone($data['end']['timeZone']));
+            $userBooking->iCalUId = $data['iCalUId'];
+            $userBooking->subject = $data['resource']['subject'] ?? '';
+            $userBooking->displayName = $data['location']['displayName'];
+            $userBooking->body = $data['body']['content'];
+
+            $locationUniqueId = $data['location']['uniqueId'];
+            $organizerEmail = $data['organizer']['emailAddress']['address'] ?? null;
+
+            $userBooking->ownedByServiceAccount = $organizerEmail == $this->serviceAccountUsername;
+
+            // Find resource mail.
+            $attendeeResource = null;
+
+            foreach ($data['attendees'] as $attendee) {
+                if ($attendee['emailAddress']['name'] == $locationUniqueId) {
+                    $attendeeResource = $attendee;
+                    break;
+                }
+            }
+
+            if (is_null($attendeeResource)) {
+                throw new Exception('Could not find location in attendee list', 400);
+            }
+
+            $userBooking->resourceMail = $attendeeResource['emailAddress']['address'];
+            $userBooking->resourceName = $attendeeResource['emailAddress']['name'];
+
+            return $userBooking;
+        } catch (Exception $exception) {
+            throw new UserBookingException($exception->getMessage(), (int) $exception->getCode());
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createBodyUserId(string $id): string
+    {
+        return "UID-$id-UID";
+    }
+
+    /**
+     * @throws MicrosoftGraphCommunicationException
+     * @throws UserBookingException
+     *
+     * @see https://learn.microsoft.com/en-us/graph/api/user-list-events?view=graph-rest-1.0&tabs=http
+     * @see https://learn.microsoft.com/en-us/graph/query-parameters
+     */
+    private function getEventFromResourceByICalUid(string $resourceEmail, string $iCalUId): ?array
     {
         $token = $this->authenticateAsServiceAccount();
 
-        // TODO: Handle this differently.
-        $bookingId_formatted = str_replace(['/', ' '], ['-', '+'], $bookingId);
+        $path = "/users/$resourceEmail/events?\$filter=iCalUId eq '$iCalUId'";
 
-        $response = $this->request('/me/events/'.$bookingId_formatted, $token);
+        $r = $this->request($path, $token);
 
-        return $response->getBody();
+        $body = $r->getBody();
+
+        if (isset($body['value'])) {
+            $numberOfResults = count($body['value']);
+
+            if (1 == $numberOfResults) {
+                return array_pop($body['value']);
+            } elseif ($numberOfResults > 1) {
+                throw new UserBookingException('More than one event found with iCalUId', 500);
+            }
+        }
+
+        return null;
     }
 }
