@@ -36,10 +36,10 @@ docker compose exec phpfpm bin/console doctrine:migrations:migrate
 docker compose exec phpfpm bin/console doctrine:database:create --connection=azure_sql
 
 # Run migrations for resource database
-bin/console doctrine:migrations:migrate --em=resources --configuration=config/config-migrations/doctrine-migrations-resources.yaml
+docker compose exec phpfpm bin/console doctrine:migrations:migrate --em=resources --configuration=config/config-migrations/doctrine-migrations-resources.yaml
 
 # Load resource fixtures
-bin/console doctrine:fixtures:load --em=resources --group=ResourceFixtures
+docker compose exec phpfpm bin/console doctrine:fixtures:load --em=resources --group=ResourceFixtures
 ```
 
 The api can be accessed at `/`.
@@ -231,6 +231,14 @@ To consume messages run the following command
 ```shell
 docker compose exec phpfpm composer queues
 ```
+
+To debug the queue find the address to the rabbitmq container with
+
+```shell
+docker compose ps
+```
+
+and open it in a browser.
 
 ### Production
 

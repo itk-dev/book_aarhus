@@ -11,7 +11,8 @@ use App\MessageHandler\CreateBookingHandler;
 use App\MessageHandler\WebformSubmitHandler;
 use App\Repository\Main\AAKResourceRepository;
 use App\Security\Voter\BookingVoter;
-use App\Service\MicrosoftGraphService;
+use App\Service\BookingServiceInterface;
+use App\Service\MicrosoftGraphBookingService;
 use App\Service\NotificationServiceInterface;
 use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
@@ -167,9 +168,9 @@ class BookingTest extends AbstractBaseApiTestCase
         ]);
 
         $validationUtilsMock = $this->getMockBuilder(ValidationUtils::class)
-          ->onlyMethods(['validateEmail', 'validateDate'])
-          ->disableOriginalConstructor()
-          ->getMock();
+            ->onlyMethods(['validateEmail', 'validateDate'])
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $validationUtilsMock->method('validateDate')->willReturn(new \DateTime('2022-08-18T10:00:00.000Z'));
         $validationUtilsMock->method('validateEmail')->willReturn('test@bookaarhus.local.itkdev.dk');
@@ -179,6 +180,7 @@ class BookingTest extends AbstractBaseApiTestCase
         $container = self::getContainer();
         $twig = $container->get(Environment::class);
         $bus = $container->get(MessageBusInterface::class);
+        $bookingService = $container->get(BookingServiceInterface::class);
 
         $aakBookingRepository = $this->getMockBuilder(AAKResourceRepository::class)
             ->onlyMethods(['findOneBy'])
@@ -195,7 +197,7 @@ class BookingTest extends AbstractBaseApiTestCase
         /** @var ApiKeyUser $testUser */
         $testUser = $entityManager->getRepository(ApiKeyUser::class)->findOneBy(['name' => 'test']);
 
-        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $bus, $validationUtilsMock, $logger, $aakBookingRepository, $twig);
+        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $bus, $validationUtilsMock, $logger, $aakBookingRepository, $twig, $bookingService);
 
         $webformSubmitHandler->__invoke(new WebformSubmitMessage(
             'booking',
@@ -211,7 +213,7 @@ class BookingTest extends AbstractBaseApiTestCase
 
     public function testCreateBookingHandler(): void
     {
-        $microsoftGraphServiceMock = $this->getMockBuilder(MicrosoftGraphService::class)
+        $microsoftGraphServiceMock = $this->getMockBuilder(MicrosoftGraphBookingService::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['createBookingForResource'])
             ->getMock();
@@ -220,7 +222,6 @@ class BookingTest extends AbstractBaseApiTestCase
         $container = self::getContainer();
         $logger = $container->get(LoggerInterface::class);
         $bus = $container->get(MessageBusInterface::class);
-        $notificationServiceInterface = $container->get(NotificationServiceInterface::class);
 
         $booking = new Booking();
         $booking->setBody('test');
@@ -269,7 +270,10 @@ class BookingTest extends AbstractBaseApiTestCase
 
         $container->set(AAKResourceRepository::class, $aakResourceRepositoryMock);
 
-        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock, $security, $notificationServiceInterface, $bus);
+        $notificationServiceMock = $this->createMock(NotificationServiceInterface::class);
+        $container->set(NotificationServiceInterface::class, $notificationServiceMock);
+
+        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock, $security, $bus);
         $createBookingHandler->__invoke(new CreateBookingMessage($booking));
     }
 
@@ -291,85 +295,6 @@ class BookingTest extends AbstractBaseApiTestCase
         ];
 
         $client->request('POST', '/v1/bookings-webform', [
-            'json' => $requestData,
-        ]);
-
-        $this->assertResponseStatusCodeSame(400);
-
-        $this->messenger('async')->queue()->assertCount(0);
-    }
-
-    public function testBooking(): void
-    {
-        $this->messenger('async')->queue()->assertEmpty();
-
-        $client = $this->getAuthenticatedClient();
-
-        $requestData = [
-            'resourceEmail' => 'test@example.com',
-            'resourceName' => 'Test',
-            'subject' => 'Subject',
-            'body' => 'Body',
-            'startTime' => '2022-06-25T10:00:00.000Z',
-            'endTime' => '2022-06-25T10:30:00.000Z',
-        ];
-
-        $client->request('POST', '/v1/bookings', [
-            'json' => $requestData,
-        ]);
-
-        $this->assertResponseStatusCodeSame(201);
-
-        $this->messenger('async')->queue()->assertCount(1);
-        $this->messenger('async')->queue()->assertContains(CreateBookingMessage::class);
-
-        /** @var CreateBookingMessage $message */
-        $message = $this->messenger('async')->queue()->first(CreateBookingMessage::class)->getMessage();
-        $booking = $message->getBooking();
-        $this->assertEquals('test@example.com', $booking->getResourceEmail());
-        $this->assertEquals('Test', $booking->getResourceName());
-        $this->assertEquals('Subject', $booking->getSubject());
-        $this->assertEquals('Body', $booking->getBody());
-        $this->assertEquals('2022-06-25T10:00:00+00:00', $booking->getStartTime()->format('c'));
-        $this->assertEquals('2022-06-25T10:30:00+00:00', $booking->getEndTime()->format('c'));
-    }
-
-    /**
-     * @throws TransportExceptionInterface
-     */
-    public function testInvalidBooking(): void
-    {
-        $this->messenger('async')->queue()->assertEmpty();
-
-        $client = $this->getAuthenticatedClient();
-
-        $requestData = [
-            'resourceEmail' => 'test',
-            'resourceName' => 'Test',
-            'subject' => 'Subject',
-            'body' => 'Body',
-            'startTime' => '2022-06-25T10:00:00.000Z',
-            'endTime' => '2022-06-25T10:30:00.000Z',
-        ];
-
-        $client->request('POST', '/v1/bookings', [
-            'json' => $requestData,
-        ]);
-
-        $this->assertResponseStatusCodeSame(400);
-
-        $this->messenger('async')->queue()->assertCount(0);
-
-        $requestData = [
-            'resourceEmail' => 'test@example.com',
-            'resourceName' => 'Test',
-            'subject' => 'Subject',
-            'body' => 'Body',
-            'startTime' => 'not a date',
-            'endTime' => '2022-06-25T10:30:00.000Z',
-        ];
-
-        $client->request('POST', '/v1/bookings', [
             'json' => $requestData,
         ]);
 

@@ -2,6 +2,10 @@
 
 namespace App\Service;
 
+use App\Entity\Main\Booking;
+use App\Entity\Resources\AAKResource;
+use App\Enum\NotificationTypeEnum;
+use App\Utils\ValidationUtils;
 use DateTimeImmutable;
 use Eluceo\iCal\Domain\Entity;
 use Eluceo\iCal\Domain\ValueObject\DateTime;
@@ -10,6 +14,7 @@ use Eluceo\iCal\Presentation\Component;
 use Eluceo\iCal\Presentation\Factory;
 use Exception;
 use JsonException;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -18,18 +23,26 @@ use Symfony\Component\Mime\MimeTypes;
 
 class NotificationService implements NotificationServiceInterface
 {
-    public function __construct(private string $emailFromAddress, private MailerInterface $mailer)
-    {
+    private ?string $validatedAdminNotificationEmail;
+
+    public function __construct(
+        private readonly string $emailFromAddress,
+        private readonly string $emailAdminNotification,
+        private readonly ValidationUtils $validationUtils,
+        private readonly LoggerInterface $logger,
+        private readonly MailerInterface $mailer
+    ) {
+        try {
+            $this->validatedAdminNotificationEmail = $this->validationUtils->validateEmail($this->emailAdminNotification);
+        } catch (Exception) {
+            $this->logger->warning('No admin notification email set.');
+        }
     }
 
     /**
-     * @param $booking
-     * @param $resource
-     * @param string $type
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function sendBookingNotification($booking, $resource, string $type)
+    public function sendBookingNotification(Booking $booking, ?AAKResource $resource, NotificationTypeEnum $type): void
     {
         try {
             $data = [
@@ -46,26 +59,90 @@ class NotificationService implements NotificationServiceInterface
 
             $this->sendNotification($notification);
         } catch (JsonException $e) {
+            // TODO: Handle error.
         }
     }
 
     /**
-     * @param string $type
+     * {@inheritdoc}
+     */
+    public function createCalendarComponent(array $events): Component
+    {
+        $iCalEvents = [];
+
+        foreach ($events as $eventData) {
+            $event = new Entity\Event();
+
+            $event->setSummary($eventData['summary']);
+            $event->setDescription($eventData['description']);
+
+            $immutableFrom = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
+            $immutableTo = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
+
+            if (false === $immutableFrom || false === $immutableTo) {
+                throw new Exception('DateTimeImmutable cannot be false');
+            }
+
+            $start = new DateTime($immutableFrom, false);
+            $end = new DateTime($immutableTo, false);
+            $occurrence = new TimeSpan($start, $end);
+            $event->setOccurrence($occurrence);
+
+            $iCalEvents[] = $event;
+        }
+
+        $calendar = new Entity\Calendar($iCalEvents);
+
+        return (new Factory\CalendarFactory())->createCalendar($calendar);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function notifyAdmin(string $subject, string $message, ?Booking $booking, ?AAKResource $resource): void
+    {
+        if ($this->validatedAdminNotificationEmail) {
+            $to = $this->validatedAdminNotificationEmail;
+            $template = 'email-notify-admin.html.twig';
+
+            $data = [
+                'subject' => $subject,
+                'message' => $message,
+                'booking' => $booking,
+                'resource' => $resource,
+            ];
+
+            $notificationData = [
+                'from' => $this->emailFromAddress,
+                'to' => $to,
+                'subject' => $subject,
+                'template' => $template,
+                'data' => $data,
+            ];
+
+            $this->sendNotification($notificationData);
+        }
+    }
+
+    /**
+     * @param NotificationTypeEnum $type
      * @param array $data
      *
      * @return array
      */
-    private function buildNotification(string $type, array $data): array
+    private function buildNotification(NotificationTypeEnum $type, array $data): array
     {
         $notificationData = [];
+
         try {
             $template = null;
             $fileAttachments = [];
             $to = $data['user']['mail'];
             $subject = 'Booking bekræftigelse: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
+
             switch ($type) {
-                case 'success':
-                    $template = 'emailBookingSuccess.html.twig';
+                case NotificationTypeEnum::SUCCESS:
+                    $template = 'email-booking-success.html.twig';
 
                     $events = $this->prepareIcalEvents($data);
                     $iCalendarComponent = $this->createCalendarComponent($events);
@@ -74,15 +151,16 @@ class NotificationService implements NotificationServiceInterface
                         'ics' => [$iCalendarComponent],
                     ];
                     break;
-                case 'booking_changed':
-                    $template = 'emailBookingChanged.html.twig';
+                case NotificationTypeEnum::CHANGED:
+                    $template = 'email-booking-changed.html.twig';
                     $subject = 'Booking ændret: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
                     break;
-                case 'booking_failed':
-                    $template = 'emailBookingFailed.html.twig';
+                case NotificationTypeEnum::FAILED:
+                    $template = 'email-booking-failed.html.twig';
                     $subject = 'Booking lykkedes ikke: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
                     break;
             }
+
             $notificationData = [
                 'from' => $this->emailFromAddress,
                 'to' => $to,
@@ -92,6 +170,7 @@ class NotificationService implements NotificationServiceInterface
                 'fileAttachments' => $fileAttachments,
             ];
         } catch (Exception $e) {
+            // TODO: Handle error.
         }
 
         return $notificationData;
@@ -106,17 +185,17 @@ class NotificationService implements NotificationServiceInterface
     {
         try {
             $email = (new TemplatedEmail())
-        ->from($notification['from'])
-        ->to(new Address($notification['to']))
-        ->subject($notification['subject'])
-        ->htmlTemplate($notification['template'])
-        ->context($notification);
+                ->from($notification['from'])
+                ->to(new Address($notification['to']))
+                ->subject($notification['subject'])
+                ->htmlTemplate($notification['template'])
+                ->context($notification);
             $tempDir = sys_get_temp_dir();
             $bookingId = $notification['data']['booking']->getId();
             $fileName = 'booking-'.$bookingId.'.ics';
             $filePath = $tempDir.'/'.$fileName;
             // Add ics attachment to mail.
-            if ($notification['fileAttachments']['ics']) {
+            if (!empty($notification['fileAttachments']['ics'])) {
                 foreach ($notification['fileAttachments']['ics'] as $key => $ics) {
                     try {
                         file_put_contents($filePath, (string) $ics);
@@ -153,41 +232,5 @@ class NotificationService implements NotificationServiceInterface
                 'to' => $data['booking']->getEndTime()->format('Y-m-d H:i:s'),
             ],
         ];
-    }
-
-    /**
-     * @param array $events
-     *
-     * @return Component
-     *
-     * @throws Exception
-     */
-    public function createCalendarComponent(array $events): Component
-    {
-        $iCalEvents = [];
-
-        foreach ($events as $eventData) {
-            $event = new Entity\Event();
-
-            $event->setSummary($eventData['summary']);
-            $event->setDescription($eventData['description']);
-
-            $immutableFrom = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
-            $immutableTo = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
-            if (false === $immutableFrom || false === $immutableTo) {
-                throw new Exception('DateTimeImmutable cannot be false');
-            }
-
-            $start = new DateTime($immutableFrom, false);
-            $end = new DateTime($immutableTo, false);
-            $occurrence = new TimeSpan($start, $end);
-            $event->setOccurrence($occurrence);
-
-            $iCalEvents[] = $event;
-        }
-
-        $calendar = new Entity\Calendar($iCalEvents);
-
-        return (new Factory\CalendarFactory())->createCalendar($calendar);
     }
 }

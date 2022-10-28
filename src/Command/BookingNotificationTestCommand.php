@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\Main\Booking;
 use App\Entity\Resources\AAKResource;
+use App\Enum\NotificationTypeEnum;
 use App\Service\NotificationServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -49,18 +50,18 @@ class BookingNotificationTestCommand extends Command
 
         switch ($type) {
             case 'New booking success':
-                $this->notificationService->sendBookingNotification($this->createBooking($email), $this->createResource(), 'success');
+                $this->notificationService->sendBookingNotification($this->createBooking($email), $this->createResource(), NotificationTypeEnum::SUCCESS);
                 $output->writeln('Sent "'.$type.'" mail to '.$email);
                 break;
 
             case 'Booking changed':
-                $this->notificationService->sendBookingNotification($this->createBooking($email), $this->createResource(), 'booking_changed');
+                $this->notificationService->sendBookingNotification($this->createBooking($email), $this->createResource(), NotificationTypeEnum::CHANGED);
                 $output->writeln('Sent "'.$type.'" mail to '.$email);
 
                 break;
 
             case 'Booking failed':
-                $this->notificationService->sendBookingNotification($this->createBooking($email), $this->createResource(), 'booking_failed');
+                $this->notificationService->sendBookingNotification($this->createBooking($email), $this->createResource(), NotificationTypeEnum::FAILED);
                 $output->writeln('Sent "'.$type.'" mail to '.$email);
 
                 break;

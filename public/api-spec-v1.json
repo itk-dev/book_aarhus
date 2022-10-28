@@ -1,5 +1,5 @@
 {
-    "openapi": "3.0.3",
+    "openapi": "3.0.0",
     "info": {
         "title": "Book Aarhus API Service",
         "description": "API Service for Book Aarhus",
@@ -15,77 +15,6 @@
         }
     ],
     "paths": {
-        "/v1/bookings": {
-            "post": {
-                "operationId": "postBookingCollection",
-                "tags": [
-                    "Booking"
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Booking resource created",
-                        "content": {
-                            "application/ld+json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Booking.jsonld"
-                                }
-                            },
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Booking"
-                                }
-                            },
-                            "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Booking"
-                                }
-                            }
-                        },
-                        "links": {
-                            "GetBookingItem": {
-                                "operationId": "getBookingItem",
-                                "parameters": {
-                                    "id": "$response.body#/id"
-                                },
-                                "description": "The `id` value returned in the response can be used as the `id` parameter in `GET /v1/bookings/{id}`."
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid input"
-                    },
-                    "422": {
-                        "description": "Unprocessable entity"
-                    }
-                },
-                "summary": "Creates a Booking resource.",
-                "description": "Creates a Booking resource.",
-                "parameters": [],
-                "requestBody": {
-                    "description": "The new Booking resource",
-                    "content": {
-                        "application/ld+json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/Booking.BookingInput.jsonld"
-                            }
-                        },
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/Booking.BookingInput"
-                            }
-                        },
-                        "text/html": {
-                            "schema": {
-                                "$ref": "#/components/schemas/Booking.BookingInput"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "deprecated": false
-            },
-            "parameters": []
-        },
         "/v1/bookings-webform": {
             "post": {
                 "operationId": "post-v1-create-booking-webform-submit",
@@ -127,53 +56,6 @@
                     },
                     "required": true
                 },
-                "deprecated": false
-            },
-            "parameters": []
-        },
-        "/v1/bookings/{id}": {
-            "get": {
-                "operationId": "getBookingItem",
-                "tags": [
-                    "Booking"
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Booking resource",
-                        "content": {
-                            "application/ld+json": {
-                                "schema": {}
-                            },
-                            "application/json": {
-                                "schema": {}
-                            },
-                            "text/html": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Resource not found"
-                    }
-                },
-                "summary": "Unsupported action.",
-                "description": "Unsupported action.",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Resource identifier",
-                        "required": true,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "simple",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
                 "deprecated": false
             },
             "parameters": []
@@ -268,53 +150,6 @@
             },
             "parameters": []
         },
-        "/v1/busy-intervals/{id}": {
-            "get": {
-                "operationId": "getBusyIntervalItem",
-                "tags": [
-                    "BusyInterval"
-                ],
-                "responses": {
-                    "204": {
-                        "description": "BusyInterval resource",
-                        "content": {
-                            "application/ld+json": {
-                                "schema": {}
-                            },
-                            "application/json": {
-                                "schema": {}
-                            },
-                            "text/html": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Resource not found"
-                    }
-                },
-                "summary": "Unsupported action.",
-                "description": "Unsupported action.",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Resource identifier",
-                        "required": true,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "simple",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
-                "deprecated": false
-            },
-            "parameters": []
-        },
         "/v1/locations": {
             "get": {
                 "operationId": "get-v1-locations",
@@ -347,53 +182,6 @@
                             "default": 1
                         },
                         "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
-                "deprecated": false
-            },
-            "parameters": []
-        },
-        "/v1/locations/{name}": {
-            "get": {
-                "operationId": "getLocationItem",
-                "tags": [
-                    "Location"
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Location resource",
-                        "content": {
-                            "application/ld+json": {
-                                "schema": {}
-                            },
-                            "application/json": {
-                                "schema": {}
-                            },
-                            "text/html": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Resource not found"
-                    }
-                },
-                "summary": "Unsupported action.",
-                "description": "Unsupported action.",
-                "parameters": [
-                    {
-                        "name": "name",
-                        "in": "path",
-                        "description": "Resource identifier",
-                        "required": true,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "simple",
                         "explode": false,
                         "allowReserved": false
                     }
@@ -452,6 +240,14 @@
                                                     "type": "string",
                                                     "format": "iri-reference"
                                                 }
+                                            },
+                                            "example": {
+                                                "@id": "string",
+                                                "type": "string",
+                                                "hydra:first": "string",
+                                                "hydra:last": "string",
+                                                "hydra:previous": "string",
+                                                "hydra:next": "string"
                                             }
                                         },
                                         "hydra:search": {
@@ -892,38 +688,47 @@
         },
         "/v1/user-bookings/{id}": {
             "get": {
-                "operationId": "get-v1-booking",
+                "operationId": "getUserBookingItem",
                 "tags": [
                     "UserBooking"
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "UserBooking resource",
                         "content": {
                             "application/ld+json": {
-                                "examples": null
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserBooking.jsonld-userBooking"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserBooking-userBooking"
+                                }
+                            },
+                            "text/html": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserBooking-userBooking"
+                                }
                             }
-                        },
-                        "headers": {}
+                        }
                     },
                     "404": {
                         "description": "Resource not found"
                     }
                 },
-                "summary": "Retrieves a specific booking from a specific user.",
-                "description": "Retrieves a specific booking from a specific user.",
+                "summary": "Retrieves a UserBooking resource.",
+                "description": "Retrieves a UserBooking resource.",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "urlencoded ID of the booking to get",
+                        "description": "Resource identifier",
                         "required": true,
                         "deprecated": false,
                         "allowEmptyValue": false,
                         "schema": {
-                            "type": "string",
-                            "format": "string",
-                            "example": "AAMkADA2YjNjYzNjLThjMjAtNDA3MS05NWEwLTZhZjM2MzYxZjZmNwBGAAAAAADPMx9il%2Fl3TpK5N7vcXYJbBwCTGBSNlZNgQKMu0%2BOa3o5eAAAAAAENAACTGBSNlZNgQKMu0%2BOa3o5eAABLCAbAAAA%3D"
+                            "type": "string"
                         },
                         "style": "simple",
                         "explode": false,
@@ -933,7 +738,7 @@
                 "deprecated": false
             },
             "delete": {
-                "operationId": "delete-v1-booking",
+                "operationId": "deleteUserBookingItem",
                 "tags": [
                     "UserBooking"
                 ],
@@ -943,31 +748,20 @@
                     },
                     "404": {
                         "description": "Resource not found"
-                    },
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/ld+json": {
-                                "examples": null
-                            }
-                        },
-                        "headers": {}
                     }
                 },
-                "summary": "Requests deletion for a specific booking.",
-                "description": "Requests deletion for a specific booking.",
+                "summary": "Removes the UserBooking resource.",
+                "description": "Removes the UserBooking resource.",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "urlencoded ID of the booking to delete",
+                        "description": "Resource identifier",
                         "required": true,
                         "deprecated": false,
                         "allowEmptyValue": false,
                         "schema": {
-                            "type": "string",
-                            "format": "string",
-                            "example": ""
+                            "type": "string"
                         },
                         "style": "simple",
                         "explode": false,
@@ -983,6 +777,7 @@
         "schemas": {
             "Booking": {
                 "type": "object",
+                "description": "",
                 "properties": {
                     "id": {
                         "type": "string"
@@ -1027,89 +822,9 @@
                     }
                 }
             },
-            "Booking.BookingInput": {
-                "type": "object",
-                "properties": {
-                    "resourceEmail": {
-                        "type": "string"
-                    },
-                    "resourceName": {
-                        "type": "string"
-                    },
-                    "subject": {
-                        "type": "string"
-                    },
-                    "body": {
-                        "type": "string"
-                    },
-                    "startTime": {
-                        "type": "string"
-                    },
-                    "endTime": {
-                        "type": "string"
-                    }
-                }
-            },
-            "Booking.BookingInput.jsonld": {
-                "type": "object",
-                "properties": {
-                    "@context": {
-                        "readOnly": true,
-                        "oneOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "object",
-                                "properties": {
-                                    "@vocab": {
-                                        "type": "string"
-                                    },
-                                    "hydra": {
-                                        "type": "string",
-                                        "enum": [
-                                            "http://www.w3.org/ns/hydra/core#"
-                                        ]
-                                    }
-                                },
-                                "required": [
-                                    "@vocab",
-                                    "hydra"
-                                ],
-                                "additionalProperties": true
-                            }
-                        ]
-                    },
-                    "@id": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
-                    "@type": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
-                    "resourceEmail": {
-                        "type": "string"
-                    },
-                    "resourceName": {
-                        "type": "string"
-                    },
-                    "subject": {
-                        "type": "string"
-                    },
-                    "body": {
-                        "type": "string"
-                    },
-                    "startTime": {
-                        "type": "string"
-                    },
-                    "endTime": {
-                        "type": "string"
-                    }
-                }
-            },
             "Booking.WebformBookingInput": {
                 "type": "object",
+                "description": "",
                 "properties": {
                     "data": {
                         "default": {
@@ -1151,6 +866,7 @@
             },
             "Booking.WebformBookingInput.jsonld": {
                 "type": "object",
+                "description": "",
                 "properties": {
                     "@context": {
                         "readOnly": true,
@@ -1227,6 +943,7 @@
             },
             "Booking.jsonld": {
                 "type": "object",
+                "description": "",
                 "properties": {
                     "@context": {
                         "readOnly": true,
@@ -1308,6 +1025,7 @@
             },
             "BusyInterval": {
                 "type": "object",
+                "description": "",
                 "properties": {
                     "id": {
                         "type": "string"
@@ -1329,6 +1047,7 @@
             },
             "BusyInterval.jsonld": {
                 "type": "object",
+                "description": "",
                 "properties": {
                     "@id": {
                         "readOnly": true,
@@ -1358,6 +1077,7 @@
             },
             "HolidayOpenHours-resource": {
                 "type": "object",
+                "description": "",
                 "properties": {
                     "holidayOpen": {
                         "type": "string",
@@ -1375,6 +1095,7 @@
             },
             "HolidayOpenHours.jsonld-resource": {
                 "type": "object",
+                "description": "",
                 "properties": {
                     "@context": {
                         "readOnly": true,
@@ -1427,6 +1148,7 @@
             },
             "Location": {
                 "type": "object",
+                "description": "",
                 "properties": {
                     "name": {
                         "type": "string"
@@ -1435,6 +1157,7 @@
             },
             "Location.jsonld": {
                 "type": "object",
+                "description": "",
                 "properties": {
                     "@id": {
                         "readOnly": true,
@@ -1451,6 +1174,7 @@
             },
             "OpenHours-resource": {
                 "type": "object",
+                "description": "",
                 "properties": {
                     "id": {
                         "readOnly": true,
@@ -1475,6 +1199,7 @@
             },
             "OpenHours.jsonld-resource": {
                 "type": "object",
+                "description": "",
                 "properties": {
                     "@context": {
                         "readOnly": true,
@@ -1765,6 +1490,7 @@
             },
             "UserBooking-userBooking": {
                 "type": "object",
+                "description": "",
                 "properties": {
                     "id": {
                         "type": "string"
@@ -1783,18 +1509,23 @@
                     },
                     "start": {
                         "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "format": "date-time"
                     },
                     "end": {
                         "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "format": "date-time"
+                    },
+                    "resourceMail": {
+                        "type": "string"
+                    },
+                    "resourceName": {
+                        "type": "string"
                     }
                 }
             },
             "UserBooking.jsonld-userBooking": {
                 "type": "object",
+                "description": "",
                 "properties": {
                     "@id": {
                         "readOnly": true,
@@ -1848,13 +1579,17 @@
                     },
                     "start": {
                         "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "format": "date-time"
                     },
                     "end": {
                         "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "format": "date-time"
+                    },
+                    "resourceMail": {
+                        "type": "string"
+                    },
+                    "resourceName": {
+                        "type": "string"
                     }
                 }
             }

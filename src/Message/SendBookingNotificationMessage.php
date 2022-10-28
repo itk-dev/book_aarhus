@@ -3,13 +3,14 @@
 namespace App\Message;
 
 use App\Entity\Main\Booking;
+use App\Enum\NotificationTypeEnum;
 
 class SendBookingNotificationMessage
 {
     private Booking $booking;
-    private string $type;
+    private NotificationTypeEnum $type;
 
-    public function __construct(Booking $booking, string $type)
+    public function __construct(Booking $booking, NotificationTypeEnum $type)
     {
         $this->booking = $booking;
         $this->type = $type;
@@ -20,7 +21,7 @@ class SendBookingNotificationMessage
         return $this->booking;
     }
 
-    public function getType(): string
+    public function getType(): NotificationTypeEnum
     {
         return $this->type;
     }
