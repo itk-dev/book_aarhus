@@ -41,6 +41,7 @@ class GetAllResourcesController extends AbstractController
             $cacheItem->expiresAfter(60 * 30); // 30 minutes.
 
             $info = $this->aakResourceRepository->getAllByPermission($userPermission);
+
             return $this->serializer->serialize($info, 'json', ['groups' => 'minimum']);
         });
 

@@ -63,7 +63,8 @@ class AAKResourceRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function getOnlyWhitelisted(string $permission = null, string $whitelistKey = null) {
+    public function getOnlyWhitelisted(string $permission = null, string $whitelistKey = null)
+    {
         $qb = $this->createQueryBuilder('res');
 
         if ('citizen' == $permission) {
