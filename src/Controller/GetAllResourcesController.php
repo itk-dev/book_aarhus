@@ -6,6 +6,7 @@ use App\Repository\Main\AAKResourceRepository;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -30,29 +31,30 @@ class GetAllResourcesController extends AbstractController
         $userPermissionHeader = $request->headers->get('Authorization-UserPermission');
         $whitelistKey = $request->query->get('whitelistKey');
 
-        // If whitelistKey is set, we do no rely on cache.
-        // @TODO: This should also be cacheable on a whitelistKey basis.
-        if (null !== $whitelistKey) {
-            $info = $this->aakResourceRepository->getAllByPermission(null, $whitelistKey);
-
-            $value = $this->serializer->serialize($info, 'json', ['groups' => 'minimum']);
-
-            return new Response($value, 200);
-        }
-
         $userPermission = null;
 
         if (in_array($userPermissionHeader, ['citizen', 'businessPartner'])) {
             $userPermission = $userPermissionHeader;
         }
 
-        $value = $this->resourceCache->get("resources-$userPermission", function (CacheItemInterface $cacheItem) use ($userPermission) {
+        $serializedResources = $this->resourceCache->get("resources-$userPermission", function (CacheItemInterface $cacheItem) use ($userPermission) {
             $cacheItem->expiresAfter(60 * 30); // 30 minutes.
 
             $info = $this->aakResourceRepository->getAllByPermission($userPermission);
             return $this->serializer->serialize($info, 'json', ['groups' => 'minimum']);
         });
 
-        return new Response($value, 200);
+        if (null !== $whitelistKey) {
+            $info = $this->aakResourceRepository->getOnlyWhitelisted($userPermission, $whitelistKey);
+            $serializedWhitelistedResources = $this->serializer->serialize($info, 'json', ['groups' => 'minimum']);
+        }
+
+        $resources = json_decode($serializedResources);
+
+        if (isset($serializedWhitelistedResources)) {
+            $resources = array_merge($resources, json_decode($serializedWhitelistedResources));
+        }
+
+        return new JsonResponse($resources, 200);
     }
 }
