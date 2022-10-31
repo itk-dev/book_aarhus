@@ -142,6 +142,27 @@ class ResourceFixtures extends Fixture
         $whitelistEntity->setUpdateTimestamp(new \DateTime());
         $manager->persist($whitelistEntity);
 
+        for ($i = 0; $i < 1000; ++$i) {
+            $res = new AAKResource();
+            $res->setResourceMail("test$i@bookaarhus.local.itkdev");
+            $res->setResourceName("test$i");
+            $res->setResourceDescription('description');
+            $res->setResourceEmailText('email text');
+            $res->setLocation('NEW LOCATION');
+            $res->setWheelchairAccessible(1 == rand(0, 1));
+            $res->setVideoConferenceEquipment(1 == rand(0, 1));
+            $res->setUpdateTimestamp(new \DateTime());
+            $res->setMonitorEquipment(1 == rand(0, 1));
+            $res->setCatering(1 == rand(0, 1));
+            $res->setAcceptanceFlow(1 == rand(0, 1));
+            $res->setCapacity(rand(1, 1000));
+            $res->setPermissionBusinessPartner(1 == rand(0, 1));
+            $res->setPermissionCitizen(1 == rand(0, 1));
+            $res->setPermissionEmployee(1 == rand(0, 1));
+            $res->setHasWhitelist(false);
+            $manager->persist($res);
+        }
+
         $manager->flush();
     }
 }

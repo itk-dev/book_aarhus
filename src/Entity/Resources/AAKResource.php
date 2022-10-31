@@ -16,7 +16,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class AAKResource
 {
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -24,25 +24,25 @@ class AAKResource
     private int $id;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\OneToMany(targetEntity="OpenHours", mappedBy="resource")
      */
     private Collection $openHours;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\OneToMany(targetEntity="HolidayOpenHours", mappedBy="resource")
      */
     private Collection $holidayOpenHours;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="ResourceMail", type="string", length=128, nullable=false)
      */
     private string $resourceMail;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="ResourceName", type="string", length=128, nullable=false)
      */
     private string $resourceName;
@@ -60,19 +60,19 @@ class AAKResource
     private ?string $resourceEmailText;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="Location", type="string", length=128, nullable=false)
      */
     private string $location;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="GeoCordinates", type="string", length=128, nullable=true)
      */
     private ?string $geoCoordinates;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="Capacity", type="bigint", nullable=true)
      */
     private ?int $capacity;
@@ -84,19 +84,19 @@ class AAKResource
     private ?string $resourceDescription;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="WheelChairAccessible", type="boolean", nullable=false)
      */
     private bool $wheelchairAccessible;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="VideoConferenceEquipment", type="boolean", nullable=false)
      */
     private bool $videoConferenceEquipment;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="MonitorEquipment", type="boolean", nullable=false)
      */
     private bool $monitorEquipment;
@@ -120,13 +120,13 @@ class AAKResource
     private ?string $formId;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="HasHolidayOpen", type="boolean", nullable=true)
      */
     private ?bool $hasHolidayOpen;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="HasOpen", type="boolean", nullable=true)
      */
     private ?bool $hasOpen;

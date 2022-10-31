@@ -36,6 +36,55 @@ class AAKResourceRepository extends ServiceEntityRepository
         return null;
     }
 
+    public function getAllByPermission(string $permission = null, string $whitelistKey = null): array
+    {
+        $qb = $this->createQueryBuilder('res');
+
+        if ('citizen' == $permission) {
+            $qb->andWhere($qb->expr()->eq('res.permissionCitizen', true));
+        } elseif ('businessPartner' == $permission) {
+            $qb->andWhere($qb->expr()->eq('res.permissionBusinessPartner', true));
+        }
+
+        if (null == $whitelistKey) {
+            $qb->andWhere($qb->expr()->neq('res.hasWhitelist', true));
+        } else {
+            $subQueryBuilder = $this->cvrWhitelistRepository->createQueryBuilder('w');
+            $subQuery = $subQueryBuilder->where('w.cvr = :whitelist')->andWhere('w.resourceId = res.id');
+
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->neq('res.hasWhitelist', true),
+                    $qb->expr()->exists($subQuery),
+                )
+            )->setParameter('whitelist', $whitelistKey);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function getOnlyWhitelisted(string $permission = null, string $whitelistKey = null) {
+        $qb = $this->createQueryBuilder('res');
+
+        if ('citizen' == $permission) {
+            $qb->andWhere($qb->expr()->eq('res.permissionCitizen', true));
+        } elseif ('businessPartner' == $permission) {
+            $qb->andWhere($qb->expr()->eq('res.permissionBusinessPartner', true));
+        }
+
+        $subQueryBuilder = $this->cvrWhitelistRepository->createQueryBuilder('w');
+        $subQuery = $subQueryBuilder->where('w.cvr = :whitelist')->andWhere('w.resourceId = res.id');
+
+        $qb->andWhere(
+            $qb->expr()->andX(
+                $qb->expr()->eq('res.hasWhitelist', true),
+                $qb->expr()->exists($subQuery),
+            )
+        )->setParameter('whitelist', $whitelistKey);
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function findAllLocations(string $whitelistKey = null): array
     {
         $qb = $this->createQueryBuilder('res');
