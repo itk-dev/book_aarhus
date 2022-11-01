@@ -106,9 +106,14 @@ services:
       - "1025"
       - "8025"
     labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=frontend"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.rule=Host(`${COMPOSE_DOMAIN}`)"
+
+  redis:
+    image: 'redis:6'
+    networks:
+      - app
+    ports:
+      - '6379'
 
 volumes:
   # Named volume requires that you have NFS shares enabled (performance boost on Macs).
