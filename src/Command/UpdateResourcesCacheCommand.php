@@ -2,17 +2,13 @@
 
 namespace App\Command;
 
-use App\Repository\Main\AAKResourceRepository;
-use Psr\Cache\CacheItemInterface;
-use Psr\Cache\InvalidArgumentException;
+use App\Service\ResourceServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Contracts\Cache\CacheInterface;
 
 #[AsCommand(
     name: 'app:resource:cache',
@@ -24,9 +20,7 @@ class UpdateResourcesCacheCommand extends Command
     public const ENABLE_PROGRESSBAR = 'enable-progressbar';
 
     public function __construct(
-        private readonly AAKResourceRepository $aakResourceRepository,
-        private readonly CacheInterface $resourceCache,
-        private readonly SerializerInterface $serializer,
+        private readonly ResourceServiceInterface $resourceService,
     ) {
         parent::__construct();
     }
@@ -48,61 +42,34 @@ class UpdateResourcesCacheCommand extends Command
         );
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $cacheLifetime = (int) $input->getOption(UpdateResourcesCacheCommand::CACHE_LIFETIME);
         $enableProgressbar = $input->getOption(UpdateResourcesCacheCommand::ENABLE_PROGRESSBAR);
 
-        $progressBar = new ProgressBar($output, 6);
+        $progressBar = new ProgressBar($output, 3);
         $progressBar->setFormat('[%bar%] %elapsed% (%memory%)');
 
         $enableProgressbar && $progressBar->start();
 
-        $this->resourceCache->delete('resources-');
+        $this->resourceService->removeResourcesCacheEntry();
+        $this->resourceService->getAllResources(null, $cacheLifetime);
 
         $enableProgressbar && $progressBar->advance();
 
-        $this->resourceCache->get('resources-', function (CacheItemInterface $cacheItem) use ($cacheLifetime) {
-            $cacheItem->expiresAfter($cacheLifetime);
-            $info = $this->aakResourceRepository->getAllByPermission();
-
-            return $this->serializer->serialize($info, 'json', ['groups' => 'minimum']);
-        });
+        $this->resourceService->removeResourcesCacheEntry('businessPartner');
+        $this->resourceService->getAllResources('businessPartner', $cacheLifetime);
 
         $enableProgressbar && $progressBar->advance();
 
-        $this->resourceCache->delete('resources-businessPartner');
-
-        $enableProgressbar && $progressBar->advance();
-
-        $this->resourceCache->get('resources-businessPartner', function (CacheItemInterface $cacheItem) use ($cacheLifetime) {
-            $cacheItem->expiresAfter($cacheLifetime);
-            $info = $this->aakResourceRepository->getAllByPermission('businessPartner');
-
-            return $this->serializer->serialize($info, 'json', ['groups' => 'minimum']);
-        });
-
-        $enableProgressbar && $progressBar->advance();
-
-        $this->resourceCache->delete('resources-citizen');
-
-        $enableProgressbar && $progressBar->advance();
-
-        $this->resourceCache->get('resources-citizen', function (CacheItemInterface $cacheItem) use ($cacheLifetime) {
-            $cacheItem->expiresAfter($cacheLifetime);
-            $info = $this->aakResourceRepository->getAllByPermission('citizen');
-
-            return $this->serializer->serialize($info, 'json', ['groups' => 'minimum']);
-        });
+        $this->resourceService->removeResourcesCacheEntry('citizen');
+        $this->resourceService->getAllResources('citizen', $cacheLifetime);
 
         $enableProgressbar && $progressBar->advance();
 
         $enableProgressbar && $progressBar->finish();
 
-        $output->writeln('');
+        $enableProgressbar && $output->writeln('');
 
         return Command::SUCCESS;
     }
