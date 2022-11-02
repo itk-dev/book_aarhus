@@ -142,6 +142,12 @@ class ResourceFixtures extends Fixture
         $whitelistEntity->setUpdateTimestamp(new \DateTime());
         $manager->persist($whitelistEntity);
 
+        $geoLocations = [
+            '56.15357461749666, 10.214345916610233',
+            '56.15408647075074, 10.199744795395857',
+            '56.20302907626276, 10.181046014442838',
+        ];
+
         for ($i = 0; $i < 1000; ++$i) {
             $res = new AAKResource();
             $res->setResourceMail("test$i@bookaarhus.local.itkdev");
@@ -151,6 +157,7 @@ class ResourceFixtures extends Fixture
             $res->setLocation('NEW LOCATION');
             $res->setWheelchairAccessible(1 == rand(0, 1));
             $res->setVideoConferenceEquipment(1 == rand(0, 1));
+            $res->setGeoCoordinates($geoLocations[rand(0, 2)]);
             $res->setUpdateTimestamp(new \DateTime());
             $res->setMonitorEquipment(1 == rand(0, 1));
             $res->setCatering(1 == rand(0, 1));
