@@ -4,17 +4,23 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-    client_id: '%env(CLIENT_ID)%'
-    tenant_id: '%env(TENANT_ID)%'
-    username: '%env(USERNAME)%'
-    password: '%env(PASSWORD)%'
-
+    microsoft_graph_tenant_id: '%env(string:MICROSOFT_GRAPH_TENANT_ID)%'
+    microsoft_graph_client_id: '%env(string:MICROSOFT_GRAPH_CLIENT_ID)%'
+    microsoft_graph_service_account_name: '%env(string:MICROSOFT_GRAPH_SERVICE_ACCOUNT_NAME)%'
+    microsoft_graph_service_account_username: '%env(string:MICROSOFT_GRAPH_SERVICE_ACCOUNT_USERNAME)%'
+    microsoft_graph_service_account_password: '%env(string:MICROSOFT_GRAPH_SERVICE_ACCOUNT_PASSWORD)%'
+    email_from_address: '%env(string:EMAIL_FROM_ADDRESS)%'
+    email_admin_notification: '%env(string:ADMIN_NOTIFICATION_EMAIL)%'
 
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+        bind:
+            $projectDir: '%kernel.project_dir%'
+            $bindDefaultDateFormat: '%env(string:APP_DEFAULT_DATE_FORMAT)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -27,3 +33,62 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Doctrine\AAKResourceExtension:
+        tags:
+            - { name: api_platform.doctrine.orm.query_extension.collection }
+            - { name: api_platform.doctrine.orm.query_extension.item }
+
+    App\Service\MicrosoftGraphBookingService:
+        arguments:
+            - '%microsoft_graph_tenant_id%'
+            - '%microsoft_graph_client_id%'
+            - '%microsoft_graph_service_account_username%'
+            - '%microsoft_graph_service_account_password%'
+            - '%microsoft_graph_service_account_name%'
+
+    App\Service\NotificationService:
+        arguments:
+            - '%email_from_address%'
+            - '%email_admin_notification%'
+
+    App\Service\BookingServiceInterface:
+        alias: 'App\Service\MicrosoftGraphBookingService'
+
+    App\Service\WebformServiceInterface:
+        alias: 'App\Service\WebformService'
+
+    App\Service\NotificationServiceInterface:
+        alias: 'App\Service\NotificationService'
+
+    resource.search_filter:
+        # https://api-platform.com/docs/core/filters/#search-filter
+        parent: 'api_platform.doctrine.orm.search_filter'
+        arguments: [ { location: 'exact', resourceName: 'partial', resourceMail: 'exact' } ]
+        tags:  [ 'api_platform.filter' ]
+        autowire: false
+        autoconfigure: false
+        public: false
+
+    resource.boolean_filter:
+        # https://api-platform.com/docs/core/filters/#boolean-filter
+        parent: 'api_platform.doctrine.orm.boolean_filter'
+        arguments: [ { wheelchairAccessible: ~, videoConferenceEquipment: ~, monitorEquipment: ~, acceptanceFlow: ~, catering: ~, permissionBusinessPartner: ~, permissionCitizen: ~ } ]
+        tags:  [ 'api_platform.filter' ]
+        autowire: false
+        autoconfigure: false
+        public: false
+
+    resource.range_filter:
+        # https://api-platform.com/docs/core/filters/#range-filter
+        parent: 'api_platform.doctrine.orm.range_filter'
+        arguments: [ { capacity: ~ } ]
+        tags:  [ 'api_platform.filter' ]
+        autowire: false
+        autoconfigure: false
+        public: false
+
+    App\OpenApi\OpenApiFactory:
+        decorates: 'api_platform.openapi.factory'
+        arguments: [ '@App\OpenApi\OpenApiFactory.inner' ]
+        autoconfigure: false

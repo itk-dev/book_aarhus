@@ -1,0 +1,126 @@
+{#
+# Variables
+#  - submission: A webform submission.
+#  - resource: A resource entity.
+#  - metaData: Additional data from os2forms
+#
+# Content that should be searched automatically is wrapped in a html container that has a unique id and the class "hasData"
+# i.e
+# <td id="userId" class="hasData">{{ submission.userId }}</td>
+# <span id="start" class="hidden hasData">{{ submission.start }}</span>
+#
+# Static data field ids:
+# - resource_name
+# - resource_mail
+# - subject
+# - start
+# - end
+# - name
+# - email
+# - userId
+#
+# Os2forms may provide additional meta data fields to a booking. The id of these fields is provided by the webform,
+# but maintain the same html structure as above.
+#}
+
+<!DOCTYPE html>
+<html>
+{% include 'inline-email-head.html.twig' %}
+<body>
+<table role="presentation" cellspacing="0" cellpadding="24" border="0" align="center" class="document">
+    <tr>
+        <td valign="top">
+            <table role="presentation" cellspacing="0" cellpadding="24" border="0" align="center" width="750" class="container" style="background-color: #ffffff;">
+                <tr>
+                    <td>
+                        <table class="booking-fields" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="100%">
+                            <tr>
+                                <td>
+                                    <table class="header" role="presentation" cellspacing="0" cellpadding="6" border="0" align="left" width="100%">
+                                        <tr>
+                                            <td>
+                                                <h2>Ny booking af {{ resource.resourceName }} - {{ resource.location }}</h2>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table class="resource zebra" cellspacing="0" cellpadding="6" border="0" align="left" width="100%" style="border-bottom: 1px solid #E9ECEF;">
+                                        <tr>
+                                            <td>
+                                                <h3>Resource</h3>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Resource navn:</td>
+                                            <td class="hasData" id="resourceName">{{ resource.resourceName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Resource email:</td>
+                                            <td class="hasData" id="resourceMail">{{ resource.resourceMail }}</td>
+                                        </tr>
+                                    </table>
+                                    <table class="container" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="12" border="0" align="center" width="750"><tr><td><!-- vertical spacing --></td></tr></table>
+                                    <table class="booking zebra" cellspacing="0" cellpadding="6" border="0" align="left" width="100%"style="border-bottom: 1px solid #E9ECEF;">
+                                        <tr>
+                                            <td>
+                                                <h3>Booking</h3>
+                                            </td>
+                                        </tr>
+                                        <tr class="subject">
+                                            <td>Booking emne:</td>
+                                            <td class="hasData" id="subject">{{ submission.subject }}</td>
+                                        </tr>
+                                        <tr class="start-time">
+                                            <td>Booking starttidspunkt:</td>
+                                            <td>{{ submission.fromObj|date("d/m/Y - H:i") }}<span id="start" class="hidden hasData" data-format="ISO-8601">{{ submission.start }}</span></td>
+                                        </tr>
+                                        <tr class="end-time">
+                                            <td>Booking sluttidspunkt:</td>
+                                            <td>{{ submission.toObj|date("d/m/Y - H:i") }}<span id="end" class="hidden hasData" data-format="ISO-8601">{{ submission.end }}</span></td>
+                                        </tr>
+                                        {# Metadata fields #}
+                                        {% for key, value in metaData %}
+                                            <tr class="{{ key }}">
+                                                <td>{{ key }}</td><td id="{{ key }}" class="metaData hasData">{{ value }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                    <table class="container" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="12" border="0" align="center" width="750"><tr><td><!-- vertical spacing --></td></tr></table>
+                                    <table class="user zebra" cellspacing="0" cellpadding="6" border="0" align="left" width="100%"style="border-bottom: 1px solid #E9ECEF;">
+                                        <tr>
+                                            <td>
+                                                <h3>Bruger</h3>
+                                            </td>
+                                        </tr>
+                                        <tr class="booker-name">
+                                            <td>Booking bruger navn:</td>
+                                            <td id="name" class="hasData">{{ submission.name }}</td>
+                                        </tr>
+                                        <tr class="booker-email">
+                                            <td>Booking bruger email:</td>
+                                            <td><a id="email" class="hasData" href="mailto:{{ submission.email }}?subject=Vdr. Booking af {{ resource.resourceName }} - {{ resource.location }}">{{ submission.email }}</a></td>
+                                        </tr>
+                                        <tr class="user-id">
+                                            <td>Booking bruger id:</td>
+                                            <td id="userId" class="hasData">{{ userUniqueId }}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="container" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="12" border="0" align="center" width="750"><tr><td><!-- vertical spacing --></td></tr></table>
+                        <table class="container" role="presentation" cellspacing="0" cellpadding="6" border="0" align="center" width="750">
+                            <tr>
+                                <td>
+                                    Denne mail er sendt fra <a href="https://booking.aarhus.dk">Book Aarhus.</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+
+</html>

@@ -1,0 +1,1150 @@
+openapi: 3.0.0
+info:
+  title: 'Book Aarhus API Service'
+  description: 'API Service for Book Aarhus'
+  license:
+    name: MIT
+  version: '1'
+servers:
+  -
+    url: /
+    description: ''
+paths:
+  /v1/bookings-webform:
+    post:
+      operationId: post-v1-create-booking-webform-submit
+      tags:
+        - Booking
+      responses:
+        201:
+          description: Created
+        400:
+          description: 'Invalid input'
+        422:
+          description: 'Unprocessable entity'
+      summary: 'Create a booking from a Drupal Webform submit.'
+      description: 'Create a booking from a Drupal Webform submit.'
+      parameters: []
+      requestBody:
+        description: 'The new Booking resource'
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/Booking.WebformBookingInput.jsonld'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booking.WebformBookingInput'
+          text/html:
+            schema:
+              $ref: '#/components/schemas/Booking.WebformBookingInput'
+        required: true
+      deprecated: false
+    parameters: []
+  /v1/busy-intervals:
+    get:
+      operationId: get-v1-busy-intervals
+      tags:
+        - BusyInterval
+      responses:
+        200:
+          description: OK
+          content:
+            application/ld+json:
+              examples: null
+          headers: {  }
+      summary: 'Retrieves busy intervals.'
+      description: 'Retrieves busy intervals.'
+      parameters:
+        -
+          name: resources
+          in: query
+          description: 'Array of resources to request busy intervals for.'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: array
+            items:
+              type: string
+              example: test@bookaarhus.local.itkdev.dk
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: dateStart
+          in: query
+          description: 'Start time for the search interval (DateTime. Expected format: "2022-05-30T17:32:28Z")'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+            format: date-time
+            example: '2022-05-30T17:32:28Z'
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: dateEnd
+          in: query
+          description: 'End time for the search interval (DateTime. Expected format: "2022-05-30T17:32:28Z")'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+            format: date-time
+            example: '2022-06-22T17:32:28Z'
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  /v1/locations:
+    get:
+      operationId: get-v1-locations
+      tags:
+        - Location
+      responses:
+        200:
+          description: OK
+          content:
+            application/ld+json:
+              examples: null
+          headers: {  }
+      summary: 'Retrieves locations.'
+      description: 'Retrieves locations.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  /v1/resources:
+    get:
+      operationId: getResourceCollection
+      tags:
+        - Resource
+      responses:
+        200:
+          description: 'Resource collection'
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                properties:
+                  'hydra:member': { type: array, items: { $ref: '#/components/schemas/Resource.jsonld-resource' } }
+                  'hydra:totalItems': { type: integer, minimum: 0 }
+                  'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } }, example: { '@id': string, type: string, 'hydra:first': string, 'hydra:last': string, 'hydra:previous': string, 'hydra:next': string } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                required:
+                  - 'hydra:member'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Resource-resource'
+            text/html:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Resource-resource'
+      summary: 'Retrieves the collection of Resource resources.'
+      description: 'Retrieves the collection of Resource resources.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: location
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'location[]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          allowReserved: false
+        -
+          name: resourceName
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: resourceMail
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'resourceMail[]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          allowReserved: false
+        -
+          name: wheelchairAccessible
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: boolean
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: videoConferenceEquipment
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: boolean
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: monitorEquipment
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: boolean
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: acceptanceFlow
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: boolean
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: catering
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: boolean
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: permissionBusinessPartner
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: boolean
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: permissionCitizen
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: boolean
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'capacity[between]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'capacity[gt]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'capacity[gte]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'capacity[lt]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'capacity[lte]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  /v1/resources-all:
+    get:
+      operationId: get-v1-all-bookings
+      tags:
+        - Resource
+      responses:
+        200:
+          description: ''
+      summary: 'Get all resources.'
+      description: 'Get all resources in a minified view.'
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/v1/resources/{id}':
+    get:
+      operationId: getResourceItem
+      tags:
+        - Resource
+      responses:
+        200:
+          description: 'Resource resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Resource.jsonld-resource'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource-resource'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/Resource-resource'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a Resource resource.'
+      description: 'Retrieves a Resource resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  /v1/user-bookings:
+    get:
+      operationId: get-v1-bookings
+      tags:
+        - UserBooking
+      responses:
+        200:
+          description: OK
+          content:
+            application/ld+json:
+              examples: null
+          headers: {  }
+      summary: 'Retrieves user bookings from a specific user.'
+      description: 'Retrieves user bookings from a specific user.'
+      parameters:
+        -
+          name: userId
+          in: query
+          description: 'ID of the user to retrieve bookings for'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+            format: string
+            example: '1'
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/v1/user-bookings/{id}':
+    get:
+      operationId: getUserBookingItem
+      tags:
+        - UserBooking
+      responses:
+        200:
+          description: 'UserBooking resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/UserBooking.jsonld-userBooking'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserBooking-userBooking'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/UserBooking-userBooking'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a UserBooking resource.'
+      description: 'Retrieves a UserBooking resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    delete:
+      operationId: deleteUserBookingItem
+      tags:
+        - UserBooking
+      responses:
+        204:
+          description: 'UserBooking resource deleted'
+        404:
+          description: 'Resource not found'
+      summary: 'Removes the UserBooking resource.'
+      description: 'Removes the UserBooking resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+components:
+  schemas:
+    Booking:
+      type: object
+      description: ''
+      properties:
+        id:
+          type: string
+        resourceEmail:
+          type: string
+        resourceName:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        userMail:
+          type: string
+        userName:
+          type: string
+        metaData:
+          type: array
+          items:
+            type: string
+        userId:
+          type: string
+        userPermission:
+          type: string
+    Booking.WebformBookingInput:
+      type: object
+      description: ''
+      properties:
+        data:
+          default:
+            webform:
+              id: ''
+            submission:
+              uuid: ''
+          example:
+            webform:
+              id: ''
+            submission:
+              uuid: ''
+          type: array
+          items:
+            type: string
+        links:
+          default:
+            sender: ''
+            get_submission_url: ''
+          example:
+            sender: ''
+            get_submission_url: ''
+          type: array
+          items:
+            type: string
+    Booking.WebformBookingInput.jsonld:
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        data:
+          default:
+            webform:
+              id: ''
+            submission:
+              uuid: ''
+          example:
+            webform:
+              id: ''
+            submission:
+              uuid: ''
+          type: array
+          items:
+            type: string
+        links:
+          default:
+            sender: ''
+            get_submission_url: ''
+          example:
+            sender: ''
+            get_submission_url: ''
+          type: array
+          items:
+            type: string
+    Booking.jsonld:
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        id:
+          type: string
+        resourceEmail:
+          type: string
+        resourceName:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        userMail:
+          type: string
+        userName:
+          type: string
+        metaData:
+          type: array
+          items:
+            type: string
+        userId:
+          type: string
+        userPermission:
+          type: string
+    BusyInterval:
+      type: object
+      description: ''
+      properties:
+        id:
+          type: string
+        resource:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+          nullable: true
+        endTime:
+          type: string
+          format: date-time
+          nullable: true
+    BusyInterval.jsonld:
+      type: object
+      description: ''
+      properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        id:
+          type: string
+        resource:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+          nullable: true
+        endTime:
+          type: string
+          format: date-time
+          nullable: true
+    HolidayOpenHours-resource:
+      type: object
+      description: ''
+      properties:
+        holidayOpen:
+          type: string
+          format: date-time
+        holidayClose:
+          type: string
+          format: date-time
+        updateTimestamp:
+          type: string
+          format: date-time
+    HolidayOpenHours.jsonld-resource:
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        holidayOpen:
+          type: string
+          format: date-time
+        holidayClose:
+          type: string
+          format: date-time
+        updateTimestamp:
+          type: string
+          format: date-time
+    Location:
+      type: object
+      description: ''
+      properties:
+        name:
+          type: string
+    Location.jsonld:
+      type: object
+      description: ''
+      properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        name:
+          type: string
+    OpenHours-resource:
+      type: object
+      description: ''
+      properties:
+        id:
+          readOnly: true
+          type: integer
+        weekday:
+          type: integer
+        open:
+          type: string
+          format: date-time
+        close:
+          type: string
+          format: date-time
+        updateTimestamp:
+          type: string
+          format: date-time
+    OpenHours.jsonld-resource:
+      type: object
+      description: ''
+      properties:
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        id:
+          readOnly: true
+          type: integer
+        weekday:
+          type: integer
+        open:
+          type: string
+          format: date-time
+        close:
+          type: string
+          format: date-time
+        updateTimestamp:
+          type: string
+          format: date-time
+    Resource-resource:
+      type: object
+      description: Extbooking.aakresources.
+      properties:
+        id:
+          readOnly: true
+          type: integer
+        openHours:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpenHours-resource'
+        holidayOpenHours:
+          type: array
+          items:
+            $ref: '#/components/schemas/HolidayOpenHours-resource'
+        resourceMail:
+          type: string
+        resourceName:
+          type: string
+        resourceImage:
+          type: string
+          nullable: true
+        resourceEmailText:
+          type: string
+          nullable: true
+        location:
+          type: string
+        geoCoordinates:
+          type: string
+          nullable: true
+        capacity:
+          type: string
+          nullable: true
+        resourceDescription:
+          type: string
+          nullable: true
+        wheelchairAccessible:
+          type: boolean
+        videoConferenceEquipment:
+          type: boolean
+        monitorEquipment:
+          type: boolean
+        acceptanceFlow:
+          type: boolean
+        catering:
+          type: boolean
+        formId:
+          type: string
+          nullable: true
+        hasHolidayOpen:
+          type: boolean
+          nullable: true
+        hasOpen:
+          type: boolean
+          nullable: true
+        hasWhitelist:
+          type: boolean
+          nullable: true
+        permissionEmployee:
+          type: boolean
+          nullable: true
+        permissionCitizen:
+          type: boolean
+          nullable: true
+        permissionBusinessPartner:
+          type: boolean
+          nullable: true
+        updateTimestamp:
+          type: string
+          format: date-time
+    Resource.jsonld-resource:
+      type: object
+      description: Extbooking.aakresources.
+      properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        id:
+          readOnly: true
+          type: integer
+        openHours:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpenHours.jsonld-resource'
+        holidayOpenHours:
+          type: array
+          items:
+            $ref: '#/components/schemas/HolidayOpenHours.jsonld-resource'
+        resourceMail:
+          type: string
+        resourceName:
+          type: string
+        resourceImage:
+          type: string
+          nullable: true
+        resourceEmailText:
+          type: string
+          nullable: true
+        location:
+          type: string
+        geoCoordinates:
+          type: string
+          nullable: true
+        capacity:
+          type: string
+          nullable: true
+        resourceDescription:
+          type: string
+          nullable: true
+        wheelchairAccessible:
+          type: boolean
+        videoConferenceEquipment:
+          type: boolean
+        monitorEquipment:
+          type: boolean
+        acceptanceFlow:
+          type: boolean
+        catering:
+          type: boolean
+        formId:
+          type: string
+          nullable: true
+        hasHolidayOpen:
+          type: boolean
+          nullable: true
+        hasOpen:
+          type: boolean
+          nullable: true
+        hasWhitelist:
+          type: boolean
+          nullable: true
+        permissionEmployee:
+          type: boolean
+          nullable: true
+        permissionCitizen:
+          type: boolean
+          nullable: true
+        permissionBusinessPartner:
+          type: boolean
+          nullable: true
+        updateTimestamp:
+          type: string
+          format: date-time
+    UserBooking-userBooking:
+      type: object
+      description: ''
+      properties:
+        id:
+          type: string
+        hitId:
+          type: string
+        subject:
+          type: string
+        displayName:
+          type: string
+        status:
+          type: string
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        resourceMail:
+          type: string
+        resourceName:
+          type: string
+    UserBooking.jsonld-userBooking:
+      type: object
+      description: ''
+      properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
+        id:
+          type: string
+        hitId:
+          type: string
+        subject:
+          type: string
+        displayName:
+          type: string
+        status:
+          type: string
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        resourceMail:
+          type: string
+        resourceName:
+          type: string
+  responses: {  }
+  parameters: {  }
+  examples: {  }
+  requestBodies: {  }
+  headers: {  }
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      description: 'Value for the Authorization header parameter.'
+      name: Authorization
+      in: header
+security:
+  -
+    apiKey: []
+tags: []

@@ -1,0 +1,33 @@
+---
+resources:
+  App\Entity\Main\UserBooking:
+    attributes:
+      normalization_context:
+        groups: ['userBooking']
+    itemOperations:
+      get: ~
+      delete: ~
+    collectionOperations:
+      get:
+        openapi_context:
+          operationId: get-v1-bookings
+          description: Retrieves user bookings from a specific user.
+          summary: Retrieves user bookings from a specific user.
+          tags:
+          parameters:
+            - schema:
+                type: string
+                format: string
+                example: "1"
+              in: query
+              name: userId
+              required: true
+              description: "ID of the user to retrieve bookings for"
+          responses:
+            '200':
+              description: OK
+              content:
+                application/ld+json:
+                  examples:
+              headers: { }
+      

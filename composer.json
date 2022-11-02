@@ -1,33 +1,74 @@
 {
-    "type": "project",
+    "name": "itk-dev/book_aarhus",
+    "description": "Book Aarhus API Service",
     "license": "proprietary",
-    "minimum-stability": "stable",
-    "prefer-stable": true,
+    "type": "project",
     "require": {
-        "php": ">=7.4",
+        "php": ">=8.1.0",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "microsoft/microsoft-graph": "^1.62",
-        "symfony/console": "5.4.*",
-        "symfony/dotenv": "5.4.*",
-        "symfony/flex": "^1.17|^2",
-        "symfony/framework-bundle": "5.4.*",
-        "symfony/runtime": "5.4.*",
-        "symfony/yaml": "5.4.*",
-        "ext-json": "*"
+        "api-platform/core": "^2.6",
+        "doctrine/annotations": "^1.0",
+        "doctrine/doctrine-bundle": "^2.6",
+        "doctrine/doctrine-migrations-bundle": "^3.2",
+        "doctrine/orm": "^2.12",
+        "eluceo/ical": "^2.7",
+        "microsoft/microsoft-graph": "^1.66",
+        "nelmio/cors-bundle": "^2.2",
+        "phpdocumentor/reflection-docblock": "^5.3",
+        "phpstan/phpdoc-parser": "^1.5",
+        "symfony/amqp-messenger": "6.1.*",
+        "symfony/asset": "6.1.*",
+        "symfony/cache": "6.1.*",
+        "symfony/console": "6.1.*",
+        "symfony/doctrine-messenger": "6.1.*",
+        "symfony/dom-crawler": "6.1.*",
+        "symfony/dotenv": "6.1.*",
+        "symfony/expression-language": "6.1.*",
+        "symfony/flex": "^2",
+        "symfony/framework-bundle": "6.1.*",
+        "symfony/http-client": "6.1.*",
+        "symfony/mailer": "6.1.*",
+        "symfony/messenger": "6.1.*",
+        "symfony/monolog-bundle": "^3.8",
+        "symfony/property-access": "6.1.*",
+        "symfony/property-info": "6.1.*",
+        "symfony/proxy-manager-bridge": "6.1.*",
+        "symfony/runtime": "6.1.*",
+        "symfony/security-bundle": "6.1.*",
+        "symfony/serializer": "6.1.*",
+        "symfony/twig-bundle": "6.1.*",
+        "symfony/uid": "6.1.*",
+        "symfony/validator": "6.1.*",
+        "symfony/yaml": "6.1.*"
     },
-    "config": {
-        "allow-plugins": {
-            "composer/package-versions-deprecated": true,
-            "symfony/flex": true,
-            "symfony/runtime": true
-        },
-        "optimize-autoloader": true,
-        "preferred-install": {
-            "*": "dist"
-        },
-        "sort-packages": true
+    "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.4",
+        "ergebnis/composer-normalize": "^2.27",
+        "friendsofphp/php-cs-fixer": "^3.8",
+        "hectorj/safe-php-psalm-plugin": "^1.4",
+        "phpunit/phpunit": "^9.5",
+        "psalm/plugin-symfony": "^3.1",
+        "symfony/browser-kit": "6.1.*",
+        "symfony/maker-bundle": "^1.43",
+        "symfony/phpunit-bridge": "^6.0",
+        "vimeo/psalm": "^4.27",
+        "weirdan/doctrine-psalm-plugin": "^2.3",
+        "zenstruck/messenger-test": "^1.4"
     },
+    "replace": {
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-php72": "*",
+        "symfony/polyfill-php73": "*",
+        "symfony/polyfill-php74": "*",
+        "symfony/polyfill-php80": "*"
+    },
+    "conflict": {
+        "symfony/symfony": "*"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "App\\": "src/"
@@ -38,30 +79,64 @@
             "App\\Tests\\": "tests/"
         }
     },
-    "replace": {
-        "symfony/polyfill-ctype": "*",
-        "symfony/polyfill-iconv": "*",
-        "symfony/polyfill-php72": "*"
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "symfony/flex": true,
+            "symfony/runtime": true,
+            "ergebnis/composer-normalize": true
+        },
+        "optimize-autoloader": true,
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "6.1.*"
+        }
     },
     "scripts": {
-        "auto-scripts": {
-            "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
-        },
         "post-install-cmd": [
             "@auto-scripts"
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        },
+        "coding-standards-apply": [
+            "vendor/bin/php-cs-fixer fix"
+        ],
+        "coding-standards-check": [
+            "vendor/bin/php-cs-fixer fix --dry-run"
+        ],
+        "prepare-code": [
+            "@coding-standards-apply",
+            "@tests",
+            "@update-api-spec",
+            "@psalm",
+            "composer normalize"
+        ],
+        "psalm": [
+            "./vendor/bin/psalm --no-cache"
+        ],
+        "queues": [
+            "bin/console messenger:consume async --failure-limit=1 -vvv"
+        ],
+        "tests": [
+            "bin/console --env=test doctrine:database:drop --if-exists --force --quiet",
+            "bin/console --env=test doctrine:database:create --no-interaction --if-not-exists --quiet",
+            "bin/console --env=test doctrine:migrations:migrate --no-interaction --quiet",
+            "vendor/bin/phpunit --stop-on-failure"
+        ],
+        "update-api-spec": [
+            "bin/console api:openapi:export --output=public/api-spec-v1.yaml --yaml --no-interaction",
+            "bin/console api:openapi:export --output=public/api-spec-v1.json --no-interaction"
         ]
-    },
-    "conflict": {
-        "symfony/symfony": "*"
-    },
-    "extra": {
-        "symfony": {
-            "allow-contrib": false,
-            "require": "5.4.*"
-        }
     }
 }

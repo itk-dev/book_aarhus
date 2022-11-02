@@ -1,0 +1,15 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    App\Repository\Main\AAKResourceRepository: ~
+
+    App\Service\BookingServiceInterface:
+        alias: 'App\Service\MicrosoftGraphBookingService'
+
+    App\Service\WebformServiceInterface:
+        alias: 'App\Service\WebformService'
+
+    App\Service\NotificationServiceInterface: ~

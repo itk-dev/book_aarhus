@@ -22,20 +22,46 @@ services:
       - MYSQL_DATABASE=db
       #- ENCRYPT=1 # Uncomment to enable database encryption.
 
+  azure-sql:
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    networks:
+      - app
+    ports:
+      - '1433'
+    environment:
+      # Database user: sa
+      MSSQL_SA_PASSWORD: P@ssword123 # (Minimum length 8 characters, strength required)
+      ACCEPT_EULA: Y
+
   phpfpm:
     image: itkdev/php8.1-fpm:latest
     networks:
       - app
+      - frontend
     environment:
       - XDEBUG_MODE=${XDEBUG_MODE:-off}
       - XDEBUG_SESSION=${XDEBUG_SESSION:-0}
       - PHP_MAX_EXECUTION_TIME=30
       - PHP_MEMORY_LIMIT=256M
-      # - PHP_MAIL=1 # Uncomment to enable mailhog.
+      #- PHP_MAIL=1 # Uncomment to enable mailhog.
       - DOCKER_HOST_DOMAIN=${COMPOSE_DOMAIN}
-      - COMPOSER_VERSION=1
+      - COMPOSER_VERSION=2
+      - PHP_IDE_CONFIG=serverName=localhost
+    extra_hosts:
+        # Used by ssh tunnel to Azure SQL Server
+        #
+        # Run these commands to make it actually work:
+        #
+        ## Copy ssh keys to container
+        # $ docker-compose exec phpfpm mkdir -p /root/.ssh
+        # $ docker-compose cp ~/.ssh/id_rsa phpfpm:/root/.ssh/id_rsa
+        # $ docker-compose cp ~/.ssh/id_rsa-cert.pub phpfpm:/root/.ssh/id_rsa-cert.pub
+        ## Create ssh tunnel using IPv4 (`-4`)
+        # $ docker-compose exec phpfpm ssh -4 -f deploy@admwebstgitk01.admnonwin.aarhuskommune.dk -L 1433:externalbooking.database.windows.net:1433 -N
+        - "externalbooking.database.windows.net:127.0.0.1"
     depends_on:
       - mariadb
+      - azure-sql
     volumes:
       - nfsApp:/app:delegated
 
@@ -56,8 +82,20 @@ services:
       - "traefik.docker.network=frontend"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${COMPOSE_DOMAIN}`)"
 #      HTTPS config - uncomment to enable redirect from :80 to :443
-#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=redirect-to-https"
-#      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+
+  rabbit:
+    image: rabbitmq:3.9-management
+    networks:
+      - app
+      - frontend
+    ports:
+      - "15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
+      - RABBITMQ_ERLANG_COOKIE='d53f319cd7376f8f840aaf9889f315ab'
 
   mailhog:
     image: mailhog/mailhog
@@ -68,9 +106,14 @@ services:
       - "1025"
       - "8025"
     labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=frontend"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.rule=Host(`${COMPOSE_DOMAIN}`)"
+
+  redis:
+    image: 'redis:6'
+    networks:
+      - app
+    ports:
+      - '6379'
 
 volumes:
   # Named volume requires that you have NFS shares enabled (performance boost on Macs).

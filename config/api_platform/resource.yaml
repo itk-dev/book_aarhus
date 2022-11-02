@@ -1,0 +1,25 @@
+---
+resources:
+  App\Entity\Resources\AAKResource:
+    attributes:
+      normalization_context:
+        groups: ['resource']
+    shortName: 'Resource'
+    itemOperations:
+      get:
+    collectionOperations:
+      get:
+        filters: ['resource.search_filter', 'resource.boolean_filter', 'resource.range_filter']
+      get_all:
+        method: GET
+        path: '/resources-all'
+        controller: App\Controller\GetAllResourcesController
+        openapi_context:
+          description: Get all resources in a minified view.
+          summary: Get all resources.
+          operationId: get-v1-all-bookings
+          tags:
+            - Resource
+          parameters: []
+          responses:
+            '200':
