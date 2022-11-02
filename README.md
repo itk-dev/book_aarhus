@@ -44,6 +44,14 @@ docker compose exec phpfpm bin/console doctrine:fixtures:load --em=resources --g
 
 The api can be accessed at `/`.
 
+## Resource cache
+
+Resources are cached for the /v1/resources endpoint. To update cache entries:
+
+```shell
+docker compose exec phpfpm bin/console app:resource:cache --no-debug
+```
+
 ## PRs
 
 Before creating a PR make sure the code is ready.

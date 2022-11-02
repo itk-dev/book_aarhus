@@ -62,6 +62,12 @@ class CreateBookingHandler
                     $booking->getStartTime(),
                     $booking->getEndTime(),
                 );
+
+                // Register notification job.
+                $this->bus->dispatch(new SendBookingNotificationMessage(
+                    $booking,
+                    NotificationTypeEnum::REQUEST_RECEIVED
+                ));
             } else {
                 $this->bookingService->createBookingForResource(
                     $booking->getResourceEmail(),
