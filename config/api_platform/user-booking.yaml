@@ -7,7 +7,24 @@ resources:
     itemOperations:
       get: ~
       delete: ~
-      patch: ~
+      update_booking_time:
+        input: App\Dto\UpdateBookingTimeInput
+        method: POST
+        path: '/user-booking/update-booking-time'
+        controller: App\Controller\CreateBookingWebformSubmitController
+        openapi_context:
+          operationId: update_booking_time-v1-user-bookings
+          description: Update the time for an existing booking.
+          summary: Update the time for an existing booking.
+          parameters:
+          responses:
+            '200':
+              description: OK
+              content:
+                application/ld+json:
+                  examples:
+              headers: { }
+
     collectionOperations:
       get:
         openapi_context:

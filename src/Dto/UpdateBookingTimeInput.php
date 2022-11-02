@@ -2,8 +2,9 @@
 
 namespace App\Dto;
 
-final class PatchBookingInput
+final class UpdateBookingTimeInput
 {
+    public string $id;
     public string $startTime;
     public string $endTime;
 }
