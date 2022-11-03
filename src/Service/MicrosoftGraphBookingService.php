@@ -33,7 +33,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         private readonly string $serviceAccountUsername,
         private readonly string $serviceAccountPassword,
         private readonly string $serviceAccountName,
-        private readonly CacheInterface $cache,
+        private readonly CacheInterface $graphCache,
     ) {
     }
 
@@ -42,7 +42,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function authenticateAsServiceAccount(): string
     {
-        return $this->cache->get('serviceAccountToken', function (CacheItemInterface $item) {
+        return $this->graphCache->get('serviceAccountToken', function (CacheItemInterface $item) {
             $tokenEntry = $this->authenticateAsUser($this->serviceAccountUsername, $this->serviceAccountPassword);
 
             $item->expiresAfter($tokenEntry['expires_in'] ?? 3600);
