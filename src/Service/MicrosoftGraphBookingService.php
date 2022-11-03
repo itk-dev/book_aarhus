@@ -285,11 +285,11 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
         // Only allow changing start and end times.
         $newData = [
-            'end' => [
+            'start' => [
                 'dateTime' => $booking->start->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
                 'timeZone' => 'UTC',
             ],
-            'start' => [
+            'end' => [
                 'dateTime' => $booking->end->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
                 'timeZone' => 'UTC',
             ],
@@ -297,17 +297,25 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
         if ($booking->ownedByServiceAccount) {
             $bookingId = $booking->id;
+
+            $response = $this->request("/me/events/$bookingId", $token, 'PATCH', $newData);
         } else {
-            $eventInResource = $this->getEventFromResourceByICalUid($booking->resourceMail, $booking->iCalUId);
+            $resourceMail = $booking->resourceMail;
+
+            $eventInResource = $this->getEventFromResourceByICalUid($resourceMail, $booking->iCalUId);
 
             if (is_null($eventInResource)) {
                 throw new UserBookingException('Could not find booking in resource.');
             }
 
             $bookingId = urlencode($eventInResource['id']);
-        }
 
-        $response = $this->request("/me/events/$bookingId", $token, 'PATCH', $newData);
+            try {
+                $response = $this->request("/users/$resourceMail/events/$bookingId", $token, 'PATCH', $newData);
+            } catch (Exception $e) {
+                $p = 1;
+            }
+        }
 
         return $response->getStatus();
     }
