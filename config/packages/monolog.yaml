@@ -1,23 +1,13 @@
-monolog:
-    channels:
-        - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
-
 when@dev:
     monolog:
+        channels:
+            - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
         handlers:
             main:
                 type: stream
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
                 level: info
                 channels: ["!event", "!doctrine"]
-            # uncomment to get logging in your browser
-            # you may have to allow bigger header sizes in your Web server configuration
-            #firephp:
-            #    type: firephp
-            #    level: info
-            #chromephp:
-            #    type: chromephp
-            #    level: info
             console:
                 type: console
                 process_psr_3_messages: false
@@ -57,5 +47,5 @@ when@prod:
                 channels: ["!event", "!doctrine"]
             deprecation:
                 type: stream
-                channels: [deprecation]
+                level: debug
                 path: php://stderr

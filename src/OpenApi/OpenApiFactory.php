@@ -2,9 +2,9 @@
 
 namespace App\OpenApi;
 
+use ApiPlatform\Core\OpenApi\Factory\OpenApiFactoryInterface;
 use ApiPlatform\Core\OpenApi\Model\Paths;
-use ApiPlatform\OpenApi\Factory\OpenApiFactoryInterface;
-use ApiPlatform\OpenApi\OpenApi;
+use ApiPlatform\Core\OpenApi\OpenApi;
 
 class OpenApiFactory implements OpenApiFactoryInterface
 {
