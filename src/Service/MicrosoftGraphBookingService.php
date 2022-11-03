@@ -295,29 +295,41 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             ],
         ];
 
-        if ($booking->ownedByServiceAccount) {
-            $bookingId = $booking->id;
+        $resourceMail = $booking->resourceMail;
 
-            $response = $this->request("/me/events/$bookingId", $token, 'PATCH', $newData);
-        } else {
-            $resourceMail = $booking->resourceMail;
+        // Search interval for existing bookings. Report error if interval is booked already.
+        $busyIntervals = $this->getBusyIntervals([$resourceMail], $booking->start, $booking->end, $token);
 
-            $eventInResource = $this->getEventFromResourceByICalUid($resourceMail, $booking->iCalUId);
-
-            if (is_null($eventInResource)) {
-                throw new UserBookingException('Could not find booking in resource.');
-            }
-
-            $bookingId = urlencode($eventInResource['id']);
-
-            try {
-                $response = $this->request("/users/$resourceMail/events/$bookingId", $token, 'PATCH', $newData);
-            } catch (Exception $e) {
-                $p = 1;
-            }
+        if (!empty($busyIntervals[$resourceMail])) {
+            throw new UserBookingException('Booking interval conflict.', 409);
         }
 
-        return $response->getStatus();
+        try {
+            if ($booking->ownedByServiceAccount) {
+                $bookingId = $booking->id;
+
+                $response = $this->request("/me/events/$bookingId", $token, 'PATCH', $newData);
+            } else {
+
+                $eventInResource = $this->getEventFromResourceByICalUid($resourceMail, $booking->iCalUId);
+
+                if (is_null($eventInResource)) {
+                    throw new UserBookingException('Could not find booking in resource.');
+                }
+
+                $bookingId = urlencode($eventInResource['id']);
+
+                $response = $this->request("/users/$resourceMail/events/$bookingId", $token, 'PATCH', $newData);
+            }
+
+            if (200 != $response->getStatus()) {
+                throw new UserBookingException('Booking could not be updated', (int) $response->getStatus());
+            }
+
+            return $response->getStatus();
+        } catch (Exception $e) {
+            throw new UserBookingException($e->getMessage(), (int) $e->getCode());
+        }
     }
 
     /**
