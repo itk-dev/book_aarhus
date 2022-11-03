@@ -310,7 +310,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
                 $response = $this->request("/me/events/$bookingId", $token, 'PATCH', $newData);
             } else {
-
                 $eventInResource = $this->getEventFromResourceByICalUid($resourceMail, $booking->iCalUId);
 
                 if (is_null($eventInResource)) {
