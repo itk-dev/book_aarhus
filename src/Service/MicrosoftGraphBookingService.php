@@ -144,6 +144,65 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
+     * @throws MicrosoftGraphCommunicationException
+     */
+    public function isBookingConflict($resourceEmail, $startTime, $endTime, $accessToken, array $ignoreICalUIds = null): bool
+    {
+        $token = $accessToken ?: $this->authenticateAsServiceAccount();
+        $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
+        $endString = $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
+
+        $filterString = "\$filter=start/dateTime ge '$startString' and end/dateTime lt '$endString'";
+
+        $response = $this->request("/users/$resourceEmail/calendar/events?$filterString", $token);
+
+        $body = $response->getBody();
+
+        $entries = $body['value'];
+
+        if (count($entries) > 0) {
+            if (null != $ignoreICalUIds) {
+                foreach ($entries as $entry) {
+                    if (!in_array($entry['iCalUId'], $ignoreICalUIds)) {
+                        return true;
+                    }
+                }
+            } else {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @throws MicrosoftGraphCommunicationException
+     */
+    public function isOnlyBookingInInterval($resourceEmail, $startTime, $endTime, string $iCalUId, $accessToken): bool
+    {
+        $token = $accessToken ?: $this->authenticateAsServiceAccount();
+
+        $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
+        $endString = $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
+
+        $filterString = "\$filter=start/dateTime ge '$startString' and end/dateTime lt '$endString'";
+
+        $response = $this->request("/users/$resourceEmail/calendar/events?$filterString", $token);
+
+        $body = $response->getBody();
+
+        $entries = $body['value'];
+
+        if (count($entries) == 1) {
+            if ($entries[0]['iCalUId'] == $iCalUId) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
@@ -152,10 +211,9 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     {
         $token = $this->authenticateAsServiceAccount();
 
-        // Search interval for existing bookings. Report error if interval is booked already.
-        $busyIntervals = $this->getBusyIntervals([$resourceEmail], $startTime, $endTime, $token);
+        $bookingConflict = $this->isBookingConflict($resourceEmail, $startTime, $endTime, $token);
 
-        if (!empty($busyIntervals[$resourceEmail])) {
+        if ($bookingConflict) {
             throw new BookingCreateException('Booking interval conflict.', 409);
         }
 
@@ -193,20 +251,16 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
         $response = $this->request("/users/$resourceEmail/events", $token, 'POST', $body);
 
-        // Make sure only the new booking exists in the interval.
-        $busyIntervals = $this->getBusyIntervals([$resourceEmail], $startTime, $endTime, $token);
-
-        if (empty($busyIntervals[$resourceEmail])) {
-            throw new BookingCreateException('Booking was not created.', 404);
-        }
-
-        // TODO: Decide if this should be added.
+        // TODO: Make sure only the new booking is the only booking in the interval.
+        // TODO: Delete booking if more than one booking exists in interval.
         /*
-        if (count($busyIntervals[$resourceEmail]) > 1) {
-            // TODO: Remove booking again.
-            throw new \Exception('Booking interval conflict.', 409);
+        $iCalUId = "TODO: Get from created booking.";
+        $aloneInInterval = $this->isOnlyBookingInInterval($resourceEmail, $startTime, $endTime, $iCalUId);
+
+        if (!$aloneInInterval) {
+            throw new BookingCreateException('Booking was not created.', 409);
         }
-        */
+       */
 
         return $response->getBody();
     }
@@ -297,15 +351,15 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
         $resourceMail = $booking->resourceMail;
 
-        // Search interval for existing bookings. Report error if interval is booked already.
-        $busyIntervals = $this->getBusyIntervals([$resourceMail], $booking->start, $booking->end, $token);
+        $bookingConflict = $this->isBookingConflict($resourceMail, $booking->start, $booking->end, $token, [$booking->iCalUId]);
 
-        if (!empty($busyIntervals[$resourceMail])) {
+        if ($bookingConflict) {
             throw new UserBookingException('Booking interval conflict.', 409);
         }
 
         try {
             if ($booking->ownedByServiceAccount) {
+                // TODO: Test that booking change results in a new message for acceptance in resource calendar.
                 $bookingId = $booking->id;
 
                 $response = $this->request("/me/events/$bookingId", $token, 'PATCH', $newData);
