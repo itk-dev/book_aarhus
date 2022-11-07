@@ -14,6 +14,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class HolidayOpenHours
 {
     /**
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -27,13 +28,13 @@ class HolidayOpenHours
     private AAKResource $resource;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="holidayopen", type="time", nullable=false)
      */
     private \DateTime $holidayOpen;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="holidayclose", type="time", nullable=false)
      */
     private \DateTime $holidayClose;
