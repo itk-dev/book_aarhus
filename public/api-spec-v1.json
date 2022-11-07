@@ -1336,10 +1336,6 @@
                 "type": "object",
                 "description": "",
                 "properties": {
-                    "id": {
-                        "readOnly": true,
-                        "type": "integer"
-                    },
                     "weekday": {
                         "type": "integer"
                     },
@@ -1395,10 +1391,6 @@
                     "@type": {
                         "readOnly": true,
                         "type": "string"
-                    },
-                    "id": {
-                        "readOnly": true,
-                        "type": "integer"
                     },
                     "weekday": {
                         "type": "integer"

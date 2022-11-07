@@ -14,7 +14,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class OpenHours
 {
     /**
-     * @Groups({"resource"})
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -28,13 +27,13 @@ class OpenHours
     private AAKResource $resource;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="weekday", type="integer", nullable=false)
      */
     private int $weekday;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      *
      * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/basic-mapping.html#quoting-reserved-words
      *
@@ -43,7 +42,7 @@ class OpenHours
     private \DateTime $open;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      *
      * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/basic-mapping.html#quoting-reserved-words
      *
