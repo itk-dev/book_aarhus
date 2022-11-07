@@ -144,65 +144,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * @throws MicrosoftGraphCommunicationException
-     */
-    public function isBookingConflict($resourceEmail, $startTime, $endTime, $accessToken, array $ignoreICalUIds = null): bool
-    {
-        $token = $accessToken ?: $this->authenticateAsServiceAccount();
-        $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
-        $endString = $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
-
-        $filterString = "\$filter=start/dateTime ge '$startString' and end/dateTime lt '$endString'";
-
-        $response = $this->request("/users/$resourceEmail/calendar/events?$filterString", $token);
-
-        $body = $response->getBody();
-
-        $entries = $body['value'];
-
-        if (count($entries) > 0) {
-            if (null != $ignoreICalUIds) {
-                foreach ($entries as $entry) {
-                    if (!in_array($entry['iCalUId'], $ignoreICalUIds)) {
-                        return true;
-                    }
-                }
-            } else {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @throws MicrosoftGraphCommunicationException
-     */
-    public function isOnlyBookingInInterval($resourceEmail, $startTime, $endTime, string $iCalUId, $accessToken): bool
-    {
-        $token = $accessToken ?: $this->authenticateAsServiceAccount();
-
-        $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
-        $endString = $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
-
-        $filterString = "\$filter=start/dateTime ge '$startString' and end/dateTime lt '$endString'";
-
-        $response = $this->request("/users/$resourceEmail/calendar/events?$filterString", $token);
-
-        $body = $response->getBody();
-
-        $entries = $body['value'];
-
-        if (count($entries) == 1) {
-            if ($entries[0]['iCalUId'] == $iCalUId) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * {@inheritdoc}
      *
      * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
@@ -250,17 +191,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         ];
 
         $response = $this->request("/users/$resourceEmail/events", $token, 'POST', $body);
-
-        // TODO: Make sure only the new booking is the only booking in the interval.
-        // TODO: Delete booking if more than one booking exists in interval.
-        /*
-        $iCalUId = "TODO: Get from created booking.";
-        $aloneInInterval = $this->isOnlyBookingInInterval($resourceEmail, $startTime, $endTime, $iCalUId);
-
-        if (!$aloneInInterval) {
-            throw new BookingCreateException('Booking was not created.', 409);
-        }
-       */
 
         return $response->getBody();
     }
@@ -555,5 +485,45 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         }
 
         return null;
+    }
+
+    /**
+     * Check that there is no interval conflict.
+     *
+     * @param string $resourceEmail Resource to check for conflict in.
+     * @param DateTime $startTime Start of interval.
+     * @param DateTime $endTime End of interval.
+     * @param string|null $accessToken Access token.
+     * @param array|null $ignoreICalUIds Ignore bookings with these ICalUIds in the evaluation. Use to allow editing an existing booking.
+     * @return bool Whether or not there is a booking conflict for the given interval.
+     * @throws MicrosoftGraphCommunicationException
+     */
+    private function isBookingConflict(string $resourceEmail, DateTime $startTime, DateTime $endTime, string $accessToken = null, array $ignoreICalUIds = null): bool
+    {
+        $token = $accessToken ?: $this->authenticateAsServiceAccount();
+        $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
+        $endString = $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
+
+        $filterString = "\$filter=start/dateTime ge '$startString' and end/dateTime lt '$endString'";
+
+        $response = $this->request("/users/$resourceEmail/calendar/events?$filterString", $token);
+
+        $body = $response->getBody();
+
+        $entries = $body['value'];
+
+        if (count($entries) > 0) {
+            if (null != $ignoreICalUIds) {
+                foreach ($entries as $entry) {
+                    if (!in_array($entry['iCalUId'], $ignoreICalUIds)) {
+                        return true;
+                    }
+                }
+            } else {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
