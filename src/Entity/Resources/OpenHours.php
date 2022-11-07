@@ -14,7 +14,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class OpenHours
 {
     /**
-     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
