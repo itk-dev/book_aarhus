@@ -152,10 +152,9 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     {
         $token = $this->authenticateAsServiceAccount();
 
-        // Search interval for existing bookings. Report error if interval is booked already.
-        $busyIntervals = $this->getBusyIntervals([$resourceEmail], $startTime, $endTime, $token);
+        $bookingConflict = $this->isBookingConflict($resourceEmail, $startTime, $endTime, $token);
 
-        if (!empty($busyIntervals[$resourceEmail])) {
+        if ($bookingConflict) {
             throw new BookingCreateException('Booking interval conflict.', 409);
         }
 
@@ -192,21 +191,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         ];
 
         $response = $this->request("/users/$resourceEmail/events", $token, 'POST', $body);
-
-        // Make sure only the new booking exists in the interval.
-        $busyIntervals = $this->getBusyIntervals([$resourceEmail], $startTime, $endTime, $token);
-
-        if (empty($busyIntervals[$resourceEmail])) {
-            throw new BookingCreateException('Booking was not created.', 404);
-        }
-
-        // TODO: Decide if this should be added.
-        /*
-        if (count($busyIntervals[$resourceEmail]) > 1) {
-            // TODO: Remove booking again.
-            throw new \Exception('Booking interval conflict.', 409);
-        }
-        */
 
         return $response->getBody();
     }
@@ -281,18 +265,54 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function updateBooking(UserBooking $booking): ?string
     {
-        /*
         $token = $this->authenticateAsServiceAccount();
 
-        // Formatting the url decoded booking id, replacing "/" with "-" as this is graph-compatible, and replacing
-        // " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
-        $cleanedBookingId = str_replace(['/', ' '], ['-', '+'], urldecode($bookingId));
+        // Only allow changing start and end times.
+        $newData = [
+            'start' => [
+                'dateTime' => $booking->start->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
+                'timeZone' => 'UTC',
+            ],
+            'end' => [
+                'dateTime' => $booking->end->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT),
+                'timeZone' => 'UTC',
+            ],
+        ];
 
-        $response = $this->request("/me/events/$cleanedBookingId", $token, 'PATCH', $newData);
+        $resourceMail = $booking->resourceMail;
 
-        return $response->getStatus();
-        */
-        return '';
+        $bookingConflict = $this->isBookingConflict($resourceMail, $booking->start, $booking->end, $token, [$booking->iCalUId]);
+
+        if ($bookingConflict) {
+            throw new UserBookingException('Booking interval conflict.', 409);
+        }
+
+        try {
+            if ($booking->ownedByServiceAccount) {
+                // TODO: Test that booking change results in a new message for acceptance in resource calendar.
+                $bookingId = $booking->id;
+
+                $response = $this->request("/me/events/$bookingId", $token, 'PATCH', $newData);
+            } else {
+                $eventInResource = $this->getEventFromResourceByICalUid($resourceMail, $booking->iCalUId);
+
+                if (is_null($eventInResource)) {
+                    throw new UserBookingException('Could not find booking in resource.');
+                }
+
+                $bookingId = urlencode($eventInResource['id']);
+
+                $response = $this->request("/users/$resourceMail/events/$bookingId", $token, 'PATCH', $newData);
+            }
+
+            if (200 != $response->getStatus()) {
+                throw new UserBookingException('Booking could not be updated', (int) $response->getStatus());
+            }
+
+            return $response->getStatus();
+        } catch (Exception $e) {
+            throw new UserBookingException($e->getMessage(), (int) $e->getCode());
+        }
     }
 
     /**
@@ -386,9 +406,14 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     public function getUserBookingFromApiData(array $data): UserBooking
     {
         try {
+            // Formatting the url decoded booking id, replacing "/" with "-" as this is graph-compatible, and replacing
+            // " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
+            $cleanedBookingId = str_replace(['/', ' '], ['-', '+'], $data['id']);
+
             $userBooking = new UserBooking();
-            $userBooking->id = urlencode($data['id']);
-            $userBooking->hitId = $data['id'] ?? '';
+            $userBooking->id = $cleanedBookingId;
+            $userBooking->urlencodedId = $cleanedBookingId;
+            $userBooking->hitId = $data['id'];
             $userBooking->start = new \DateTime($data['start']['dateTime'], new \DateTimeZone($data['start']['timeZone']));
             $userBooking->end = new \DateTime($data['end']['dateTime'], new \DateTimeZone($data['end']['timeZone']));
             $userBooking->iCalUId = $data['iCalUId'];
@@ -460,5 +485,47 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         }
 
         return null;
+    }
+
+    /**
+     * Check that there is no interval conflict.
+     *
+     * @param string $resourceEmail resource to check for conflict in
+     * @param DateTime $startTime start of interval
+     * @param DateTime $endTime end of interval
+     * @param string|null $accessToken access token
+     * @param array|null $ignoreICalUIds Ignore bookings with these ICalUIds in the evaluation. Use to allow editing an existing booking.
+     *
+     * @return bool whether or not there is a booking conflict for the given interval
+     *
+     * @throws MicrosoftGraphCommunicationException
+     */
+    private function isBookingConflict(string $resourceEmail, DateTime $startTime, DateTime $endTime, string $accessToken = null, array $ignoreICalUIds = null): bool
+    {
+        $token = $accessToken ?: $this->authenticateAsServiceAccount();
+        $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
+        $endString = $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
+
+        $filterString = "\$filter=start/dateTime ge '$startString' and end/dateTime lt '$endString'";
+
+        $response = $this->request("/users/$resourceEmail/calendar/events?$filterString", $token);
+
+        $body = $response->getBody();
+
+        $entries = $body['value'];
+
+        if (count($entries) > 0) {
+            if (null != $ignoreICalUIds) {
+                foreach ($entries as $entry) {
+                    if (!in_array($entry['iCalUId'], $ignoreICalUIds)) {
+                        return true;
+                    }
+                }
+            } else {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

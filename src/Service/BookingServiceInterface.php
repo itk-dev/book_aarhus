@@ -25,11 +25,12 @@ interface BookingServiceInterface
     /**
      * Update a booking.
      *
-     * @param UserBooking $booking
+     * @param UserBooking $booking the booking with updated fields
      *
      * @return string|null
      *
      * @throws MicrosoftGraphCommunicationException
+     * @throws UserBookingException
      */
     public function updateBooking(UserBooking $booking): ?string;
 
