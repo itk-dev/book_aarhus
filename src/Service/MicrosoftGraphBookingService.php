@@ -152,10 +152,9 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     {
         $token = $this->authenticateAsServiceAccount();
 
-        // Search interval for existing bookings. Report error if interval is booked already.
-        $busyIntervals = $this->getBusyIntervals([$resourceEmail], $startTime, $endTime, $token);
+        $bookingConflict = $this->isBookingConflict($resourceEmail, $startTime, $endTime, $token);
 
-        if (!empty($busyIntervals[$resourceEmail])) {
+        if ($bookingConflict) {
             throw new BookingCreateException('Booking interval conflict.', 409);
         }
 
@@ -192,21 +191,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         ];
 
         $response = $this->request("/users/$resourceEmail/events", $token, 'POST', $body);
-
-        // Make sure only the new booking exists in the interval.
-        $busyIntervals = $this->getBusyIntervals([$resourceEmail], $startTime, $endTime, $token);
-
-        if (empty($busyIntervals[$resourceEmail])) {
-            throw new BookingCreateException('Booking was not created.', 404);
-        }
-
-        // TODO: Decide if this should be added.
-        /*
-        if (count($busyIntervals[$resourceEmail]) > 1) {
-            // TODO: Remove booking again.
-            throw new \Exception('Booking interval conflict.', 409);
-        }
-        */
 
         return $response->getBody();
     }
@@ -297,15 +281,15 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
         $resourceMail = $booking->resourceMail;
 
-        // Search interval for existing bookings. Report error if interval is booked already.
-        $busyIntervals = $this->getBusyIntervals([$resourceMail], $booking->start, $booking->end, $token);
+        $bookingConflict = $this->isBookingConflict($resourceMail, $booking->start, $booking->end, $token, [$booking->iCalUId]);
 
-        if (!empty($busyIntervals[$resourceMail])) {
+        if ($bookingConflict) {
             throw new UserBookingException('Booking interval conflict.', 409);
         }
 
         try {
             if ($booking->ownedByServiceAccount) {
+                // TODO: Test that booking change results in a new message for acceptance in resource calendar.
                 $bookingId = $booking->id;
 
                 $response = $this->request("/me/events/$bookingId", $token, 'PATCH', $newData);
@@ -501,5 +485,47 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         }
 
         return null;
+    }
+
+    /**
+     * Check that there is no interval conflict.
+     *
+     * @param string $resourceEmail resource to check for conflict in
+     * @param DateTime $startTime start of interval
+     * @param DateTime $endTime end of interval
+     * @param string|null $accessToken access token
+     * @param array|null $ignoreICalUIds Ignore bookings with these ICalUIds in the evaluation. Use to allow editing an existing booking.
+     *
+     * @return bool whether or not there is a booking conflict for the given interval
+     *
+     * @throws MicrosoftGraphCommunicationException
+     */
+    private function isBookingConflict(string $resourceEmail, DateTime $startTime, DateTime $endTime, string $accessToken = null, array $ignoreICalUIds = null): bool
+    {
+        $token = $accessToken ?: $this->authenticateAsServiceAccount();
+        $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
+        $endString = $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
+
+        $filterString = "\$filter=start/dateTime ge '$startString' and end/dateTime lt '$endString'";
+
+        $response = $this->request("/users/$resourceEmail/calendar/events?$filterString", $token);
+
+        $body = $response->getBody();
+
+        $entries = $body['value'];
+
+        if (count($entries) > 0) {
+            if (null != $ignoreICalUIds) {
+                foreach ($entries as $entry) {
+                    if (!in_array($entry['iCalUId'], $ignoreICalUIds)) {
+                        return true;
+                    }
+                }
+            } else {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
