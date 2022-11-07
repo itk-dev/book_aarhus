@@ -102,13 +102,13 @@ class AAKResource
     private bool $monitorEquipment;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="AcceptanceFlow", type="boolean", nullable=false)
      */
     private bool $acceptanceFlow;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="Catering", type="boolean", nullable=false)
      */
     private bool $catering;
