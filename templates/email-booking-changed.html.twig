@@ -39,7 +39,7 @@
                                                 {{ 'Følgende booking blev ændret.' }}
                                             </td>
                                         </tr>
-                                        {% if data.messsage is set %}
+                                        {% if data.messsage is defined %}
                                             <tr>
                                                 <td>
                                                     {{ data.message }}

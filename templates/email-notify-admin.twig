@@ -35,7 +35,7 @@
                                             </td>
                                         </tr>
                                     </table>
-                                    {% if data.booking is set %}
+                                    {% if data.booking is defined %}
                                     <table class="booking zebra" cellspacing="0" cellpadding="6" border="0" align="left" width="100%"style="border-bottom: 1px solid #E9ECEF;">
                                         <tr>
                                             <td>
@@ -62,7 +62,7 @@
                                         {% endfor %}
                                     </table>
                                     {% endif %}
-                                    {% if data.resource is set %}
+                                    {% if data.resource is defined %}
                                     <table class="resource zebra" cellspacing="0" cellpadding="6" border="0" align="left" width="100%" style="border-bottom: 1px solid #E9ECEF;">
                                         <tr>
                                             <td>
