@@ -1154,10 +1154,6 @@ components:
       properties:
         id:
           type: string
-        urlencodedId:
-          type: string
-        hitId:
-          type: string
         iCalUId:
           writeOnly: true
           type: string
@@ -1188,10 +1184,6 @@ components:
       description: ''
       properties:
         id:
-          type: string
-        urlencodedId:
-          type: string
-        hitId:
           type: string
         subject:
           type: string
@@ -1237,10 +1229,6 @@ components:
                 - hydra
               additionalProperties: true
         id:
-          type: string
-        urlencodedId:
-          type: string
-        hitId:
           type: string
         subject:
           type: string
