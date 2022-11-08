@@ -390,7 +390,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
                         'queryString' => $this->createBodyUserId($userId),
                     ],
                     'from' => 0,
-                    'to' => 100,
+                    'size' => 1000,
                 ],
             ],
         ];
@@ -412,8 +412,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
             $userBooking = new UserBooking();
             $userBooking->id = $cleanedBookingId;
-            $userBooking->urlencodedId = $cleanedBookingId;
-            $userBooking->hitId = $data['id'];
             $userBooking->start = new \DateTime($data['start']['dateTime'], new \DateTimeZone($data['start']['timeZone']));
             $userBooking->end = new \DateTime($data['end']['dateTime'], new \DateTimeZone($data['end']['timeZone']));
             $userBooking->iCalUId = $data['iCalUId'];

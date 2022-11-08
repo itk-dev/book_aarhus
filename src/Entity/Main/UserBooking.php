@@ -14,16 +14,6 @@ class UserBooking
     #[ApiProperty(identifier: true)]
     public string $id;
 
-    /**
-     * @Groups({"userBooking"})
-     */
-    public string $urlencodedId;
-
-    /**
-     * @Groups({"userBooking"})
-     */
-    public string $hitId;
-
     public string $iCalUId;
 
     /**
