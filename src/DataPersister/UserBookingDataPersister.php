@@ -6,13 +6,17 @@ use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Entity\Main\UserBooking;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
+use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Security\Core\Security;
 
 class UserBookingDataPersister implements ContextAwareDataPersisterInterface
 {
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
+        private readonly Security $security,
     ) {
     }
 
@@ -25,6 +29,10 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
     {
         try {
             if ($data instanceof UserBooking) {
+                if (!$this->security->isGranted(UserBookingVoter::DELETE, $data)) {
+                    throw new AccessDeniedHttpException('Access denied');
+                }
+
                 $this->bookingService->deleteBooking($data);
             }
         } catch (MicrosoftGraphCommunicationException $e) {
@@ -36,6 +44,10 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
     {
         try {
             if ($data instanceof UserBooking) {
+                if (!$this->security->isGranted(UserBookingVoter::EDIT, $data)) {
+                    throw new AccessDeniedHttpException('Access denied');
+                }
+
                 $this->bookingService->updateBooking($data);
             }
         } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
