@@ -61,6 +61,9 @@ services:
     App\Service\NotificationServiceInterface:
         alias: 'App\Service\NotificationService'
 
+    App\Service\ResourceServiceInterface:
+        alias: 'App\Service\ResourceService'
+
     resource.search_filter:
         # https://api-platform.com/docs/core/filters/#search-filter
         parent: 'api_platform.doctrine.orm.search_filter'

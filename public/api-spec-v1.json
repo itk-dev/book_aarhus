@@ -190,6 +190,56 @@
             },
             "parameters": []
         },
+        "/v1/resource-by-email/{resourceMail}": {
+            "get": {
+                "operationId": "get-v1-resource-by-email",
+                "tags": [
+                    "Resource"
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                },
+                "summary": "Get a resource by email",
+                "description": "Get a resource by email",
+                "parameters": [
+                    {
+                        "name": "resourceMail",
+                        "in": "path",
+                        "description": "Resource mail",
+                        "required": true,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "string",
+                            "example": "test@example.com"
+                        },
+                        "style": "simple",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The collection page number",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    }
+                ],
+                "deprecated": false
+            },
+            "parameters": []
+        },
         "/v1/resources": {
             "get": {
                 "operationId": "getResourceCollection",
@@ -579,7 +629,7 @@
         },
         "/v1/resources-all": {
             "get": {
-                "operationId": "get-v1-all-bookings",
+                "operationId": "get-v1-all-resources",
                 "tags": [
                     "Resource"
                 ],
@@ -802,6 +852,82 @@
                         "allowReserved": false
                     }
                 ],
+                "deprecated": false
+            },
+            "patch": {
+                "operationId": "patchUserBookingItem",
+                "tags": [
+                    "UserBooking"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "UserBooking resource updated",
+                        "content": {
+                            "application/ld+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserBooking.jsonld-userBooking"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserBooking-userBooking"
+                                }
+                            },
+                            "text/html": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserBooking-userBooking"
+                                }
+                            }
+                        },
+                        "links": {
+                            "GetUserBookingItem": {
+                                "operationId": "getUserBookingItem",
+                                "parameters": {
+                                    "id": "$response.body#/id"
+                                },
+                                "description": "The `id` value returned in the response can be used as the `id` parameter in `GET /v1/user-bookings/{id}`."
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "422": {
+                        "description": "Unprocessable entity"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "summary": "Updates the UserBooking resource.",
+                "description": "Updates the UserBooking resource.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Resource identifier",
+                        "required": true,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "simple",
+                        "explode": false,
+                        "allowReserved": false
+                    }
+                ],
+                "requestBody": {
+                    "description": "The updated UserBooking resource",
+                    "content": {
+                        "application/merge-patch+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserBooking"
+                            }
+                        }
+                    },
+                    "required": true
+                },
                 "deprecated": false
             },
             "parameters": []
@@ -1210,10 +1336,6 @@
                 "type": "object",
                 "description": "",
                 "properties": {
-                    "id": {
-                        "readOnly": true,
-                        "type": "integer"
-                    },
                     "weekday": {
                         "type": "integer"
                     },
@@ -1269,10 +1391,6 @@
                     "@type": {
                         "readOnly": true,
                         "type": "string"
-                    },
-                    "id": {
-                        "readOnly": true,
-                        "type": "integer"
                     },
                     "weekday": {
                         "type": "integer"
@@ -1522,14 +1640,55 @@
                     }
                 }
             },
-            "UserBooking-userBooking": {
+            "UserBooking": {
                 "type": "object",
                 "description": "",
                 "properties": {
                     "id": {
                         "type": "string"
                     },
-                    "hitId": {
+                    "iCalUId": {
+                        "writeOnly": true,
+                        "type": "string"
+                    },
+                    "subject": {
+                        "type": "string"
+                    },
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "body": {
+                        "writeOnly": true,
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "start": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "end": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "resourceMail": {
+                        "type": "string"
+                    },
+                    "resourceName": {
+                        "type": "string"
+                    },
+                    "ownedByServiceAccount": {
+                        "writeOnly": true,
+                        "type": "boolean"
+                    }
+                }
+            },
+            "UserBooking-userBooking": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                    "id": {
                         "type": "string"
                     },
                     "subject": {
@@ -1597,9 +1756,6 @@
                         ]
                     },
                     "id": {
-                        "type": "string"
-                    },
-                    "hitId": {
                         "type": "string"
                     },
                     "subject": {

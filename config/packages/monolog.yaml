@@ -5,11 +5,15 @@ monolog:
 when@dev:
     monolog:
         handlers:
+            deprecation:
+                type: stream
+                channels: [deprecation]
+                path: '%kernel.logs_dir%/%kernel.environment%.deprecated.log'
             main:
                 type: stream
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
                 level: info
-                channels: ["!event", "!doctrine"]
+                channels: ["!event", "!deprecation", "!doctrine"]
             # uncomment to get logging in your browser
             # you may have to allow bigger header sizes in your Web server configuration
             #firephp:
@@ -22,10 +26,6 @@ when@dev:
                 type: console
                 process_psr_3_messages: false
                 channels: ["!event", "!doctrine", "!console"]
-            deprecation:
-                type: stream
-                channels: [deprecation]
-                path: php://stderr
 
 when@test:
     monolog:

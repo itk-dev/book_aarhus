@@ -1,12 +1,10 @@
-# itk-version: 2.1.0
+# itk-version: 2.2.0
 version: "3"
 
 services:
   phpfpm:
     environment:
-      - PHP_MAILHOG_ENABLE=true
-      - PHP_MAILHOG_SERVER=mailhog
-      - PHP_MAILHOG_PORT=1025
+      - PHP_SENDMAIL_PATH='/usr/local/bin/mhsendmail --smtp-addr="mailhog:1025"'
 
   # Disable basic authentication for traefik since it's not possible to include multiple Authorization Headers
   # in an HTTP message. https://stackoverflow.com/questions/29282578/multiple-http-authorization-headers.
