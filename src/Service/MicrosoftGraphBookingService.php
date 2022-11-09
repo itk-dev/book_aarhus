@@ -487,7 +487,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             $locationUniqueId = $data['location']['uniqueId'];
             $organizerEmail = $data['organizer']['emailAddress']['address'] ?? null;
 
-            $userBooking->ownedByServiceAccount = $organizerEmail == $this->serviceAccountUsername;
+            $userBooking->ownedByServiceAccount = mb_strtolower($organizerEmail) == mb_strtolower($this->serviceAccountUsername);
 
             $bookingType = $userBooking->ownedByServiceAccount ? UserBookingTypeEnum::ACCEPTANCE : UserBookingTypeEnum::INSTANT;
             $userBooking->bookingType = $bookingType->name;
@@ -496,7 +496,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             $attendeeResource = null;
 
             foreach ($data['attendees'] as $attendee) {
-                if ($attendee['emailAddress']['name'] == $locationUniqueId) {
+                if (mb_strtolower($attendee['emailAddress']['name']) == mb_strtolower($locationUniqueId)) {
                     $attendeeResource = $attendee;
                     break;
                 }
@@ -521,6 +521,10 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
                 case 'declined':
                     $status = UserBookingStatusEnum::DECLINED;
                     break;
+                case 'none':
+                    if ($userBooking->ownedByServiceAccount) {
+                        $status = UserBookingStatusEnum::AWAITING_APPROVAL;
+                    }
             }
 
             $userBooking->status = $status->name;

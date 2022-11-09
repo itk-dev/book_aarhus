@@ -10,4 +10,5 @@ enum UserBookingStatusEnum
     case ACCEPTED;
     case DECLINED;
     case NONE;
+    case AWAITING_APPROVAL;
 }
