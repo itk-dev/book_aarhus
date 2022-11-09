@@ -1647,12 +1647,6 @@
                     "id": {
                         "type": "string"
                     },
-                    "urlencodedId": {
-                        "type": "string"
-                    },
-                    "hitId": {
-                        "type": "string"
-                    },
                     "iCalUId": {
                         "writeOnly": true,
                         "type": "string"
@@ -1695,12 +1689,6 @@
                 "description": "",
                 "properties": {
                     "id": {
-                        "type": "string"
-                    },
-                    "urlencodedId": {
-                        "type": "string"
-                    },
-                    "hitId": {
                         "type": "string"
                     },
                     "subject": {
@@ -1768,12 +1756,6 @@
                         ]
                     },
                     "id": {
-                        "type": "string"
-                    },
-                    "urlencodedId": {
-                        "type": "string"
-                    },
-                    "hitId": {
                         "type": "string"
                     },
                     "subject": {
