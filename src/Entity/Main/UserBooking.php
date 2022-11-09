@@ -3,6 +3,8 @@
 namespace App\Entity\Main;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\Enum\UserBookingStatusEnum;
+use App\Enum\UserBookingTypeEnum;
 use DateTime;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -32,6 +34,16 @@ class UserBooking
      * @Groups({"userBooking"})
      */
     public string $status;
+
+    /**
+     * @Groups({"userBooking"})
+     */
+    public string $bookingType;
+
+    /**
+     * @Groups({"userBooking"})
+     */
+    public bool $expired;
 
     /**
      * @Groups({"userBooking"})
