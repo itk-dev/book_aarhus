@@ -3,6 +3,8 @@
 namespace App\Service;
 
 use App\Entity\Main\UserBooking;
+use App\Enum\UserBookingStatusEnum;
+use App\Enum\UserBookingTypeEnum;
 use App\Exception\BookingCreateException;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
@@ -265,6 +267,10 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function updateBooking(UserBooking $booking): ?string
     {
+        if ($booking->expired) {
+            throw new UserBookingException('Booking is expired. Cannot be updated.', 400);
+        }
+
         $token = $this->authenticateAsServiceAccount();
 
         // Only allow changing start and end times.
@@ -324,6 +330,10 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function deleteBooking(UserBooking $booking): ?string
     {
+        if ($booking->expired) {
+            throw new UserBookingException('Booking is expired. Cannot be deleted.', 400);
+        }
+
         $token = $this->authenticateAsServiceAccount();
 
         $bookingId = $booking->id;
@@ -380,28 +390,83 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function getUserBookings(string $userId): array
     {
-        $token = $this->authenticateAsServiceAccount();
+        try {
+            $page = 0;
+            $pageSize = 25;
 
-        $body = [
-            'requests' => [
-                [
-                    'entityTypes' => ['event'],
-                    'query' => [
-                        'queryString' => $this->createBodyUserId($userId),
+            $userBookings = [];
+
+            do {
+                $data = $this->getUserBookingsPage($userId, $page, $pageSize);
+
+                $userBookings = array_merge($userBookings, $data['userBookings']);
+
+                $page = $page + 1;
+            } while ($data['moreResultsAvailable']);
+
+            return $userBookings;
+        } catch (Exception $e) {
+            throw new MicrosoftGraphCommunicationException($e->getMessage(), (int) $e->getCode());
+        }
+    }
+
+    /**
+     * @throws MicrosoftGraphCommunicationException
+     */
+    private function getUserBookingsPage(string $userId, int $page = 0, int $pageSize = 25): array
+    {
+        try {
+            $token = $this->authenticateAsServiceAccount();
+
+            $body = [
+                'requests' => [
+                    [
+                        'entityTypes' => ['event'],
+                        'query' => [
+                            'queryString' => $this->createBodyUserId($userId),
+                        ],
+                        'from' => $page,
+                        'size' => $pageSize,
                     ],
-                    'from' => 0,
-                    'size' => 1000,
                 ],
-            ],
-        ];
+            ];
 
-        $response = $this->request('/search/query', $token, 'POST', $body);
+            $response = $this->request('/search/query', $token, 'POST', $body);
 
-        return $response->getBody();
+            $resultBody = $response->getBody();
+
+            $result = $resultBody['value'][0]['hitsContainers'][0] ?? [];
+            $hits = $result['hits'] ?? [];
+
+            $responseData = [
+                'userBookings' => [],
+                'total' => $result['total'] ?? null,
+                'moreResultsAvailable' => $result['moreResultsAvailable'] ?? false,
+                'page' => $page,
+                'pageSize' => $pageSize,
+            ];
+
+            if (!empty($result) && !empty($hits)) {
+                foreach ($hits as $hit) {
+                    $id = urlencode($hit['hitId']);
+
+                    $userBookingGraphData = $this->getBooking($id);
+
+                    $responseData['userBookings'][] = $this->getUserBookingFromApiData($userBookingGraphData);
+                }
+            }
+
+            return $responseData;
+        } catch (Exception $e) {
+            throw new MicrosoftGraphCommunicationException($e->getMessage(), (int) $e->getCode());
+        }
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @see https://learn.microsoft.com/en-us/graph/api/resources/event?view=graph-rest-1.0
+     * @see https://learn.microsoft.com/en-us/graph/api/resources/responsestatus?view=graph-rest-1.0
      */
     public function getUserBookingFromApiData(array $data): UserBooking
     {
@@ -415,20 +480,23 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             $userBooking->start = new \DateTime($data['start']['dateTime'], new \DateTimeZone($data['start']['timeZone']));
             $userBooking->end = new \DateTime($data['end']['dateTime'], new \DateTimeZone($data['end']['timeZone']));
             $userBooking->iCalUId = $data['iCalUId'];
-            $userBooking->subject = $data['resource']['subject'] ?? '';
+            $userBooking->subject = $data['subject'] ?? '';
             $userBooking->displayName = $data['location']['displayName'];
             $userBooking->body = $data['body']['content'];
 
             $locationUniqueId = $data['location']['uniqueId'];
             $organizerEmail = $data['organizer']['emailAddress']['address'] ?? null;
 
-            $userBooking->ownedByServiceAccount = $organizerEmail == $this->serviceAccountUsername;
+            $userBooking->ownedByServiceAccount = $organizerEmail && mb_strtolower($organizerEmail) == mb_strtolower($this->serviceAccountUsername);
+
+            $bookingType = $userBooking->ownedByServiceAccount ? UserBookingTypeEnum::ACCEPTANCE : UserBookingTypeEnum::INSTANT;
+            $userBooking->bookingType = $bookingType->name;
 
             // Find resource mail.
             $attendeeResource = null;
 
             foreach ($data['attendees'] as $attendee) {
-                if ($attendee['emailAddress']['name'] == $locationUniqueId) {
+                if (mb_strtolower($attendee['emailAddress']['name']) == mb_strtolower($locationUniqueId)) {
                     $attendeeResource = $attendee;
                     break;
                 }
@@ -440,6 +508,28 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
             $userBooking->resourceMail = $attendeeResource['emailAddress']['address'];
             $userBooking->resourceName = $attendeeResource['emailAddress']['name'];
+
+            $status = UserBookingStatusEnum::NONE;
+            $attendeeResourceStatus = $attendeeResource['status']['response'] ?? null;
+            $responseStatus = $data['responseStatus']['response'] ?? null;
+            $statusResponse = $userBooking->ownedByServiceAccount ? $attendeeResourceStatus : $responseStatus;
+
+            switch ($statusResponse) {
+                case 'accepted':
+                    $status = UserBookingStatusEnum::ACCEPTED;
+                    break;
+                case 'declined':
+                    $status = UserBookingStatusEnum::DECLINED;
+                    break;
+                case 'none':
+                    if ($userBooking->ownedByServiceAccount) {
+                        $status = UserBookingStatusEnum::AWAITING_APPROVAL;
+                    }
+            }
+
+            $userBooking->status = $status->name;
+
+            $userBooking->expired = $userBooking->end < new DateTime();
 
             return $userBooking;
         } catch (Exception $exception) {
@@ -494,7 +584,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      * @param string|null $accessToken access token
      * @param array|null $ignoreICalUIds Ignore bookings with these ICalUIds in the evaluation. Use to allow editing an existing booking.
      *
-     * @return bool whether or not there is a booking conflict for the given interval
+     * @return bool whether there is a booking conflict for the given interval
      *
      * @throws MicrosoftGraphCommunicationException
      */

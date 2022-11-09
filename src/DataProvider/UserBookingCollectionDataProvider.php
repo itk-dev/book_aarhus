@@ -7,7 +7,6 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
-use DateTime;
 use Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -46,23 +45,7 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
 
         $userBookingData = $this->bookingService->getUserBookings($userId);
 
-        // TODO: Handle paginated results.
-        $userBookingsHits = $userBookingData['value'][0]['hitsContainers'][0]['hits'] ?? [];
-
-        $now = new DateTime();
-
-        foreach ($userBookingsHits as $hit) {
-            $id = urlencode($hit['hitId']);
-
-            $userBookingGraphData = $this->bookingService->getBooking($id);
-
-            $userBooking = $this->bookingService->getUserBookingFromApiData($userBookingGraphData);
-
-            // Ignore bookings that are in the past.
-            if ($userBooking->end < $now) {
-                continue;
-            }
-
+        foreach ($userBookingData as $userBooking) {
             if ($this->security->isGranted(UserBookingVoter::VIEW, $userBooking)) {
                 yield $userBooking;
             }
