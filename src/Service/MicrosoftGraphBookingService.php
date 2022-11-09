@@ -487,7 +487,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             $locationUniqueId = $data['location']['uniqueId'];
             $organizerEmail = $data['organizer']['emailAddress']['address'] ?? null;
 
-            $userBooking->ownedByServiceAccount = mb_strtolower($organizerEmail) == mb_strtolower($this->serviceAccountUsername);
+            $userBooking->ownedByServiceAccount = $organizerEmail && mb_strtolower($organizerEmail) == mb_strtolower($this->serviceAccountUsername);
 
             $bookingType = $userBooking->ownedByServiceAccount ? UserBookingTypeEnum::ACCEPTANCE : UserBookingTypeEnum::INSTANT;
             $userBooking->bookingType = $bookingType->name;

@@ -3,8 +3,6 @@
 namespace App\Entity\Main;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
-use App\Enum\UserBookingStatusEnum;
-use App\Enum\UserBookingTypeEnum;
 use DateTime;
 use Symfony\Component\Serializer\Annotation\Groups;
 

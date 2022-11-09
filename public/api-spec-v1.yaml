@@ -1166,6 +1166,10 @@ components:
           type: string
         status:
           type: string
+        bookingType:
+          type: string
+        expired:
+          type: boolean
         start:
           type: string
           format: date-time
@@ -1191,6 +1195,10 @@ components:
           type: string
         status:
           type: string
+        bookingType:
+          type: string
+        expired:
+          type: boolean
         start:
           type: string
           format: date-time
@@ -1236,6 +1244,10 @@ components:
           type: string
         status:
           type: string
+        bookingType:
+          type: string
+        expired:
+          type: boolean
         start:
           type: string
           format: date-time
