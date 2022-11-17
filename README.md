@@ -143,4 +143,3 @@ Github Actions are used to run the test suite and code style checks on all PRs.
 We use [SemVer](http://semver.org/) for versioning.
 For the versions available, see the
 [tags on this repository](https://github.com/itk-dev/book_aarhus/tags).
-
