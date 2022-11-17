@@ -81,6 +81,14 @@ To do this
 - Set the relevant `BOOKING_RESOURCES_DATABASE_XYZ` values in the `.env.local` file.
 - Uncomment `authentication: ActiveDirectoryPassword` in `doctrine.yaml:21`
 
+#### Test for access
+
+A command can be used to access data for a resource with the given email:
+
+```shell
+bin/console app:resource:display resource@aarhus.dk
+```
+
 #### To troubleshoot this setup do
 
 Open shell in container
