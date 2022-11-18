@@ -132,7 +132,7 @@ class AAKResource
     private ?bool $hasOpen;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="HasWhiteList", type="boolean", nullable=true)
      */
     private ?bool $hasWhitelist;
