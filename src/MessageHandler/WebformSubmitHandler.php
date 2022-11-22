@@ -71,6 +71,7 @@ class WebformSubmitHandler
                 $booking->setEndTime($this->validationUtils->validateDate($data['end']));
                 $booking->setUserId($data['userId']);
                 $booking->setUserPermission($data['userPermission']);
+                $booking->setWhitelistKey($data['whitelistKey'] ?? null);
 
                 $this->logger->info('Registering CreateBookingMessage job');
 

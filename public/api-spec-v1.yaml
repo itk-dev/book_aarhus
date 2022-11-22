@@ -693,6 +693,9 @@ components:
           type: string
         userPermission:
           type: string
+        whitelistKey:
+          type: string
+          nullable: true
     Booking.WebformBookingInput:
       type: object
       description: ''
@@ -827,6 +830,9 @@ components:
           type: string
         userPermission:
           type: string
+        whitelistKey:
+          type: string
+          nullable: true
     BusyInterval:
       type: object
       description: ''

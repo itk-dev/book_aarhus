@@ -10,6 +10,7 @@ use App\Message\WebformSubmitMessage;
 use App\MessageHandler\CreateBookingHandler;
 use App\MessageHandler\WebformSubmitHandler;
 use App\Repository\Main\AAKResourceRepository;
+use App\Repository\Resources\CvrWhitelistRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
 use App\Service\MicrosoftGraphBookingService;
@@ -273,7 +274,9 @@ class BookingTest extends AbstractBaseApiTestCase
         $notificationServiceMock = $this->createMock(NotificationServiceInterface::class);
         $container->set(NotificationServiceInterface::class, $notificationServiceMock);
 
-        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock, $security, $bus);
+        $cvrWhitelistRepositoryMock = $this->createMock(CvrWhitelistRepository::class);
+
+        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock, $security, $bus, $cvrWhitelistRepositoryMock);
         $createBookingHandler->__invoke(new CreateBookingMessage($booking));
     }
 

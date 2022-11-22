@@ -979,6 +979,10 @@
                     },
                     "userPermission": {
                         "type": "string"
+                    },
+                    "whitelistKey": {
+                        "type": "string",
+                        "nullable": true
                     }
                 }
             },
@@ -1180,6 +1184,10 @@
                     },
                     "userPermission": {
                         "type": "string"
+                    },
+                    "whitelistKey": {
+                        "type": "string",
+                        "nullable": true
                     }
                 }
             },
