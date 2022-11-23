@@ -39,11 +39,10 @@ interface BookingServiceInterface
      *
      * @param UserBooking $booking
      *
-     * @return string|null
-     *
      * @throws MicrosoftGraphCommunicationException
+     * @throws UserBookingException
      */
-    public function deleteBooking(UserBooking $booking): ?string;
+    public function deleteBooking(UserBooking $booking);
 
     /**
      * Accept a booking.
