@@ -325,15 +325,28 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      * {@inheritdoc}
      *
      * @see https://docs.microsoft.com/en-us/graph/api/event-delete?view=graph-rest-1.0&tabs=http
-     *
-     * @throws UserBookingException
      */
-    public function deleteBooking(UserBooking $booking): ?string
+    public function deleteBooking(UserBooking $booking)
     {
         if ($booking->expired) {
             throw new UserBookingException('Booking is expired. Cannot be deleted.', 400);
         }
 
+        if ($booking->ownedByServiceAccount) {
+            $this->deleteBookingFromResource($booking);
+            $this->deleteBookingFromServiceAccount($booking);
+        } else {
+            $this->deleteBookingFromServiceAccount($booking);
+            $this->deleteBookingFromResource($booking);
+        }
+    }
+
+    /**
+     * @throws MicrosoftGraphCommunicationException
+     * @throws UserBookingException
+     */
+    private function deleteBookingFromServiceAccount(UserBooking $booking): void
+    {
         $token = $this->authenticateAsServiceAccount();
 
         $bookingId = $booking->id;
@@ -341,9 +354,18 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         // Remove from service account.
         $response = $this->request("/me/events/$bookingId", $token, 'DELETE');
 
-        if (204 !== $response->getStatus()) {
+        if (204 != $response->getStatus()) {
             throw new UserBookingException('Booking could not be removed', (int) $response->getStatus());
         }
+    }
+
+    /**
+     * @throws MicrosoftGraphCommunicationException
+     * @throws UserBookingException
+     */
+    private function deleteBookingFromResource(UserBooking $booking): void
+    {
+        $token = $this->authenticateAsServiceAccount();
 
         $eventInResource = $this->getEventFromResourceByICalUid($booking->resourceMail, $booking->iCalUId);
 
@@ -357,11 +379,9 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         // Remove from resource.
         $response = $this->request("/users/$userId/events/$bookingId", $token, 'DELETE');
 
-        if (204 !== $response->getStatus()) {
+        if (204 != $response->getStatus()) {
             throw new UserBookingException('Booking could not be removed from resource', (int) $response->getStatus());
         }
-
-        return $response->getStatus();
     }
 
     /**
