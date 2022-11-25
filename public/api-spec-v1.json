@@ -979,6 +979,10 @@
                     },
                     "userPermission": {
                         "type": "string"
+                    },
+                    "whitelistKey": {
+                        "type": "string",
+                        "nullable": true
                     }
                 }
             },
@@ -1180,6 +1184,10 @@
                     },
                     "userPermission": {
                         "type": "string"
+                    },
+                    "whitelistKey": {
+                        "type": "string",
+                        "nullable": true
                     }
                 }
             },
@@ -1664,6 +1672,12 @@
                     "status": {
                         "type": "string"
                     },
+                    "bookingType": {
+                        "type": "string"
+                    },
+                    "expired": {
+                        "type": "boolean"
+                    },
                     "start": {
                         "type": "string",
                         "format": "date-time"
@@ -1699,6 +1713,12 @@
                     },
                     "status": {
                         "type": "string"
+                    },
+                    "bookingType": {
+                        "type": "string"
+                    },
+                    "expired": {
+                        "type": "boolean"
                     },
                     "start": {
                         "type": "string",
@@ -1766,6 +1786,12 @@
                     },
                     "status": {
                         "type": "string"
+                    },
+                    "bookingType": {
+                        "type": "string"
+                    },
+                    "expired": {
+                        "type": "boolean"
                     },
                     "start": {
                         "type": "string",

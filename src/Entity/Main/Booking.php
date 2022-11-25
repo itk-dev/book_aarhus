@@ -32,6 +32,8 @@ class Booking
 
     private string $userPermission;
 
+    private ?string $whitelistKey;
+
     public function __construct()
     {
         $this->id = Ulid::generate();
@@ -155,5 +157,15 @@ class Booking
     public function setUserPermission(string $userPermission): void
     {
         $this->userPermission = $userPermission;
+    }
+
+    public function getWhitelistKey(): ?string
+    {
+        return $this->whitelistKey;
+    }
+
+    public function setWhitelistKey(?string $whitelistKey): void
+    {
+        $this->whitelistKey = $whitelistKey;
     }
 }

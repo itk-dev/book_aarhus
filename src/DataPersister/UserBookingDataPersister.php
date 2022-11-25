@@ -35,7 +35,7 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
 
                 $this->bookingService->deleteBooking($data);
             }
-        } catch (MicrosoftGraphCommunicationException $e) {
+        } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
             throw new HttpException($e->getCode(), 'Booking could not be deleted.');
         }
     }

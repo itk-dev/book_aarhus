@@ -36,6 +36,16 @@ class UserBooking
     /**
      * @Groups({"userBooking"})
      */
+    public string $bookingType;
+
+    /**
+     * @Groups({"userBooking"})
+     */
+    public bool $expired;
+
+    /**
+     * @Groups({"userBooking"})
+     */
     public DateTime $start;
 
     /**
