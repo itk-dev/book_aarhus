@@ -138,7 +138,7 @@ class NotificationService implements NotificationServiceInterface
             $template = null;
             $fileAttachments = [];
             $to = $data['user']['mail'];
-            $subject = 'Booking bekræftigelse: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
+            $subject = 'Booking bekræftelse: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
 
             switch ($type) {
                 case NotificationTypeEnum::SUCCESS:
@@ -194,12 +194,14 @@ class NotificationService implements NotificationServiceInterface
                 ->subject($notification['subject'])
                 ->htmlTemplate($notification['template'])
                 ->context($notification);
-            $tempDir = sys_get_temp_dir();
-            $bookingId = $notification['data']['booking']->getId();
-            $fileName = 'booking-'.$bookingId.'.ics';
-            $filePath = $tempDir.'/'.$fileName;
+
             // Add ics attachment to mail.
             if (!empty($notification['fileAttachments']['ics'])) {
+                $tempDir = sys_get_temp_dir();
+                $bookingId = $notification['data']['booking']->getId();
+                $fileName = 'booking-'.$bookingId.'.ics';
+                $filePath = $tempDir.'/'.$fileName;
+
                 foreach ($notification['fileAttachments']['ics'] as $key => $ics) {
                     try {
                         file_put_contents($filePath, (string) $ics);
