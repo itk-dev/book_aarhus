@@ -77,7 +77,7 @@ class NotificationService implements NotificationServiceInterface
             $event->setDescription($eventData['description']);
 
             $immutableFrom = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
-            $immutableTo = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
+            $immutableTo = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['to']);
 
             if (false === $immutableFrom || false === $immutableTo) {
                 throw new Exception('DateTimeImmutable cannot be false');
