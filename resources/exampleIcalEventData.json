@@ -4,13 +4,17 @@
       "summary": "New year",
       "description": "This is new year",
       "from": "2022-12-31 23:00:00",
-      "to": "2022-12-31 23:30:00"
+      "to": "2022-12-31 23:30:00",
+      "coordinates": "56.175895100,10.191482000",
+      "location_name": "Dokk1 - Lokale 4a"
     },
     {
       "summary": "Christmas",
       "description": "This is christmas",
       "from": "2022-12-24 15:00:00",
-      "to": "2022-12-24 22:30:00"
+      "to": "2022-12-24 22:30:00",
+      "coordinates": "56.175895100,10.191482000",
+      "location_name": "Dokk1 - Store sal"
     }
   ]
 }
