@@ -77,13 +77,13 @@ class NotificationService implements NotificationServiceInterface
             $location = new Location($eventData['location_name']);
 
             if ($eventData['coordinates']) {
-              $coordinatesArr = explode(',', $eventData['coordinates']);
-              $location = $location->withGeographicPosition(
-                new GeographicPosition(
-                  (float)$coordinatesArr['0'],
-                  (float)$coordinatesArr['1']
-                )
-              );
+                $coordinatesArr = explode(',', $eventData['coordinates']);
+                $location = $location->withGeographicPosition(
+                    new GeographicPosition(
+                        (float) $coordinatesArr['0'],
+                        (float) $coordinatesArr['1']
+                    )
+                );
             }
 
             $event = new Entity\Event();
@@ -253,7 +253,7 @@ class NotificationService implements NotificationServiceInterface
                 'from' => $data['booking']->getStartTime()->format('Y-m-d H:i:s'),
                 'to' => $data['booking']->getEndTime()->format('Y-m-d H:i:s'),
                 'coordinates' => $data['resource']->getGeoCoordinates(),
-                'location_name' => $data['resource']->getLocation() . ' - ' . $data['resource']->getResourceName(),
+                'location_name' => $data['resource']->getLocation().' - '.$data['resource']->getResourceName(),
             ],
         ];
     }
