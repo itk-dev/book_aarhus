@@ -9,6 +9,8 @@ use App\Utils\ValidationUtils;
 use DateTimeImmutable;
 use Eluceo\iCal\Domain\Entity;
 use Eluceo\iCal\Domain\ValueObject\DateTime;
+use Eluceo\iCal\Domain\ValueObject\GeographicPosition;
+use Eluceo\iCal\Domain\ValueObject\Location;
 use Eluceo\iCal\Domain\ValueObject\TimeSpan;
 use Eluceo\iCal\Presentation\Component;
 use Eluceo\iCal\Presentation\Factory;
@@ -71,6 +73,19 @@ class NotificationService implements NotificationServiceInterface
         $iCalEvents = [];
 
         foreach ($events as $eventData) {
+            // Set location:
+            $location = new Location($eventData['location_name']);
+
+            if ($eventData['coordinates']) {
+                $coordinatesArr = explode(',', $eventData['coordinates']);
+                $location = $location->withGeographicPosition(
+                    new GeographicPosition(
+                        (float) $coordinatesArr['0'],
+                        (float) $coordinatesArr['1']
+                    )
+                );
+            }
+
             $event = new Entity\Event();
 
             $event->setSummary($eventData['summary']);
@@ -87,6 +102,7 @@ class NotificationService implements NotificationServiceInterface
             $end = new DateTime($immutableTo, false);
             $occurrence = new TimeSpan($start, $end);
             $event->setOccurrence($occurrence);
+            $event->setLocation($location);
 
             $iCalEvents[] = $event;
         }
@@ -236,6 +252,8 @@ class NotificationService implements NotificationServiceInterface
                 'description' => $data['booking']->getBody(),
                 'from' => $data['booking']->getStartTime()->format('Y-m-d H:i:s'),
                 'to' => $data['booking']->getEndTime()->format('Y-m-d H:i:s'),
+                'coordinates' => $data['resource']->getGeoCoordinates(),
+                'location_name' => $data['resource']->getLocation().' - '.$data['resource']->getResourceName(),
             ],
         ];
     }

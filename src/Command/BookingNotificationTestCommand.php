@@ -127,6 +127,7 @@ class BookingNotificationTestCommand extends Command
         $res->setResourceDescription('Resource description as shown in the booking app.');
         $res->setResourceEmailText('Resource specific text from resource db.');
         $res->setLocation('LOCATION1');
+        $res->setGeoCoordinates('56.175895100,10.191482000');
         $res->setWheelchairAccessible(true);
         $res->setVideoConferenceEquipment(false);
         $res->setUpdateTimestamp(new \DateTime());
