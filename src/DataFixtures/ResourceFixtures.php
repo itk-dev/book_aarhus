@@ -183,10 +183,10 @@ class ResourceFixtures extends Fixture
             $res->setPermissionEmployee(1 == rand(0, 1));
             $res->setHasWhitelist(false);
             $res->setDisplayName("Test $i");
-            $res->setCity("Aarhus");
-            $res->setStreetName("A random road");
+            $res->setCity('Aarhus');
+            $res->setStreetName('A random road');
             $res->setPostalCode(rand(8000, 8400));
-            $res->setResourceCategory(rand(0, 1) == 0 ? "Lokaler" : "Køretøjer");
+            $res->setResourceCategory(0 == rand(0, 1) ? 'Lokaler' : 'Køretøjer');
 
             $manager->persist($res);
         }

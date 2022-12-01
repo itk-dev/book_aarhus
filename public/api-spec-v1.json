@@ -1512,6 +1512,26 @@
                     "updateTimestamp": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "displayName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "city": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "streetName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "postalCode": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "resourceCategory": {
+                        "type": "string",
+                        "nullable": true
                     }
                 }
             },
@@ -1645,6 +1665,26 @@
                     "updateTimestamp": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "displayName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "city": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "streetName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "postalCode": {
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "resourceCategory": {
+                        "type": "string",
+                        "nullable": true
                     }
                 }
             },

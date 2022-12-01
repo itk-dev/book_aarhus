@@ -1061,6 +1061,21 @@ components:
         updateTimestamp:
           type: string
           format: date-time
+        displayName:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        streetName:
+          type: string
+          nullable: true
+        postalCode:
+          type: integer
+          nullable: true
+        resourceCategory:
+          type: string
+          nullable: true
     Resource.jsonld-resource:
       type: object
       description: Extbooking.aakresources.
@@ -1154,6 +1169,21 @@ components:
         updateTimestamp:
           type: string
           format: date-time
+        displayName:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        streetName:
+          type: string
+          nullable: true
+        postalCode:
+          type: integer
+          nullable: true
+        resourceCategory:
+          type: string
+          nullable: true
     UserBooking:
       type: object
       description: ''
