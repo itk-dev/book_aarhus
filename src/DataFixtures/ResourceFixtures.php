@@ -32,7 +32,7 @@ class ResourceFixtures extends Fixture
                 'streetName' => 'Hack Kampmanns Pl. 2',
                 'postalCode' => 8000,
                 'resourceCategory' => 'Lokaler',
-                'formId' => NULL
+                'formId' => null,
             ],
             [
                 'resourceEmail' => 'dokk1-lokale-test2@aarhus.dk',
@@ -55,7 +55,7 @@ class ResourceFixtures extends Fixture
                 'streetName' => 'Hack Kampmanns Pl. 2',
                 'postalCode' => 8000,
                 'resourceCategory' => 'Lokaler',
-                'formId' => NULL
+                'formId' => null,
             ],
             [
                 'resourceEmail' => 'MSO-rolator-test1@aarhus.dk',
@@ -77,7 +77,7 @@ class ResourceFixtures extends Fixture
                 'streetName' => 'En vej',
                 'postalCode' => 8000,
                 'resourceCategory' => 'Hjælpemidler',
-                'formId' => 'http://selvbetjening.local.itkdev.dk/da/content/step-two-alt'
+                'formId' => 'http://selvbetjening.local.itkdev.dk/da/content/step-two-alt',
             ],
             [
                 'resourceEmail' => 'without_location@bookaarhus.local.itkdev',
@@ -100,7 +100,7 @@ class ResourceFixtures extends Fixture
                 'streetName' => 'En vej',
                 'postalCode' => 8000,
                 'resourceCategory' => 'Lokaler',
-                'formId' => NULL
+                'formId' => null,
             ],
             [
                 'resourceEmail' => 'MSO-bil-test1@aarhus.dk',
@@ -123,7 +123,7 @@ class ResourceFixtures extends Fixture
                 'streetName' => 'En anden vej',
                 'postalCode' => 8200,
                 'resourceCategory' => 'Køretøjer',
-                'formId' => 'http://selvbetjening.local.itkdev.dk/da/content/step-two-alt'
+                'formId' => 'http://selvbetjening.local.itkdev.dk/da/content/step-two-alt',
             ],
         ];
 
@@ -192,7 +192,7 @@ class ResourceFixtures extends Fixture
             $res->setStreetName('A random road');
             $res->setPostalCode(rand(8000, 8400));
             $res->setResourceCategory(0 == rand(0, 1) ? 'Lokaler' : 'Køretøjer');
-            $res->setFormId(NULL);
+            $res->setFormId(null);
             $manager->persist($res);
         }
 
