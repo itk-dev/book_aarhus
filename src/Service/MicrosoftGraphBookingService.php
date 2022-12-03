@@ -194,7 +194,23 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
         $response = $this->request("/users/$resourceEmail/events", $token, 'POST', $body);
 
-        return $response->getBody();
+        $content = $response->getBody();
+        $iCalUId = $content['iCalUId'];
+
+        if ($this->isBookingConflict($resourceEmail, $startTime, $endTime, $token, [$iCalUId])) {
+            $bookingId = $content['id'];
+
+            // If another booking has been created at the same time, remove this booking.
+            $response = $this->request("/users/$resourceEmail/events/$bookingId", $token, 'DELETE');
+
+            if (204 != $response->getStatus()) {
+                throw new BookingCreateException('Booking interval conflict. Booking could not be removed after conflict.', 409);
+            }
+
+            throw new BookingCreateException('Booking interval conflict.', 409);
+        }
+
+        return $content;
     }
 
     /**
@@ -614,7 +630,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
         $endString = $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
 
-        $filterString = "\$filter=start/dateTime ge '$startString' and end/dateTime lt '$endString'";
+        $filterString = "\$filter=start/dateTime le '$endString' and end/dateTime ge '$startString'";
 
         $response = $this->request("/users/$resourceEmail/calendar/events?$filterString", $token);
 
