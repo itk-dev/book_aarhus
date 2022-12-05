@@ -147,7 +147,7 @@ jobs:
 
   changelog:
     runs-on: ubuntu-20.04
-    name: Changelog updated
+    name: Changelog should be updated
     strategy:
       fail-fast: false
     steps:
