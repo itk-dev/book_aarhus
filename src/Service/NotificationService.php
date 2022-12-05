@@ -15,7 +15,6 @@ use Eluceo\iCal\Domain\ValueObject\TimeSpan;
 use Eluceo\iCal\Presentation\Component;
 use Eluceo\iCal\Presentation\Factory;
 use Exception;
-use JsonException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -46,23 +45,19 @@ class NotificationService implements NotificationServiceInterface
      */
     public function sendBookingNotification(Booking $booking, ?AAKResource $resource, NotificationTypeEnum $type): void
     {
-        try {
-            $data = [
-                'booking' => $booking,
-                'resource' => $resource,
-                'user' => [
-                    'name' => $booking->getUserName(),
-                    'mail' => $booking->getUserMail(),
-                ],
-                'metaData' => $booking->getMetaData(),
-            ];
+        $data = [
+            'booking' => $booking,
+            'resource' => $resource,
+            'user' => [
+                'name' => $booking->getUserName(),
+                'mail' => $booking->getUserMail(),
+            ],
+            'metaData' => $booking->getMetaData(),
+        ];
 
-            $notification = $this->buildNotification($type, $data);
+        $notification = $this->buildNotification($type, $data);
 
-            $this->sendNotification($notification);
-        } catch (JsonException $e) {
-            // TODO: Handle error.
-        }
+        $this->sendNotification($notification);
     }
 
     /**
@@ -73,7 +68,6 @@ class NotificationService implements NotificationServiceInterface
         $iCalEvents = [];
 
         foreach ($events as $eventData) {
-            // Set location:
             $location = new Location($eventData['location_name']);
 
             if ($eventData['coordinates']) {
@@ -152,13 +146,14 @@ class NotificationService implements NotificationServiceInterface
 
         try {
             $template = null;
+            $subject = null;
             $fileAttachments = [];
             $to = $data['user']['mail'];
-            $subject = 'Booking bekræftelse: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
 
             switch ($type) {
                 case NotificationTypeEnum::SUCCESS:
                     $template = 'email-booking-success.html.twig';
+                    $subject = 'Booking bekræftelse: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
 
                     $events = $this->prepareIcalEvents($data);
                     $iCalendarComponent = $this->createCalendarComponent($events);
@@ -179,6 +174,10 @@ class NotificationService implements NotificationServiceInterface
                     $template = 'email-booking-failed.html.twig';
                     $subject = 'Booking lykkedes ikke: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
                     break;
+                case NotificationTypeEnum::CONFLICT:
+                    $template = 'email-booking-failed.html.twig';
+                    $subject = 'Booking lykkedes ikke. Intervallet er optaget: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
+                    break;
             }
 
             $notificationData = [
@@ -190,7 +189,7 @@ class NotificationService implements NotificationServiceInterface
                 'fileAttachments' => $fileAttachments,
             ];
         } catch (Exception $e) {
-            // TODO: Handle error.
+            $this->logger->error('Error building notification: '.$e->getMessage());
         }
 
         return $notificationData;
@@ -236,6 +235,7 @@ class NotificationService implements NotificationServiceInterface
 
             $this->mailer->send($email);
         } catch (TransportExceptionInterface $e) {
+            $this->logger->error('Error sending notification: '.$e->getMessage());
         }
     }
 

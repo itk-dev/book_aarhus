@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Main\UserBooking;
-use App\Exception\BookingCreateException;
+use App\Exception\BookingCreateConflictException;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
 use DateTime;
@@ -90,7 +90,7 @@ interface BookingServiceInterface
      *
      * @return array
      *
-     * @throws BookingCreateException
+     * @throws BookingCreateConflictException
      * @throws MicrosoftGraphCommunicationException
      */
     public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, DateTime $startTime, DateTime $endTime): array;

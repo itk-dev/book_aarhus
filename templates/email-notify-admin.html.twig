@@ -55,11 +55,13 @@
                                             <td>{{ data.booking.endTime|date("d/m/Y - H:i") }}</td>
                                         </tr>
                                         {# Metadata fields #}
-                                        {% for key, value in data.metaData %}
-                                            <tr class="{{ key }}">
-                                                <td>{{ key }}</td><td>{{ value }}</td>
-                                            </tr>
-                                        {% endfor %}
+                                        {% if data.booking.metaData is defined and data.booking.metaData is not null %}
+                                            {% for key, value in data.booking.metaData %}
+                                                <tr class="{{ key }}">
+                                                    <td>{{ key }}</td><td>{{ value }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endif %}
                                     </table>
                                     {% endif %}
                                     {% if data.resource is defined and data.resource is not null %}
