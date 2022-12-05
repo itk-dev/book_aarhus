@@ -33,6 +33,7 @@ class ResourceFixtures extends Fixture
                 'postalCode' => 8000,
                 'resourceCategory' => 'Lokaler',
                 'formId' => null,
+                'resourceImage' => 'https://placekitten.com/g/200/200',
             ],
             [
                 'resourceEmail' => 'dokk1-lokale-test2@aarhus.dk',
@@ -56,6 +57,7 @@ class ResourceFixtures extends Fixture
                 'postalCode' => 8000,
                 'resourceCategory' => 'Lokaler',
                 'formId' => null,
+                'resourceImage' => 'https://placekitten.com/g/1000/1000',
             ],
             [
                 'resourceEmail' => 'MSO-rolator-test1@aarhus.dk',
@@ -78,6 +80,7 @@ class ResourceFixtures extends Fixture
                 'postalCode' => 8000,
                 'resourceCategory' => 'Hjælpemidler',
                 'formId' => 'http://selvbetjening.local.itkdev.dk/da/content/step-two-alt',
+                'resourceImage' => 'https://placekitten.com/g/500/1000',
             ],
             [
                 'resourceEmail' => 'without_location@bookaarhus.local.itkdev',
@@ -101,6 +104,7 @@ class ResourceFixtures extends Fixture
                 'postalCode' => 8000,
                 'resourceCategory' => 'Lokaler',
                 'formId' => null,
+                'resourceImage' => 'https://placekitten.com/g/1000/500',
             ],
             [
                 'resourceEmail' => 'MSO-bil-test1@aarhus.dk',
@@ -124,6 +128,7 @@ class ResourceFixtures extends Fixture
                 'postalCode' => 8200,
                 'resourceCategory' => 'Køretøjer',
                 'formId' => 'http://selvbetjening.local.itkdev.dk/da/content/step-two-alt',
+                'resourceImage' => 'https://placekitten.com/g/800/600',
             ],
         ];
 
@@ -151,6 +156,7 @@ class ResourceFixtures extends Fixture
             $res->setPostalCode($resource['postalCode'] ?? null);
             $res->setResourceCategory($resource['resourceCategory'] ?? null);
             $res->setFormId($resource['formId']);
+            $res->setResourceImage($resource['resourceImage']);
             $manager->persist($res);
         }
 
@@ -193,6 +199,7 @@ class ResourceFixtures extends Fixture
             $res->setPostalCode(rand(8000, 8400));
             $res->setResourceCategory(0 == rand(0, 1) ? 'Lokaler' : 'Køretøjer');
             $res->setFormId(null);
+            $res->setResourceImage(null);
             $manager->persist($res);
         }
 
