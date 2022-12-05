@@ -48,7 +48,7 @@ class AAKResource
     private string $resourceName;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="ResourceImage", type="text", length=-1, nullable=true)
      */
     private ?string $resourceImage;
@@ -78,7 +78,7 @@ class AAKResource
     private ?int $capacity;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="ResourceDescription", type="text", length=-1, nullable=true)
      */
     private ?string $resourceDescription;
