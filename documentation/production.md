@@ -41,11 +41,4 @@ bin/console app:resource:cache --env=prod --no-debug
 ```
 
 ## Installing/Updating
-
-```shell
-# Install dependencies
-composer install --no-dev -o
-
-# Migrate the local database.
-bin/console doctrine:migrations:migrate
-```
+Run the deploy script.
