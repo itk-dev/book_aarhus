@@ -4,7 +4,7 @@ namespace App\MessageHandler;
 
 use App\Entity\Resources\AAKResource;
 use App\Enum\NotificationTypeEnum;
-use App\Exception\BookingCreateException;
+use App\Exception\BookingCreateConflictException;
 use App\Message\CreateBookingMessage;
 use App\Message\SendBookingNotificationMessage;
 use App\Repository\Main\AAKResourceRepository;
@@ -106,9 +106,12 @@ class CreateBookingHandler
             }
         } catch (\Exception $exception) {
             // Differentiate between errors:
-            // If it is a BookingCreateException it should be rejected otherwise it should be retried.
-            if ($exception instanceof BookingCreateException) {
-                throw new UnrecoverableMessageHandlingException($exception->getMessage(), (int) $exception->getCode());
+            // If it is a BookingCreateConflictException it should be rejected otherwise it should be retried.
+            if ($exception instanceof BookingCreateConflictException) {
+                $this->bus->dispatch(new SendBookingNotificationMessage(
+                    $booking,
+                    NotificationTypeEnum::CONFLICT
+                ));
             } else {
                 throw $exception;
             }
