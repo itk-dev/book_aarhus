@@ -27,6 +27,12 @@ class ResourceFixtures extends Fixture
                 'permissionBusinessPartner' => true,
                 'permissionCitizen' => true,
                 'permissionEmployee' => true,
+                'displayName' => 'Dokk1 Lokale Test 1',
+                'city' => 'Aarhus',
+                'streetName' => 'Hack Kampmanns Pl. 2',
+                'postalCode' => 8000,
+                'resourceCategory' => 'Lokaler',
+                'formId' => null,
             ],
             [
                 'resourceEmail' => 'dokk1-lokale-test2@aarhus.dk',
@@ -44,6 +50,12 @@ class ResourceFixtures extends Fixture
                 'permissionCitizen' => false,
                 'permissionEmployee' => true,
                 'hasWhitelist' => true,
+                'displayName' => 'Dokk1 Lokale Test 2',
+                'city' => 'Aarhus',
+                'streetName' => 'Hack Kampmanns Pl. 2',
+                'postalCode' => 8000,
+                'resourceCategory' => 'Lokaler',
+                'formId' => null,
             ],
             [
                 'resourceEmail' => 'MSO-rolator-test1@aarhus.dk',
@@ -60,6 +72,12 @@ class ResourceFixtures extends Fixture
                 'permissionBusinessPartner' => false,
                 'permissionCitizen' => true,
                 'permissionEmployee' => true,
+                'displayName' => 'Test Rolator',
+                'city' => 'Aarhus',
+                'streetName' => 'En vej',
+                'postalCode' => 8000,
+                'resourceCategory' => 'Hjælpemidler',
+                'formId' => 'http://selvbetjening.local.itkdev.dk/da/content/step-two-alt',
             ],
             [
                 'resourceEmail' => 'without_location@bookaarhus.local.itkdev',
@@ -77,6 +95,12 @@ class ResourceFixtures extends Fixture
                 'permissionBusinessPartner' => true,
                 'permissionCitizen' => true,
                 'permissionEmployee' => true,
+                'displayName' => 'Test without location',
+                'city' => 'Aarhus',
+                'streetName' => 'En vej',
+                'postalCode' => 8000,
+                'resourceCategory' => 'Lokaler',
+                'formId' => null,
             ],
             [
                 'resourceEmail' => 'MSO-bil-test1@aarhus.dk',
@@ -94,6 +118,12 @@ class ResourceFixtures extends Fixture
                 'permissionBusinessPartner' => true,
                 'permissionCitizen' => true,
                 'permissionEmployee' => true,
+                'displayName' => 'Test Bil',
+                'city' => 'Aarhus V',
+                'streetName' => 'En anden vej',
+                'postalCode' => 8200,
+                'resourceCategory' => 'Køretøjer',
+                'formId' => 'http://selvbetjening.local.itkdev.dk/da/content/step-two-alt',
             ],
         ];
 
@@ -115,6 +145,12 @@ class ResourceFixtures extends Fixture
             $res->setPermissionCitizen($resource['permissionCitizen']);
             $res->setPermissionEmployee($resource['permissionEmployee']);
             $res->setHasWhitelist($resource['hasWhitelist'] ?? false);
+            $res->setDisplayName($resource['displayName'] ?? null);
+            $res->setCity($resource['city'] ?? null);
+            $res->setStreetName($resource['streetName'] ?? null);
+            $res->setPostalCode($resource['postalCode'] ?? null);
+            $res->setResourceCategory($resource['resourceCategory'] ?? null);
+            $res->setFormId($resource['formId']);
             $manager->persist($res);
         }
 
@@ -151,6 +187,12 @@ class ResourceFixtures extends Fixture
             $res->setPermissionCitizen(1 == rand(0, 1));
             $res->setPermissionEmployee(1 == rand(0, 1));
             $res->setHasWhitelist(false);
+            $res->setDisplayName("Test $i");
+            $res->setCity('Aarhus');
+            $res->setStreetName('A random road');
+            $res->setPostalCode(rand(8000, 8400));
+            $res->setResourceCategory(0 == rand(0, 1) ? 'Lokaler' : 'Køretøjer');
+            $res->setFormId(null);
             $manager->persist($res);
         }
 

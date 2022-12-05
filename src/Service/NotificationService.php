@@ -9,6 +9,8 @@ use App\Utils\ValidationUtils;
 use DateTimeImmutable;
 use Eluceo\iCal\Domain\Entity;
 use Eluceo\iCal\Domain\ValueObject\DateTime;
+use Eluceo\iCal\Domain\ValueObject\GeographicPosition;
+use Eluceo\iCal\Domain\ValueObject\Location;
 use Eluceo\iCal\Domain\ValueObject\TimeSpan;
 use Eluceo\iCal\Presentation\Component;
 use Eluceo\iCal\Presentation\Factory;
@@ -71,6 +73,19 @@ class NotificationService implements NotificationServiceInterface
         $iCalEvents = [];
 
         foreach ($events as $eventData) {
+            // Set location:
+            $location = new Location($eventData['location_name']);
+
+            if ($eventData['coordinates']) {
+                $coordinatesArr = explode(',', $eventData['coordinates']);
+                $location = $location->withGeographicPosition(
+                    new GeographicPosition(
+                        (float) $coordinatesArr['0'],
+                        (float) $coordinatesArr['1']
+                    )
+                );
+            }
+
             $event = new Entity\Event();
 
             $event->setSummary($eventData['summary']);
@@ -87,6 +102,7 @@ class NotificationService implements NotificationServiceInterface
             $end = new DateTime($immutableTo, false);
             $occurrence = new TimeSpan($start, $end);
             $event->setOccurrence($occurrence);
+            $event->setLocation($location);
 
             $iCalEvents[] = $event;
         }
@@ -138,7 +154,7 @@ class NotificationService implements NotificationServiceInterface
             $template = null;
             $fileAttachments = [];
             $to = $data['user']['mail'];
-            $subject = 'Booking bekræftigelse: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
+            $subject = 'Booking bekræftelse: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
 
             switch ($type) {
                 case NotificationTypeEnum::SUCCESS:
@@ -194,12 +210,14 @@ class NotificationService implements NotificationServiceInterface
                 ->subject($notification['subject'])
                 ->htmlTemplate($notification['template'])
                 ->context($notification);
-            $tempDir = sys_get_temp_dir();
-            $bookingId = $notification['data']['booking']->getId();
-            $fileName = 'booking-'.$bookingId.'.ics';
-            $filePath = $tempDir.'/'.$fileName;
+
             // Add ics attachment to mail.
             if (!empty($notification['fileAttachments']['ics'])) {
+                $tempDir = sys_get_temp_dir();
+                $bookingId = $notification['data']['booking']->getId();
+                $fileName = 'booking-'.$bookingId.'.ics';
+                $filePath = $tempDir.'/'.$fileName;
+
                 foreach ($notification['fileAttachments']['ics'] as $key => $ics) {
                     try {
                         file_put_contents($filePath, (string) $ics);
@@ -234,6 +252,8 @@ class NotificationService implements NotificationServiceInterface
                 'description' => $data['booking']->getBody(),
                 'from' => $data['booking']->getStartTime()->format('Y-m-d H:i:s'),
                 'to' => $data['booking']->getEndTime()->format('Y-m-d H:i:s'),
+                'coordinates' => $data['resource']->getGeoCoordinates(),
+                'location_name' => $data['resource']->getLocation().' - '.$data['resource']->getResourceName(),
             ],
         ];
     }

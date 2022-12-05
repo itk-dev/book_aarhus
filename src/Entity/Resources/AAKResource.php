@@ -114,7 +114,7 @@ class AAKResource
     private bool $catering;
 
     /**
-     * @Groups({"resource"})
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="FormID", type="text", length=-1, nullable=true)
      */
     private ?string $formId;
@@ -160,6 +160,36 @@ class AAKResource
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
     private \DateTime $updateTimestamp;
+
+    /**
+     * @Groups({"resource", "minimum"})
+     * @ORM\Column(name="DisplayName", type="string", length=128, nullable=true)
+     */
+    private ?string $displayName;
+
+    /**
+     * @Groups({"resource", "minimum"})
+     * @ORM\Column(name="City", type="string", length=128, nullable=true)
+     */
+    private ?string $city;
+
+    /**
+     * @Groups({"resource", "minimum"})
+     * @ORM\Column(name="StreetName", type="string", length=128, nullable=true)
+     */
+    private ?string $streetName;
+
+    /**
+     * @Groups({"resource", "minimum"})
+     * @ORM\Column(name="PostalCode", type="integer", nullable=true)
+     */
+    private ?int $postalCode;
+
+    /**
+     * @Groups({"resource", "minimum"})
+     * @ORM\Column(name="RessourceCategory", type="string", length=128, nullable=true)
+     */
+    private ?string $resourceCategory;
 
     public function __construct()
     {
@@ -549,5 +579,85 @@ class AAKResource
     public function setUpdateTimestamp(\DateTime $updateTimestamp): void
     {
         $this->updateTimestamp = $updateTimestamp;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDisplayName(): ?string
+    {
+        return $this->displayName;
+    }
+
+    /**
+     * @param string|null $displayName
+     */
+    public function setDisplayName(?string $displayName): void
+    {
+        $this->displayName = $displayName;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    /**
+     * @param string|null $city
+     */
+    public function setCity(?string $city): void
+    {
+        $this->city = $city;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getStreetName(): ?string
+    {
+        return $this->streetName;
+    }
+
+    /**
+     * @param string|null $streetName
+     */
+    public function setStreetName(?string $streetName): void
+    {
+        $this->streetName = $streetName;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getPostalCode(): ?int
+    {
+        return $this->postalCode;
+    }
+
+    /**
+     * @param int|null $postalCode
+     */
+    public function setPostalCode(?int $postalCode): void
+    {
+        $this->postalCode = $postalCode;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getResourceCategory(): ?string
+    {
+        return $this->resourceCategory;
+    }
+
+    /**
+     * @param string|null $resourceCategory
+     */
+    public function setResourceCategory(?string $resourceCategory): void
+    {
+        $this->resourceCategory = $resourceCategory;
     }
 }
