@@ -5,7 +5,7 @@ namespace App\Service;
 use App\Entity\Main\UserBooking;
 use App\Enum\UserBookingStatusEnum;
 use App\Enum\UserBookingTypeEnum;
-use App\Exception\BookingCreateException;
+use App\Exception\BookingCreateConflictException;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
 use DateTime;
@@ -149,6 +149,8 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      * {@inheritdoc}
      *
      * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
+     *
+     * @throws BookingCreateConflictException
      */
     public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, DateTime $startTime, DateTime $endTime): array
     {
@@ -157,7 +159,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         $bookingConflict = $this->isBookingConflict($resourceEmail, $startTime, $endTime, $token);
 
         if ($bookingConflict) {
-            throw new BookingCreateException('Booking interval conflict.', 409);
+            throw new BookingCreateConflictException('Booking interval conflict.', 409);
         }
 
         $body = [
@@ -194,6 +196,12 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
         $response = $this->request("/users/$resourceEmail/events", $token, 'POST', $body);
 
+        $status = (int) $response->getStatus();
+
+        if (201 !== $status) {
+            throw new MicrosoftGraphCommunicationException('Booking create was unsuccessful.', $status);
+        }
+
         $content = $response->getBody();
         $iCalUId = $content['iCalUId'];
 
@@ -204,10 +212,10 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             $response = $this->request("/users/$resourceEmail/events/$bookingId", $token, 'DELETE');
 
             if (204 != $response->getStatus()) {
-                throw new BookingCreateException('Booking interval conflict. Booking could not be removed after conflict.', 409);
+                throw new BookingCreateConflictException('Booking interval conflict. Booking could not be removed after conflict.', 409);
             }
 
-            throw new BookingCreateException('Booking interval conflict.', 409);
+            throw new BookingCreateConflictException('Booking interval conflict.', 409);
         }
 
         return $content;
@@ -254,6 +262,12 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         ];
 
         $response = $this->request('/me/events', $token, 'POST', $body);
+
+        $status = (int) $response->getStatus();
+
+        if (201 !== $status) {
+            throw new MicrosoftGraphCommunicationException('Booking create was unsuccessful.', $status);
+        }
 
         return $response->getBody();
     }
@@ -630,7 +644,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
         $endString = $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
 
-        $filterString = "\$filter=start/dateTime le '$endString' and end/dateTime ge '$startString'";
+        $filterString = "\$filter=start/dateTime lt '$endString' and end/dateTime gt '$startString'";
 
         $response = $this->request("/users/$resourceEmail/calendar/events?$filterString", $token);
 

@@ -8,4 +8,5 @@ enum NotificationTypeEnum
     case FAILED;
     case CHANGED;
     case REQUEST_RECEIVED;
+    case CONFLICT;
 }
