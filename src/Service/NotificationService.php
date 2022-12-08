@@ -96,9 +96,11 @@ class NotificationService implements NotificationServiceInterface
             'to' => $email,
             'subject' => null,
             'template' => 'email-booking-changed.html.twig',
+            'adminNotification' => false,
             'data' => [
                 'user' => [
                     'name' => $name,
+                    'email' => $email,
                 ],
                 'booking' => [
                     'subject' => $userBooking->subject,
@@ -112,19 +114,33 @@ class NotificationService implements NotificationServiceInterface
             'fileAttachments' => [],
         ];
 
+        $notifyResourceSubject = null;
+
         switch ($type) {
             case NotificationTypeEnum::DELETE_SUCCESS:
                 $notificationData['subject'] = 'Din booking er blevet slettet.';
                 $notificationData['data']['subject'] = 'Din booking er blevet slettet.';
                 $notificationData['template'] = 'email-booking-deleted.html.twig';
+                $notifyResourceSubject = 'Følgende booking blev slettet';
+
                 break;
             case NotificationTypeEnum::UPDATE_SUCCESS:
                 $notificationData['subject'] = 'Din booking er blevet opdateret.';
                 $notificationData['data']['subject'] = 'Din booking er blevet opdateret.';
+                $notifyResourceSubject = 'Følgende booking blev ændret';
+
                 break;
             default:
                 $this->logger->error('Error sending UserBooking notification: Unsupported NotificationTypeEnum');
         }
+
+        $this->sendNotification($notificationData);
+
+        // Email notification to resource as well.
+
+        $notificationData['subject'] = $notifyResourceSubject;
+        $notificationData['to'] = $userBooking->resourceMail;
+        $notificationData['adminNotification'] = true;
 
         $this->sendNotification($notificationData);
     }

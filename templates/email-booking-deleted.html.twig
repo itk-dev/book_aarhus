@@ -29,11 +29,13 @@
                                                 <h2>{{ 'Booking blev slettet' }}</h2>
                                             </td>
                                         </tr>
+                                        {% if not adminNotification %}
                                         <tr>
                                             <td>
                                                 {{ 'Kære' }} {{ data.user.name }}
                                             </td>
                                         </tr>
+                                        {% endif %}
                                         <tr>
                                             <td>
                                                 {{ 'Følgende booking blev slettet.' }}
@@ -46,6 +48,16 @@
                                                 <h3>{{ 'Booking' }}</h3>
                                             </td>
                                         </tr>
+                                        {% if adminNotification == true %}
+                                            <tr>
+                                                <td>{{ 'Brugers navn:' }}</td>
+                                                <td>{{ data.user.name }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>{{ 'Brugers email:' }}</td>
+                                                <td>{{ data.user.email }}</td>
+                                            </tr>
+                                        {% endif %}
                                         <tr class="subject">
                                             <td>{{ 'Booking emne:' }}</td>
                                             <td>{{ data.booking.subject }}</td>
