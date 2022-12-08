@@ -7,7 +7,6 @@ use App\Entity\Main\UserBooking;
 use App\Enum\NotificationTypeEnum;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
-use App\Message\SendBookingNotificationMessage;
 use App\Message\SendUserBookingNotificationMessage;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;

@@ -3,7 +3,6 @@
 namespace App\MessageHandler;
 
 use App\Entity\Resources\AAKResource;
-use App\Message\SendBookingNotificationMessage;
 use App\Message\SendUserBookingNotificationMessage;
 use App\Repository\Main\AAKResourceRepository;
 use App\Service\NotificationServiceInterface;

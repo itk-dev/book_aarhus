@@ -1735,6 +1735,14 @@
                     "ownedByServiceAccount": {
                         "writeOnly": true,
                         "type": "boolean"
+                    },
+                    "userEmail": {
+                        "writeOnly": true,
+                        "type": "string"
+                    },
+                    "userName": {
+                        "writeOnly": true,
+                        "type": "string"
                     }
                 }
             },

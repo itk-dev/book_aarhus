@@ -1219,6 +1219,12 @@ components:
         ownedByServiceAccount:
           writeOnly: true
           type: boolean
+        userEmail:
+          writeOnly: true
+          type: string
+        userName:
+          writeOnly: true
+          type: string
     UserBooking-userBooking:
       type: object
       description: ''
