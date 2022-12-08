@@ -17,7 +17,8 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ### Changed
 
-- [PR-89](https://github.com/itk-dev/book_aarhus/pull/89): Fixed issue with GET /user-bookings where pagination was not handled correctly.
+- [PR-89](https://github.com/itk-dev/book_aarhus/pull/89): Fixed issue with GET /user-bookings where pagination
+was not handled correctly.
 
 ## [1.0.0] - YYYY-MM-DD
 
