@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Main\Booking;
+use App\Entity\Main\UserBooking;
 use App\Entity\Resources\AAKResource;
 use App\Enum\NotificationTypeEnum;
 use Eluceo\iCal\Presentation\Component;
@@ -20,6 +21,17 @@ interface NotificationServiceInterface
      * @return void
      */
     public function sendBookingNotification(Booking $booking, ?AAKResource $resource, NotificationTypeEnum $type): void;
+
+    /**
+     * Send notification about a user booking.
+     *
+     * @param UserBooking $userBooking the user booking
+     * @param AAKResource|null $resource the resource
+     * @param NotificationTypeEnum $type the type of notification
+     *
+     * @return void
+     */
+    public function sendUserBookingNotification(UserBooking $userBooking, ?AAKResource $resource, NotificationTypeEnum $type): void;
 
     /**
      * Create an iCol component.

@@ -59,12 +59,6 @@ class BookingNotificationTestCommand extends Command
                 $output->writeln('Sent "'.$type.'" mail to '.$email);
                 break;
 
-            case 'Booking changed':
-                $this->notificationService->sendBookingNotification($this->createBooking($email), $this->createResource(), NotificationTypeEnum::CHANGED);
-                $output->writeln('Sent "'.$type.'" mail to '.$email);
-
-                break;
-
             case 'Booking failed':
                 $this->notificationService->sendBookingNotification($this->createBooking($email), $this->createResource(), NotificationTypeEnum::FAILED);
                 $output->writeln('Sent "'.$type.'" mail to '.$email);
