@@ -11,14 +11,14 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ### Added
 
-- Added check to avoid getting many user-bookings in the past (https://github.com/itk-dev/book_aarhus/pull/89).
-- Added notifications to user on edit and delete (https://github.com/itk-dev/book_aarhus/pull/89).
-- Added notifications to resource on edit and delete (https://github.com/itk-dev/book_aarhus/pull/89).
+- [PR-89](https://github.com/itk-dev/book_aarhus/pull/89): Added check to avoid getting many user-bookings in the past.
+- [PR-89](https://github.com/itk-dev/book_aarhus/pull/89): Added notifications to user on edit and delete.
+- [PR-89](https://github.com/itk-dev/book_aarhus/pull/89): Added notifications to resource on edit and delete.
 
 ### Changed
 
-- Fixed issue with GET /user-bookings where pagination was not handled correctly (https://github.com/itk-dev/book_aarhus/pull/89).
+- [PR-89](https://github.com/itk-dev/book_aarhus/pull/89): Fixed issue with GET /user-bookings where pagination was not handled correctly.
 
-## [1.0.0] - TODO
+## [1.0.0] - YYYY-MM-DD TODO: Add release date.
 
 - First release.
