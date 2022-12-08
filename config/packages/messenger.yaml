@@ -19,6 +19,8 @@ framework:
             # Route your messages to the transports
             'App\Message\WebformSubmitMessage': async
             'App\Message\CreateBookingMessage': async
+            'App\Message\SendBookingNotificationMessage': async
+            'App\Message\SendUserBookingNotificationMessage': async
 
 when@test:
    framework:

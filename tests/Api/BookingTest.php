@@ -265,7 +265,7 @@ class BookingTest extends AbstractBaseApiTestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['findOneByEmail'])
             ->getMock();
-        $aakResourceRepositoryMock->expects($this->exactly(3))->method('findOneByEmail')->willReturn($res);
+        $aakResourceRepositoryMock->expects($this->exactly(2))->method('findOneByEmail')->willReturn($res);
 
         $security = $container->get(Security::class);
 
