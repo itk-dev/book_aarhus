@@ -31,7 +31,7 @@ class ResourceFixtures extends Fixture
                 'city' => 'Aarhus',
                 'streetName' => 'Hack Kampmanns Pl. 2',
                 'postalCode' => 8000,
-                'resourceCategory' => 'Lokaler',
+                'resourceCategory' => 'Lokale',
                 'formId' => null,
                 'resourceImage' => 'https://placekitten.com/g/200/200',
             ],
@@ -55,7 +55,7 @@ class ResourceFixtures extends Fixture
                 'city' => 'Aarhus',
                 'streetName' => 'Hack Kampmanns Pl. 2',
                 'postalCode' => 8000,
-                'resourceCategory' => 'Lokaler',
+                'resourceCategory' => 'Lokale',
                 'formId' => null,
                 'resourceImage' => 'https://placekitten.com/g/1000/1000',
             ],
@@ -78,7 +78,7 @@ class ResourceFixtures extends Fixture
                 'city' => 'Aarhus',
                 'streetName' => 'En vej',
                 'postalCode' => 8000,
-                'resourceCategory' => 'Hjælpemidler',
+                'resourceCategory' => 'Udstyr',
                 'formId' => 'http://selvbetjening.local.itkdev.dk/da/content/step-two-alt',
                 'resourceImage' => 'https://placekitten.com/g/500/1000',
             ],
@@ -102,7 +102,7 @@ class ResourceFixtures extends Fixture
                 'city' => 'Aarhus',
                 'streetName' => 'En vej',
                 'postalCode' => 8000,
-                'resourceCategory' => 'Lokaler',
+                'resourceCategory' => 'Lokale',
                 'formId' => null,
                 'resourceImage' => 'https://placekitten.com/g/1000/500',
             ],
@@ -126,7 +126,7 @@ class ResourceFixtures extends Fixture
                 'city' => 'Aarhus V',
                 'streetName' => 'En anden vej',
                 'postalCode' => 8200,
-                'resourceCategory' => 'Køretøjer',
+                'resourceCategory' => 'Transport',
                 'formId' => 'http://selvbetjening.local.itkdev.dk/da/content/step-two-alt',
                 'resourceImage' => 'https://placekitten.com/g/800/600',
             ],
@@ -197,7 +197,7 @@ class ResourceFixtures extends Fixture
             $res->setCity('Aarhus');
             $res->setStreetName('A random road');
             $res->setPostalCode(rand(8000, 8400));
-            $res->setResourceCategory(0 == rand(0, 1) ? 'Lokaler' : 'Køretøjer');
+            $res->setResourceCategory(0 == rand(0, 1) ? 'Lokale' : 'Transport');
             $res->setFormId(null);
             $res->setResourceImage(null);
             $manager->persist($res);
