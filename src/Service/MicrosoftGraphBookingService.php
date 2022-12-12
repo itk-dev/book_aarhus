@@ -441,8 +441,9 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     public function getUserBookings(string $userId): array
     {
         try {
+            $now = new DateTime();
             $page = 0;
-            $pageSize = 25;
+            $pageSize = 5;
 
             $userBookings = [];
 
@@ -450,6 +451,12 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
                 $data = $this->getUserBookingsPage($userId, $page, $pageSize);
 
                 $userBookings = array_merge($userBookings, $data['userBookings']);
+
+                $last = $userBookings[count($userBookings) - 1];
+
+                if ($last->end < $now) {
+                    break;
+                }
 
                 $page = $page + 1;
             } while ($data['moreResultsAvailable']);
@@ -475,7 +482,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
                         'query' => [
                             'queryString' => $this->createBodyUserId($userId),
                         ],
-                        'from' => $page,
+                        'from' => $page * $pageSize,
                         'size' => $pageSize,
                     ],
                 ],

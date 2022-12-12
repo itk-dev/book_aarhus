@@ -9,4 +9,6 @@ enum NotificationTypeEnum
     case CHANGED;
     case REQUEST_RECEIVED;
     case CONFLICT;
+    case DELETE_SUCCESS;
+    case UPDATE_SUCCESS;
 }

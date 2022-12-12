@@ -64,4 +64,8 @@ class UserBooking
     public string $resourceName;
 
     public bool $ownedByServiceAccount;
+
+    public string $userEmail;
+
+    public string $userName;
 }

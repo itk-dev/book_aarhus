@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Main\Booking;
+use App\Entity\Main\UserBooking;
 use App\Entity\Resources\AAKResource;
 use App\Enum\NotificationTypeEnum;
 use App\Utils\ValidationUtils;
@@ -17,6 +18,7 @@ use Eluceo\iCal\Presentation\Factory;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
@@ -58,6 +60,89 @@ class NotificationService implements NotificationServiceInterface
         $notification = $this->buildNotification($type, $data);
 
         $this->sendNotification($notification);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sendUserBookingNotification(UserBooking $userBooking, ?AAKResource $resource, NotificationTypeEnum $type): void
+    {
+        $body = $userBooking->body;
+
+        $crawler = new Crawler($body);
+
+        $node = $crawler->filterXPath('//*[@id="email"]')->getNode(0);
+
+        if (is_null($node)) {
+            $this->logger->error('Cannot send user booking notification. No user email in body.');
+
+            return;
+        }
+
+        $email = $node->nodeValue;
+
+        $node = $crawler->filterXPath('//*[@id="name"]')->getNode(0);
+
+        if (is_null($node)) {
+            $this->logger->error('Cannot send user booking notification. No user name in body.');
+
+            return;
+        }
+
+        $name = $node->nodeValue;
+
+        $notificationData = [
+            'from' => $this->emailFromAddress,
+            'to' => $email,
+            'subject' => null,
+            'template' => 'email-booking-changed.html.twig',
+            'adminNotification' => false,
+            'data' => [
+                'user' => [
+                    'name' => $name,
+                    'email' => $email,
+                ],
+                'booking' => [
+                    'subject' => $userBooking->subject,
+                    'startTime' => $userBooking->start,
+                    'endTime' => $userBooking->end,
+                ],
+                'resource' => [
+                    'resourceName' => $userBooking->resourceName,
+                ],
+            ],
+            'fileAttachments' => [],
+        ];
+
+        $notifyResourceSubject = null;
+
+        switch ($type) {
+            case NotificationTypeEnum::DELETE_SUCCESS:
+                $notificationData['subject'] = 'Din booking er blevet slettet.';
+                $notificationData['data']['subject'] = 'Din booking er blevet slettet.';
+                $notificationData['template'] = 'email-booking-deleted.html.twig';
+                $notifyResourceSubject = 'Følgende booking blev slettet';
+
+                break;
+            case NotificationTypeEnum::UPDATE_SUCCESS:
+                $notificationData['subject'] = 'Din booking er blevet opdateret.';
+                $notificationData['data']['subject'] = 'Din booking er blevet opdateret.';
+                $notifyResourceSubject = 'Følgende booking blev ændret';
+
+                break;
+            default:
+                $this->logger->error('Error sending UserBooking notification: Unsupported NotificationTypeEnum');
+        }
+
+        $this->sendNotification($notificationData);
+
+        // Email notification to resource as well.
+
+        $notificationData['subject'] = $notifyResourceSubject;
+        $notificationData['to'] = $userBooking->resourceMail;
+        $notificationData['adminNotification'] = true;
+
+        $this->sendNotification($notificationData);
     }
 
     /**
@@ -165,10 +250,6 @@ class NotificationService implements NotificationServiceInterface
                 case NotificationTypeEnum::REQUEST_RECEIVED:
                     $template = 'email-booking-request-received-receipt.html.twig';
                     $subject = 'Booking anmodning modtaget: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
-                    break;
-                case NotificationTypeEnum::CHANGED:
-                    $template = 'email-booking-changed.html.twig';
-                    $subject = 'Booking ændret: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
                     break;
                 case NotificationTypeEnum::FAILED:
                     $template = 'email-booking-failed.html.twig';
