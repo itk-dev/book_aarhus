@@ -36,13 +36,13 @@ interface NotificationServiceInterface
     /**
      * Create an iCol component.
      *
-     * @param array $events the events
+     * @param array $eventData the event data
      *
      * @return Component
      *
      * @throws Exception
      */
-    public function createCalendarComponent(array $events): Component;
+    public function createCalendarComponent(array $eventData): Component;
 
     /**
      * Notify the admin.
