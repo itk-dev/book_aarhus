@@ -16,10 +16,10 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 - Change .ics "to time"
 - Change .ics description to use subject.
 
-## [1.0.0] - 2022-12-12
-
-- First release.
-
 ## [1.0.1] - 2022-12-12
 
 - Updated changelog
+
+## [1.0.0] - 2022-12-12
+
+- First release.
