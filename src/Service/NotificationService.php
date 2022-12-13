@@ -33,7 +33,9 @@ class NotificationService implements NotificationServiceInterface
         private readonly string $emailAdminNotification,
         private readonly ValidationUtils $validationUtils,
         private readonly LoggerInterface $logger,
-        private readonly MailerInterface $mailer
+        private readonly MailerInterface $mailer,
+        private readonly string $bindNotificationTimezone,
+        private readonly string $bindNotificationDateFormat,
     ) {
         try {
             $this->validatedAdminNotificationEmail = $this->validationUtils->validateEmail($this->emailAdminNotification);
@@ -168,20 +170,16 @@ class NotificationService implements NotificationServiceInterface
             $event = new Entity\Event();
 
             $event->setSummary($eventData['summary']);
-            $event->setDescription($eventData['description']);
+            $event->setDescription('');
+            $event->setLocation($location);
 
-            $immutableFrom = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
-            $immutableTo = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
+            $dateFrom = $eventData['start']->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+            $dateTo = $eventData['end']->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
 
-            if (false === $immutableFrom || false === $immutableTo) {
-                throw new Exception('DateTimeImmutable cannot be false');
-            }
-
-            $start = new DateTime($immutableFrom, false);
-            $end = new DateTime($immutableTo, false);
+            $start = new DateTime($dateFrom, true);
+            $end = new DateTime($dateTo, true);
             $occurrence = new TimeSpan($start, $end);
             $event->setOccurrence($occurrence);
-            $event->setLocation($location);
 
             $iCalEvents[] = $event;
         }
@@ -261,6 +259,20 @@ class NotificationService implements NotificationServiceInterface
                     break;
             }
 
+            if (isset($data['booking'])) {
+                /** @var Booking $booking */
+                $booking = $data['booking'];
+
+                $dateStart = $booking->getStartTime();
+                $dateEnd = $booking->getEndTime();
+
+                $dateStart->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+                $dateEnd->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+
+                $data['startFormatted'] = $dateStart->format($this->bindNotificationDateFormat);
+                $data['endFormatted'] = $dateEnd->format($this->bindNotificationDateFormat);
+            }
+
             $notificationData = [
                 'from' => $this->emailFromAddress,
                 'to' => $to,
@@ -331,8 +343,8 @@ class NotificationService implements NotificationServiceInterface
             [
                 'summary' => $data['booking']->getSubject(),
                 'description' => $data['booking']->getBody(),
-                'from' => $data['booking']->getStartTime()->format('Y-m-d H:i:s'),
-                'to' => $data['booking']->getEndTime()->format('Y-m-d H:i:s'),
+                'start' => $data['booking']->getStartTime(),
+                'end' => $data['booking']->getEndTime(),
                 'coordinates' => $data['resource']->getGeoCoordinates(),
                 'location_name' => $data['resource']->getLocation().' - '.$data['resource']->getResourceName(),
             ],
