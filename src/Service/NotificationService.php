@@ -143,6 +143,8 @@ class NotificationService implements NotificationServiceInterface
                 break;
             default:
                 $this->logger->error('Error sending UserBooking notification: Unsupported NotificationTypeEnum');
+
+                return;
         }
 
         $this->sendNotification($notificationData);
@@ -210,19 +212,24 @@ class NotificationService implements NotificationServiceInterface
             $to = $this->validatedAdminNotificationEmail;
             $template = 'email-notify-admin.html.twig';
 
-            $dateStart = $booking->getStartTime();
-            $dateEnd = $booking->getEndTime();
+            if (null !== $booking) {
+                $dateStart = $booking->getStartTime();
+                $dateEnd = $booking->getEndTime();
 
-            $dateStart->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
-            $dateEnd->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+                $dateStart->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+                $dateEnd->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+
+                $dateStartString = $dateStart->format($this->bindNotificationDateFormat);
+                $dateEndString = $dateEnd->format($this->bindNotificationDateFormat);
+            }
 
             $data = [
                 'subject' => $subject,
                 'message' => $message,
                 'booking' => $booking,
                 'resource' => $resource,
-                'startFormatted' => $dateStart->format($this->bindNotificationDateFormat),
-                'endFormatted' => $dateEnd->format($this->bindNotificationDateFormat),
+                'startFormatted' => $dateStartString ?? '',
+                'endFormatted' => $dateEndString ?? '',
             ];
 
             $notificationData = [
@@ -277,6 +284,8 @@ class NotificationService implements NotificationServiceInterface
                     $template = 'email-booking-failed.html.twig';
                     $subject = 'Booking lykkedes ikke. Intervallet er optaget: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
                     break;
+                default:
+                    $this->logger->error('Error sending UserBooking notification: Unsupported NotificationTypeEnum');
             }
 
             if (isset($data['booking'])) {
@@ -355,7 +364,7 @@ class NotificationService implements NotificationServiceInterface
     /**
      * @param array $data
      *
-     * @return array[]
+     * @return array
      */
     private function prepareICalEvent(array $data): array
     {

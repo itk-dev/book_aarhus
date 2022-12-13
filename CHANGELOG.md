@@ -16,6 +16,10 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 - Change .ics "to time"
 - Change .ics description to use subject.
 
+### Fixed
+
+- Fixed timezone issues for emails.
+
 ## [1.0.1] - 2022-12-12
 
 - Updated changelog
