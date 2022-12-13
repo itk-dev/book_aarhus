@@ -8,7 +8,9 @@ use App\Entity\Resources\AAKResource;
 use App\Enum\NotificationTypeEnum;
 use App\Utils\ValidationUtils;
 use DateTimeImmutable;
+use DateTimeZone as PhpDateTimeZone;
 use Eluceo\iCal\Domain\Entity;
+use Eluceo\iCal\Domain\Entity\TimeZone;
 use Eluceo\iCal\Domain\ValueObject\DateTime;
 use Eluceo\iCal\Domain\ValueObject\GeographicPosition;
 use Eluceo\iCal\Domain\ValueObject\Location;
@@ -151,7 +153,8 @@ class NotificationService implements NotificationServiceInterface
     public function createCalendarComponent(array $events): Component
     {
         $iCalEvents = [];
-
+        $immutableFrom = null;
+        $immutableTo = null;
         foreach ($events as $eventData) {
             $location = new Location($eventData['location_name']);
 
@@ -164,21 +167,20 @@ class NotificationService implements NotificationServiceInterface
                     )
                 );
             }
-
             $event = new Entity\Event();
 
             $event->setSummary($eventData['summary']);
             $event->setDescription($eventData['description']);
 
             $immutableFrom = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
-            $immutableTo = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['from']);
+            $immutableTo = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $eventData['to']);
 
             if (false === $immutableFrom || false === $immutableTo) {
                 throw new Exception('DateTimeImmutable cannot be false');
             }
 
-            $start = new DateTime($immutableFrom, false);
-            $end = new DateTime($immutableTo, false);
+            $start = new DateTime($immutableFrom, true);
+            $end = new DateTime($immutableTo, true);
             $occurrence = new TimeSpan($start, $end);
             $event->setOccurrence($occurrence);
             $event->setLocation($location);
@@ -187,6 +189,14 @@ class NotificationService implements NotificationServiceInterface
         }
 
         $calendar = new Entity\Calendar($iCalEvents);
+
+        $phpDateTimeZone = new PhpDateTimeZone('Europe/Copenhagen');
+        $timeZone = TimeZone::createFromPhpDateTimeZone(
+            $phpDateTimeZone,
+            $immutableFrom,
+            $immutableTo,
+        );
+        $calendar->addTimeZone($timeZone);
 
         return (new Factory\CalendarFactory())->createCalendar($calendar);
     }
@@ -330,7 +340,7 @@ class NotificationService implements NotificationServiceInterface
         return [
             [
                 'summary' => $data['booking']->getSubject(),
-                'description' => $data['booking']->getBody(),
+                'description' => $data['booking']->getSubject(),
                 'from' => $data['booking']->getStartTime()->format('Y-m-d H:i:s'),
                 'to' => $data['booking']->getEndTime()->format('Y-m-d H:i:s'),
                 'coordinates' => $data['resource']->getGeoCoordinates(),
