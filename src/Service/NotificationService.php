@@ -94,8 +94,8 @@ class NotificationService implements NotificationServiceInterface
 
         $name = $node->nodeValue;
 
-        $dateStart =  $userBooking->start;
-        $dateEnd =  $userBooking->end;
+        $dateStart = $userBooking->start;
+        $dateEnd = $userBooking->end;
 
         $dateStart->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
         $dateEnd->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
@@ -210,11 +210,19 @@ class NotificationService implements NotificationServiceInterface
             $to = $this->validatedAdminNotificationEmail;
             $template = 'email-notify-admin.html.twig';
 
+            $dateStart = $booking->getStartTime();
+            $dateEnd = $booking->getEndTime();
+
+            $dateStart->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+            $dateEnd->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+
             $data = [
                 'subject' => $subject,
                 'message' => $message,
                 'booking' => $booking,
                 'resource' => $resource,
+                'startFormatted' => $dateStart->format($this->bindNotificationDateFormat),
+                'endFormatted' => $dateEnd->format($this->bindNotificationDateFormat),
             ];
 
             $notificationData = [
