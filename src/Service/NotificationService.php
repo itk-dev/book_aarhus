@@ -151,45 +151,43 @@ class NotificationService implements NotificationServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function createCalendarComponent(array $events): Component
+    public function createCalendarComponent(array $eventData): Component
     {
-        $iCalEvents = [];
-        $immutableFrom = null;
-        $immutableTo = null;
-        foreach ($events as $eventData) {
-            $location = new Location($eventData['location_name']);
+        $location = new Location($eventData['location_name']);
 
-            if ($eventData['coordinates']) {
-                $coordinatesArr = explode(',', $eventData['coordinates']);
-                $location = $location->withGeographicPosition(
-                    new GeographicPosition(
-                        (float) $coordinatesArr['0'],
-                        (float) $coordinatesArr['1']
-                    )
-                );
-            }
-            $event = new Entity\Event();
-
-            $event->setSummary($eventData['summary']);
-            $event->setDescription($eventData['description']);
-            $event->setLocation($location);
-
-            $dateFrom = $eventData['start']->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
-            $dateTo = $eventData['end']->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
-
-            $start = new ICalDateTime($dateFrom, true);
-            $end = new ICalDateTime($dateTo, true);
-
-            $occurrence = new TimeSpan($start, $end);
-            $event->setOccurrence($occurrence);
-
-            $iCalEvents[] = $event;
+        if ($eventData['coordinates']) {
+            $coordinatesArr = explode(',', $eventData['coordinates']);
+            $location = $location->withGeographicPosition(
+                new GeographicPosition(
+                    (float) $coordinatesArr['0'],
+                    (float) $coordinatesArr['1']
+                )
+            );
         }
 
-        $calendar = new Entity\Calendar($iCalEvents);
+        $event = new Entity\Event();
+
+        $event->setSummary($eventData['summary']);
+        $event->setDescription($eventData['description']);
+        $event->setLocation($location);
+
+        $dateFrom = $eventData['start']->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+        $dateTo = $eventData['end']->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+
+        $start = new ICalDateTime($dateFrom, true);
+        $end = new ICalDateTime($dateTo, true);
+
+        $occurrence = new TimeSpan($start, $end);
+        $event->setOccurrence($occurrence);
+
+        $calendar = new Entity\Calendar([$event]);
 
         $phpDateTimeZone = new PhpDateTimeZone($this->bindNotificationTimezone);
-        $timeZone = TimeZone::createFromPhpDateTimeZone($phpDateTimeZone);
+        $timeZone = TimeZone::createFromPhpDateTimeZone(
+            $phpDateTimeZone,
+            $dateFrom,
+            $dateTo
+        );
         $calendar->addTimeZone($timeZone);
 
         return (new Factory\CalendarFactory())->createCalendar($calendar);
@@ -244,8 +242,8 @@ class NotificationService implements NotificationServiceInterface
                     $template = 'email-booking-success.html.twig';
                     $subject = 'Booking bekræftelse: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
 
-                    $events = $this->prepareIcalEvents($data);
-                    $iCalendarComponent = $this->createCalendarComponent($events);
+                    $event = $this->prepareICalEvent($data);
+                    $iCalendarComponent = $this->createCalendarComponent($event);
 
                     $fileAttachments = [
                         'ics' => [$iCalendarComponent],
@@ -343,17 +341,15 @@ class NotificationService implements NotificationServiceInterface
      *
      * @return array[]
      */
-    private function prepareIcalEvents(array $data): array
+    private function prepareICalEvent(array $data): array
     {
         return [
-            [
-                'summary' => $data['booking']->getSubject(),
-                'start' => $data['booking']->getStartTime(),
-                'end' => $data['booking']->getEndTime(),
-                'description' => $data['booking']->getSubject(),
-                'coordinates' => $data['resource']->getGeoCoordinates(),
-                'location_name' => $data['resource']->getLocation().' - '.$data['resource']->getResourceName(),
-            ],
+            'summary' => $data['booking']->getSubject(),
+            'start' => $data['booking']->getStartTime(),
+            'end' => $data['booking']->getEndTime(),
+            'description' => $data['booking']->getSubject(),
+            'coordinates' => $data['resource']->getGeoCoordinates(),
+            'location_name' => $data['resource']->getLocation().' - '.$data['resource']->getResourceName(),
         ];
     }
 }
