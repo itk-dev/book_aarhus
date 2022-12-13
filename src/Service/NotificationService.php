@@ -94,6 +94,12 @@ class NotificationService implements NotificationServiceInterface
 
         $name = $node->nodeValue;
 
+        $dateStart =  $userBooking->start;
+        $dateEnd =  $userBooking->end;
+
+        $dateStart->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+        $dateEnd->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+
         $notificationData = [
             'from' => $this->emailFromAddress,
             'to' => $email,
@@ -113,6 +119,8 @@ class NotificationService implements NotificationServiceInterface
                 'resource' => [
                     'resourceName' => $userBooking->resourceName,
                 ],
+                'startFormatted' => $dateStart->format($this->bindNotificationDateFormat),
+                'endFormatted' => $dateEnd->format($this->bindNotificationDateFormat),
             ],
             'fileAttachments' => [],
         ];

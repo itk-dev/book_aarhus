@@ -64,11 +64,11 @@
                                         </tr>
                                         <tr class="start-time">
                                             <td>{{ 'Booking starttidspunkt:' }}</td>
-                                            <td>{{ data.booking.startTime|date("d/m/Y - H:i") }}</td>
+                                            <td>{{ data.startFormatted }}</td>
                                         </tr>
                                         <tr class="end-time">
                                             <td>{{ 'Booking sluttidspunkt:' }}</td>
-                                            <td>{{ data.booking.endTime|date("d/m/Y - H:i") }}</td>
+                                            <td>{{ data.endFormatted }}</td>
                                         </tr>
                                     </table>
                                     <table class="resource zebra" cellspacing="0" cellpadding="6" border="0" align="left" width="100%" style="border-bottom: 1px solid #E9ECEF;">
