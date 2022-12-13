@@ -10,18 +10,16 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 ## [Unreleased]
 
 ### Added
-
-- [PR-89](https://github.com/itk-dev/book_aarhus/pull/89): Added check to avoid getting many user-bookings in the past.
-- [PR-89](https://github.com/itk-dev/book_aarhus/pull/89): Added notifications to user on edit and delete.
-- [PR-89](https://github.com/itk-dev/book_aarhus/pull/89): Added notifications to resource on edit and delete.
+- Add .ics timezone
 
 ### Changed
+- Change .ics "to time"
+- Change .ics description to use subject.
 
-- [PR-89](https://github.com/itk-dev/book_aarhus/pull/89): Fixed issue with GET /user-bookings where pagination
-was not handled correctly.
-- [PR-90](https://github.com/itk-dev/book_aarhus/pull/90): Updated fixtures to match expected data for resource
-categories.
+## [1.0.1] - 2022-12-12
 
-## [1.0.0] - YYYY-MM-DD
+- Updated changelog
+
+## [1.0.0] - 2022-12-12
 
 - First release.

@@ -7,9 +7,10 @@ use App\Entity\Main\UserBooking;
 use App\Entity\Resources\AAKResource;
 use App\Enum\NotificationTypeEnum;
 use App\Utils\ValidationUtils;
-use DateTimeImmutable;
+use DateTimeZone as PhpDateTimeZone;
 use Eluceo\iCal\Domain\Entity;
-use Eluceo\iCal\Domain\ValueObject\DateTime;
+use Eluceo\iCal\Domain\Entity\TimeZone;
+use Eluceo\iCal\Domain\ValueObject\DateTime as ICalDateTime;
 use Eluceo\iCal\Domain\ValueObject\GeographicPosition;
 use Eluceo\iCal\Domain\ValueObject\Location;
 use Eluceo\iCal\Domain\ValueObject\TimeSpan;
@@ -153,7 +154,8 @@ class NotificationService implements NotificationServiceInterface
     public function createCalendarComponent(array $events): Component
     {
         $iCalEvents = [];
-
+        $immutableFrom = null;
+        $immutableTo = null;
         foreach ($events as $eventData) {
             $location = new Location($eventData['location_name']);
 
@@ -166,18 +168,18 @@ class NotificationService implements NotificationServiceInterface
                     )
                 );
             }
-
             $event = new Entity\Event();
 
             $event->setSummary($eventData['summary']);
-            $event->setDescription('');
+            $event->setDescription($eventData['description']);
             $event->setLocation($location);
 
             $dateFrom = $eventData['start']->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
             $dateTo = $eventData['end']->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
 
-            $start = new DateTime($dateFrom, true);
-            $end = new DateTime($dateTo, true);
+            $start = new ICalDateTime($dateFrom, true);
+            $end = new ICalDateTime($dateTo, true);
+
             $occurrence = new TimeSpan($start, $end);
             $event->setOccurrence($occurrence);
 
@@ -185,6 +187,10 @@ class NotificationService implements NotificationServiceInterface
         }
 
         $calendar = new Entity\Calendar($iCalEvents);
+
+        $phpDateTimeZone = new PhpDateTimeZone($this->bindNotificationTimezone);
+        $timeZone = TimeZone::createFromPhpDateTimeZone($phpDateTimeZone);
+        $calendar->addTimeZone($timeZone);
 
         return (new Factory\CalendarFactory())->createCalendar($calendar);
     }
@@ -342,9 +348,9 @@ class NotificationService implements NotificationServiceInterface
         return [
             [
                 'summary' => $data['booking']->getSubject(),
-                'description' => $data['booking']->getBody(),
                 'start' => $data['booking']->getStartTime(),
                 'end' => $data['booking']->getEndTime(),
+                'description' => $data['booking']->getSubject(),
                 'coordinates' => $data['resource']->getGeoCoordinates(),
                 'location_name' => $data['resource']->getLocation().' - '.$data['resource']->getResourceName(),
             ],
