@@ -8,13 +8,13 @@ use App\Entity\Resources\AAKResource;
 use App\Enum\NotificationTypeEnum;
 use App\Utils\ValidationUtils;
 use DateTimeImmutable;
+use DateTimeZone as PhpDateTimeZone;
 use Eluceo\iCal\Domain\Entity;
+use Eluceo\iCal\Domain\Entity\TimeZone;
 use Eluceo\iCal\Domain\ValueObject\DateTime;
 use Eluceo\iCal\Domain\ValueObject\GeographicPosition;
 use Eluceo\iCal\Domain\ValueObject\Location;
 use Eluceo\iCal\Domain\ValueObject\TimeSpan;
-use Eluceo\iCal\Domain\Entity\TimeZone;
-use DateTimeZone as PhpDateTimeZone;
 use Eluceo\iCal\Presentation\Component;
 use Eluceo\iCal\Presentation\Factory;
 use Exception;
@@ -192,9 +192,9 @@ class NotificationService implements NotificationServiceInterface
 
         $phpDateTimeZone = new PhpDateTimeZone('Europe/Copenhagen');
         $timeZone = TimeZone::createFromPhpDateTimeZone(
-          $phpDateTimeZone,
-          $immutableFrom,
-          $immutableTo,
+            $phpDateTimeZone,
+            $immutableFrom,
+            $immutableTo,
         );
         $calendar->addTimeZone($timeZone);
 
