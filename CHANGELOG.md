@@ -10,8 +10,11 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 ## [Unreleased]
 
 ### Added
+- Add .ics timezone
 
 ### Changed
+- Change .ics "to time"
+- Change .ics description to use subject.
 
 ## [1.0.0] - 2022-12-12
 
