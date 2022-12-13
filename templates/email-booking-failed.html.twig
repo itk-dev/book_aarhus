@@ -59,11 +59,11 @@
                                         </tr>
                                         <tr class="start-time">
                                             <td>{{ 'Booking starttidspunkt:' }}</td>
-                                            <td>{{ data.booking.startTime|date("d/m/Y - H:i") }}</td>
+                                            <td>{{ data.startFormatted }}</td>
                                         </tr>
                                         <tr class="end-time">
                                             <td>{{ 'Booking sluttidspunkt:' }}</td>
-                                            <td>{{ data.booking.endTime|date("d/m/Y - H:i") }}</td>
+                                            <td>{{ data.endFormatted }}</td>
                                         </tr>
                                         {# Metadata fields #}
                                         {% for key, value in data.metaData %}
