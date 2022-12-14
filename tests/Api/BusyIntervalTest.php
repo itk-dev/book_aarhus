@@ -3,6 +3,7 @@
 namespace App\Tests\Api;
 
 use App\Service\MicrosoftGraphBookingService;
+use App\Service\MicrosoftGraphHelperService;
 use App\Tests\AbstractBaseApiTestCase;
 use Microsoft\Graph\Http\GraphRequest;
 use Microsoft\Graph\Http\GraphResponse;
@@ -36,14 +37,14 @@ class BusyIntervalTest extends AbstractBaseApiTestCase
     {
         $client = self::getAuthenticatedClient();
 
-        $microsoftGraphServiceMock = $this->getMockBuilder(MicrosoftGraphBookingService::class)
+        $microsoftGraphHelperServiceMock = $this->getMockBuilder(MicrosoftGraphHelperService::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['request', 'authenticateAsServiceAccount'])
             ->getMock();
 
-        $microsoftGraphServiceMock->method('authenticateAsServiceAccount')->willReturn('1234');
+        $microsoftGraphHelperServiceMock->method('authenticateAsServiceAccount')->willReturn('1234');
 
-        $microsoftGraphServiceMock->method('request')->willReturn(
+        $microsoftGraphHelperServiceMock->method('request')->willReturn(
             new GraphResponse(
                 new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
                 json_encode([
@@ -68,7 +69,7 @@ class BusyIntervalTest extends AbstractBaseApiTestCase
             )
         );
 
-        self::getContainer()->set('App\Service\BookingServiceInterface', $microsoftGraphServiceMock);
+        self::getContainer()->set('App\Service\MicrosoftGraphHelperService', $microsoftGraphHelperServiceMock);
 
         $url = '/v1/busy-intervals?resources=resource%40example.com&dateStart=2022-05-30T17%3A32%3A28Z&dateEnd=2022-06-22T17%3A32%3A28Z&page=1';
 
