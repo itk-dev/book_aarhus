@@ -203,24 +203,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
     /**
      * {@inheritdoc}
-     */
-    public function acceptBooking(UserBooking $booking): ?string
-    {
-        $token = $this->graphHelperService->authenticateAsServiceAccount();
-
-        // Formatting the url decoded booking id, replacing "/" with "-" as this is graph-compatible, and replacing
-        // " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
-        $cleanedBookingId = str_replace(['/', ' '], ['-', '+'], urldecode($booking->id));
-
-        $response = $this->graphHelperService->request("/me/events/$cleanedBookingId/accept", $token, 'POST', [
-            'sendResponse' => false,
-        ]);
-
-        return $response->getStatus();
-    }
-
-    /**
-     * {@inheritdoc}
      *
      * @see https://docs.microsoft.com/en-us/graph/api/event-update?view=graph-rest-1.0&tabs=http
      */

@@ -45,6 +45,15 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
                 ],
             ],
         ], $bookingData);
+    }
+
+    public function testCreateBodyUserId(): void
+    {
+        $microsoftGraphHelperServiceMock = $this->getMockBuilder(MicrosoftGraphHelperService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock);
 
         $userId = $graphService->createBodyUserId('useridtest');
 
@@ -159,4 +168,5 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
             $this->assertEquals(400, $e->getCode());
         }
     }
+
 }
