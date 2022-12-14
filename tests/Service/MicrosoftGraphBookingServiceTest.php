@@ -130,6 +130,34 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
             ),
             new GraphResponse(
                 new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode(MicrosoftGraphBookingServiceData::getUserBookingData2()),
+            ),
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode(MicrosoftGraphBookingServiceData::getUserBookingData2()),
+            ),
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode(MicrosoftGraphBookingServiceData::getUserBookingData2()),
+            ),
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode(MicrosoftGraphBookingServiceData::getUserBookingData2()),
+            ),
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode(MicrosoftGraphBookingServiceData::getUserBookingData2()),
+            ),
+            new GraphResponse(
+                new GraphRequest('POST', '/', '123', 'http://localhost', 'v1'),
+                json_encode(MicrosoftGraphBookingServiceData::getUserBookings2()),
+            ),
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode(MicrosoftGraphBookingServiceData::getUserBookingData2()),
+            ),
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
                 json_encode(MicrosoftGraphBookingServiceData::getUserBookingData1()),
             ),
         );
@@ -138,6 +166,6 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
 
         $userBookings = $graphService->getUserBookings('1234567890');
 
-        $this->assertCount(1, $userBookings);
+        $this->assertCount(7, $userBookings);
     }
 }

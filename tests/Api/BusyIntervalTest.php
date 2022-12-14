@@ -2,7 +2,6 @@
 
 namespace App\Tests\Api;
 
-use App\Service\MicrosoftGraphBookingService;
 use App\Service\MicrosoftGraphHelperService;
 use App\Tests\AbstractBaseApiTestCase;
 use Microsoft\Graph\Http\GraphRequest;

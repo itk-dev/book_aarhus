@@ -79,5 +79,4 @@ class MicrosoftGraphHelperService
             throw new MicrosoftGraphCommunicationException($e->getMessage(), $e->getCode());
         }
     }
-
 }

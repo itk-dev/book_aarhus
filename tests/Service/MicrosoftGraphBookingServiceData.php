@@ -64,21 +64,53 @@ class MicrosoftGraphBookingServiceData
         ];
     }
 
+    public static function getUserBookingData2(): array
+    {
+        $arr = self::getUserBookingData1();
+        $arr['start'] = ['dateTime' => '2042-12-13T14:00:00.0000000', 'timeZone' => 'UTC'];
+        $arr['end'] = ['dateTime' => '2042-12-13T14:15:00.0000000', 'timeZone' => 'UTC'];
+
+        return $arr;
+    }
+
     public static function getUserBookings1(): array
     {
         return [
-            "value" => [
+            'value' => [
                 [
-                    "searchTerms" => ["uid-1234567890-uid"],
-                    "hitsContainers" => [
+                    'searchTerms' => ['uid-1234567890-uid'],
+                    'hitsContainers' => [
                         [
-                            "hits" => [
-                                [
-                                    "hitId" => "123",
-                                ]
+                            'hits' => [
+                                ['hitId' => '123'],
+                                ['hitId' => '124'],
+                                ['hitId' => '125'],
+                                ['hitId' => '126'],
+                                ['hitId' => '127'],
                             ],
-                            "total" => 1,
-                            "moreResultsAvailable" => false,
+                            'total' => 6,
+                            'moreResultsAvailable' => true,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    public static function getUserBookings2(): array
+    {
+        return [
+            'value' => [
+                [
+                    'searchTerms' => ['uid-1234567890-uid'],
+                    'hitsContainers' => [
+                        [
+                            'hits' => [
+                                ['hitId' => '128'],
+                                ['hitId' => '129'],
+                            ],
+                            'total' => 7,
+                            'moreResultsAvailable' => false,
                         ],
                     ],
                 ],
