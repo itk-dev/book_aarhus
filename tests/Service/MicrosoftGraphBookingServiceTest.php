@@ -2,6 +2,7 @@
 
 namespace App\Tests\Service;
 
+use App\Exception\BookingCreateConflictException;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
 use App\Service\MicrosoftGraphBookingService;
@@ -296,6 +297,260 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
             $graphService->deleteBooking($userBooking);
         } catch (UserBookingException $e) {
             $this->assertEquals(500, $e->getCode());
+        }
+    }
+
+    public function testUpdateBooking(): void
+    {
+        $microsoftGraphHelperServiceMock = $this->getMockBuilder(MicrosoftGraphHelperService::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['request', 'authenticateAsServiceAccount'])
+            ->getMock();
+
+        $microsoftGraphHelperServiceMock->method('authenticateAsServiceAccount')->willReturn('1234');
+
+        $microsoftGraphHelperServiceMock->method('request')->willReturn(
+            // 2. No conflict: isBookingConflict
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([
+                    'value' => [
+                        MicrosoftGraphBookingServiceData::getUserBookingData2(),
+                    ],
+                ]),
+                200,
+            ),
+            // getEventFromResourceByICalUid
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([
+                    'value' => [
+                        MicrosoftGraphBookingServiceData::getUserBookingData2(),
+                    ],
+                ]),
+                200,
+            ),
+            // request
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([]),
+                200,
+            ),
+            // 3. No conflict, owned by service account. isBookingConflict
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([
+                    'value' => [
+                        MicrosoftGraphBookingServiceData::getUserBookingData2(),
+                    ],
+                ]),
+                200,
+            ),
+            // request
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([]),
+                200,
+            ),
+            // 3. Conflict, owned by service account. isBookingConflict
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([
+                    'value' => [
+                        MicrosoftGraphBookingServiceData::getUserBookingData3(),
+                        MicrosoftGraphBookingServiceData::getUserBookingData2(),
+                    ],
+                ]),
+                200,
+            ),
+        );
+
+        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock);
+
+        // 1. Expired
+        $userBooking = $graphService->getUserBookingFromApiData(MicrosoftGraphBookingServiceData::getUserBookingData1());
+
+        try {
+            $graphService->updateBooking($userBooking);
+        } catch (UserBookingException $e) {
+            $this->assertEquals(400, $e->getCode());
+        }
+
+        // 2. No conflict
+        $userBooking = $graphService->getUserBookingFromApiData(MicrosoftGraphBookingServiceData::getUserBookingData2());
+
+        $result = $graphService->updateBooking($userBooking);
+
+        $this->assertEquals(200, $result);
+
+        // 3. No conflict, owned by service account.
+        $userBooking = $graphService->getUserBookingFromApiData(MicrosoftGraphBookingServiceData::getUserBookingData2());
+        $userBooking->ownedByServiceAccount = true;
+
+        $result = $graphService->updateBooking($userBooking);
+
+        $this->assertEquals(200, $result);
+
+        // 4. Conflict.
+        $userBooking = $graphService->getUserBookingFromApiData(MicrosoftGraphBookingServiceData::getUserBookingData2());
+
+        try {
+            $graphService->updateBooking($userBooking);
+        } catch (UserBookingException $e) {
+            $this->assertEquals(409, $e->getCode());
+        }
+    }
+
+    public function testCreateBookingForResource(): void
+    {
+        $microsoftGraphHelperServiceMock = $this->getMockBuilder(MicrosoftGraphHelperService::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['request', 'authenticateAsServiceAccount'])
+            ->getMock();
+
+        $microsoftGraphHelperServiceMock->method('authenticateAsServiceAccount')->willReturn('1234');
+
+        $microsoftGraphHelperServiceMock->method('request')->willReturn(
+            // 1. No conflict
+            // Empty interval.
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([
+                    'value' => [],
+                ]),
+                200,
+            ),
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode(MicrosoftGraphBookingServiceData::getUserBookingData2()),
+                201,
+            ),
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([
+                    'value' => [
+                        MicrosoftGraphBookingServiceData::getUserBookingData2(),
+                    ],
+                ]),
+                200,
+            ),
+            // 2. Conflict 1
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([
+                    'value' => [
+                        MicrosoftGraphBookingServiceData::getUserBookingData2(),
+                    ],
+                ]),
+                200,
+            ),
+            // 3. Conflict 2
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([
+                    'value' => [],
+                ]),
+                200,
+            ),
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode(MicrosoftGraphBookingServiceData::getUserBookingData2()),
+                201,
+            ),
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([
+                    'value' => [
+                        MicrosoftGraphBookingServiceData::getUserBookingData2(),
+                        MicrosoftGraphBookingServiceData::getUserBookingData3(),
+                    ],
+                ]),
+                200,
+            ),
+            // Delete
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([]),
+                204,
+            ),
+        );
+
+        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock);
+
+        // 1. No conflict
+        $data = [
+            'name' => 'DOKK1-Lokale-Test1',
+            'address' => 'DOKK1-Lokale-Test1@aarhus.dk',
+            'subject' => 'test',
+            'body' => '',
+            'start' => new DateTime('2042-12-13T14:00:00.0000000'),
+            'end' => new DateTime('2042-12-13T14:15:00.0000000'),
+        ];
+
+        $content = $graphService->createBookingForResource($data['address'], $data['name'], $data['subject'], $data['body'], $data['start'], $data['end']);
+
+        $this->assertEquals(MicrosoftGraphBookingServiceData::getUserBookingData2(), $content);
+
+        // 2. Conflict 1
+        try {
+            $graphService->createBookingForResource($data['address'], $data['name'], $data['subject'], $data['body'], $data['start'], $data['end']);
+        } catch (BookingCreateConflictException $e) {
+            $this->assertEquals(409, $e->getCode());
+        }
+
+        // 3. Conflict 2
+        try {
+            $graphService->createBookingForResource($data['address'], $data['name'], $data['subject'], $data['body'], $data['start'], $data['end']);
+        } catch (BookingCreateConflictException $e) {
+            $this->assertEquals(409, $e->getCode());
+        }
+    }
+
+    public function testCreateBookingInviteResource(): void
+    {
+        $microsoftGraphHelperServiceMock = $this->getMockBuilder(MicrosoftGraphHelperService::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['request', 'authenticateAsServiceAccount'])
+            ->getMock();
+
+        $microsoftGraphHelperServiceMock->method('authenticateAsServiceAccount')->willReturn('1234');
+
+        $microsoftGraphHelperServiceMock->method('request')->willReturn(
+            // 1. Success
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode(MicrosoftGraphBookingServiceData::getUserBookingData2()),
+                201,
+            ),
+            // 2. Error
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([]),
+                400,
+            ),
+        );
+
+        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock);
+
+        $data = [
+            'name' => 'DOKK1-Lokale-Test1',
+            'address' => 'DOKK1-Lokale-Test1@aarhus.dk',
+            'subject' => 'test',
+            'body' => '',
+            'start' => new DateTime('2042-12-13T14:00:00.0000000'),
+            'end' => new DateTime('2042-12-13T14:15:00.0000000'),
+        ];
+
+        // 1. Success
+        $content = $graphService->createBookingInviteResource($data['address'], $data['name'], $data['subject'], $data['body'], $data['start'], $data['end']);
+
+        $this->assertEquals(MicrosoftGraphBookingServiceData::getUserBookingData2(), $content);
+
+        // 2. Error
+        try {
+            $graphService->createBookingInviteResource($data['address'], $data['name'], $data['subject'], $data['body'], $data['start'], $data['end']);
+        } catch (MicrosoftGraphCommunicationException $e) {
+            $this->assertEquals(400, $e->getCode());
         }
     }
 }

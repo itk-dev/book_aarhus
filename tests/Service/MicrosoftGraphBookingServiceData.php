@@ -69,6 +69,16 @@ class MicrosoftGraphBookingServiceData
         $arr = self::getUserBookingData1();
         $arr['start'] = ['dateTime' => '2042-12-13T14:00:00.0000000', 'timeZone' => 'UTC'];
         $arr['end'] = ['dateTime' => '2042-12-13T14:15:00.0000000', 'timeZone' => 'UTC'];
+        $arr['id'] = 'ID123456';
+
+        return $arr;
+    }
+
+    public static function getUserBookingData3(): array
+    {
+        $arr = self::getUserBookingData1();
+        $arr['id'] = 'ID3';
+        $arr['iCalUId'] = 'ICALUID3';
 
         return $arr;
     }
