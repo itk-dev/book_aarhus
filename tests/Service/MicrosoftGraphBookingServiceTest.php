@@ -123,43 +123,36 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
 
         $microsoftGraphHelperServiceMock->method('authenticateAsServiceAccount')->willReturn('1234');
 
+        $resp1 = new GraphResponse(
+            new GraphRequest('POST', '/', '123', 'http://localhost', 'v1'),
+            json_encode(MicrosoftGraphBookingServiceData::getUserBookings1()),
+        );
+
+        $resp2 = new GraphResponse(
+            new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+            json_encode(MicrosoftGraphBookingServiceData::getUserBookingData2()),
+        );
+
+        $resp3 = new GraphResponse(
+            new GraphRequest('POST', '/', '123', 'http://localhost', 'v1'),
+            json_encode(MicrosoftGraphBookingServiceData::getUserBookings2()),
+        );
+
+        $resp4 = new GraphResponse(
+            new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+            json_encode(MicrosoftGraphBookingServiceData::getUserBookingData1()),
+        );
+
         $microsoftGraphHelperServiceMock->method('request')->willReturn(
-            new GraphResponse(
-                new GraphRequest('POST', '/', '123', 'http://localhost', 'v1'),
-                json_encode(MicrosoftGraphBookingServiceData::getUserBookings1()),
-            ),
-            new GraphResponse(
-                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
-                json_encode(MicrosoftGraphBookingServiceData::getUserBookingData2()),
-            ),
-            new GraphResponse(
-                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
-                json_encode(MicrosoftGraphBookingServiceData::getUserBookingData2()),
-            ),
-            new GraphResponse(
-                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
-                json_encode(MicrosoftGraphBookingServiceData::getUserBookingData2()),
-            ),
-            new GraphResponse(
-                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
-                json_encode(MicrosoftGraphBookingServiceData::getUserBookingData2()),
-            ),
-            new GraphResponse(
-                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
-                json_encode(MicrosoftGraphBookingServiceData::getUserBookingData2()),
-            ),
-            new GraphResponse(
-                new GraphRequest('POST', '/', '123', 'http://localhost', 'v1'),
-                json_encode(MicrosoftGraphBookingServiceData::getUserBookings2()),
-            ),
-            new GraphResponse(
-                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
-                json_encode(MicrosoftGraphBookingServiceData::getUserBookingData2()),
-            ),
-            new GraphResponse(
-                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
-                json_encode(MicrosoftGraphBookingServiceData::getUserBookingData1()),
-            ),
+            $resp1,
+            $resp2,
+            $resp2,
+            $resp2,
+            $resp2,
+            $resp2,
+            $resp3,
+            $resp2,
+            $resp4,
         );
 
         $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock);
