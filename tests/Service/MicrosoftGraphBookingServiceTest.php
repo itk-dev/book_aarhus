@@ -2,6 +2,7 @@
 
 namespace App\Tests\Service;
 
+use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
 use App\Service\MicrosoftGraphBookingService;
 use App\Service\MicrosoftGraphHelperService;
@@ -160,5 +161,141 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
         $userBookings = $graphService->getUserBookings('1234567890');
 
         $this->assertCount(7, $userBookings);
+    }
+
+    /**
+     * @throws MicrosoftGraphCommunicationException
+     * @throws UserBookingException
+     */
+    public function testDeleteBooking(): void
+    {
+        $microsoftGraphHelperServiceMock = $this->getMockBuilder(MicrosoftGraphHelperService::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['request', 'authenticateAsServiceAccount'])
+            ->getMock();
+
+        $microsoftGraphHelperServiceMock->method('authenticateAsServiceAccount')->willReturn('1234');
+
+        $microsoftGraphHelperServiceMock->method('request')->willReturn(
+            // 2. Test ok 204
+            // deleteBookingFromServiceAccount: request
+            new GraphResponse(
+                new GraphRequest('POST', '/', '123', 'http://localhost', 'v1'),
+                json_encode(MicrosoftGraphBookingServiceData::getUserBookingData2()),
+                204,
+            ),
+            // deleteBookingFromResource: getEventFromResourceByICalUid
+            new GraphResponse(
+                new GraphRequest('POST', '/', '123', 'http://localhost', 'v1'),
+                json_encode([
+                    'value' => [
+                        MicrosoftGraphBookingServiceData::getUserBookingData2(),
+                    ],
+                ]),
+                200,
+            ),
+            // deleteBookingFromResource: request
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([]),
+                204,
+            ),
+            // 3. Test when request reports error.
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([]),
+                400,
+            ),
+            // 4. Owned by service account
+            // deleteBookingFromResource: getEventFromResourceByICalUid
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([]),
+                200,
+            ),
+            // 5. Owned by service account, not request 204
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([
+                    'value' => [
+                        MicrosoftGraphBookingServiceData::getUserBookingData2(),
+                    ],
+                ]),
+                200,
+            ),
+            new GraphResponse(
+                new GraphRequest('POST', '/', '123', 'http://localhost', 'v1'),
+                json_encode([]),
+                500,
+            ),
+            // 6. Owned by service account, not request 204
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([
+                    'value' => [
+                        MicrosoftGraphBookingServiceData::getUserBookingData2(),
+                    ],
+                ]),
+                200,
+            ),
+            new GraphResponse(
+                new GraphRequest('POST', '/', '123', 'http://localhost', 'v1'),
+                json_encode([]),
+                204,
+            ),
+            new GraphResponse(
+                new GraphRequest('POST', '/', '123', 'http://localhost', 'v1'),
+                json_encode([]),
+                204,
+            ),
+        );
+
+        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock);
+
+        // 1. Expired booking.
+        $userBooking = $graphService->getUserBookingFromApiData(MicrosoftGraphBookingServiceData::getUserBookingData1());
+
+        try {
+            $graphService->deleteBooking($userBooking);
+        } catch (UserBookingException $e) {
+            $this->assertEquals('Booking is expired. Cannot be deleted.', $e->getMessage());
+        }
+
+        // 2. Test ok 204
+        $userBooking = $graphService->getUserBookingFromApiData(MicrosoftGraphBookingServiceData::getUserBookingData2());
+
+        // Should not create an exception.
+        $graphService->deleteBooking($userBooking);
+
+        // 3. Test when request reports error.
+        try {
+            $graphService->deleteBooking($userBooking);
+        } catch (UserBookingException $e) {
+            $this->assertEquals(400, $e->getCode());
+        }
+
+        // 4. Owned by service account.
+        $userBooking = $graphService->getUserBookingFromApiData(MicrosoftGraphBookingServiceData::getUserBookingData2());
+        $userBooking->ownedByServiceAccount = true;
+
+        try {
+            $graphService->deleteBooking($userBooking);
+        } catch (UserBookingException $e) {
+            $this->assertEquals(404, $e->getCode());
+        }
+
+        // 5. Owned by service account, not request 204
+        try {
+            $graphService->deleteBooking($userBooking);
+        } catch (UserBookingException $e) {
+            $this->assertEquals(500, $e->getCode());
+        }
+
+        // 6. Owned by service account, not request 204, removed from resource
+        try {
+            $graphService->deleteBooking($userBooking);
+        } catch (UserBookingException $e) {
+            $this->assertEquals(500, $e->getCode());
+        }
     }
 }
