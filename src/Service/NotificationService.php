@@ -125,8 +125,6 @@ class NotificationService implements NotificationServiceInterface
             'fileAttachments' => [],
         ];
 
-        $notifyResourceSubject = null;
-
         switch ($type) {
             case NotificationTypeEnum::DELETE_SUCCESS:
                 $notificationData['subject'] = 'Din booking er blevet slettet.';
@@ -255,8 +253,6 @@ class NotificationService implements NotificationServiceInterface
         $notificationData = [];
 
         try {
-            $template = null;
-            $subject = null;
             $fileAttachments = [];
             $to = $data['user']['mail'];
 
@@ -285,7 +281,7 @@ class NotificationService implements NotificationServiceInterface
                     $subject = 'Booking lykkedes ikke. Intervallet er optaget: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
                     break;
                 default:
-                    $this->logger->error('Error sending UserBooking notification: Unsupported NotificationTypeEnum');
+                    throw new Exception('Unsupported NotificationTypeEnum');
             }
 
             if (isset($data['booking'])) {

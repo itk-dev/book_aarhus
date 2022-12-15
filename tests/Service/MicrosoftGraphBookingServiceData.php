@@ -46,7 +46,139 @@ class MicrosoftGraphBookingServiceData
             ],
             'body' => [
                 'contentType' => 'html',
-                'content' => '<html>\r\n<head><\/head>\r\n<body>\r\n<table role=\"presentation\" cellspacing=\"0\" cellpadding=\"24\" border=\"0\" align=\"center\" class=\"document\">\r\n<tbody>\r\n<tr>\r\n<td valign=\"top\">\r\n<table role=\"presentation\" cellspacing=\"0\" cellpadding=\"24\" border=\"0\" align=\"center\" width=\"750\" class=\"container\" style=\"background-color:#ffffff\">\r\n<tbody>\r\n<tr>\r\n<td>\r\n<table class=\"booking-fields\" role=\"presentation\" aria-hidden=\"true\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" align=\"center\" width=\"100%\">\r\n<tbody>\r\n<tr>\r\n<td>\r\n<table class=\"header\" role=\"presentation\" cellspacing=\"0\" cellpadding=\"6\" border=\"0\" align=\"left\" width=\"100%\">\r\n<tbody>\r\n<tr>\r\n<td>\r\n<h2>Ny booking af DOKK1-Lokale-Test1 - LOCATION1<\/h2>\r\n<\/td>\r\n<\/tr>\r\n<\/tbody>\r\n<\/table>\r\n<table class=\"resource zebra\" cellspacing=\"0\" cellpadding=\"6\" border=\"0\" align=\"left\" width=\"100%\" style=\"border-bottom:1px solid #E9ECEF\">\r\n<tbody>\r\n<tr>\r\n<td>\r\n<h3>Resource<\/h3>\r\n<\/td>\r\n<\/tr>\r\n<tr>\r\n<td>Resource navn:<\/td>\r\n<td class=\"hasData\" id=\"resourceName\">DOKK1-Lokale-Test1<\/td>\r\n<\/tr>\r\n<tr>\r\n<td>Resource email:<\/td>\r\n<td class=\"hasData\" id=\"resourceMail\">DOKK1-Lokale-Test1@aarhus.dk<\/td>\r\n<\/tr>\r\n<\/tbody>\r\n<\/table>\r\n<table class=\"container\" role=\"presentation\" aria-hidden=\"true\" cellspacing=\"0\" cellpadding=\"12\" border=\"0\" align=\"center\" width=\"750\">\r\n<tbody>\r\n<tr>\r\n<td><\/td>\r\n<\/tr>\r\n<\/tbody>\r\n<\/table>\r\n<table class=\"booking zebra\" cellspacing=\"0\" cellpadding=\"6\" border=\"0\" align=\"left\" width=\"100%\" style=\"border-bottom:1px solid #E9ECEF\">\r\n<tbody>\r\n<tr>\r\n<td>\r\n<h3>Booking<\/h3>\r\n<\/td>\r\n<\/tr>\r\n<tr class=\"subject\">\r\n<td>Booking emne:<\/td>\r\n<td class=\"hasData\" id=\"subject\">Test booking<\/td>\r\n<\/tr>\r\n<tr class=\"start-time\">\r\n<td>Booking starttidspunkt:<\/td>\r\n<td>13\/12\/2022 - 14:00<span id=\"start\" class=\"hidden hasData\">2022-12-13T14:00:00.000Z<\/span><\/td>\r\n<\/tr>\r\n<tr class=\"end-time\">\r\n<td>Booking sluttidspunkt:<\/td>\r\n<td>13\/12\/2022 - 14:15<span id=\"end\" class=\"hidden hasData\">2022-12-13T14:15:00.000Z<\/span><\/td>\r\n<\/tr>\r\n<tr class=\"extra\">\r\n<td>extra<\/td>\r\n<td id=\"extra\" class=\"metaData hasData\">extradata<\/td>\r\n<\/tr>\r\n<\/tbody>\r\n<\/table>\r\n<table class=\"container\" role=\"presentation\" aria-hidden=\"true\" cellspacing=\"0\" cellpadding=\"12\" border=\"0\" align=\"center\" width=\"750\">\r\n<tbody>\r\n<tr>\r\n<td><\/td>\r\n<\/tr>\r\n<\/tbody>\r\n<\/table>\r\n<table class=\"user zebra\" cellspacing=\"0\" cellpadding=\"6\" border=\"0\" align=\"left\" width=\"100%\" style=\"border-bottom:1px solid #E9ECEF\">\r\n<tbody>\r\n<tr>\r\n<td>\r\n<h3>Bruger<\/h3>\r\n<\/td>\r\n<\/tr>\r\n<tr class=\"booker-name\">\r\n<td>Booking bruger navn:<\/td>\r\n<td id=\"name\" class=\"hasData\">Test Testesen<\/td>\r\n<\/tr>\r\n<tr class=\"booker-email\">\r\n<td>Booking bruger email:<\/td>\r\n<td><a href=\"mailto:test@example.com?subject=Vdr. Booking af DOKK1-Lokale-Test1 - LOCATION1\" id=\"email\" class=\"hasData\">test@example.com<\/a><\/td>\r\n<\/tr>\r\n<tr class=\"user-id\">\r\n<td>Booking bruger id:<\/td>\r\n<td id=\"userId\" class=\"hasData\">UID-1234567890-UID<\/td>\r\n<\/tr>\r\n<\/tbody>\r\n<\/table>\r\n<\/td>\r\n<\/tr>\r\n<\/tbody>\r\n<\/table>\r\n<table class=\"container\" role=\"presentation\" aria-hidden=\"true\" cellspacing=\"0\" cellpadding=\"12\" border=\"0\" align=\"center\" width=\"750\">\r\n<tbody>\r\n<tr>\r\n<td><\/td>\r\n<\/tr>\r\n<\/tbody>\r\n<\/table>\r\n<table class=\"container\" role=\"presentation\" cellspacing=\"0\" cellpadding=\"6\" border=\"0\" align=\"center\" width=\"750\">\r\n<tbody>\r\n<tr>\r\n<td>Denne mail er sendt fra <a href=\"https:\/\/booking.aarhus.dk\">Book Aarhus.<\/a> <\/td>\r\n<\/tr>\r\n<\/tbody>\r\n<\/table>\r\n<\/td>\r\n<\/tr>\r\n<\/tbody>\r\n<\/table>\r\n<\/td>\r\n<\/tr>\r\n<\/tbody>\r\n<\/table>\r\n<\/body>\r\n<\/html>\r\n',
+                'content' => '<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width">
+<meta name="x-apple-disable-message-reformatting">
+</head>
+<body>
+<table role="presentation" cellspacing="0" cellpadding="24" border="0" align="center" class="document">
+<tbody>
+<tr>
+<td valign="top">
+<table role="presentation" cellspacing="0" cellpadding="24" border="0" align="center" width="750" class="container" style="background-color:#ffffff">
+<tbody>
+<tr>
+<td>
+<table class="booking-fields" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" align="center" width="100%">
+<tbody>
+<tr>
+<td>
+<table class="header" role="presentation" cellspacing="0" cellpadding="6" border="0" align="left" width="100%">
+<tbody>
+<tr>
+<td>
+<h2>Ny booking af DOKK1-Lokale-Test1 - LOCATION1</h2>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="resource zebra" cellspacing="0" cellpadding="6" border="0" align="left" width="100%" style="border-bottom:1px solid #E9ECEF">
+<tbody>
+<tr>
+<td>
+<h3>Resource</h3>
+</td>
+</tr>
+<tr>
+<td>Resource navn:</td>
+<td class="hasData" id="resourceName">DOKK1-Lokale-Test1</td>
+</tr>
+<tr>
+<td>Resource email:</td>
+<td class="hasData" id="resourceMail">DOKK1-Lokale-Test1@aarhus.dk</td>
+</tr>
+</tbody>
+</table>
+<table class="container" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="12" border="0" align="center" width="750">
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table class="booking zebra" cellspacing="0" cellpadding="6" border="0" align="left" width="100%" style="border-bottom:1px solid #E9ECEF">
+<tbody>
+<tr>
+<td>
+<h3>Booking</h3>
+</td>
+</tr>
+<tr class="subject">
+<td>Booking emne:</td>
+<td class="hasData" id="subject">E1</td>
+</tr>
+<tr class="start-time">
+<td>Booking starttidspunkt:</td>
+<td>13/12/2022 - 14:00<span id="start" class="hidden hasData">2022-12-13T14:00:00.000Z</span></td>
+</tr>
+<tr class="end-time">
+<td>Booking sluttidspunkt:</td>
+<td>13/12/2022 - 14:15<span id="end" class="hidden hasData">2022-12-13T14:15:00.000Z</span></td>
+</tr>
+<tr class="extra">
+<td>extra</td>
+<td id="extra" class="metaData hasData">asd</td>
+</tr>
+</tbody>
+</table>
+<table class="container" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="12" border="0" align="center" width="750">
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table class="user zebra" cellspacing="0" cellpadding="6" border="0" align="left" width="100%" style="border-bottom:1px solid #E9ECEF">
+<tbody>
+<tr>
+<td>
+<h3>Bruger</h3>
+</td>
+</tr>
+<tr class="booker-name">
+<td>Booking bruger navn:</td>
+<td id="name" class="hasData">Test Testesen</td>
+</tr>
+<tr class="booker-email">
+<td>Booking bruger email:</td>
+<td><a href="mailto:test@example.com?subject=Vdr. Booking af DOKK1-Lokale-Test1 - LOCATION1" id="email" class="hasData">test@example.com</a></td>
+</tr>
+<tr class="user-id">
+<td>Booking bruger id:</td>
+<td id="userId" class="hasData">UID-1234567890-UID</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="container" role="presentation" aria-hidden="true" cellspacing="0" cellpadding="12" border="0" align="center" width="750">
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table class="container" role="presentation" cellspacing="0" cellpadding="6" border="0" align="center" width="750">
+<tbody>
+<tr>
+<td>Denne mail er sendt fra <a href="https://booking.aarhus.dk">Book Aarhus.</a> </td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>',
             ],
             'start' => ['dateTime' => '2022-12-13T14:00:00.0000000', 'timeZone' => 'UTC'],
             'end' => ['dateTime' => '2022-12-13T14:15:00.0000000', 'timeZone' => 'UTC'],
