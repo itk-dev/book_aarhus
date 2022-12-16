@@ -78,7 +78,6 @@ class NotificationServiceTest extends AbstractBaseApiTestCase
 
     public function testSendUserBookingNotification(): void
     {
-
         $mailer = $this->createMock(MailerInterface::class);
 
         $logger = $this->getMockBuilder(LoggerInterface::class)

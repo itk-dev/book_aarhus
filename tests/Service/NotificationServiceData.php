@@ -3,7 +3,6 @@
 namespace App\Tests\Service;
 
 use App\Entity\Main\Booking;
-use App\Entity\Main\UserBooking;
 use App\Entity\Resources\AAKResource;
 use DateTime;
 
