@@ -29,6 +29,7 @@ class NotificationServiceData
     public static function getResource(): AAKResource
     {
         $resource = new AAKResource();
+        $resource->setId(1);
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
         $resource->setResourceName('DOKK1-Lokale-Test1');
         $resource->setResourceDescription('description');

@@ -8,7 +8,6 @@ use App\Message\WebformSubmitMessage;
 use App\Repository\Main\ApiKeyUserRepository;
 use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
-use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -301,16 +300,16 @@ class WebformServiceTest extends AbstractBaseApiTestCase
         $service = new WebformService($client, $logger, $repo);
 
         $result = $service->sortWebformSubmissionDataByType(['data' => [
-                'test1' => 'test2'
-            ]
+            'test1' => 'test2',
+        ],
         ]);
 
         $this->assertEquals([
             'bookingData' => [],
             'arrayData' => [],
             'stringData' => [
-                'test1' => 'test2'
-            ]
+                'test1' => 'test2',
+            ],
         ], $result);
     }
 
