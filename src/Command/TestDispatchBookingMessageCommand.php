@@ -1,5 +1,7 @@
 <?php
 
+// @codeCoverageIgnoreStart
+
 namespace App\Command;
 
 use App\Entity\Main\Booking;
@@ -13,10 +15,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
-    name: 'app:dispatchbooking:test',
+    name: 'app:test:dispatchbooking',
     description: 'Test dispatch booking to message queue',
 )]
-class DispatchBookingMessageTestCommand extends Command
+class TestDispatchBookingMessageCommand extends Command
 {
     public function __construct(private readonly MessageBusInterface $bus)
     {
@@ -103,3 +105,4 @@ class DispatchBookingMessageTestCommand extends Command
         return $booking;
     }
 }
+// @codeCoverageIgnoreEnd

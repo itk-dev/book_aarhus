@@ -1,5 +1,7 @@
 <?php
 
+// @codeCoverageIgnoreStart
+
 namespace App\Command;
 
 use App\Service\NotificationServiceInterface;
@@ -10,10 +12,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'app:bookingnotification:create-ical',
+    name: 'app:test:bookingnotification-create-ical',
     description: 'Create example ical file',
 )]
-class BookingNotificationCreateIcalCommand extends Command
+class TestBookingNotificationCreateIcalCommand extends Command
 {
     public function __construct(private NotificationServiceInterface $notificationService)
     {
@@ -49,3 +51,4 @@ class BookingNotificationCreateIcalCommand extends Command
         return $events['data'];
     }
 }
+// @codeCoverageIgnoreEnd

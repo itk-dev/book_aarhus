@@ -1,5 +1,7 @@
 <?php
 
+// @codeCoverageIgnoreStart
+
 namespace App\Command;
 
 use App\Service\BookingServiceInterface;
@@ -11,10 +13,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'app:graph:busy',
+    name: 'app:test:graph-busy',
     description: 'Get busy intervals for resource',
 )]
-class GraphFreeBusyCommand extends Command
+class TestGraphFreeBusyCommand extends Command
 {
     public function __construct(
         private readonly BookingServiceInterface $bookingService
@@ -49,3 +51,4 @@ class GraphFreeBusyCommand extends Command
         return Command::SUCCESS;
     }
 }
+// @codeCoverageIgnoreEnd

@@ -8,7 +8,9 @@ use App\Message\WebformSubmitMessage;
 use App\Repository\Main\ApiKeyUserRepository;
 use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
+use Exception;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
@@ -59,6 +61,7 @@ class WebformServiceTest extends AbstractBaseApiTestCase
             [
                 'data' => [
                     'booking' => json_encode($testData),
+                    'otherStuff' => ['test1, test2'],
                 ],
             ],
             [
@@ -212,6 +215,9 @@ class WebformServiceTest extends AbstractBaseApiTestCase
             'bookingData' => [
                 'booking' => $testData,
             ],
+            'metaData' => [
+                'otherStuff' => 'test1, test2',
+            ],
         ], $data);
 
         // Subject not set.
@@ -285,5 +291,78 @@ class WebformServiceTest extends AbstractBaseApiTestCase
             $errorMessage = $e->getMessage();
         }
         $this->assertEquals('Webform (booking) userPermission not set', $errorMessage);
+    }
+
+    public function testSortWebformSubmissionDataByType(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $client = $this->createMock(HttpClientInterface::class);
+        $repo = $this->createMock(ApiKeyUserRepository::class);
+        $service = new WebformService($client, $logger, $repo);
+
+        $result = $service->sortWebformSubmissionDataByType(['data' => [
+                'test1' => 'test2'
+            ]
+        ]);
+
+        $this->assertEquals([
+            'bookingData' => [],
+            'arrayData' => [],
+            'stringData' => [
+                'test1' => 'test2'
+            ]
+        ], $result);
+    }
+
+    public function testGetWebformSubmission(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $client = $this->getMockBuilder(HttpClientInterface::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['request', 'withOptions', 'stream'])
+            ->getMock();
+
+        $client->method('request')->willThrowException(new TransportException('Transport error'));
+
+        $repo = $this->createMock(ApiKeyUserRepository::class);
+
+        $service = new WebformService($client, $logger, $repo);
+
+        $errorMessage = null;
+        try {
+            $service->getWebformSubmission('http://localhost', '1234');
+        } catch (WebformSubmissionRetrievalException $e) {
+            $errorMessage = $e->getMessage();
+        }
+        $this->assertEquals('Transport error', $errorMessage);
+    }
+
+    public function testNoUser(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $client = $this->createMock(HttpClientInterface::class);
+        $repo = $this->getMockBuilder(ApiKeyUserRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['find'])
+            ->getMock();
+        $repo->method('find')->willReturn(null);
+
+        $service = new WebformService($client, $logger, $repo);
+
+        $message = new WebformSubmitMessage(
+            '1234',
+            '12345',
+            'test',
+            'http://localhost/test/1234',
+            1
+        );
+
+        $errorMessage = null;
+        try {
+            $service->getData($message);
+        } catch (WebformSubmissionRetrievalException $e) {
+            $errorMessage = $e->getMessage();
+        }
+        $this->assertEquals('ApiKeyUser not set.', $errorMessage);
     }
 }

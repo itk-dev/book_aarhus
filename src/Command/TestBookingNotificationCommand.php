@@ -1,5 +1,7 @@
 <?php
 
+// @codeCoverageIgnoreStart
+
 namespace App\Command;
 
 use App\Entity\Main\Booking;
@@ -14,10 +16,10 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'app:bookingnotification:test',
+    name: 'app:test:bookingnotification',
     description: 'Test a booking notification',
 )]
-class BookingNotificationTestCommand extends Command
+class TestBookingNotificationCommand extends Command
 {
     public function __construct(private NotificationServiceInterface $notificationService)
     {
@@ -137,3 +139,4 @@ class BookingNotificationTestCommand extends Command
         return $res;
     }
 }
+// @codeCoverageIgnoreEnd
