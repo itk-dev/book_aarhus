@@ -3,11 +3,10 @@
 namespace App\Service;
 
 use App\Exception\MicrosoftGraphCommunicationException;
-use GuzzleHttp\Client;
+use App\Factory\ClientFactory;
 use GuzzleHttp\Exception\GuzzleException;
 use JsonException;
 use Microsoft\Graph\Exception\GraphException;
-use Microsoft\Graph\Graph;
 use Microsoft\Graph\Http\GraphResponse;
 use Psr\Cache\CacheItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -20,6 +19,7 @@ class MicrosoftGraphHelperService
         private readonly string $serviceAccountUsername,
         private readonly string $serviceAccountPassword,
         private readonly CacheInterface $graphCache,
+        private readonly ClientFactory $clientFactory,
     ) {
     }
 
@@ -40,10 +40,10 @@ class MicrosoftGraphHelperService
     public function authenticateAsUser(string $username, string $password): array
     {
         try {
-            $guzzle = new Client();
+            $client = $this->clientFactory->getGuzzleClient();
             $url = 'https://login.microsoftonline.com/'.$this->tenantId.'/oauth2/v2.0/token';
 
-            $response = $guzzle->post($url, [
+            $response = $client->post($url, [
                 'form_params' => [
                     'client_id' => $this->clientId,
                     'scope' => 'https://graph.microsoft.com/.default',
@@ -65,7 +65,7 @@ class MicrosoftGraphHelperService
     public function request(string $path, string $accessToken, string $requestType = 'GET', array $body = null): GraphResponse
     {
         try {
-            $graph = new Graph();
+            $graph = $this->clientFactory->getGraph();
             $graph->setAccessToken($accessToken);
 
             $graphRequest = $graph->createRequest($requestType, $path);
