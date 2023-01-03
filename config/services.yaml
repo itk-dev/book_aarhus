@@ -41,13 +41,16 @@ services:
             - { name: api_platform.doctrine.orm.query_extension.collection }
             - { name: api_platform.doctrine.orm.query_extension.item }
 
-    App\Service\MicrosoftGraphBookingService:
+    App\Service\MicrosoftGraphHelperService:
         arguments:
             - '%microsoft_graph_tenant_id%'
             - '%microsoft_graph_client_id%'
             - '%microsoft_graph_service_account_username%'
             - '%microsoft_graph_service_account_password%'
-            - '%microsoft_graph_service_account_name%'
+
+    App\Service\MicrosoftGraphBookingService:
+        - '%microsoft_graph_service_account_username%'
+        - '%microsoft_graph_service_account_name%'
 
     App\Service\NotificationService:
         arguments:

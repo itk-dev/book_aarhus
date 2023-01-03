@@ -42,6 +42,20 @@ docker compose exec phpfpm bin/console doctrine:migrations:migrate --em=resource
 docker compose exec phpfpm bin/console doctrine:fixtures:load --em=resources --group=ResourceFixtures
 ```
 
+## Testing
+
+Run tests with
+
+```shell
+docker compose exec phpfpm composer tests
+```
+
+Get coverage report to `coverage/` folder
+
+```shell
+docker compose exec phpfpm composer tests-coverage
+```
+
 ## Docker setup
 
 The docker setup consists of:

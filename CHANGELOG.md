@@ -11,6 +11,7 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ### Added
 - Add .ics timezone
+- Added tests.
 
 ### Changed
 - Change .ics "to time"

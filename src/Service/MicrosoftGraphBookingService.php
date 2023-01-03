@@ -10,14 +10,6 @@ use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
 use DateTime;
 use Exception;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use JsonException;
-use Microsoft\Graph\Exception\GraphException;
-use Microsoft\Graph\Graph;
-use Microsoft\Graph\Http\GraphResponse;
-use Psr\Cache\CacheItemInterface;
-use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * @see https://github.com/microsoftgraph/msgraph-sdk-php
@@ -30,73 +22,10 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     public const DATE_FORMAT = 'Y-m-d\TH:i:s';
 
     public function __construct(
-        private readonly string $tenantId,
-        private readonly string $clientId,
         private readonly string $serviceAccountUsername,
-        private readonly string $serviceAccountPassword,
         private readonly string $serviceAccountName,
-        private readonly CacheInterface $graphCache,
+        private readonly MicrosoftGraphHelperService $graphHelperService,
     ) {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function authenticateAsServiceAccount(): string
-    {
-        return $this->graphCache->get('serviceAccountToken', function (CacheItemInterface $item) {
-            $tokenEntry = $this->authenticateAsUser($this->serviceAccountUsername, $this->serviceAccountPassword);
-
-            $item->expiresAfter($tokenEntry['expires_in'] ?? 3600);
-
-            return $tokenEntry['access_token'];
-        });
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function authenticateAsUser(string $username, string $password): array
-    {
-        try {
-            $guzzle = new Client();
-            $url = 'https://login.microsoftonline.com/'.$this->tenantId.'/oauth2/v2.0/token';
-
-            $response = $guzzle->post($url, [
-                'form_params' => [
-                    'client_id' => $this->clientId,
-                    'scope' => 'https://graph.microsoft.com/.default',
-                    'username' => $username,
-                    'password' => $password,
-                    'grant_type' => 'password',
-                ],
-            ]);
-
-            return json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException|GuzzleException $exception) {
-            throw new MicrosoftGraphCommunicationException($exception->getMessage(), $exception->getCode());
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function request(string $path, string $accessToken, string $requestType = 'GET', array $body = null): GraphResponse
-    {
-        try {
-            $graph = new Graph();
-            $graph->setAccessToken($accessToken);
-
-            $graphRequest = $graph->createRequest($requestType, $path);
-
-            if ($body) {
-                $graphRequest->attachBody($body);
-            }
-
-            return $graphRequest->execute();
-        } catch (GuzzleException|GraphException $e) {
-            throw new MicrosoftGraphCommunicationException($e->getMessage(), $e->getCode());
-        }
     }
 
     /**
@@ -107,7 +36,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     public function getBusyIntervals(array $schedules, DateTime $startTime, DateTime $endTime, string $accessToken = null): array
     {
         // Use service account if accessToken is not set.
-        $token = $accessToken ?: $this->authenticateAsServiceAccount();
+        $token = $accessToken ?: $this->graphHelperService->authenticateAsServiceAccount();
 
         $body = [
             'schedules' => $schedules,
@@ -121,7 +50,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             ],
         ];
 
-        $response = $this->request('/me/calendar/getSchedule', $token, 'POST', $body);
+        $response = $this->graphHelperService->request('/me/calendar/getSchedule', $token, 'POST', $body);
 
         $data = $response->getBody();
 
@@ -154,7 +83,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, DateTime $startTime, DateTime $endTime): array
     {
-        $token = $this->authenticateAsServiceAccount();
+        $token = $this->graphHelperService->authenticateAsServiceAccount();
 
         $bookingConflict = $this->isBookingConflict($resourceEmail, $startTime, $endTime, $token);
 
@@ -194,7 +123,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             ],
         ];
 
-        $response = $this->request("/users/$resourceEmail/events", $token, 'POST', $body);
+        $response = $this->graphHelperService->request("/users/$resourceEmail/events", $token, 'POST', $body);
 
         $status = (int) $response->getStatus();
 
@@ -209,7 +138,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             $bookingId = $content['id'];
 
             // If another booking has been created at the same time, remove this booking.
-            $response = $this->request("/users/$resourceEmail/events/$bookingId", $token, 'DELETE');
+            $response = $this->graphHelperService->request("/users/$resourceEmail/events/$bookingId", $token, 'DELETE');
 
             if (204 != $response->getStatus()) {
                 throw new BookingCreateConflictException('Booking interval conflict. Booking could not be removed after conflict.', 409);
@@ -228,7 +157,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function createBookingInviteResource(string $resourceEmail, string $resourceName, string $subject, string $body, DateTime $startTime, DateTime $endTime): array
     {
-        $token = $this->authenticateAsServiceAccount();
+        $token = $this->graphHelperService->authenticateAsServiceAccount();
 
         $body = [
             'subject' => $subject,
@@ -261,7 +190,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             ],
         ];
 
-        $response = $this->request('/me/events', $token, 'POST', $body);
+        $response = $this->graphHelperService->request('/me/events', $token, 'POST', $body);
 
         $status = (int) $response->getStatus();
 
@@ -270,24 +199,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         }
 
         return $response->getBody();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function acceptBooking(UserBooking $booking): ?string
-    {
-        $token = $this->authenticateAsServiceAccount();
-
-        // Formatting the url decoded booking id, replacing "/" with "-" as this is graph-compatible, and replacing
-        // " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
-        $cleanedBookingId = str_replace(['/', ' '], ['-', '+'], urldecode($booking->id));
-
-        $response = $this->request("/me/events/$cleanedBookingId/accept", $token, 'POST', [
-            'sendResponse' => false,
-        ]);
-
-        return $response->getStatus();
     }
 
     /**
@@ -301,7 +212,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             throw new UserBookingException('Booking is expired. Cannot be updated.', 400);
         }
 
-        $token = $this->authenticateAsServiceAccount();
+        $token = $this->graphHelperService->authenticateAsServiceAccount();
 
         // Only allow changing start and end times.
         $newData = [
@@ -328,7 +239,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
                 // TODO: Test that booking change results in a new message for acceptance in resource calendar.
                 $bookingId = $booking->id;
 
-                $response = $this->request("/me/events/$bookingId", $token, 'PATCH', $newData);
+                $response = $this->graphHelperService->request("/me/events/$bookingId", $token, 'PATCH', $newData);
             } else {
                 $eventInResource = $this->getEventFromResourceByICalUid($resourceMail, $booking->iCalUId);
 
@@ -338,7 +249,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
                 $bookingId = urlencode($eventInResource['id']);
 
-                $response = $this->request("/users/$resourceMail/events/$bookingId", $token, 'PATCH', $newData);
+                $response = $this->graphHelperService->request("/users/$resourceMail/events/$bookingId", $token, 'PATCH', $newData);
             }
 
             if (200 != $response->getStatus()) {
@@ -377,12 +288,12 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     private function deleteBookingFromServiceAccount(UserBooking $booking): void
     {
-        $token = $this->authenticateAsServiceAccount();
+        $token = $this->graphHelperService->authenticateAsServiceAccount();
 
         $bookingId = $booking->id;
 
         // Remove from service account.
-        $response = $this->request("/me/events/$bookingId", $token, 'DELETE');
+        $response = $this->graphHelperService->request("/me/events/$bookingId", $token, 'DELETE');
 
         if (204 != $response->getStatus()) {
             throw new UserBookingException('Booking could not be removed', (int) $response->getStatus());
@@ -395,7 +306,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     private function deleteBookingFromResource(UserBooking $booking): void
     {
-        $token = $this->authenticateAsServiceAccount();
+        $token = $this->graphHelperService->authenticateAsServiceAccount();
 
         $eventInResource = $this->getEventFromResourceByICalUid($booking->resourceMail, $booking->iCalUId);
 
@@ -407,7 +318,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         $userId = $booking->resourceMail;
 
         // Remove from resource.
-        $response = $this->request("/users/$userId/events/$bookingId", $token, 'DELETE');
+        $response = $this->graphHelperService->request("/users/$userId/events/$bookingId", $token, 'DELETE');
 
         if (204 != $response->getStatus()) {
             throw new UserBookingException('Booking could not be removed from resource', (int) $response->getStatus());
@@ -421,14 +332,14 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function getBooking(string $bookingId): array
     {
-        $token = $this->authenticateAsServiceAccount();
+        $token = $this->graphHelperService->authenticateAsServiceAccount();
 
         // TODO: Move this out of the service an in to the code receiving the request.
         // Formatting the url decoded booking id, replacing "/" with "-" as this is graph-compatible, and replacing
         // " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
         $cleanedBookingId = str_replace(['/', ' '], ['-', '+'], urldecode($bookingId));
 
-        $response = $this->request('/me/events/'.$cleanedBookingId, $token);
+        $response = $this->graphHelperService->request('/me/events/'.$cleanedBookingId, $token);
 
         return $response->getBody();
     }
@@ -473,7 +384,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     private function getUserBookingsPage(string $userId, int $page = 0, int $pageSize = 25): array
     {
         try {
-            $token = $this->authenticateAsServiceAccount();
+            $token = $this->graphHelperService->authenticateAsServiceAccount();
 
             $body = [
                 'requests' => [
@@ -488,7 +399,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
                 ],
             ];
 
-            $response = $this->request('/search/query', $token, 'POST', $body);
+            $response = $this->graphHelperService->request('/search/query', $token, 'POST', $body);
 
             $resultBody = $response->getBody();
 
@@ -611,11 +522,11 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     private function getEventFromResourceByICalUid(string $resourceEmail, string $iCalUId): ?array
     {
-        $token = $this->authenticateAsServiceAccount();
+        $token = $this->graphHelperService->authenticateAsServiceAccount();
 
         $path = "/users/$resourceEmail/events?\$filter=iCalUId eq '$iCalUId'";
 
-        $r = $this->request($path, $token);
+        $r = $this->graphHelperService->request($path, $token);
 
         $body = $r->getBody();
 
@@ -647,13 +558,13 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     private function isBookingConflict(string $resourceEmail, DateTime $startTime, DateTime $endTime, string $accessToken = null, array $ignoreICalUIds = null): bool
     {
-        $token = $accessToken ?: $this->authenticateAsServiceAccount();
+        $token = $accessToken ?: $this->graphHelperService->authenticateAsServiceAccount();
         $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
         $endString = $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
 
         $filterString = "\$filter=start/dateTime lt '$endString' and end/dateTime gt '$startString'";
 
-        $response = $this->request("/users/$resourceEmail/calendar/events?$filterString", $token);
+        $response = $this->graphHelperService->request("/users/$resourceEmail/calendar/events?$filterString", $token);
 
         $body = $response->getBody();
 
