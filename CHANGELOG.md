@@ -12,6 +12,8 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 ### Added
 - Add .ics timezone
 - Added tests.
+- Upgraded symfony/http-kernel [Security]
+- Upgraded symfony/security-bundle [Security]
 
 ### Changed
 - Change .ics "to time"
