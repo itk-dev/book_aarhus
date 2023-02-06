@@ -30,9 +30,9 @@ class ResourceService implements ResourceServiceInterface
      */
     public function getAllResources(string $permission = null, int $cacheLifetime = 60 * 30): array
     {
-        $cachedResources = $this->resourceCache->get("resources-$permission", function (CacheItemInterface $cacheItem) use ($cacheLifetime) {
+        $cachedResources = $this->resourceCache->get("resources-$permission", function (CacheItemInterface $cacheItem) use ($cacheLifetime, $permission) {
             $cacheItem->expiresAfter($cacheLifetime);
-            $info = $this->aakResourceRepository->getAllByPermission();
+            $info = $this->aakResourceRepository->getAllByPermission($permission);
 
             return $this->serializer->serialize($info, 'json', ['groups' => 'minimum']);
         });

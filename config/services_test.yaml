@@ -13,3 +13,11 @@ services:
         alias: 'App\Service\WebformService'
 
     App\Service\NotificationServiceInterface: ~
+
+    App\Service\MicrosoftGraphHelperService:
+        arguments:
+            - 'test'
+            - 'test'
+            - 'test@example.com'
+            - 'test'
+

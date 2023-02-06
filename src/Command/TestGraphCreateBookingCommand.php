@@ -1,5 +1,7 @@
 <?php
 
+// @codeCoverageIgnoreStart
+
 namespace App\Command;
 
 use App\Service\BookingServiceInterface;
@@ -11,10 +13,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'app:graph:create-booking',
+    name: 'app:test:graph-create-booking',
     description: 'Create a booking',
 )]
-class GraphCreateBookingCommand extends Command
+class TestGraphCreateBookingCommand extends Command
 {
     public function __construct(
         private readonly BookingServiceInterface $bookingService
@@ -108,3 +110,4 @@ class GraphCreateBookingCommand extends Command
         return Command::SUCCESS;
     }
 }
+// @codeCoverageIgnoreEnd

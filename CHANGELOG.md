@@ -10,13 +10,23 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 ## [Unreleased]
 
 ### Added
+- Add .ics timezone
+- Added tests.
+- Upgraded symfony/http-kernel [Security]
+- Upgraded symfony/security-bundle [Security]
 
 ### Changed
+- Change .ics "to time"
+- Change .ics description to use subject.
 
-## [1.0.0] - 2022-12-12
+### Fixed
 
-- First release.
+- Fixed timezone issues for emails.
 
 ## [1.0.1] - 2022-12-12
 
 - Updated changelog
+
+## [1.0.0] - 2022-12-12
+
+- First release.
