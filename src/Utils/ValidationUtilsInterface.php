@@ -14,7 +14,7 @@ interface ValidationUtilsInterface
      *
      * @return \DateTime
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function validateDate(string $dateString, string $format = null): \DateTime;
 

@@ -4,7 +4,7 @@ services:
         autoconfigure: true
         public: true
 
-    App\Repository\Main\AAKResourceRepository: ~
+    App\Repository\Resources\AAKResourceRepository: ~
 
     App\Service\BookingServiceInterface:
         alias: 'App\Service\MicrosoftGraphBookingService'
