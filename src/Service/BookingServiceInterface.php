@@ -6,7 +6,6 @@ use App\Entity\Main\UserBooking;
 use App\Exception\BookingCreateConflictException;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
-use DateTime;
 
 interface BookingServiceInterface
 {
@@ -58,44 +57,44 @@ interface BookingServiceInterface
      * Get busy intervals for a given number of schedules.
      *
      * @param array $schedules
-     * @param DateTime $startTime
-     * @param DateTime $endTime
+     * @param \DateTime $startTime
+     * @param \DateTime $endTime
      * @param string|null $accessToken
      *
      * @return array
      *
      * @throws MicrosoftGraphCommunicationException
      */
-    public function getBusyIntervals(array $schedules, DateTime $startTime, DateTime $endTime, string $accessToken = null): array;
+    public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, string $accessToken = null): array;
 
     /**
      * @param string $resourceEmail
      * @param string $resourceName
      * @param string $subject
      * @param string $body
-     * @param DateTime $startTime
-     * @param DateTime $endTime
+     * @param \DateTime $startTime
+     * @param \DateTime $endTime
      *
      * @return array
      *
      * @throws BookingCreateConflictException
      * @throws MicrosoftGraphCommunicationException
      */
-    public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, DateTime $startTime, DateTime $endTime): array;
+    public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array;
 
     /**
      * @param string $resourceEmail
      * @param string $resourceName
      * @param string $subject
      * @param string $body
-     * @param DateTime $startTime
-     * @param DateTime $endTime
+     * @param \DateTime $startTime
+     * @param \DateTime $endTime
      *
      * @return array
      *
      * @throws MicrosoftGraphCommunicationException
      */
-    public function createBookingInviteResource(string $resourceEmail, string $resourceName, string $subject, string $body, DateTime $startTime, DateTime $endTime): array;
+    public function createBookingInviteResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array;
 
     /**
      * Create a UserBooking from graph data.

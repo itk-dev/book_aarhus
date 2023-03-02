@@ -7,7 +7,6 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
-use Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Security;
@@ -27,7 +26,7 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {

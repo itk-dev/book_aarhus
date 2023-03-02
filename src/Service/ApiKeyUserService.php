@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Entity\Main\ApiKeyUser;
 use App\Repository\Main\ApiKeyUserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiKeyUserService
@@ -17,7 +16,7 @@ class ApiKeyUserService
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function createApiKey($name, $webformApiKey = null): ApiKeyUser
     {

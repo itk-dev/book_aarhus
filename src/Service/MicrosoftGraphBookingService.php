@@ -8,8 +8,6 @@ use App\Enum\UserBookingTypeEnum;
 use App\Exception\BookingCreateConflictException;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
-use DateTime;
-use Exception;
 
 /**
  * @see https://github.com/microsoftgraph/msgraph-sdk-php
@@ -33,7 +31,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/api/calendar-getschedule?view=graph-rest-1.0&tabs=http
      */
-    public function getBusyIntervals(array $schedules, DateTime $startTime, DateTime $endTime, string $accessToken = null): array
+    public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, string $accessToken = null): array
     {
         // Use service account if accessToken is not set.
         $token = $accessToken ?: $this->graphHelperService->authenticateAsServiceAccount();
@@ -81,7 +79,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      *
      * @throws BookingCreateConflictException
      */
-    public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, DateTime $startTime, DateTime $endTime): array
+    public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array
     {
         $token = $this->graphHelperService->authenticateAsServiceAccount();
 
@@ -155,7 +153,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
      */
-    public function createBookingInviteResource(string $resourceEmail, string $resourceName, string $subject, string $body, DateTime $startTime, DateTime $endTime): array
+    public function createBookingInviteResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array
     {
         $token = $this->graphHelperService->authenticateAsServiceAccount();
 
@@ -257,7 +255,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             }
 
             return $response->getStatus();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new UserBookingException($e->getMessage(), (int) $e->getCode());
         }
     }
@@ -352,7 +350,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     public function getUserBookings(string $userId): array
     {
         try {
-            $now = new DateTime();
+            $now = new \DateTime();
             $page = 0;
             $pageSize = 5;
 
@@ -373,7 +371,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             } while ($data['moreResultsAvailable']);
 
             return $userBookings;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new MicrosoftGraphCommunicationException($e->getMessage(), (int) $e->getCode());
         }
     }
@@ -425,7 +423,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             }
 
             return $responseData;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new MicrosoftGraphCommunicationException($e->getMessage(), (int) $e->getCode());
         }
     }
@@ -471,7 +469,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             }
 
             if (is_null($attendeeResource)) {
-                throw new Exception('Could not find location in attendee list', 400);
+                throw new \Exception('Could not find location in attendee list', 400);
             }
 
             $userBooking->resourceMail = $attendeeResource['emailAddress']['address'];
@@ -497,10 +495,10 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
             $userBooking->status = $status->name;
 
-            $userBooking->expired = $userBooking->end < new DateTime();
+            $userBooking->expired = $userBooking->end < new \DateTime();
 
             return $userBooking;
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new UserBookingException($exception->getMessage(), (int) $exception->getCode());
         }
     }
@@ -547,8 +545,8 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      * Check that there is no interval conflict.
      *
      * @param string $resourceEmail resource to check for conflict in
-     * @param DateTime $startTime start of interval
-     * @param DateTime $endTime end of interval
+     * @param \DateTime $startTime start of interval
+     * @param \DateTime $endTime end of interval
      * @param string|null $accessToken access token
      * @param array|null $ignoreICalUIds Ignore bookings with these ICalUIds in the evaluation. Use to allow editing an existing booking.
      *
@@ -556,7 +554,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      *
      * @throws MicrosoftGraphCommunicationException
      */
-    private function isBookingConflict(string $resourceEmail, DateTime $startTime, DateTime $endTime, string $accessToken = null, array $ignoreICalUIds = null): bool
+    private function isBookingConflict(string $resourceEmail, \DateTime $startTime, \DateTime $endTime, string $accessToken = null, array $ignoreICalUIds = null): bool
     {
         $token = $accessToken ?: $this->graphHelperService->authenticateAsServiceAccount();
         $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';

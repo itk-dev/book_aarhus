@@ -4,7 +4,6 @@ namespace App\Tests\Service;
 
 use App\Entity\Main\Booking;
 use App\Entity\Resources\AAKResource;
-use DateTime;
 
 class NotificationServiceData
 {
@@ -20,8 +19,8 @@ class NotificationServiceData
         $booking->setUserId('1234567890');
         $booking->setUserPermission('citizen');
         $booking->setUserMail('test@example.com');
-        $booking->setStartTime(new DateTime('2042-12-13T14:00:00.0000000'));
-        $booking->setEndTime(new DateTime('2042-12-13T14:15:00.0000000'));
+        $booking->setStartTime(new \DateTime('2042-12-13T14:00:00.0000000'));
+        $booking->setEndTime(new \DateTime('2042-12-13T14:15:00.0000000'));
 
         return $booking;
     }

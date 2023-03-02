@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Factory\ClientFactory;
 use GuzzleHttp\Exception\GuzzleException;
-use JsonException;
 use Microsoft\Graph\Exception\GraphException;
 use Microsoft\Graph\Http\GraphResponse;
 use Psr\Cache\CacheItemInterface;
@@ -54,7 +53,7 @@ class MicrosoftGraphHelperService
             ]);
 
             return json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException|GuzzleException $exception) {
+        } catch (\JsonException|GuzzleException $exception) {
             throw new MicrosoftGraphCommunicationException($exception->getMessage(), $exception->getCode());
         }
     }
