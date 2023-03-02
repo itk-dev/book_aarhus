@@ -18,6 +18,7 @@ use App\Service\NotificationServiceInterface;
 use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
 use App\Utils\ValidationUtils;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Security;
@@ -30,7 +31,7 @@ class BookingTest extends AbstractBaseApiTestCase
     use InteractsWithMessenger;
 
     /**
-     * @throws TransportExceptionInterface|\Exception
+     * @throws TransportExceptionInterface|Exception
      */
     public function testBookingVoter(): void
     {
@@ -113,7 +114,7 @@ class BookingTest extends AbstractBaseApiTestCase
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function testWebformSubmitMessageHandler(): void
     {

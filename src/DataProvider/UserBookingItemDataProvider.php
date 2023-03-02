@@ -7,6 +7,7 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
+use Exception;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Security;
@@ -25,7 +26,7 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): UserBooking|null
     {

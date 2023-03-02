@@ -8,7 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
  * Extbooking.cvrwhitelist.
  *
  * @ORM\Table(name="ExtBooking.cvrWhiteList")
- *
  * @ORM\Entity
  */
 class CvrWhitelist
@@ -17,9 +16,7 @@ class CvrWhitelist
      * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
-     *
      * @ORM\Id
-     *
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private int $id;

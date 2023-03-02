@@ -6,6 +6,7 @@ use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\BusyInterval;
 use App\Service\BookingServiceInterface;
+use Exception;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Uid\Ulid;
 
@@ -22,7 +23,7 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
