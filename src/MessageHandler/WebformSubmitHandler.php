@@ -2,6 +2,7 @@
 
 namespace App\MessageHandler;
 
+use ApiPlatform\Exception\InvalidArgumentException;
 use App\Entity\Main\Booking;
 use App\Entity\Resources\AAKResource;
 use App\Exception\WebformSubmissionRetrievalException;
@@ -11,12 +12,12 @@ use App\Repository\Resources\AAKResourceRepository;
 use App\Service\BookingServiceInterface;
 use App\Service\WebformServiceInterface;
 use App\Utils\ValidationUtilsInterface;
-use DateTime;
-use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -75,10 +76,17 @@ class WebformSubmitHandler
 
                 $this->logger->info('Registering CreateBookingMessage job');
 
-                // Register job.
-                $this->bus->dispatch(new CreateBookingMessage($booking));
+                // Register message to only dispatch if no exceptions are thrown in this handler
+                // @see https://symfony.com/doc/current/messenger/dispatch_after_current_bus.html
+                $message = new CreateBookingMessage($booking);
+                $envelope = new Envelope($message);
+                $this->bus->dispatch(
+                    $envelope->with(new DispatchAfterCurrentBusStamp())
+                );
             }
-        } catch (WebformSubmissionRetrievalException $e) {
+        } catch (WebformSubmissionRetrievalException|InvalidArgumentException $e) {
+            $this->logger->error(sprintf('Webform submission handling failed: %d %s', $e->getCode(), $e->getMessage()));
+
             throw new UnrecoverableMessageHandlingException($e->getMessage());
         }
     }
@@ -92,13 +100,13 @@ class WebformSubmitHandler
             $body = [];
             $body['resource'] = $resource;
             $body['submission'] = $data;
-            $body['submission']['fromObj'] = new DateTime($data['start']);
-            $body['submission']['toObj'] = new DateTime($data['end']);
+            $body['submission']['fromObj'] = new \DateTime($data['start']);
+            $body['submission']['toObj'] = new \DateTime($data['end']);
             $body['metaData'] = $metaData;
             $body['userUniqueId'] = $this->bookingService->createBodyUserId($data['userId']);
 
             return $body;
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new WebformSubmissionRetrievalException($exception->getMessage());
         }
     }

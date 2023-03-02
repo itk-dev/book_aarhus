@@ -6,8 +6,10 @@ use App\Entity\Main\Booking;
 use App\Entity\Main\UserBooking;
 use App\Entity\Resources\AAKResource;
 use App\Enum\NotificationTypeEnum;
+use App\Exception\NoNotificationRecieverException;
+use App\Exception\UnsupportedNotificationTypeException;
 use Eluceo\iCal\Presentation\Component;
-use Exception;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 interface NotificationServiceInterface
 {
@@ -19,6 +21,10 @@ interface NotificationServiceInterface
      * @param NotificationTypeEnum $type the type of notification
      *
      * @return void
+     *
+     * @throws NoNotificationRecieverException
+     * @throws UnsupportedNotificationTypeException
+     * @throws TransportExceptionInterface
      */
     public function sendBookingNotification(Booking $booking, ?AAKResource $resource, NotificationTypeEnum $type): void;
 
@@ -30,6 +36,10 @@ interface NotificationServiceInterface
      * @param NotificationTypeEnum $type the type of notification
      *
      * @return void
+     *
+     * @throws NoNotificationRecieverException
+     * @throws UnsupportedNotificationTypeException
+     * @throws TransportExceptionInterface
      */
     public function sendUserBookingNotification(UserBooking $userBooking, ?AAKResource $resource, NotificationTypeEnum $type): void;
 
@@ -40,7 +50,7 @@ interface NotificationServiceInterface
      *
      * @return Component
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function createCalendarComponent(array $eventData): Component;
 
