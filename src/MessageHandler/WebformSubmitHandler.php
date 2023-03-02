@@ -7,7 +7,7 @@ use App\Entity\Resources\AAKResource;
 use App\Exception\WebformSubmissionRetrievalException;
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
-use App\Repository\Main\AAKResourceRepository;
+use App\Repository\Resources\AAKResourceRepository;
 use App\Service\BookingServiceInterface;
 use App\Service\WebformServiceInterface;
 use App\Utils\ValidationUtilsInterface;

@@ -4,7 +4,7 @@ namespace App\MessageHandler;
 
 use App\Entity\Resources\AAKResource;
 use App\Message\SendBookingNotificationMessage;
-use App\Repository\Main\AAKResourceRepository;
+use App\Repository\Resources\AAKResourceRepository;
 use App\Service\NotificationServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

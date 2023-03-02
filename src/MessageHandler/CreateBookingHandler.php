@@ -7,7 +7,7 @@ use App\Enum\NotificationTypeEnum;
 use App\Exception\BookingCreateConflictException;
 use App\Message\CreateBookingMessage;
 use App\Message\SendBookingNotificationMessage;
-use App\Repository\Main\AAKResourceRepository;
+use App\Repository\Resources\AAKResourceRepository;
 use App\Repository\Resources\CvrWhitelistRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
