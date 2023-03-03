@@ -24,7 +24,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - .:/app:delegated
+      - .:/app
 
   redis:
     image: 'redis:6'
