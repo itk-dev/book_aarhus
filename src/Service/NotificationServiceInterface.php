@@ -6,7 +6,7 @@ use App\Entity\Main\Booking;
 use App\Entity\Main\UserBooking;
 use App\Entity\Resources\AAKResource;
 use App\Enum\NotificationTypeEnum;
-use App\Exception\NoNotificationRecieverException;
+use App\Exception\NoNotificationReceiverException;
 use App\Exception\UnsupportedNotificationTypeException;
 use Eluceo\iCal\Presentation\Component;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -22,7 +22,7 @@ interface NotificationServiceInterface
      *
      * @return void
      *
-     * @throws NoNotificationRecieverException
+     * @throws NoNotificationReceiverException
      * @throws UnsupportedNotificationTypeException
      * @throws TransportExceptionInterface
      */
@@ -37,7 +37,7 @@ interface NotificationServiceInterface
      *
      * @return void
      *
-     * @throws NoNotificationRecieverException
+     * @throws NoNotificationReceiverException
      * @throws UnsupportedNotificationTypeException
      * @throws TransportExceptionInterface
      */

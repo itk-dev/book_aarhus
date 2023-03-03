@@ -3,7 +3,7 @@
 namespace App\MessageHandler;
 
 use App\Entity\Resources\AAKResource;
-use App\Exception\NoNotificationRecieverException;
+use App\Exception\NoNotificationReceiverException;
 use App\Exception\UnsupportedNotificationTypeException;
 use App\Message\SendBookingNotificationMessage;
 use App\Repository\Resources\AAKResourceRepository;
@@ -39,7 +39,7 @@ class SendBookingNotificationHandler
             $resource = $this->aakResourceRepository->findOneByEmail($email);
 
             $this->notificationService->sendBookingNotification($booking, $resource, $type);
-        } catch (NoNotificationRecieverException|UnsupportedNotificationTypeException $e) {
+        } catch (NoNotificationReceiverException|UnsupportedNotificationTypeException $e) {
             $this->logger->error(sprintf('SendBookingNotificationHandler exception: %d %s', $e->getCode(), $e->getMessage()));
 
             throw new UnrecoverableMessageHandlingException($e->getMessage(), $e->getCode(), $e);

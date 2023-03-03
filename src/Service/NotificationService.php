@@ -7,7 +7,7 @@ use App\Entity\Main\UserBooking;
 use App\Entity\Resources\AAKResource;
 use App\Enum\NotificationTypeEnum;
 use App\Exception\BuildNotificationException;
-use App\Exception\NoNotificationRecieverException;
+use App\Exception\NoNotificationReceiverException;
 use App\Exception\UnsupportedNotificationTypeException;
 use App\Utils\ValidationUtils;
 use DateTimeZone as PhpDateTimeZone;
@@ -84,7 +84,7 @@ class NotificationService implements NotificationServiceInterface
         $node = $crawler->filterXPath('//*[@id="email"]')->getNode(0);
 
         if (is_null($node)) {
-            throw new NoNotificationRecieverException('Cannot send user booking notification. No user email in body.');
+            throw new NoNotificationReceiverException('Cannot send user booking notification. No user email in body.');
         }
 
         $email = $node->nodeValue;
@@ -92,7 +92,7 @@ class NotificationService implements NotificationServiceInterface
         $node = $crawler->filterXPath('//*[@id="name"]')->getNode(0);
 
         if (is_null($node)) {
-            throw new NoNotificationRecieverException('Cannot send user booking notification. No user name in body.');
+            throw new NoNotificationReceiverException('Cannot send user booking notification. No user name in body.');
         }
 
         $name = $node->nodeValue;

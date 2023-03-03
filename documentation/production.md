@@ -51,9 +51,9 @@ Replace `1.1.0` with the tag you are releasing.
 1. Stop containers
 2. Checkout the relevant git tag
 3. Pull docker images
-3. Run composer install
-4. Run migratiosn
-5. Clear cache
+4. Run composer install
+5. Run migrations
+6. Clear cache
 7. Start containers
 
 **Important**: The job consumers MUST be stopped and restarted when doing releases. If they are not
