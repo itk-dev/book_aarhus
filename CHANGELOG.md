@@ -8,7 +8,10 @@ All notable changes to this project will be documented in this file.
 See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information about writing changes to this log.
 
 ## [Unreleased]
+
+### Changed
 - Updated docker setup to itk-version: 3.0.0
+- Refactored message handling and notifications with better logging and retry logic
 
 ## [1.0.2] - 2023-02-06
 

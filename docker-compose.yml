@@ -49,6 +49,7 @@ services:
     depends_on:
       - mariadb
       - azure-sql
+      - redis
     volumes:
       - .:/app
     extra_hosts:
