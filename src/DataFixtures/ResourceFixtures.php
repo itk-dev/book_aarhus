@@ -34,6 +34,8 @@ class ResourceFixtures extends Fixture
                 'resourceCategory' => 'Lokale',
                 'formId' => null,
                 'resourceImage' => 'https://placekitten.com/g/200/200',
+                'resourceDisplayName' => 'Dokk1 Lokale Test 1',
+                'locationDisplayName' => 'Location 1',
             ],
             [
                 'resourceEmail' => 'dokk1-lokale-test2@aarhus.dk',
@@ -58,6 +60,8 @@ class ResourceFixtures extends Fixture
                 'resourceCategory' => 'Lokale',
                 'formId' => null,
                 'resourceImage' => 'https://placekitten.com/g/1000/1000',
+                'resourceDisplayName' => 'Dokk1 Lokale Test 2',
+                'locationDisplayName' => 'Location 1',
             ],
             [
                 'resourceEmail' => 'MSO-rolator-test1@aarhus.dk',
@@ -81,6 +85,8 @@ class ResourceFixtures extends Fixture
                 'resourceCategory' => 'Udstyr',
                 'formId' => 'http://selvbetjening.local.itkdev.dk/da/content/step-two-alt',
                 'resourceImage' => 'https://placekitten.com/g/500/1000',
+                'resourceDisplayName' => 'Test Rolator',
+                'locationDisplayName' => 'Location 2',
             ],
             [
                 'resourceEmail' => 'without_location@bookaarhus.local.itkdev',
@@ -105,6 +111,8 @@ class ResourceFixtures extends Fixture
                 'resourceCategory' => 'Lokale',
                 'formId' => null,
                 'resourceImage' => 'https://placekitten.com/g/1000/500',
+                'resourceDisplayName' => 'Test without location',
+                'locationDisplayName' => null,
             ],
             [
                 'resourceEmail' => 'MSO-bil-test1@aarhus.dk',
@@ -129,6 +137,8 @@ class ResourceFixtures extends Fixture
                 'resourceCategory' => 'Transport',
                 'formId' => 'http://selvbetjening.local.itkdev.dk/da/content/step-two-alt',
                 'resourceImage' => 'https://placekitten.com/g/800/600',
+                'resourceDisplayName' => 'Test Bil',
+                'locationDisplayName' => 'Location Whitelist',
             ],
         ];
 
@@ -157,6 +167,8 @@ class ResourceFixtures extends Fixture
             $res->setResourceCategory($resource['resourceCategory'] ?? null);
             $res->setFormId($resource['formId']);
             $res->setResourceImage($resource['resourceImage']);
+            $res->setResourceDisplayName($resource['resourceDisplayName']);
+            $res->setLocationDisplayName($resource['locationDisplayName']);
             $manager->persist($res);
         }
 
@@ -200,6 +212,8 @@ class ResourceFixtures extends Fixture
             $res->setResourceCategory(0 == rand(0, 1) ? 'Lokale' : 'Transport');
             $res->setFormId(null);
             $res->setResourceImage(null);
+            $res->setResourceDisplayName("Test $i");
+            $res->setLocationDisplayName('New Location');
             $manager->persist($res);
         }
 

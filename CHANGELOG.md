@@ -9,6 +9,9 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+### Changed
+- Updated resource entity with new schema.
+
 ## [1.0.2] - 2022-02-06
 
 ### Added
