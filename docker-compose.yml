@@ -52,6 +52,7 @@ services:
       - redis
     volumes:
       - .:/app
+
     extra_hosts:
       # Used by ssh tunnel to Azure SQL Server
       #
