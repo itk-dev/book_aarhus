@@ -191,6 +191,18 @@ class AAKResource
      */
     private ?string $resourceCategory;
 
+    /**
+     * @Groups({"resource", "minimum"})
+     * @ORM\Column(name="ResourceDisplayName", type="string", length=128, nullable=true)
+     */
+    private ?string $resourceDisplayName;
+
+    /**
+     * @Groups({"resource", "minimum"})
+     * @ORM\Column(name="LocationDisplayName", type="string", length=128, nullable=true)
+     */
+    private ?string $locationDisplayName;
+
     public function __construct()
     {
         $this->openHours = new ArrayCollection();
@@ -659,5 +671,37 @@ class AAKResource
     public function setResourceCategory(?string $resourceCategory): void
     {
         $this->resourceCategory = $resourceCategory;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLocationDisplayName(): ?string
+    {
+        return $this->locationDisplayName;
+    }
+
+    /**
+     * @param string|null $locationDisplayName
+     */
+    public function setLocationDisplayName(?string $locationDisplayName): void
+    {
+        $this->locationDisplayName = $locationDisplayName;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getResourceDisplayName(): ?string
+    {
+        return $this->resourceDisplayName;
+    }
+
+    /**
+     * @param string|null $resourceDisplayName
+     */
+    public function setResourceDisplayName(?string $resourceDisplayName): void
+    {
+        $this->resourceDisplayName = $resourceDisplayName;
     }
 }

@@ -1532,6 +1532,14 @@
                     "resourceCategory": {
                         "type": "string",
                         "nullable": true
+                    },
+                    "resourceDisplayName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "locationDisplayName": {
+                        "type": "string",
+                        "nullable": true
                     }
                 }
             },
@@ -1683,6 +1691,14 @@
                         "nullable": true
                     },
                     "resourceCategory": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "resourceDisplayName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "locationDisplayName": {
                         "type": "string",
                         "nullable": true
                     }

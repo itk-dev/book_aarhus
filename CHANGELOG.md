@@ -10,6 +10,7 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 ## [Unreleased]
 
 ### Changed
+- Updated resource entity with new schema.
 - Updated docker setup to itk-version: 3.0.0
 - Refactored message handling and notifications with better logging and retry logic
 
