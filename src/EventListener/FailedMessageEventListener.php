@@ -6,7 +6,7 @@ use App\Enum\NotificationTypeEnum;
 use App\Message\CreateBookingMessage;
 use App\Message\SendBookingNotificationMessage;
 use App\Message\WebformSubmitMessage;
-use App\Repository\Main\AAKResourceRepository;
+use App\Repository\Resources\AAKResourceRepository;
 use App\Service\NotificationServiceInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;

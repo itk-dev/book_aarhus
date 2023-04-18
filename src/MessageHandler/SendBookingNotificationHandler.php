@@ -3,11 +3,15 @@
 namespace App\MessageHandler;
 
 use App\Entity\Resources\AAKResource;
+use App\Exception\NoNotificationReceiverException;
+use App\Exception\UnsupportedNotificationTypeException;
 use App\Message\SendBookingNotificationMessage;
-use App\Repository\Main\AAKResourceRepository;
+use App\Repository\Resources\AAKResourceRepository;
 use App\Service\NotificationServiceInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
 #[AsMessageHandler]
 class SendBookingNotificationHandler
@@ -19,17 +23,30 @@ class SendBookingNotificationHandler
     {
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
     public function __invoke(SendBookingNotificationMessage $message): void
     {
-        $this->logger->info('SendBookingNotificationHandler invoked.');
+        try {
+            $this->logger->info('SendBookingNotificationHandler invoked.');
 
-        $booking = $message->getBooking();
-        $type = $message->getType();
+            $booking = $message->getBooking();
+            $type = $message->getType();
 
-        /** @var AAKResource $resource */
-        $email = $booking->getResourceEmail();
-        $resource = $this->aakResourceRepository->findOneByEmail($email);
+            /** @var AAKResource $resource */
+            $email = $booking->getResourceEmail();
+            $resource = $this->aakResourceRepository->findOneByEmail($email);
 
-        $this->notificationService->sendBookingNotification($booking, $resource, $type);
+            $this->notificationService->sendBookingNotification($booking, $resource, $type);
+        } catch (NoNotificationReceiverException|UnsupportedNotificationTypeException $e) {
+            $this->logger->error(sprintf('SendBookingNotificationHandler exception: %d %s', $e->getCode(), $e->getMessage()));
+
+            throw new UnrecoverableMessageHandlingException($e->getMessage(), $e->getCode(), $e);
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->error(sprintf('SendBookingNotificationHandler exception: %d %s', $e->getCode(), $e->getMessage()));
+
+            throw $e;
+        }
     }
 }

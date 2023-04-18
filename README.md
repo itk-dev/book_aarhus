@@ -12,7 +12,7 @@
 
 see [documentation/development.md](documentation/development.md) for information about setting up the project for development.
 
-## Production
+## Production & Release procedure
 
 See [documentation/production.md](documentation/production.md) for information about setting up the project for production.
 
@@ -20,6 +20,9 @@ See [documentation/production.md](documentation/production.md) for information a
 
 Before creating a PR make sure the code is ready.
 The following command will apply coding standards, run tests, normalize composer.json and update the openapi spec.
+
+Please note that if there are changes to the API spec you must review them to make sure that they are not breaking changes.
+If breaking changes must be introduced in the API, the version number must be incremented.
 
 ```shell
 docker compose exec phpfpm composer prepare-code
