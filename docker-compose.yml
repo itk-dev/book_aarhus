@@ -63,20 +63,20 @@ services:
       - mariadb
       - azure-sql
     volumes:
-      - nfsApp:/app:delegated
+      - .:/app
 
   nginx:
-    image: nginx:latest
+    image: nginxinc/nginx-unprivileged:alpine
     networks:
       - app
       - frontend
     depends_on:
       - phpfpm
     ports:
-      - '80'
+      - '8080'
     volumes:
-      - ${PWD}/.docker/vhost.conf:/etc/nginx/conf.d/default.conf:ro
-      - nfsApp:/app:delegated
+      - ./.docker/vhost.conf:/etc/nginx/conf.d/default.conf:ro
+      - .:/app
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=frontend"
@@ -98,7 +98,7 @@ services:
       - RABBITMQ_ERLANG_COOKIE='d53f319cd7376f8f840aaf9889f315ab'
 
   mailhog:
-    image: mailhog/mailhog
+    image: itkdev/mailhog
     networks:
       - app
       - frontend
@@ -106,7 +106,10 @@ services:
       - "1025"
       - "8025"
     labels:
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.rule=Host(`${COMPOSE_DOMAIN}`)"
+      - "traefik.enable=true"
+      - "traefik.docker.network=frontend"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}Mailhog.rule=Host(`mailhog-${COMPOSE_DOMAIN}`)"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}Mailhog.loadbalancer.server.port=8025"
 
   redis:
     image: 'redis:6'
@@ -114,15 +117,3 @@ services:
       - app
     ports:
       - '6379'
-
-volumes:
-  # Named volume requires that you have NFS shares enabled (performance boost on Macs).
-  # Use `itkdev-docker-compose nfs:enable` to enable NFS shares. If you don't want to use it remove it from here and
-  # change the volume mapping to use normal shares in the containers. See
-  # https://sean-handley.medium.com/how-to-set-up-docker-for-mac-with-native-nfs-145151458adc
-  nfsApp:
-    driver: local
-    driver_opts:
-      type: nfs
-      o: addr=host.docker.internal,rw,nolock,hard,nointr,nfsvers=3
-      device: ":$PWD"
