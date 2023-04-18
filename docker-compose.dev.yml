@@ -1,4 +1,4 @@
-# itk-version: 2.2.0
+# itk-version: 3.0.0
 version: "3"
 
 services:
@@ -6,14 +6,12 @@ services:
     environment:
       - PHP_SENDMAIL_PATH='/usr/local/bin/mhsendmail --smtp-addr="mailhog:1025"'
 
-  # Disable basic authentication for traefik since it's not possible to include multiple Authorization Headers
-  # in an HTTP message. https://stackoverflow.com/questions/29282578/multiple-http-authorization-headers.
-  #  nginx:
-  #    labels:
-  #      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=ITKBasicAuth@file"
+  nginx:
+    labels:
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=ITKBasicAuth@file"
 
   mailhog:
-    image: mailhog/mailhog
+    image: itkdev/mailhog
     networks:
       - app
       - frontend

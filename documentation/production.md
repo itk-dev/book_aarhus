@@ -40,5 +40,22 @@ Set up a cronjob to refresh the cache, e.g. every 25 minutes. The cache has a de
 bin/console app:resource:cache --env=prod --no-debug
 ```
 
-## Installing/Updating
-Run the deploy script.
+## Releasing new versions
+Run the deploy script on the server for the relevant git tag. E.g 
+```
+../scripts/deploy 1.1.0
+```
+Replace `1.1.0` with the tag you are releasing.
+
+### Steps explained
+1. Stop containers
+2. Checkout the relevant git tag
+3. Pull docker images
+4. Run composer install
+5. Run migrations
+6. Clear cache
+7. Start containers
+
+**Important**: The job consumers MUST be stopped and restarted when doing releases. If they are not
+we risk having a consumer of version a previous version process messages from the current version (E.g. `1.0.0` process messages from version `1.1.0`.). This is most easily done by simply restarting the
+containers.

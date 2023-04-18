@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use App\Repository\Main\AAKResourceRepository;
+use App\Repository\Resources\AAKResourceRepository;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Serializer\SerializerInterface;
