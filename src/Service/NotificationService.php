@@ -6,6 +6,9 @@ use App\Entity\Main\Booking;
 use App\Entity\Main\UserBooking;
 use App\Entity\Resources\AAKResource;
 use App\Enum\NotificationTypeEnum;
+use App\Exception\BuildNotificationException;
+use App\Exception\NoNotificationReceiverException;
+use App\Exception\UnsupportedNotificationTypeException;
 use App\Utils\ValidationUtils;
 use DateTimeZone as PhpDateTimeZone;
 use Eluceo\iCal\Domain\Entity;
@@ -16,7 +19,6 @@ use Eluceo\iCal\Domain\ValueObject\Location;
 use Eluceo\iCal\Domain\ValueObject\TimeSpan;
 use Eluceo\iCal\Presentation\Component;
 use Eluceo\iCal\Presentation\Factory;
-use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DomCrawler\Crawler;
@@ -39,8 +41,10 @@ class NotificationService implements NotificationServiceInterface
         private readonly string $bindNotificationDateFormat,
     ) {
         try {
-            $this->validatedAdminNotificationEmail = $this->validationUtils->validateEmail($this->emailAdminNotification);
-        } catch (Exception) {
+            $this->validatedAdminNotificationEmail = $this->validationUtils->validateEmail(
+                $this->emailAdminNotification
+            );
+        } catch (\Exception $exception) {
             $this->logger->warning('No admin notification email set.');
         }
     }
@@ -68,8 +72,11 @@ class NotificationService implements NotificationServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function sendUserBookingNotification(UserBooking $userBooking, ?AAKResource $resource, NotificationTypeEnum $type): void
-    {
+    public function sendUserBookingNotification(
+        UserBooking $userBooking,
+        ?AAKResource $resource,
+        NotificationTypeEnum $type
+    ): void {
         $body = $userBooking->body;
 
         $crawler = new Crawler($body);
@@ -77,9 +84,7 @@ class NotificationService implements NotificationServiceInterface
         $node = $crawler->filterXPath('//*[@id="email"]')->getNode(0);
 
         if (is_null($node)) {
-            $this->logger->error('Cannot send user booking notification. No user email in body.');
-
-            return;
+            throw new NoNotificationReceiverException('Cannot send user booking notification. No user email in body.');
         }
 
         $email = $node->nodeValue;
@@ -87,9 +92,7 @@ class NotificationService implements NotificationServiceInterface
         $node = $crawler->filterXPath('//*[@id="name"]')->getNode(0);
 
         if (is_null($node)) {
-            $this->logger->error('Cannot send user booking notification. No user name in body.');
-
-            return;
+            throw new NoNotificationReceiverException('Cannot send user booking notification. No user name in body.');
         }
 
         $name = $node->nodeValue;
@@ -140,9 +143,7 @@ class NotificationService implements NotificationServiceInterface
 
                 break;
             default:
-                $this->logger->error('Error sending UserBooking notification: Unsupported NotificationTypeEnum');
-
-                return;
+                throw new UnsupportedNotificationTypeException(sprintf('Error sending UserBooking notification: Unsupported NotificationTypeEnum "%s"', $type->name));
         }
 
         $this->sendNotification($notificationData);
@@ -247,114 +248,110 @@ class NotificationService implements NotificationServiceInterface
      * @param array $data
      *
      * @return array
+     *
+     * @throws BuildNotificationException
      */
     private function buildNotification(NotificationTypeEnum $type, array $data): array
     {
-        $notificationData = [];
+        $fileAttachments = [];
+        $to = $data['user']['mail'];
 
-        try {
-            $fileAttachments = [];
-            $to = $data['user']['mail'];
+        switch ($type) {
+            case NotificationTypeEnum::SUCCESS:
+                $template = 'email-booking-success.html.twig';
+                $subject = 'Booking bekræftelse: '.$data['resource']
+                    ->getResourceName().' - '.$data['resource']->getLocation();
 
-            switch ($type) {
-                case NotificationTypeEnum::SUCCESS:
-                    $template = 'email-booking-success.html.twig';
-                    $subject = 'Booking bekræftelse: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
+                $event = $this->prepareICalEvent($data);
+                $iCalendarComponent = $this->createCalendarComponent($event);
 
-                    $event = $this->prepareICalEvent($data);
-                    $iCalendarComponent = $this->createCalendarComponent($event);
-
-                    $fileAttachments = [
-                        'ics' => [$iCalendarComponent],
-                    ];
-                    break;
-                case NotificationTypeEnum::REQUEST_RECEIVED:
-                    $template = 'email-booking-request-received-receipt.html.twig';
-                    $subject = 'Booking anmodning modtaget: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
-                    break;
-                case NotificationTypeEnum::FAILED:
-                    $template = 'email-booking-failed.html.twig';
-                    $subject = 'Booking lykkedes ikke: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
-                    break;
-                case NotificationTypeEnum::CONFLICT:
-                    $template = 'email-booking-failed.html.twig';
-                    $subject = 'Booking lykkedes ikke. Intervallet er optaget: '.$data['resource']->getResourceName().' - '.$data['resource']->getLocation();
-                    break;
-                default:
-                    throw new Exception('Unsupported NotificationTypeEnum');
-            }
-
-            if (isset($data['booking'])) {
-                /** @var Booking $booking */
-                $booking = $data['booking'];
-
-                $dateStart = $booking->getStartTime();
-                $dateEnd = $booking->getEndTime();
-
-                $dateStart->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
-                $dateEnd->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
-
-                $data['startFormatted'] = $dateStart->format($this->bindNotificationDateFormat);
-                $data['endFormatted'] = $dateEnd->format($this->bindNotificationDateFormat);
-            }
-
-            $notificationData = [
-                'from' => $this->emailFromAddress,
-                'to' => $to,
-                'subject' => $subject,
-                'template' => $template,
-                'data' => $data,
-                'fileAttachments' => $fileAttachments,
-            ];
-        } catch (Exception $e) {
-            $this->logger->error('Error building notification: '.$e->getMessage());
+                $fileAttachments = [
+                    'ics' => [$iCalendarComponent],
+                ];
+                break;
+            case NotificationTypeEnum::REQUEST_RECEIVED:
+                $template = 'email-booking-request-received-receipt.html.twig';
+                $subject = 'Booking anmodning modtaget: '.$data['resource']
+                    ->getResourceName().' - '.$data['resource']->getLocation();
+                break;
+            case NotificationTypeEnum::FAILED:
+                $template = 'email-booking-failed.html.twig';
+                $subject = 'Booking lykkedes ikke: '.$data['resource']
+                    ->getResourceName().' - '.$data['resource']->getLocation();
+                break;
+            case NotificationTypeEnum::CONFLICT:
+                $template = 'email-booking-failed.html.twig';
+                $subject = 'Booking lykkedes ikke. Intervallet er optaget: '.$data['resource']
+                    ->getResourceName().' - '.$data['resource']->getLocation();
+                break;
+            default:
+                throw new BuildNotificationException('Unsupported NotificationTypeEnum');
         }
 
-        return $notificationData;
+        if (isset($data['booking'])) {
+            /** @var Booking $booking */
+            $booking = $data['booking'];
+
+            $dateStart = $booking->getStartTime();
+            $dateEnd = $booking->getEndTime();
+
+            $dateStart->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+            $dateEnd->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+
+            $data['startFormatted'] = $dateStart->format($this->bindNotificationDateFormat);
+            $data['endFormatted'] = $dateEnd->format($this->bindNotificationDateFormat);
+        }
+
+        return [
+            'from' => $this->emailFromAddress,
+            'to' => $to,
+            'subject' => $subject,
+            'template' => $template,
+            'data' => $data,
+            'fileAttachments' => $fileAttachments,
+        ];
     }
 
     /**
      * @param array $notification
      *
      * @return void
+     *
+     * @throws TransportExceptionInterface
      */
     private function sendNotification(array $notification): void
     {
-        try {
-            $email = (new TemplatedEmail())
-                ->from($notification['from'])
-                ->to(new Address($notification['to']))
-                ->subject($notification['subject'])
-                ->htmlTemplate($notification['template'])
-                ->context($notification);
+        $email = (new TemplatedEmail())
+            ->from($notification['from'])
+            ->to(new Address($notification['to']))
+            ->subject($notification['subject'])
+            ->htmlTemplate($notification['template'])
+            ->context($notification);
 
-            // Add ics attachment to mail.
-            if (!empty($notification['fileAttachments']['ics'])) {
-                $tempDir = sys_get_temp_dir();
-                $bookingId = $notification['data']['booking']->getId();
-                $fileName = 'booking-'.$bookingId.'.ics';
-                $filePath = $tempDir.'/'.$fileName;
+        // Add ics attachment to mail.
+        if (!empty($notification['fileAttachments']['ics'])) {
+            $tempDir = sys_get_temp_dir();
+            $bookingId = $notification['data']['booking']->getId();
+            $fileName = 'booking-'.$bookingId.'.ics';
+            $filePath = $tempDir.'/'.$fileName;
 
-                foreach ($notification['fileAttachments']['ics'] as $key => $ics) {
-                    try {
-                        file_put_contents($filePath, (string) $ics);
+            foreach ($notification['fileAttachments']['ics'] as $key => $ics) {
+                try {
+                    file_put_contents($filePath, (string) $ics);
 
-                        $mimeTypes = new MimeTypes();
-                        $mimeType = $mimeTypes->guessMimeType($filePath);
+                    $mimeTypes = new MimeTypes();
+                    $mimeType = $mimeTypes->guessMimeType($filePath);
 
-                        $email->attach(fopen($filePath, 'r'), 'booking-'.$key.'.ics', $mimeType);
-                    } finally {
-                        if (file_exists($filePath)) {
-                            unlink($filePath);
-                        }
+                    $email->attach(fopen($filePath, 'r'), 'booking-'.$key.'.ics', $mimeType);
+                } finally {
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
                     }
                 }
             }
-
-            $this->mailer->send($email);
-        } catch (TransportExceptionInterface $e) {
-            $this->logger->error('Error sending notification: '.$e->getMessage());
         }
+
+        $this->mailer->send($email);
     }
 
     /**

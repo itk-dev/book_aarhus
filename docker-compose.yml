@@ -1,4 +1,4 @@
-# itk-version: 2.0.1
+# itk-version: 3.0.0
 version: "3"
 
 networks:
@@ -37,33 +37,34 @@ services:
     image: itkdev/php8.1-fpm:latest
     networks:
       - app
-      - frontend
     environment:
       - XDEBUG_MODE=${XDEBUG_MODE:-off}
       - XDEBUG_SESSION=${XDEBUG_SESSION:-0}
       - PHP_MAX_EXECUTION_TIME=30
       - PHP_MEMORY_LIMIT=256M
-      #- PHP_MAIL=1 # Uncomment to enable mailhog.
+      # - PHP_MAIL=1 # Uncomment to enable mailhog.
       - DOCKER_HOST_DOMAIN=${COMPOSE_DOMAIN}
       - COMPOSER_VERSION=2
       - PHP_IDE_CONFIG=serverName=localhost
-    extra_hosts:
-        # Used by ssh tunnel to Azure SQL Server
-        #
-        # Run these commands to make it actually work:
-        #
-        ## Copy ssh keys to container
-        # $ docker-compose exec phpfpm mkdir -p /root/.ssh
-        # $ docker-compose cp ~/.ssh/id_rsa phpfpm:/root/.ssh/id_rsa
-        # $ docker-compose cp ~/.ssh/id_rsa-cert.pub phpfpm:/root/.ssh/id_rsa-cert.pub
-        ## Create ssh tunnel using IPv4 (`-4`)
-        # $ docker-compose exec phpfpm ssh -4 -f deploy@admwebstgitk01.admnonwin.aarhuskommune.dk -L 1433:externalbooking.database.windows.net:1433 -N
-        - "externalbooking.database.windows.net:127.0.0.1"
     depends_on:
       - mariadb
       - azure-sql
+      - redis
     volumes:
       - .:/app
+
+    extra_hosts:
+      # Used by ssh tunnel to Azure SQL Server
+      #
+      # Run these commands to make it actually work:
+      #
+      ## Copy ssh keys to container
+      # $ docker-compose exec phpfpm mkdir -p /root/.ssh
+      # $ docker-compose cp ~/.ssh/id_rsa phpfpm:/root/.ssh/id_rsa
+      # $ docker-compose cp ~/.ssh/id_rsa-cert.pub phpfpm:/root/.ssh/id_rsa-cert.pub
+      ## Create ssh tunnel using IPv4 (`-4`)
+      # $ docker-compose exec phpfpm ssh -4 -f deploy@admwebstgitk01.admnonwin.aarhuskommune.dk -L 1433:externalbooking.database.windows.net:1433 -N
+      - "externalbooking.database.windows.net:127.0.0.1"
 
   nginx:
     image: nginxinc/nginx-unprivileged:alpine
@@ -81,9 +82,9 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=frontend"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${COMPOSE_DOMAIN}`)"
-#      HTTPS config - uncomment to enable redirect from :80 to :443
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=redirect-to-https"
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+  #      HTTPS config - uncomment to enable redirect from :80 to :443
+  #      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=redirect-to-https"
+  #      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
 
   rabbit:
     image: rabbitmq:3.9-management
