@@ -3,7 +3,6 @@
 namespace App\Utils;
 
 use ApiPlatform\Core\Exception\InvalidArgumentException;
-use Exception;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -16,7 +15,7 @@ class ValidationUtils implements ValidationUtilsInterface
     }
 
     /**
-     * @throws Exception
+     * {@inheritdoc}
      */
     public function validateDate(string $dateString, string $format = null): \DateTime
     {
@@ -32,6 +31,9 @@ class ValidationUtils implements ValidationUtilsInterface
         return new \DateTime($dateString);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function validateEmail(string $email): string
     {
         $errors = $this->validator->validate($email, new Assert\Email());
