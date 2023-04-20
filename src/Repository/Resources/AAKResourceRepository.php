@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Repository\Main;
+namespace App\Repository\Resources;
 
 use App\Entity\Resources\AAKResource;
-use App\Repository\Resources\CvrWhitelistRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

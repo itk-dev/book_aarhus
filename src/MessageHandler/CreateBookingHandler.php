@@ -7,7 +7,7 @@ use App\Enum\NotificationTypeEnum;
 use App\Exception\BookingCreateConflictException;
 use App\Message\CreateBookingMessage;
 use App\Message\SendBookingNotificationMessage;
-use App\Repository\Main\AAKResourceRepository;
+use App\Repository\Resources\AAKResourceRepository;
 use App\Repository\Resources\CvrWhitelistRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
@@ -43,6 +43,8 @@ class CreateBookingHandler
         $booking = $message->getBooking();
 
         if (!$this->security->isGranted(BookingVoter::CREATE, $booking)) {
+            $this->logger->error('User does not have permission to create bookings for the given resource.');
+
             throw new UnrecoverableMessageHandlingException('User does not have permission to create bookings for the given resource.', 403);
         }
 
@@ -51,6 +53,8 @@ class CreateBookingHandler
         $resource = $this->aakResourceRepository->findOneByEmail($email);
 
         if (null == $resource) {
+            $this->logger->error("Resource $email not found.");
+
             throw new UnrecoverableMessageHandlingException("Resource $email not found.", 404);
         }
 
@@ -104,17 +108,19 @@ class CreateBookingHandler
                     NotificationTypeEnum::SUCCESS
                 ));
             }
+        } catch (BookingCreateConflictException $exception) {
+            // If it is a BookingCreateConflictException the booking should be rejected.
+            $this->logger->notice(sprintf('Booking conflict detected: %d %s', $exception->getCode(), $exception->getMessage()));
+
+            $this->bus->dispatch(new SendBookingNotificationMessage(
+                $booking,
+                NotificationTypeEnum::CONFLICT
+            ));
         } catch (\Exception $exception) {
-            // Differentiate between errors:
-            // If it is a BookingCreateConflictException it should be rejected otherwise it should be retried.
-            if ($exception instanceof BookingCreateConflictException) {
-                $this->bus->dispatch(new SendBookingNotificationMessage(
-                    $booking,
-                    NotificationTypeEnum::CONFLICT
-                ));
-            } else {
-                throw $exception;
-            }
+            // Other exceptions should logged, then re-thrown for the message to be re-queued.
+            $this->logger->error(sprintf('CreateBookingHandler exception: %d %s', $exception->getCode(), $exception->getMessage()));
+
+            throw $exception;
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Tests\Service;
 
-use App\Repository\Main\AAKResourceRepository;
+use App\Repository\Resources\AAKResourceRepository;
 use App\Service\ResourceService;
 use App\Tests\AbstractBaseApiTestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;

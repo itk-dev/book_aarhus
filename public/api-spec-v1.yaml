@@ -1076,6 +1076,12 @@ components:
         resourceCategory:
           type: string
           nullable: true
+        resourceDisplayName:
+          type: string
+          nullable: true
+        locationDisplayName:
+          type: string
+          nullable: true
     Resource.jsonld-resource:
       type: object
       description: Extbooking.aakresources.
@@ -1182,6 +1188,12 @@ components:
           type: integer
           nullable: true
         resourceCategory:
+          type: string
+          nullable: true
+        resourceDisplayName:
+          type: string
+          nullable: true
+        locationDisplayName:
           type: string
           nullable: true
     UserBooking:

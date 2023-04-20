@@ -9,7 +9,18 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
-## [1.0.2] - 2022-02-06
+### Added
+
+### Changed
+
+## [1.0.3] - 2023-04-20
+
+### Changed
+- Updated resource entity with new schema.
+- Updated docker setup to itk-version: 3.0.0
+- Refactored message handling and notifications with better logging and retry logic
+
+## [1.0.2] - 2023-02-06
 
 ### Added
 - Add .ics timezone
@@ -22,7 +33,6 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 - Change .ics description to use subject.
 
 ### Fixed
-
 - Fixed timezone issues for emails.
 
 ## [1.0.1] - 2022-12-12
