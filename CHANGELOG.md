@@ -9,6 +9,12 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+### Added
+
+### Changed
+
+## [1.0.3] - 2023-04-20
+
 ### Changed
 - Updated resource entity with new schema.
 - Updated docker setup to itk-version: 3.0.0
