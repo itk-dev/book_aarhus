@@ -1,6 +1,7 @@
 services:
   rabbit:
     image: rabbitmq:3.9-management
+    restart: unless-stopped
     networks:
       - app
       - frontend
