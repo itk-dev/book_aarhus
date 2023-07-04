@@ -81,14 +81,16 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      *
      * @throws BookingCreateConflictException
      */
-    public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, DateTime $startTime, DateTime $endTime): array
+    public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, DateTime $startTime, DateTime $endTime, bool $acceptConflict = false): array
     {
         $token = $this->graphHelperService->authenticateAsServiceAccount();
 
-        $bookingConflict = $this->isBookingConflict($resourceEmail, $startTime, $endTime, $token);
+        if (!$acceptConflict) {
+            $bookingConflict = $this->isBookingConflict($resourceEmail, $startTime, $endTime, $token);
 
-        if ($bookingConflict) {
-            throw new BookingCreateConflictException('Booking interval conflict.', 409);
+            if ($bookingConflict) {
+                throw new BookingCreateConflictException('Booking interval conflict.', 409);
+            }
         }
 
         $body = [
@@ -134,17 +136,19 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         $content = $response->getBody();
         $iCalUId = $content['iCalUId'];
 
-        if ($this->isBookingConflict($resourceEmail, $startTime, $endTime, $token, [$iCalUId])) {
-            $bookingId = $content['id'];
+        if (!$acceptConflict) {
+            if ($this->isBookingConflict($resourceEmail, $startTime, $endTime, $token, [$iCalUId])) {
+                $bookingId = $content['id'];
 
-            // If another booking has been created at the same time, remove this booking.
-            $response = $this->graphHelperService->request("/users/$resourceEmail/events/$bookingId", $token, 'DELETE');
+                // If another booking has been created at the same time, remove this booking.
+                $response = $this->graphHelperService->request("/users/$resourceEmail/events/$bookingId", $token, 'DELETE');
 
-            if (204 != $response->getStatus()) {
-                throw new BookingCreateConflictException('Booking interval conflict. Booking could not be removed after conflict.', 409);
+                if (204 != $response->getStatus()) {
+                    throw new BookingCreateConflictException('Booking interval conflict. Booking could not be removed after conflict.', 409);
+                }
+
+                throw new BookingCreateConflictException('Booking interval conflict.', 409);
             }
-
-            throw new BookingCreateConflictException('Booking interval conflict.', 409);
         }
 
         return $content;

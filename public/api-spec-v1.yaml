@@ -1082,6 +1082,9 @@ components:
         locationDisplayName:
           type: string
           nullable: true
+        acceptConflict:
+          type: boolean
+          nullable: true
     Resource.jsonld-resource:
       type: object
       description: Extbooking.aakresources.
@@ -1195,6 +1198,9 @@ components:
           nullable: true
         locationDisplayName:
           type: string
+          nullable: true
+        acceptConflict:
+          type: boolean
           nullable: true
     UserBooking:
       type: object

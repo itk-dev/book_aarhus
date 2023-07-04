@@ -81,7 +81,7 @@ interface BookingServiceInterface
      * @throws BookingCreateConflictException
      * @throws MicrosoftGraphCommunicationException
      */
-    public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, DateTime $startTime, DateTime $endTime): array;
+    public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, DateTime $startTime, DateTime $endTime, bool $acceptConflict = false): array;
 
     /**
      * @param string $resourceEmail
