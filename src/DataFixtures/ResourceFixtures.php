@@ -36,6 +36,7 @@ class ResourceFixtures extends Fixture
                 'resourceImage' => 'https://placekitten.com/g/200/200',
                 'resourceDisplayName' => 'Dokk1 Lokale Test 1',
                 'locationDisplayName' => 'Location 1',
+                'acceptConflict' => true,
             ],
             [
                 'resourceEmail' => 'dokk1-lokale-test2@aarhus.dk',
@@ -62,6 +63,7 @@ class ResourceFixtures extends Fixture
                 'resourceImage' => 'https://placekitten.com/g/1000/1000',
                 'resourceDisplayName' => 'Dokk1 Lokale Test 2',
                 'locationDisplayName' => 'Location 1',
+                'acceptConflict' => false,
             ],
             [
                 'resourceEmail' => 'MSO-rolator-test1@aarhus.dk',
@@ -87,6 +89,7 @@ class ResourceFixtures extends Fixture
                 'resourceImage' => 'https://placekitten.com/g/500/1000',
                 'resourceDisplayName' => 'Test Rolator',
                 'locationDisplayName' => 'Location 2',
+                'acceptConflict' => false,
             ],
             [
                 'resourceEmail' => 'without_location@bookaarhus.local.itkdev',
@@ -113,6 +116,7 @@ class ResourceFixtures extends Fixture
                 'resourceImage' => 'https://placekitten.com/g/1000/500',
                 'resourceDisplayName' => 'Test without location',
                 'locationDisplayName' => null,
+                'acceptConflict' => false,
             ],
             [
                 'resourceEmail' => 'MSO-bil-test1@aarhus.dk',
@@ -139,6 +143,7 @@ class ResourceFixtures extends Fixture
                 'resourceImage' => 'https://placekitten.com/g/800/600',
                 'resourceDisplayName' => 'Test Bil',
                 'locationDisplayName' => 'Location Whitelist',
+                'acceptConflict' => true,
             ],
         ];
 
@@ -169,6 +174,7 @@ class ResourceFixtures extends Fixture
             $res->setResourceImage($resource['resourceImage']);
             $res->setResourceDisplayName($resource['resourceDisplayName']);
             $res->setLocationDisplayName($resource['locationDisplayName']);
+            $res->setAcceptConflict($resource['acceptConflict']);
             $manager->persist($res);
         }
 
@@ -214,6 +220,7 @@ class ResourceFixtures extends Fixture
             $res->setResourceImage(null);
             $res->setResourceDisplayName("Test $i");
             $res->setLocationDisplayName('New Location');
+            $res->setAcceptConflict(false);
             $manager->persist($res);
         }
 
