@@ -76,6 +76,8 @@ class CreateBookingHandler
             }
         }
 
+        $acceptConflict = true == $resource->getAcceptConflict();
+
         try {
             if ($acceptanceFlow) {
                 $this->bookingService->createBookingInviteResource(
@@ -100,6 +102,7 @@ class CreateBookingHandler
                     $booking->getBody(),
                     $booking->getStartTime(),
                     $booking->getEndTime(),
+                    $acceptConflict,
                 );
 
                 // Register notification job.

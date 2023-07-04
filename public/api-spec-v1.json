@@ -1540,6 +1540,10 @@
                     "locationDisplayName": {
                         "type": "string",
                         "nullable": true
+                    },
+                    "acceptConflict": {
+                        "type": "boolean",
+                        "nullable": true
                     }
                 }
             },
@@ -1700,6 +1704,10 @@
                     },
                     "locationDisplayName": {
                         "type": "string",
+                        "nullable": true
+                    },
+                    "acceptConflict": {
+                        "type": "boolean",
                         "nullable": true
                     }
                 }

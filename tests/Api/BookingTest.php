@@ -260,6 +260,7 @@ class BookingTest extends AbstractBaseApiTestCase
         $res->setPermissionCitizen(true);
         $res->setPermissionEmployee(true);
         $res->setHasWhitelist(false);
+        $res->setAcceptConflict(false);
 
         $aakResourceRepositoryMock = $this->getMockBuilder(AAKResourceRepository::class)
             ->disableOriginalConstructor()

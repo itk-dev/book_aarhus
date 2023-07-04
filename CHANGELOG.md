@@ -11,7 +11,11 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ### Added
 
+- Added acceptConflict field to resource.
+
 ### Changed
+
+- Modified create booking code to allow conflicts if resource.acceptConflict is true.
 
 ## [1.0.3] - 2023-04-20
 
