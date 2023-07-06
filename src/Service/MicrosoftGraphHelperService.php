@@ -81,7 +81,6 @@ class MicrosoftGraphHelperService
         }
     }
 
-
     /**
      * Check that there is no interval conflict.
      *

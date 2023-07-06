@@ -554,7 +554,6 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
         }
     }
 
-
     /**
      * @throws MicrosoftGraphCommunicationException
      * @throws BookingCreateConflictException
@@ -572,7 +571,7 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
             new GraphResponse(
                 new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
                 json_encode([
-                    'iCalUId' => '123'
+                    'iCalUId' => '123',
                 ]),
                 201,
             ),
