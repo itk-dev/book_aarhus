@@ -231,7 +231,7 @@ class BookingTest extends AbstractBaseApiTestCase
         $booking->setResourceEmail('test@bookaarhus.local.itkdev.dk');
         $booking->setStartTime(new \DateTime());
         $booking->setEndTime(new \DateTime());
-        $booking->setUserName('auther1');
+        $booking->setUserName('author1');
         $booking->setUserMail('author1@bookaarhus.local.itkdev.dk');
         $booking->setMetaData([
             'meta_data_4' => '1, 2, 3',

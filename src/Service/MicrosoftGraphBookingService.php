@@ -86,7 +86,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         $token = $this->graphHelperService->authenticateAsServiceAccount();
 
         if (!$acceptConflict) {
-            $bookingConflict = $this->isBookingConflict($resourceEmail, $startTime, $endTime, $token);
+            $bookingConflict = $this->graphHelperService->isBookingConflict($resourceEmail, $startTime, $endTime, $token);
 
             if ($bookingConflict) {
                 throw new BookingCreateConflictException('Booking interval conflict.', 409);
@@ -137,7 +137,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         $iCalUId = $content['iCalUId'];
 
         if (!$acceptConflict) {
-            if ($this->isBookingConflict($resourceEmail, $startTime, $endTime, $token, [$iCalUId])) {
+            if ($this->graphHelperService->isBookingConflict($resourceEmail, $startTime, $endTime, $token, [$iCalUId])) {
                 $bookingId = $content['id'];
 
                 // If another booking has been created at the same time, remove this booking.
@@ -232,7 +232,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
         $resourceMail = $booking->resourceMail;
 
-        $bookingConflict = $this->isBookingConflict($resourceMail, $booking->start, $booking->end, $token, [$booking->iCalUId]);
+        $bookingConflict = $this->graphHelperService->isBookingConflict($resourceMail, $booking->start, $booking->end, $token, [$booking->iCalUId]);
 
         if ($bookingConflict) {
             throw new UserBookingException('Booking interval conflict.', 409);
@@ -545,47 +545,5 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         }
 
         return null;
-    }
-
-    /**
-     * Check that there is no interval conflict.
-     *
-     * @param string $resourceEmail resource to check for conflict in
-     * @param DateTime $startTime start of interval
-     * @param DateTime $endTime end of interval
-     * @param string|null $accessToken access token
-     * @param array|null $ignoreICalUIds Ignore bookings with these ICalUIds in the evaluation. Use to allow editing an existing booking.
-     *
-     * @return bool whether there is a booking conflict for the given interval
-     *
-     * @throws MicrosoftGraphCommunicationException
-     */
-    private function isBookingConflict(string $resourceEmail, DateTime $startTime, DateTime $endTime, string $accessToken = null, array $ignoreICalUIds = null): bool
-    {
-        $token = $accessToken ?: $this->graphHelperService->authenticateAsServiceAccount();
-        $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
-        $endString = $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
-
-        $filterString = "\$filter=start/dateTime lt '$endString' and end/dateTime gt '$startString'";
-
-        $response = $this->graphHelperService->request("/users/$resourceEmail/calendar/events?$filterString", $token);
-
-        $body = $response->getBody();
-
-        $entries = $body['value'];
-
-        if (count($entries) > 0) {
-            if (null != $ignoreICalUIds) {
-                foreach ($entries as $entry) {
-                    if (!in_array($entry['iCalUId'], $ignoreICalUIds)) {
-                        return true;
-                    }
-                }
-            } else {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
