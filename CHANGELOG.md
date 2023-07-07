@@ -12,6 +12,7 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 ### Added
 
 - Added acceptConflict field to resource.
+- Added tests for acceptConflict.
 
 ### Changed
 

@@ -553,4 +553,59 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
             $this->assertEquals(400, $e->getCode());
         }
     }
+
+    /**
+     * @throws MicrosoftGraphCommunicationException
+     * @throws BookingCreateConflictException
+     */
+    public function testAcceptConflict(): void
+    {
+        $microsoftGraphServiceHelperMock = $this->getMockBuilder(MicrosoftGraphHelperService::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['isBookingConflict', 'request', 'authenticateAsServiceAccount'])
+            ->getMock();
+        $microsoftGraphServiceHelperMock->expects($this->exactly(1))->method('isBookingConflict')->willReturn(true);
+        $microsoftGraphServiceHelperMock->method('authenticateAsServiceAccount')->willReturn('1234');
+
+        $microsoftGraphServiceHelperMock->expects($this->exactly(1))->method('request')->willReturn(
+            new GraphResponse(
+                new GraphRequest('GET', '/', '123', 'http://localhost', 'v1'),
+                json_encode([
+                    'iCalUId' => '123',
+                ]),
+                201,
+            ),
+        );
+
+        $microsoftGraphService = new MicrosoftGraphBookingService('test', 'test', $microsoftGraphServiceHelperMock);
+
+        // Accept conflict.
+        $microsoftGraphService->createBookingForResource(
+            'test@bookaarhus.local.itkdev.dk',
+            'test resource',
+            'test',
+            '',
+            new \DateTime('2040-08-18T10:00:00.000Z'),
+            new \DateTime('2040-08-18T12:00:00.000Z'),
+            true,
+        );
+
+        $exceptionCode = null;
+
+        // Do not accept conflict.
+        try {
+            $microsoftGraphService->createBookingForResource(
+                'test@bookaarhus.local.itkdev.dk',
+                'test resource',
+                'test',
+                '',
+                new \DateTime('2040-08-18T10:00:00.000Z'),
+                new \DateTime('2040-08-18T12:00:00.000Z'),
+            );
+        } catch (BookingCreateConflictException $e) {
+            $exceptionCode = $e->getCode();
+        }
+
+        $this->assertEquals(409, $exceptionCode);
+    }
 }
