@@ -44,6 +44,9 @@ when@test:
 when@prod:
     monolog:
         handlers:
+            deprecation:
+                type: "null"
+                channels: [deprecation]
             main:
                 type: fingers_crossed
                 action_level: error
