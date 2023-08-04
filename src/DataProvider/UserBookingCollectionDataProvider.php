@@ -5,6 +5,8 @@ namespace App\DataProvider;
 use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
+use App\Entity\Resources\AAKResource;
+use App\Repository\Resources\AAKResourceRepository;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
 use Exception;
@@ -18,6 +20,7 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
         private readonly BookingServiceInterface $bookingService,
         private readonly Security $security,
         private readonly RequestStack $requestStack,
+        private readonly AAKResourceRepository $resourceRepository,
     ) {
     }
 
@@ -45,7 +48,15 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
 
         $userBookingData = $this->bookingService->getUserBookings($userId);
 
+        /** @var UserBooking $userBooking */
         foreach ($userBookingData as $userBooking) {
+            // Set resource display name if set in the AAKResource.
+            /** @var AAKResource $resource */
+            $resource = $this->resourceRepository->findOneBy(['resourceMail' => $userBooking->resourceMail]);
+            if (null != $resource) {
+                $userBooking->displayName = $resource->getResourceDisplayName() ?? $userBooking->displayName;
+            }
+
             if ($this->security->isGranted(UserBookingVoter::VIEW, $userBooking)) {
                 yield $userBooking;
             }

@@ -9,6 +9,8 @@ use App\Exception\BookingCreateConflictException;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
 use DateTime;
+use DOMDocument;
+use DOMXPath;
 use Exception;
 
 /**
@@ -456,7 +458,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             $userBooking->displayName = $data['location']['displayName'];
             $userBooking->body = $data['body']['content'];
 
-            $locationUniqueId = $data['location']['uniqueId'];
             $organizerEmail = $data['organizer']['emailAddress']['address'] ?? null;
 
             $userBooking->ownedByServiceAccount = $organizerEmail && mb_strtolower($organizerEmail) == mb_strtolower($this->serviceAccountUsername);
@@ -467,11 +468,34 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             // Find resource mail.
             $attendeeResource = null;
 
-            foreach ($data['attendees'] as $attendee) {
-                if (mb_strtolower($attendee['emailAddress']['name']) == mb_strtolower($locationUniqueId)) {
-                    $attendeeResource = $attendee;
-                    break;
+            // Find the resource email from the assumption that attendee list only contains 2 entries:
+            // One for the service account and one for the location.
+            if (2 == count($data['attendees'])) {
+                foreach ($data['attendees'] as $attendee) {
+                    if (mb_strtolower($attendee['emailAddress']['address']) != mb_strtolower($this->serviceAccountUsername)) {
+                        $attendeeResource = $attendee;
+                        break;
+                    }
                 }
+            } else {
+                // In this case we have to extract the resource from the body of the event.
+                $body = $data['body']['content'];
+                $doc = new DOMDocument();
+                $doc->loadHTML($body);
+                $xpath = new DOMXpath($doc);
+
+                $resourceMailDOMNodes = $xpath->query("//td[@id='resourceMail']");
+                $resourceMail = $resourceMailDOMNodes[0]->textContent;
+
+                $resourceNameDOMNodes = $xpath->query("//td[@id='resourceName']");
+                $resourceName = $resourceNameDOMNodes[0]->textContent;
+
+                $attendeeResource = [
+                    'emailAddress' => [
+                        'address' => $resourceMail,
+                        'name' => $resourceName,
+                    ],
+                ];
             }
 
             if (is_null($attendeeResource)) {

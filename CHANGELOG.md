@@ -17,6 +17,7 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 ### Changed
 
 - Modified create booking code to allow conflicts if resource.acceptConflict is true.
+- Changed how location email and name is found in user bookings.
 
 ## [1.0.3] - 2023-04-20
 
