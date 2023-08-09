@@ -53,7 +53,7 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
             // Set resource display name if set in the AAKResource.
             /** @var AAKResource $resource */
             $resource = $this->resourceRepository->findOneBy(['resourceMail' => $userBooking->resourceMail]);
-            if (null != $resource) {
+            if (null !== $resource) {
                 $userBooking->displayName = $resource->getResourceDisplayName() ?? $userBooking->displayName;
             }
 

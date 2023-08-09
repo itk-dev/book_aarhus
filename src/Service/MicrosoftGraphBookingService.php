@@ -484,27 +484,26 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
             $resourceMailDOMNodes = $xpath->query("//td[@id='resourceMail']");
             if (isset($resourceMailDOMNodes[0])) {
-                $resourceMail = $resourceMailDOMNodes[0]->textContent;
+                $resourceMail = trim($resourceMailDOMNodes[0]->textContent);
             }
 
             $resourceNameDOMNodes = $xpath->query("//td[@id='resourceName']");
             if (isset($resourceNameDOMNodes[0])) {
-                $resourceName = $resourceNameDOMNodes[0]->textContent;
+                $resourceName = trim($resourceNameDOMNodes[0]->textContent);
             }
 
-            if (null == $resourceMail) {
+            if (empty($resourceMail)) {
                 throw new UserBookingException('resourceMail not set in event.body');
             }
 
             $userBooking->resourceMail = $resourceMail;
-            $userBooking->resourceName = $resourceName;
+            $userBooking->resourceName = $resourceName ?? '';
 
             // Find attendee resource.
             $attendeeResource = [];
 
-            // Find the resource email from the assumption that attendee list only contains 2 entries:
             foreach ($data['attendees'] as $attendee) {
-                if (mb_strtolower($attendee['emailAddress']['address']) == mb_strtolower($userBooking->resourceMail)) {
+                if (mb_strtolower($attendee['emailAddress']['address']) === mb_strtolower($userBooking->resourceMail)) {
                     $attendeeResource = $attendee;
                     break;
                 }
