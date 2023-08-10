@@ -11,6 +11,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * @see https://symfony.com/doc/current/security/voters.html
+ *
+ * @extends Voter<string, mixed>
  */
 class UserBookingVoter extends Voter
 {

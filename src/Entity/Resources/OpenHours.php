@@ -9,25 +9,30 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * Extbooking.openhours.
  *
  * @ORM\Table(name="ExtBooking.OpenHours")
+ *
  * @ORM\Entity
  */
 class OpenHours
 {
     /**
      * @ORM\Column(name="ID", type="integer", nullable=false)
+     *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private int $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="AAKResource", inversedBy="openHours")
+     *
      * @ORM\JoinColumn(name="resourceID", referencedColumnName="ID")
      */
     private AAKResource $resource;
 
     /**
      * @Groups({"resource", "minimum"})
+     *
      * @ORM\Column(name="weekday", type="integer", nullable=false)
      */
     private int $weekday;
@@ -52,6 +57,7 @@ class OpenHours
 
     /**
      * @Groups({"resource"})
+     *
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
     private \DateTime $updateTimestamp;

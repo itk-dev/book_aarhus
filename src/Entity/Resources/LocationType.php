@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Extbooking.locationtype.
  *
  * @ORM\Table(name="ExtBooking.locationType")
+ *
  * @ORM\Entity
  */
 class LocationType
@@ -16,7 +17,9 @@ class LocationType
      * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
+     *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private int $id;

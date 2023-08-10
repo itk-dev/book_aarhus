@@ -3,7 +3,6 @@
 namespace App\Command;
 
 use App\Service\ApiKeyUserService;
-use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -31,7 +30,7 @@ class AuthDeleteApikeyCommand extends Command
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

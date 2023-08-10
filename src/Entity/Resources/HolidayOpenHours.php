@@ -9,37 +9,44 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * Extbooking.holidayopenhours.
  *
  * @ORM\Table(name="ExtBooking.holidayOpenHours")
+ *
  * @ORM\Entity
  */
 class HolidayOpenHours
 {
     /**
      * @ORM\Column(name="ID", type="integer", nullable=false)
+     *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private int $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="AAKResource", inversedBy="holidayOpenHours")
+     *
      * @ORM\JoinColumn(name="resourceID", referencedColumnName="ID")
      */
     private AAKResource $resource;
 
     /**
      * @Groups({"resource", "minimum"})
+     *
      * @ORM\Column(name="holidayopen", type="time", nullable=false)
      */
     private \DateTime $holidayOpen;
 
     /**
      * @Groups({"resource", "minimum"})
+     *
      * @ORM\Column(name="holidayclose", type="time", nullable=false)
      */
     private \DateTime $holidayClose;
 
     /**
      * @Groups({"resource"})
+     *
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
     private \DateTime $updateTimestamp;

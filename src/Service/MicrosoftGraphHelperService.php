@@ -4,9 +4,7 @@ namespace App\Service;
 
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Factory\ClientFactory;
-use DateTime;
 use GuzzleHttp\Exception\GuzzleException;
-use JsonException;
 use Microsoft\Graph\Exception\GraphException;
 use Microsoft\Graph\Http\GraphResponse;
 use Psr\Cache\CacheItemInterface;
@@ -55,7 +53,7 @@ class MicrosoftGraphHelperService
             ]);
 
             return json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException|GuzzleException $exception) {
+        } catch (\JsonException|GuzzleException $exception) {
             throw new MicrosoftGraphCommunicationException($exception->getMessage(), $exception->getCode());
         }
     }
@@ -85,8 +83,8 @@ class MicrosoftGraphHelperService
      * Check that there is no interval conflict.
      *
      * @param string $resourceEmail resource to check for conflict in
-     * @param DateTime $startTime start of interval
-     * @param DateTime $endTime end of interval
+     * @param \DateTime $startTime start of interval
+     * @param \DateTime $endTime end of interval
      * @param string|null $accessToken access token
      * @param array|null $ignoreICalUIds Ignore bookings with these ICalUIds in the evaluation. Use to allow editing an existing booking.
      *
@@ -94,7 +92,7 @@ class MicrosoftGraphHelperService
      *
      * @throws MicrosoftGraphCommunicationException
      */
-    public function isBookingConflict(string $resourceEmail, DateTime $startTime, DateTime $endTime, string $accessToken = null, array $ignoreICalUIds = null): bool
+    public function isBookingConflict(string $resourceEmail, \DateTime $startTime, \DateTime $endTime, string $accessToken = null, array $ignoreICalUIds = null): bool
     {
         $token = $accessToken ?: $this->authenticateAsServiceAccount();
         $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
