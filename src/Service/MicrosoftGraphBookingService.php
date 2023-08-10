@@ -8,10 +8,6 @@ use App\Enum\UserBookingTypeEnum;
 use App\Exception\BookingCreateConflictException;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
-use DateTime;
-use DOMDocument;
-use DOMXPath;
-use Exception;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -476,9 +472,9 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             // Extract the resource from the body of the event.
             // Assumption: event body contains td with id = resourceMail.
             $body = $data['body']['content'];
-            $doc = new DOMDocument();
+            $doc = new \DOMDocument();
             $doc->loadHTML($body);
-            $xpath = new DOMXpath($doc);
+            $xpath = new \DOMXPath($doc);
 
             $resourceMail = null;
             $resourceName = null;

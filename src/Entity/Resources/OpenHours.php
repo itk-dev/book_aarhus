@@ -9,55 +9,47 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * Extbooking.openhours.
  *
  * @ORM\Table(name="ExtBooking.OpenHours")
- *
  * @ORM\Entity
  */
 class OpenHours
 {
     /**
      * @ORM\Column(name="ID", type="integer", nullable=false)
-     *
      * @ORM\Id
-     *
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private int $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="AAKResource", inversedBy="openHours")
-     *
      * @ORM\JoinColumn(name="resourceID", referencedColumnName="ID")
      */
     private AAKResource $resource;
 
     /**
      * @Groups({"resource", "minimum"})
-     *
      * @ORM\Column(name="weekday", type="integer", nullable=false)
      */
     private int $weekday;
 
     /**
-     * @Groups({"resource", "minimum"})
-     *
      * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/basic-mapping.html#quoting-reserved-words
      *
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="`open`", type="time", length=0)
      */
     private \DateTime $open;
 
     /**
-     * @Groups({"resource", "minimum"})
-     *
      * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/basic-mapping.html#quoting-reserved-words
      *
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="`close`", type="time", length=0)
      */
     private \DateTime $close;
 
     /**
      * @Groups({"resource"})
-     *
      * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
     private \DateTime $updateTimestamp;
