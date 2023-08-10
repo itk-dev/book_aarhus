@@ -9,7 +9,10 @@ use App\Exception\BookingCreateConflictException;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
 use DateTime;
+use DOMDocument;
+use DOMXPath;
 use Exception;
+use Psr\Log\LoggerInterface;
 
 /**
  * @see https://github.com/microsoftgraph/msgraph-sdk-php
@@ -25,6 +28,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         private readonly string $serviceAccountUsername,
         private readonly string $serviceAccountName,
         private readonly MicrosoftGraphHelperService $graphHelperService,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -424,7 +428,12 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
                     $userBookingGraphData = $this->getBooking($id);
 
-                    $responseData['userBookings'][] = $this->getUserBookingFromApiData($userBookingGraphData);
+                    try {
+                        $responseData['userBookings'][] = $this->getUserBookingFromApiData($userBookingGraphData);
+                    } catch (UserBookingException $exception) {
+                        // Ignore booking, log error.
+                        $this->logger->error($exception->getMessage());
+                    }
                 }
             }
 
@@ -456,7 +465,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             $userBooking->displayName = $data['location']['displayName'];
             $userBooking->body = $data['body']['content'];
 
-            $locationUniqueId = $data['location']['uniqueId'];
             $organizerEmail = $data['organizer']['emailAddress']['address'] ?? null;
 
             $userBooking->ownedByServiceAccount = $organizerEmail && mb_strtolower($organizerEmail) == mb_strtolower($this->serviceAccountUsername);
@@ -464,22 +472,42 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             $bookingType = $userBooking->ownedByServiceAccount ? UserBookingTypeEnum::ACCEPTANCE : UserBookingTypeEnum::INSTANT;
             $userBooking->bookingType = $bookingType->name;
 
-            // Find resource mail.
-            $attendeeResource = null;
+            // Extract the resource from the body of the event.
+            // Assumption: event body contains td with id = resourceMail.
+            $body = $data['body']['content'];
+            $doc = new DOMDocument();
+            $doc->loadHTML($body);
+            $xpath = new DOMXpath($doc);
+
+            $resourceMail = null;
+            $resourceName = null;
+
+            $resourceMailDOMNodes = $xpath->query("//td[@id='resourceMail']");
+            if (isset($resourceMailDOMNodes[0])) {
+                $resourceMail = trim($resourceMailDOMNodes[0]->textContent);
+            }
+
+            $resourceNameDOMNodes = $xpath->query("//td[@id='resourceName']");
+            if (isset($resourceNameDOMNodes[0])) {
+                $resourceName = trim($resourceNameDOMNodes[0]->textContent);
+            }
+
+            if (empty($resourceMail)) {
+                throw new UserBookingException('resourceMail not set in event.body');
+            }
+
+            $userBooking->resourceMail = $resourceMail;
+            $userBooking->resourceName = $resourceName ?? '';
+
+            // Find attendee resource.
+            $attendeeResource = [];
 
             foreach ($data['attendees'] as $attendee) {
-                if (mb_strtolower($attendee['emailAddress']['name']) == mb_strtolower($locationUniqueId)) {
+                if (mb_strtolower($attendee['emailAddress']['address']) === mb_strtolower($userBooking->resourceMail)) {
                     $attendeeResource = $attendee;
                     break;
                 }
             }
-
-            if (is_null($attendeeResource)) {
-                throw new Exception('Could not find location in attendee list', 400);
-            }
-
-            $userBooking->resourceMail = $attendeeResource['emailAddress']['address'];
-            $userBooking->resourceName = $attendeeResource['emailAddress']['name'];
 
             $status = UserBookingStatusEnum::NONE;
             $attendeeResourceStatus = $attendeeResource['status']['response'] ?? null;
