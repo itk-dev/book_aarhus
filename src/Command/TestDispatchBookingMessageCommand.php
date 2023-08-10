@@ -30,14 +30,6 @@ class TestDispatchBookingMessageCommand extends Command
     {
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-     *
-     * @throws \Exception
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -69,16 +61,6 @@ class TestDispatchBookingMessageCommand extends Command
         return Command::SUCCESS;
     }
 
-    /**
-     * @param string $email
-     * @param string $type
-     * @param string $from
-     * @param string $to
-     *
-     * @return Booking
-     *
-     * @throws \Exception
-     */
     private function createBooking(string $email, string $type, string $from, string $to): Booking
     {
         $resourceEmail = 'instant' === $type ? 'DOKK1-Lokale-Test1@aarhus.dk' : 'dokk1-lokale-test2@aarhus.dk';
