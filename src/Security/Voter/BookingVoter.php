@@ -9,6 +9,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * @see https://symfony.com/doc/current/security/voters.html
+ *
+ * @extends Voter<string, mixed>
  */
 class BookingVoter extends Voter
 {
@@ -20,13 +22,13 @@ class BookingVoter extends Voter
     {
     }
 
-    protected function supports(string $attribute, $subject): bool
+    protected function supports(string $attribute, mixed $subject): bool
     {
         return self::CREATE == $attribute
             && $subject instanceof Booking;
     }
 
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         if (!($subject instanceof Booking)) {
             return false;

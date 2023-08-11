@@ -18,43 +18,42 @@
         "nelmio/cors-bundle": "^2.2",
         "phpdocumentor/reflection-docblock": "^5.3",
         "phpstan/phpdoc-parser": "^1.5",
-        "symfony/amqp-messenger": "6.1.*",
-        "symfony/asset": "6.1.*",
-        "symfony/cache": "6.1.*",
-        "symfony/console": "6.1.*",
-        "symfony/doctrine-messenger": "6.1.*",
-        "symfony/dom-crawler": "6.1.*",
-        "symfony/dotenv": "6.1.*",
-        "symfony/expression-language": "6.1.*",
+        "symfony/amqp-messenger": "~6.3.0",
+        "symfony/asset": "~6.3.0",
+        "symfony/cache": "~6.3.0",
+        "symfony/console": "~6.3.0",
+        "symfony/doctrine-messenger": "~6.3.0",
+        "symfony/dom-crawler": "~6.3.0",
+        "symfony/dotenv": "~6.3.0",
+        "symfony/expression-language": "~6.3.0",
         "symfony/flex": "^2",
-        "symfony/framework-bundle": "6.1.*",
-        "symfony/http-client": "6.1.*",
-        "symfony/mailer": "6.1.*",
-        "symfony/messenger": "6.1.*",
+        "symfony/framework-bundle": "~6.3.0",
+        "symfony/http-client": "~6.3.0",
+        "symfony/mailer": "~6.3.0",
+        "symfony/messenger": "~6.3.0",
         "symfony/monolog-bundle": "^3.8",
-        "symfony/property-access": "6.1.*",
-        "symfony/property-info": "6.1.*",
-        "symfony/proxy-manager-bridge": "6.1.*",
-        "symfony/runtime": "6.1.*",
-        "symfony/security-bundle": "6.1.*",
-        "symfony/serializer": "6.1.*",
-        "symfony/twig-bundle": "6.1.*",
-        "symfony/uid": "6.1.*",
-        "symfony/validator": "6.1.*",
-        "symfony/yaml": "6.1.*"
+        "symfony/property-access": "~6.3.0",
+        "symfony/property-info": "~6.3.0",
+        "symfony/proxy-manager-bridge": "~6.3.0",
+        "symfony/runtime": "~6.3.0",
+        "symfony/security-bundle": "~6.3.0",
+        "symfony/serializer": "~6.3.0",
+        "symfony/twig-bundle": "~6.3.0",
+        "symfony/uid": "~6.3.0",
+        "symfony/validator": "~6.3.0",
+        "symfony/yaml": "~6.3.0"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "ergebnis/composer-normalize": "^2.27",
         "friendsofphp/php-cs-fixer": "^3.8",
-        "hectorj/safe-php-psalm-plugin": "^1.4",
         "phpunit/phpunit": "^9.5",
-        "psalm/plugin-symfony": "^3.1",
-        "symfony/browser-kit": "6.1.*",
+        "psalm/plugin-symfony": "^5.0",
+        "symfony/browser-kit": "~6.3.0",
         "symfony/maker-bundle": "^1.43",
         "symfony/phpunit-bridge": "^6.0",
-        "vimeo/psalm": "^4.27",
-        "weirdan/doctrine-psalm-plugin": "^2.3",
+        "vimeo/psalm": "^5.14",
+        "weirdan/doctrine-psalm-plugin": "^2.9",
         "zenstruck/messenger-test": "^1.4"
     },
     "replace": {
@@ -96,7 +95,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "6.1.*"
+            "require": "6.3.*"
         }
     },
     "scripts": {
@@ -125,6 +124,9 @@
         ],
         "psalm": [
             "./vendor/bin/psalm --no-cache"
+        ],
+        "psalm-fix": [
+            "./vendor/bin/psalm --no-cache --alter --issues=MissingReturnType,MissingParamType --dry-run"
         ],
         "queues": [
             "bin/console messenger:consume async --failure-limit=1 -vvv"

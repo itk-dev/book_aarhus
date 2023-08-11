@@ -8,10 +8,6 @@ use App\Enum\UserBookingTypeEnum;
 use App\Exception\BookingCreateConflictException;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
-use DateTime;
-use DOMDocument;
-use DOMXPath;
-use Exception;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -37,7 +33,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/api/calendar-getschedule?view=graph-rest-1.0&tabs=http
      */
-    public function getBusyIntervals(array $schedules, DateTime $startTime, DateTime $endTime, string $accessToken = null): array
+    public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, string $accessToken = null): array
     {
         // Use service account if accessToken is not set.
         $token = $accessToken ?: $this->graphHelperService->authenticateAsServiceAccount();
@@ -85,7 +81,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      *
      * @throws BookingCreateConflictException
      */
-    public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, DateTime $startTime, DateTime $endTime, bool $acceptConflict = false): array
+    public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime, bool $acceptConflict = false): array
     {
         $token = $this->graphHelperService->authenticateAsServiceAccount();
 
@@ -163,7 +159,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
      */
-    public function createBookingInviteResource(string $resourceEmail, string $resourceName, string $subject, string $body, DateTime $startTime, DateTime $endTime): array
+    public function createBookingInviteResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array
     {
         $token = $this->graphHelperService->authenticateAsServiceAccount();
 
@@ -265,7 +261,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             }
 
             return $response->getStatus();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new UserBookingException($e->getMessage(), (int) $e->getCode());
         }
     }
@@ -275,7 +271,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/api/event-delete?view=graph-rest-1.0&tabs=http
      */
-    public function deleteBooking(UserBooking $booking)
+    public function deleteBooking(UserBooking $booking): void
     {
         if ($booking->expired) {
             throw new UserBookingException('Booking is expired. Cannot be deleted.', 400);
@@ -360,7 +356,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     public function getUserBookings(string $userId): array
     {
         try {
-            $now = new DateTime();
+            $now = new \DateTime();
             $page = 0;
             $pageSize = 5;
 
@@ -381,7 +377,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             } while ($data['moreResultsAvailable']);
 
             return $userBookings;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new MicrosoftGraphCommunicationException($e->getMessage(), (int) $e->getCode());
         }
     }
@@ -438,7 +434,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             }
 
             return $responseData;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new MicrosoftGraphCommunicationException($e->getMessage(), (int) $e->getCode());
         }
     }
@@ -454,6 +450,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         try {
             // Formatting the url decoded booking id, replacing "/" with "-" as this is graph-compatible, and replacing
             // " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
+            /** @var string $cleanedBookingId */
             $cleanedBookingId = str_replace(['/', ' '], ['-', '+'], $data['id']);
 
             $userBooking = new UserBooking();
@@ -475,9 +472,9 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             // Extract the resource from the body of the event.
             // Assumption: event body contains td with id = resourceMail.
             $body = $data['body']['content'];
-            $doc = new DOMDocument();
+            $doc = new \DOMDocument();
             $doc->loadHTML($body);
-            $xpath = new DOMXpath($doc);
+            $xpath = new \DOMXPath($doc);
 
             $resourceMail = null;
             $resourceName = null;
@@ -529,10 +526,10 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
             $userBooking->status = $status->name;
 
-            $userBooking->expired = $userBooking->end < new DateTime();
+            $userBooking->expired = $userBooking->end < new \DateTime();
 
             return $userBooking;
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new UserBookingException($exception->getMessage(), (int) $exception->getCode());
         }
     }

@@ -8,6 +8,7 @@ use App\Entity\Main\Booking;
 use App\Message\CreateBookingMessage;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -29,17 +30,10 @@ class TestDispatchBookingMessageCommand extends Command
     {
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-     *
-     * @throws \Exception
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
         $question = new ChoiceQuestion(
             'Select the type of booking',
@@ -67,17 +61,7 @@ class TestDispatchBookingMessageCommand extends Command
         return Command::SUCCESS;
     }
 
-    /**
-     * @param $email
-     * @param $type
-     * @param $from
-     * @param $to
-     *
-     * @return Booking
-     *
-     * @throws \Exception
-     */
-    private function createBooking($email, $type, $from, $to): Booking
+    private function createBooking(string $email, string $type, string $from, string $to): Booking
     {
         $resourceEmail = 'instant' === $type ? 'DOKK1-Lokale-Test1@aarhus.dk' : 'dokk1-lokale-test2@aarhus.dk';
         $booking = new Booking();
