@@ -13,6 +13,8 @@ framework:
                     delay: 60000 # 1 minutes
                     multiplier: 3
                     max_delay: 3600000 # 1 hour
+                options:
+                    auto_setup: 'false'
             # @see https://symfony.com/doc/current/messenger.html#saving-retrying-failed-messages
             failed:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN_FAILED)%'
