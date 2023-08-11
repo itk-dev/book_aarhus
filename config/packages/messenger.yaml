@@ -14,7 +14,10 @@ framework:
                     multiplier: 3
                     max_delay: 3600000 # 1 hour
             # @see https://symfony.com/doc/current/messenger.html#saving-retrying-failed-messages
-            failed: '%env(MESSENGER_TRANSPORT_DSN_FAILED)%'
+            failed:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN_FAILED)%'
+                options:
+                    auto_setup: 'false'
         routing:
             # Route your messages to the transports
             'App\Message\WebformSubmitMessage': async
