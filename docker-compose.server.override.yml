@@ -8,7 +8,9 @@ services:
     environment:
       - "RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}"
       - "RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}"
-      - RABBITMQ_ERLANG_COOKIE="asdfghjkl"
+      - "RABBITMQ_ERLANG_COOKIE=${RABBITMQ_ERLANG_COOKIE}"
+    volumes:
+      - "./.docker/data/rabbit:/var/lib/rabbitmq/mnesia"
 
   supervisor:
     image: itkdev/supervisor-php8.1:alpine
