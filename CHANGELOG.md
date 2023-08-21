@@ -9,9 +9,26 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+## [1.1.0]
+
 ### Added
 
+- Added acceptConflict field to resource.
+- Added tests for acceptConflict.
+- Ignore deprecation warnings in production.
+
 ### Changed
+
+- Modified create booking code to allow conflicts if resource.acceptConflict is true.
+- Updated symfony and dependencies.
+- Changed how location email and name is found in user bookings.
+- Set displayName from resource database when set.
+
+## [1.0.4] - 2023-05-03
+
+### Added
+
+Added auto restart to queue container.
 
 ## [1.0.3] - 2023-04-20
 

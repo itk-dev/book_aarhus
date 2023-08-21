@@ -29,7 +29,7 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
         return $data instanceof UserBooking;
     }
 
-    public function remove($data, array $context = [])
+    public function remove($data, array $context = []): void
     {
         try {
             if ($data instanceof UserBooking) {
@@ -49,7 +49,7 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
         }
     }
 
-    public function persist($data, array $context = [])
+    public function persist($data, array $context = []): mixed
     {
         try {
             if ($data instanceof UserBooking) {
@@ -64,10 +64,10 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
                     NotificationTypeEnum::UPDATE_SUCCESS
                 ));
             }
+
+            return $data;
         } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
             throw new HttpException($e->getCode(), 'Booking could not be updated.');
         }
-
-        return $data;
     }
 }

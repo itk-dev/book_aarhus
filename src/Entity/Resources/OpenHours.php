@@ -33,19 +33,17 @@ class OpenHours
     private int $weekday;
 
     /**
-     * @Groups({"resource", "minimum"})
-     *
      * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/basic-mapping.html#quoting-reserved-words
      *
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="`open`", type="time", length=0)
      */
     private \DateTime $open;
 
     /**
-     * @Groups({"resource", "minimum"})
-     *
      * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/basic-mapping.html#quoting-reserved-words
      *
+     * @Groups({"resource", "minimum"})
      * @ORM\Column(name="`close`", type="time", length=0)
      */
     private \DateTime $close;

@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Factory\ClientFactory;
 use GuzzleHttp\Exception\GuzzleException;
-use JsonException;
 use Microsoft\Graph\Exception\GraphException;
 use Microsoft\Graph\Http\GraphResponse;
 use Psr\Cache\CacheItemInterface;
@@ -54,7 +53,7 @@ class MicrosoftGraphHelperService
             ]);
 
             return json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException|GuzzleException $exception) {
+        } catch (\JsonException|GuzzleException $exception) {
             throw new MicrosoftGraphCommunicationException($exception->getMessage(), $exception->getCode());
         }
     }
@@ -78,5 +77,47 @@ class MicrosoftGraphHelperService
         } catch (GuzzleException|GraphException $e) {
             throw new MicrosoftGraphCommunicationException($e->getMessage(), $e->getCode());
         }
+    }
+
+    /**
+     * Check that there is no interval conflict.
+     *
+     * @param string $resourceEmail resource to check for conflict in
+     * @param \DateTime $startTime start of interval
+     * @param \DateTime $endTime end of interval
+     * @param string|null $accessToken access token
+     * @param array|null $ignoreICalUIds Ignore bookings with these ICalUIds in the evaluation. Use to allow editing an existing booking.
+     *
+     * @return bool whether there is a booking conflict for the given interval
+     *
+     * @throws MicrosoftGraphCommunicationException
+     */
+    public function isBookingConflict(string $resourceEmail, \DateTime $startTime, \DateTime $endTime, string $accessToken = null, array $ignoreICalUIds = null): bool
+    {
+        $token = $accessToken ?: $this->authenticateAsServiceAccount();
+        $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
+        $endString = $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
+
+        $filterString = "\$filter=start/dateTime lt '$endString' and end/dateTime gt '$startString'";
+
+        $response = $this->request("/users/$resourceEmail/calendar/events?$filterString", $token);
+
+        $body = $response->getBody();
+
+        $entries = $body['value'];
+
+        if (count($entries) > 0) {
+            if (null != $ignoreICalUIds) {
+                foreach ($entries as $entry) {
+                    if (!in_array($entry['iCalUId'], $ignoreICalUIds)) {
+                        return true;
+                    }
+                }
+            } else {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

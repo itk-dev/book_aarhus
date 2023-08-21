@@ -203,6 +203,12 @@ class AAKResource
      */
     private ?string $locationDisplayName;
 
+    /**
+     * @Groups({"resource", "minimum"})
+     * @ORM\Column(name="AcceptConflict", type="boolean", nullable=true)
+     */
+    private ?bool $acceptConflict;
+
     public function __construct()
     {
         $this->openHours = new ArrayCollection();
@@ -703,5 +709,21 @@ class AAKResource
     public function setResourceDisplayName(?string $resourceDisplayName): void
     {
         $this->resourceDisplayName = $resourceDisplayName;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getAcceptConflict(): ?bool
+    {
+        return $this->acceptConflict;
+    }
+
+    /**
+     * @param bool|null $acceptConflict
+     */
+    public function setAcceptConflict(?bool $acceptConflict): void
+    {
+        $this->acceptConflict = $acceptConflict;
     }
 }
