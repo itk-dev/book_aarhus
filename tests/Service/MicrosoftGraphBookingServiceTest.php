@@ -167,9 +167,9 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
 
         $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock, $loggerMock);
 
-        $userBookings = $graphService->getUserBookings('1234567890');
+        $userBookings = $graphService->getUserBookings('1234567890', 0, 0, 5);
 
-        $this->assertCount(7, $userBookings);
+        $this->assertCount(5, $userBookings);
     }
 
     /**
