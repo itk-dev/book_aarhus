@@ -356,10 +356,12 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         try {
             $token = $this->graphHelperService->authenticateAsServiceAccount();
 
-            $queryString = $this->createBodyUserId($userId);
+            $userIdString = $this->createBodyUserId($userId);
 
-            if (null !== $search) {
-                $queryString .= ' '.$search;
+            $queryString = "(body:\"$userIdString\")";
+
+            if (null !== $search && strlen($search) > 1) {
+                $queryString .= " AND (body:\"$search\")";
             }
 
             $body = [
