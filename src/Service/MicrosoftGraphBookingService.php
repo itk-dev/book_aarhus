@@ -349,53 +349,27 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @see https://docs.microsoft.com/en-us/graph/search-concept-events
-     */
-    public function getUserBookings(string $userId): array
-    {
-        try {
-            $now = new \DateTime();
-            $page = 0;
-            $pageSize = 5;
-
-            $userBookings = [];
-
-            do {
-                $data = $this->getUserBookingsPage($userId, $page, $pageSize);
-
-                $userBookings = array_merge($userBookings, $data['userBookings']);
-
-                $last = $userBookings[count($userBookings) - 1];
-
-                if ($last->end < $now) {
-                    break;
-                }
-
-                $page = $page + 1;
-            } while ($data['moreResultsAvailable']);
-
-            return $userBookings;
-        } catch (\Exception $e) {
-            throw new MicrosoftGraphCommunicationException($e->getMessage(), (int) $e->getCode());
-        }
-    }
-
-    /**
      * @throws MicrosoftGraphCommunicationException
      */
-    private function getUserBookingsPage(string $userId, int $page = 0, int $pageSize = 25): array
+    public function getUserBookings(string $userId, ?string $search = null, int $page = 0, int $pageSize = 25): array
     {
         try {
             $token = $this->graphHelperService->authenticateAsServiceAccount();
+
+            $userIdString = $this->createBodyUserId($userId);
+
+            $queryString = "(body:\"$userIdString\")";
+
+            if (null !== $search && strlen($search) > 1) {
+                $queryString .= " AND (body:\"$search\")";
+            }
 
             $body = [
                 'requests' => [
                     [
                         'entityTypes' => ['event'],
                         'query' => [
-                            'queryString' => $this->createBodyUserId($userId),
+                            'queryString' => $queryString,
                         ],
                         'from' => $page * $pageSize,
                         'size' => $pageSize,

@@ -4,6 +4,7 @@ namespace App\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use ApiPlatform\State\Pagination\TraversablePaginator;
 use App\Entity\Main\UserBooking;
 use App\Entity\Resources\AAKResource;
 use App\Repository\Resources\AAKResourceRepository;
@@ -45,10 +46,24 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
             throw new BadRequestHttpException('Required Authorization-UserId header is not set.');
         }
 
-        $userBookingData = $this->bookingService->getUserBookings($userId);
+        $page = intval($request->query->get('page'));
+
+        $pageSize = intval($request->query->get('pageSize'));
+        if (0 === $pageSize) {
+            $pageSize = 25;
+        }
+
+        $search = $request->query->get('search');
+        if (empty($search)) {
+            $search = null;
+        }
+
+        $responseData = $this->bookingService->getUserBookings($userId, $search, $page, $pageSize);
+
+        $userBookings = [];
 
         /** @var UserBooking $userBooking */
-        foreach ($userBookingData as $userBooking) {
+        foreach ($responseData['userBookings'] as $userBooking) {
             // Set resource display name if set in the AAKResource.
             /** @var AAKResource $resource */
             $resource = $this->resourceRepository->findOneBy(['resourceMail' => $userBooking->resourceMail]);
@@ -57,8 +72,13 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
             }
 
             if ($this->security->isGranted(UserBookingVoter::VIEW, $userBooking)) {
-                yield $userBooking;
+                $userBookings[] = $userBooking;
             }
         }
+
+        $obj = new \ArrayObject($userBookings);
+        $it = $obj->getIterator();
+
+        return new TraversablePaginator($it, $page, $responseData['pageSize'], $responseData['total']);
     }
 }
