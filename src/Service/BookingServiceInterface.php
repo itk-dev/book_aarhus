@@ -46,12 +46,15 @@ interface BookingServiceInterface
      * Get bookings containing userId.
      *
      * @param string $userId
+     * @param ?string $search
+     * @param int $page
+     * @param int $pageSize
      *
      * @return array array of search hits
      *
      * @throws MicrosoftGraphCommunicationException
      */
-    public function getUserBookings(string $userId): array;
+    public function getUserBookings(string $userId, ?string $search = null, int $page = 0, int $pageSize = 25): array;
 
     /**
      * Get busy intervals for a given number of schedules.

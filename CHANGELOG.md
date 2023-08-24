@@ -9,6 +9,10 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+## Changed
+
+- Changed user bookings to paginated
+
 ## [1.1.0]
 
 ### Added
