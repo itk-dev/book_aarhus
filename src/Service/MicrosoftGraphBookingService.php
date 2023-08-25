@@ -361,7 +361,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             $queryString = "(body:\"$userIdString\")";
 
             if (null !== $search && strlen($search) > 1) {
-                $queryString .= " AND (body:\"$search\")";
+                $queryString .= " AND (subject:\"$search\")";
             }
 
             $body = [

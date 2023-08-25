@@ -9,9 +9,13 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+### Changed
+
+- Changed search query to only allow search in subject. 
+
 ## [1.1.1] - 2023-08-24
 
-## Changed
+### Changed
 
 - Changed user bookings to paginated
 
