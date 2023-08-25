@@ -11,7 +11,7 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ### Changed
 
-- Changed search query to only allow search in subject. 
+- Changed search query to only allow search in subject.
 
 ## [1.1.1] - 2023-08-24
 
