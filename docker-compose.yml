@@ -86,32 +86,6 @@ services:
   #      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=redirect-to-https"
   #      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
 
-  rabbit:
-    image: rabbitmq:3.9-management
-    networks:
-      - app
-      - frontend
-    ports:
-      - "15672"
-    environment:
-      - RABBITMQ_DEFAULT_USER=user
-      - RABBITMQ_DEFAULT_PASS=password
-      - RABBITMQ_ERLANG_COOKIE='d53f319cd7376f8f840aaf9889f315ab'
-
-  mailhog:
-    image: itkdev/mailhog
-    networks:
-      - app
-      - frontend
-    ports:
-      - "1025"
-      - "8025"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=frontend"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}Mailhog.rule=Host(`mailhog-${COMPOSE_DOMAIN}`)"
-      - "traefik.http.services.${COMPOSE_PROJECT_NAME}Mailhog.loadbalancer.server.port=8025"
-
   redis:
     image: 'redis:6'
     networks:
