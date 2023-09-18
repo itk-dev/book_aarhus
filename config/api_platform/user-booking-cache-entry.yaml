@@ -1,0 +1,33 @@
+---
+resources:
+  App\Entity\Main\UserBookingCacheEntry:
+    attributes:
+      normalization_context:
+        groups: ['userBookingCacheEntry']
+    itemOperations:
+      get: ~
+      delete: ~
+      patch: ~
+    collectionOperations:
+      get:
+        openapi_context:
+          operationId: get-v1-bookings-cache-entry
+          description: Retrieves user bookings entry from the cache table.
+          summary: Retrieves user bookings entry from the cache table.
+          tags:
+          parameters:
+            - schema:
+                type: string
+                format: string
+                example: "1"
+              in: query
+              name: userId
+              required: true
+              description: "ID of the user to retrieve bookings for"
+          responses:
+            '200':
+              description: OK
+              content:
+                application/ld+json:
+                  examples:
+              headers: { }

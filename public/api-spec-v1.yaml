@@ -501,6 +501,164 @@ paths:
           allowReserved: false
       deprecated: false
     parameters: []
+  /v1/user-booking-cache-entries:
+    get:
+      operationId: get-v1-bookings-cache-entry
+      tags:
+        - UserBookingCacheEntry
+      responses:
+        200:
+          description: OK
+          content:
+            application/ld+json:
+              examples: null
+          headers: {  }
+      summary: 'Retrieves user bookings entry from the cache table.'
+      description: 'Retrieves user bookings entry from the cache table.'
+      parameters:
+        -
+          name: userId
+          in: query
+          description: 'ID of the user to retrieve bookings for'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+            format: string
+            example: '1'
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: page
+          in: query
+          description: 'The collection page number'
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            default: 1
+          style: form
+          explode: false
+          allowReserved: false
+      deprecated: false
+    parameters: []
+  '/v1/user-booking-cache-entries/{id}':
+    get:
+      operationId: getUserBookingCacheEntryItem
+      tags:
+        - UserBookingCacheEntry
+      responses:
+        200:
+          description: 'UserBookingCacheEntry resource'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/UserBookingCacheEntry.jsonld-userBookingCacheEntry'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserBookingCacheEntry-userBookingCacheEntry'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/UserBookingCacheEntry-userBookingCacheEntry'
+        404:
+          description: 'Resource not found'
+      summary: 'Retrieves a UserBookingCacheEntry resource.'
+      description: 'Retrieves a UserBookingCacheEntry resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    delete:
+      operationId: deleteUserBookingCacheEntryItem
+      tags:
+        - UserBookingCacheEntry
+      responses:
+        204:
+          description: 'UserBookingCacheEntry resource deleted'
+        404:
+          description: 'Resource not found'
+      summary: 'Removes the UserBookingCacheEntry resource.'
+      description: 'Removes the UserBookingCacheEntry resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      deprecated: false
+    patch:
+      operationId: patchUserBookingCacheEntryItem
+      tags:
+        - UserBookingCacheEntry
+      responses:
+        200:
+          description: 'UserBookingCacheEntry resource updated'
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/UserBookingCacheEntry.jsonld-userBookingCacheEntry'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserBookingCacheEntry-userBookingCacheEntry'
+            text/html:
+              schema:
+                $ref: '#/components/schemas/UserBookingCacheEntry-userBookingCacheEntry'
+          links:
+            GetUserBookingCacheEntryItem:
+              operationId: getUserBookingCacheEntryItem
+              parameters:
+                id: '$response.body#/id'
+              description: 'The `id` value returned in the response can be used as the `id` parameter in `GET /v1/user-booking-cache-entries/{id}`.'
+        400:
+          description: 'Invalid input'
+        422:
+          description: 'Unprocessable entity'
+        404:
+          description: 'Resource not found'
+      summary: 'Updates the UserBookingCacheEntry resource.'
+      description: 'Updates the UserBookingCacheEntry resource.'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Resource identifier'
+          required: true
+          deprecated: false
+          allowEmptyValue: false
+          schema:
+            type: string
+          style: simple
+          explode: false
+          allowReserved: false
+      requestBody:
+        description: 'The updated UserBookingCacheEntry resource'
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/UserBookingCacheEntry'
+        required: true
+      deprecated: false
+    parameters: []
   /v1/user-bookings:
     get:
       operationId: get-v1-bookings
@@ -1318,6 +1476,60 @@ components:
           type: string
         resourceName:
           type: string
+    UserBookingCacheEntry:
+      type: object
+      description: ''
+      properties:
+        title:
+          writeOnly: true
+          type: string
+        uid:
+          writeOnly: true
+          type: string
+        start:
+          writeOnly: true
+          type: string
+          format: date-time
+        end:
+          writeOnly: true
+          type: string
+          format: date-time
+        status:
+          writeOnly: true
+          type: string
+        resource:
+          writeOnly: true
+          type: string
+    UserBookingCacheEntry-userBookingCacheEntry:
+      type: object
+      description: ''
+    UserBookingCacheEntry.jsonld-userBookingCacheEntry:
+      type: object
+      description: ''
+      properties:
+        '@id':
+          readOnly: true
+          type: string
+        '@type':
+          readOnly: true
+          type: string
+        '@context':
+          readOnly: true
+          oneOf:
+            -
+              type: string
+            -
+              type: object
+              properties:
+                '@vocab':
+                  type: string
+                hydra:
+                  type: string
+                  enum: ['http://www.w3.org/ns/hydra/core#']
+              required:
+                - '@vocab'
+                - hydra
+              additionalProperties: true
   responses: {  }
   parameters: {  }
   examples: {  }
