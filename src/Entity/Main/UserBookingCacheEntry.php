@@ -8,7 +8,6 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserBookingCacheEntryRepository::class)]
-#[ApiResource]
 class UserBookingCacheEntry
 {
     #[ORM\Id]

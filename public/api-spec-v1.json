@@ -782,17 +782,17 @@
                         "content": {
                             "application/ld+json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UserBookingCacheEntry.jsonld-userBookingCacheEntry"
+                                    "$ref": "#/components/schemas/UserBookingCacheEntry.jsonld"
                                 }
                             },
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UserBookingCacheEntry-userBookingCacheEntry"
+                                    "$ref": "#/components/schemas/UserBookingCacheEntry"
                                 }
                             },
                             "text/html": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UserBookingCacheEntry-userBookingCacheEntry"
+                                    "$ref": "#/components/schemas/UserBookingCacheEntry"
                                 }
                             }
                         }
@@ -865,17 +865,17 @@
                         "content": {
                             "application/ld+json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UserBookingCacheEntry.jsonld-userBookingCacheEntry"
+                                    "$ref": "#/components/schemas/UserBookingCacheEntry.jsonld"
                                 }
                             },
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UserBookingCacheEntry-userBookingCacheEntry"
+                                    "$ref": "#/components/schemas/UserBookingCacheEntry"
                                 }
                             },
                             "text/html": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UserBookingCacheEntry-userBookingCacheEntry"
+                                    "$ref": "#/components/schemas/UserBookingCacheEntry"
                                 }
                             }
                         },
@@ -2103,39 +2103,36 @@
                 "type": "object",
                 "description": "",
                 "properties": {
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
+                    },
                     "title": {
-                        "writeOnly": true,
+                        "type": "string"
+                    },
+                    "exchangeId": {
                         "type": "string"
                     },
                     "uid": {
-                        "writeOnly": true,
                         "type": "string"
                     },
                     "start": {
-                        "writeOnly": true,
                         "type": "string",
                         "format": "date-time"
                     },
                     "end": {
-                        "writeOnly": true,
                         "type": "string",
                         "format": "date-time"
                     },
                     "status": {
-                        "writeOnly": true,
                         "type": "string"
                     },
                     "resource": {
-                        "writeOnly": true,
                         "type": "string"
                     }
                 }
             },
-            "UserBookingCacheEntry-userBookingCacheEntry": {
-                "type": "object",
-                "description": ""
-            },
-            "UserBookingCacheEntry.jsonld-userBookingCacheEntry": {
+            "UserBookingCacheEntry.jsonld": {
                 "type": "object",
                 "description": "",
                 "properties": {
@@ -2173,6 +2170,33 @@
                                 "additionalProperties": true
                             }
                         ]
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "exchangeId": {
+                        "type": "string"
+                    },
+                    "uid": {
+                        "type": "string"
+                    },
+                    "start": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "end": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "resource": {
+                        "type": "string"
                     }
                 }
             }
