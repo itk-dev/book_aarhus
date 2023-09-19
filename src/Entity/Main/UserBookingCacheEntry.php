@@ -20,6 +20,9 @@ class UserBookingCacheEntry
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
+    private ?string $exchangeId = null;
+
+    #[ORM\Column(length: 255)]
     private ?string $uid = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -51,6 +54,17 @@ class UserBookingCacheEntry
         return $this;
     }
 
+    public function getExchangeId(): ?string
+    {
+      return $this->exchangeId;
+    }
+
+    public function setExchangeId(string $exchangeId): static
+    {
+      $this->exchangeId = $exchangeId;
+
+      return $this;
+    }
     public function getUid(): ?string
     {
         return $this->uid;
