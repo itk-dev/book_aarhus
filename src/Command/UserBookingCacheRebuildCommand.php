@@ -2,12 +2,12 @@
 
 namespace App\Command;
 
+use App\Service\UserBookingCacheServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use App\Service\UserBookingCacheServiceInterface;
 
 #[AsCommand(
     name: 'app:user-booking-cache:rebuild',
@@ -15,23 +15,22 @@ use App\Service\UserBookingCacheServiceInterface;
 )]
 class UserBookingCacheRebuildCommand extends Command
 {
-  public function __construct(
+    public function __construct(
     private readonly UserBookingCacheServiceInterface $userBookingCacheServiceInterface
   ) {
-    parent::__construct();
-  }
-
-
-    protected function configure(): void
-    {
+        parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-      $this->userBookingCacheServiceInterface->rebuildCache();
-      $io = new SymfonyStyle($input, $output);
-      $io->success('Rebuilt user booking cache.');
+      protected function configure(): void
+      {
+      }
 
-      return Command::SUCCESS;
-    }
+      protected function execute(InputInterface $input, OutputInterface $output): int
+      {
+          $this->userBookingCacheServiceInterface->rebuildCache();
+          $io = new SymfonyStyle($input, $output);
+          $io->success('Rebuilt user booking cache.');
+
+          return Command::SUCCESS;
+      }
 }

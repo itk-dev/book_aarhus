@@ -2,7 +2,6 @@
 
 namespace App\Entity\Main;
 
-use ApiPlatform\Metadata\ApiResource;
 use App\Repository\Main\UserBookingCacheEntryRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -55,15 +54,16 @@ class UserBookingCacheEntry
 
     public function getExchangeId(): ?string
     {
-      return $this->exchangeId;
+        return $this->exchangeId;
     }
 
     public function setExchangeId(string $exchangeId): static
     {
-      $this->exchangeId = $exchangeId;
+        $this->exchangeId = $exchangeId;
 
-      return $this;
+        return $this;
     }
+
     public function getUid(): ?string
     {
         return $this->uid;
