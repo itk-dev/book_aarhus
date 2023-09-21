@@ -64,19 +64,17 @@ class UserBookingCacheChangeCommand extends Command
           }
 
           $write = $io->confirm(
-            'Continue? Select yes to write changes to DB, select no to abort.',
-            false,
-            '/^(y|j)/i'
+              'Continue? Select yes to write changes to DB, select no to abort.',
+              false,
+              '/^(y|j)/i'
           );
 
           if ($write) {
-            $this->userBookingCacheServiceInterface->changeCacheEntry($entityId, $data);
-            $io->writeln($entityId . ' was changed.');
+              $this->userBookingCacheServiceInterface->changeCacheEntry($entityId, $data);
+              $io->writeln($entityId.' was changed.');
+          } else {
+              $io->writeln('Aborted.');
           }
-          else {
-            $io->writeln('Aborted.');
-          }
-
 
           return Command::SUCCESS;
       }
