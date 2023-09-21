@@ -2,11 +2,15 @@
 
 namespace App\Service;
 
+use App\Entity\Main\UserBooking;
 use App\Entity\Main\UserBookingCacheEntry;
 use App\Exception\MicrosoftGraphCommunicationException;
+use App\Exception\UserBookingException;
 use DateTime;
 use DOMDocument;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
+use Psr\Log\LoggerInterface;
 
 /**
  * @see https://github.com/microsoftgraph/msgraph-sdk-php
@@ -17,6 +21,8 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface {
   public function __construct(
     private readonly MicrosoftGraphHelperService $graphHelperService,
     private readonly EntityManagerInterface $entityManager,
+    private readonly MicrosoftGraphBookingService $microsoftGraphBookingService,
+    private readonly LoggerInterface $logger,
   ) {
   }
 
@@ -27,6 +33,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface {
    */
   public function rebuildCache(): void {
     try {
+      $this->clearUserBookingCache();
       $token = $this->graphHelperService->authenticateAsServiceAccount();
       $now = new DateTime('now');
       $nowFormatted = $now->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
@@ -45,8 +52,13 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface {
 
         // Loop over all elements on page.
         foreach ($resultBody['value'] as $booking) {
-          $bookingAsCacheEntry = $this->prepareCacheEntry($booking);
-          $this->entityManager->persist($this->createCacheEntity($bookingAsCacheEntry));
+          try {
+            $userBooking = $this->microsoftGraphBookingService->getUserBookingFromApiData($booking);
+            $this->entityManager->persist($this->createCacheEntity($userBooking));
+          }
+          catch(\Exception $e) {
+            $this->logger->error($e->getMessage());
+          }
         }
 
         // Determine next page.
@@ -70,82 +82,93 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function addCacheEntry(array $data): void {
-    $bookingAsCacheEntry = $this->prepareCacheEntry($data);
-    $this->entityManager->persist($this->createCacheEntity($bookingAsCacheEntry));
+  public function addCacheEntry(UserBooking $userBooking): void {
+    $this->entityManager->persist($this->createCacheEntity($userBooking));
+    $this->entityManager->flush();
+  }
+
+  /**
+   * {@inheritdoc}
+   * @throws \Exception
+   */
+  public function changeCacheEntry(int $id, array $changes): void {
+    $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)->find($id);
+
+    if (!$entity) {
+      throw new Exception('No cache entry found for id '. $id);
+    }
+
+    foreach ($changes as $field => $value) {
+      $field = ucfirst($field);
+      $methodName = "set{$field}";
+
+      // check method
+      if (!\method_exists($entity, $methodName)) {
+        throw new Exception($methodName . ' not found.');
+      }
+
+      $entity->{$methodName}($value);
+    }
+
     $this->entityManager->flush();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function changeCacheEntry(): void {
-    // Change database entry from parameters.
-
-    // Use queue to change booking through microsoft graph. ???
+  public function deleteCacheEntry(UserBookingCacheEntry $entry): void {
+    $this->entityManager->remove($entry);
   }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function deleteCacheEntry(): void {
-    // Delete cache entry from parameter
-  }
-
 
   /**
    * Create cache entity.
    *
-   * @param array $data
+   * @param UserBooking $userBooking
    *
    * @return \App\Entity\Main\UserBookingCacheEntry
    */
-  private function createCacheEntity(array $data): UserBookingCacheEntry {
+  private function createCacheEntity(UserBooking $userBooking): UserBookingCacheEntry {
     $cacheEntry = new UserBookingCacheEntry();
-
-    $cacheEntry->setTitle($data['title']);
-    $cacheEntry->setExchangeId($data['exchange_id']);
-    $cacheEntry->setUid($data['uid']);
-    $cacheEntry->setStart($data['start']);
-    $cacheEntry->setEnd($data['end']);
-    $cacheEntry->setStatus($data['status']);
-    $cacheEntry->setResource($data['resource']);
+    if ($userBooking->resourceMail) {
+      $cacheEntry->setTitle($userBooking->subject);
+      $cacheEntry->setExchangeId($userBooking->id);
+      $cacheEntry->setUid($this->retrieveUidFromBody($userBooking->body) ?? '');
+      $cacheEntry->setStart($userBooking->start);
+      $cacheEntry->setEnd($userBooking->end);
+      $cacheEntry->setStatus($userBooking->status);
+      $cacheEntry->setResource($userBooking->resourceMail);
+    }
 
     return $cacheEntry;
   }
 
   /**
-   * Prepare a cache entry.
-   *
-   * @param array $booking
-   *
-   * @return array
-   */
-  private function prepareCacheEntry(array $booking): array {
-    return [
-      'title' => $booking['subject'],
-      'exchange_id' => $booking['id'],
-      'uid' => $this->retrieveUidFromBody($booking['body']) ?? '',
-      'start' => DateTime::createFromFormat("Y-m-d\TH:i:s.0000000", $booking['start']['dateTime']),
-      'end' => DateTime::createFromFormat("Y-m-d\TH:i:s.0000000", $booking['end']['dateTime']),
-      'status' => $booking['responseStatus']['response'],
-      'resource' => $booking['organizer']['emailAddress']['address']
-    ];
-  }
-
-  /**
    * Get uid from mail body.
    *
-   * @param array $body
+   * @param string $body
    *
    * @return string|null
    */
-  private function retrieveUidFromBody(array $body): ?string {
+  private function retrieveUidFromBody(string $body): ?string {
     $doc = new DOMDocument();
-    $doc->loadHTML($body['content']);
+    $doc->loadHTML($body);
     $uidDomElement = $doc->getElementById('userId');
 
     return $uidDomElement?->textContent;
+  }
+
+  /**
+   * Clear UserBookingCacheEntry table.
+   *
+   * @return void
+   */
+  private function clearUserBookingCache(): void {
+    $repository = $this->entityManager->getRepository(UserBookingCacheEntry::class);
+    $entities = $repository->findAll();
+
+    foreach ($entities as $entity) {
+      $this->entityManager->remove($entity);
+    }
   }
 
 }

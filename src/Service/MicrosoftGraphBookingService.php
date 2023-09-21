@@ -452,6 +452,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
             $resourceMail = null;
             $resourceName = null;
+            $userId = null;
 
             $resourceMailDOMNodes = $xpath->query("//td[@id='resourceMail']");
             if (isset($resourceMailDOMNodes[0])) {
@@ -463,12 +464,19 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
                 $resourceName = trim($resourceNameDOMNodes[0]->textContent);
             }
 
+            $resourceUidDOMNodes = $xpath->query("//td[@id='userId']");
+            if (isset($resourceUidDOMNodes[0])) {
+              $userId = trim($resourceUidDOMNodes[0]->textContent);
+            }
+
+
             if (empty($resourceMail)) {
-                throw new UserBookingException('resourceMail not set in event.body');
+              throw new UserBookingException('ID:' . $cleanedBookingId . ', resourceMail not set in event.body');
             }
 
             $userBooking->resourceMail = $resourceMail;
             $userBooking->resourceName = $resourceName ?? '';
+            $userBooking->userId = $userId ?? '';
 
             // Find attendee resource.
             $attendeeResource = [];
