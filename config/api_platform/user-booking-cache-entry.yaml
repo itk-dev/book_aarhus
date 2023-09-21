@@ -4,10 +4,9 @@ resources:
     attributes:
     itemOperations:
       get: ~
-      delete: ~
-      patch: ~
     collectionOperations:
       get:
+        filters: ['userbookingcacheentry.search_filter', 'userbookingcacheentry.boolean_filter', 'userbookingcacheentry.range_filter']
         openapi_context:
           operationId: get-v1-bookings-cache-entry
           description: Retrieves user bookings entry from the cache table.
