@@ -58,15 +58,13 @@ class UserBookingCacheChangeCommand extends Command
 
               $another = $io->confirm(
                   'Change another field for this entity?',
-                  false,
-                  '/^(y|j)/i'
+                  false
               );
           }
 
           $write = $io->confirm(
               'Continue? Select yes to write changes to DB, select no to abort.',
-              false,
-              '/^(y|j)/i'
+              false
           );
 
           if ($write) {
