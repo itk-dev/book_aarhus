@@ -3,24 +3,64 @@ resources:
   App\Entity\Main\UserBookingCacheEntry:
     attributes:
     itemOperations:
-      get: ~
+      get:
+        controller: ApiPlatform\Core\Action\NotFoundAction
+        read: false
+        output: false
+        openapi_context:
+          description: Unsupported action.
+          summary: Unsupported action.
     collectionOperations:
       get:
-        filters: ['userbookingcacheentry.search_filter', 'userbookingcacheentry.boolean_filter', 'userbookingcacheentry.range_filter']
         openapi_context:
           operationId: get-v1-bookings-cache-entry
           description: Retrieves user bookings entry from the cache table.
           summary: Retrieves user bookings entry from the cache table.
           tags:
+
           parameters:
+            - schema:
+                type: string
+                format: string
+                example: "Lorem ipsum"
+              in: query
+              name: title
+              description: "Title of the booking"
+            - schema:
+                type: string
+                format: string
+                example: "itkdev@aarhus.dk"
+              in: query
+              name: resource
+              description: "Resource of the booking, (email address)"
             - schema:
                 type: string
                 format: string
                 example: "1"
               in: query
-              name: userId
-              required: true
+              name: uid
               description: "ID of the user to retrieve bookings for"
+            - schema:
+                type: string
+                format: date-time
+                example: "2024-05-30T17:32:28Z"
+              in: query
+              name: start
+              description: "Start time for the search interval (DateTime. Expected format: \"2022-05-30T17:32:28Z\")"
+            - schema:
+                type: string
+                format: date-time
+                example: "2024-06-22T17:32:28Z"
+              in: query
+              name: end
+              description: "End time for the search interval (DateTime. Expected format: \"2022-05-30T17:32:28Z\")"
+            - schema:
+                type: string
+                format: string
+                example: "ACCEPTED"
+              in: query
+              name: status
+              description: "Status of the booking i.e. ACCEPTED or AWAITING_APPROVAL"
           responses:
             '200':
               description: OK
