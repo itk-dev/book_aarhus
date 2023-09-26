@@ -3,25 +3,42 @@ resources:
   App\Entity\Main\UserBookingCacheEntry:
     attributes:
     itemOperations:
-      get: ~
-      delete: ~
-      patch: ~
+      get:
+        controller: ApiPlatform\Core\Action\NotFoundAction
+        read: false
+        output: false
+        openapi_context:
+          description: Unsupported action.
+          summary: Unsupported action.
     collectionOperations:
       get:
+        filters: ['user_booking_cache_entry.search_filter', 'user_booking_cache_entry.order_filter', 'user_booking_cache_entry.date_filter']
         openapi_context:
           operationId: get-v1-bookings-cache-entry
           description: Retrieves user bookings entry from the cache table.
           summary: Retrieves user bookings entry from the cache table.
           tags:
+            - UserBookingCacheEntry
           parameters:
             - schema:
                 type: string
                 format: string
-                example: "1"
               in: query
-              name: userId
-              required: true
+              name: resource
+              description: "Resource of the booking, (email address)"
+            - schema:
+                type: string
+                format: string
+              in: query
+              name: uid
               description: "ID of the user to retrieve bookings for"
+            - schema:
+                type: string
+                format: string
+                example: "ACCEPTED"
+              in: query
+              name: status
+              description: "Status of the booking i.e. ACCEPTED or AWAITING_APPROVAL"
           responses:
             '200':
               description: OK

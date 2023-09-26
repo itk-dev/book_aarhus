@@ -32,16 +32,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         try {
             $this->clearUserBookingCache();
             $token = $this->graphHelperService->authenticateAsServiceAccount();
-            $now = new \DateTime('now');
-            $nowFormatted = $now->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
-
-            $query = implode('&', [
-                "\$filter=end/dateTime gt '$nowFormatted'",
-                '$top=100',
-            ]
-            );
-            $response = $this->graphHelperService->request("/me/events?$query", $token);
-            $nextResponse = $response;
+            $nextResponse = $this->microsoftGraphBookingService->getAllFutureBookings($token);
 
             // Loop over all pages of request.
             while (isset($nextResponse)) {
@@ -87,12 +78,13 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      *
      * @throws \Exception
      */
-    public function changeCacheEntry(int $id, array $changes): void
+    public function changeCacheEntry(string $exchangeId, array $changes): void
     {
-        $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)->find($id);
+        $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)
+          ->findOneBy(['exchangeId' => $exchangeId]);
 
         if (!$entity) {
-            throw new \Exception('No cache entry found for id '.$id);
+            throw new \Exception('No cache entry found for exchangeId: '. $exchangeId);
         }
 
         foreach ($changes as $field => $value) {
@@ -113,9 +105,14 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function deleteCacheEntry(UserBookingCacheEntry $entry): void
+    public function deleteCacheEntry(string $exchangeId): void
     {
-        $this->entityManager->remove($entry);
+      $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)
+        ->findOneBy(['exchangeId' => $exchangeId]);
+      if ($entity) {
+        $this->entityManager->remove($entity);
+      }
+
     }
 
     /**
@@ -154,7 +151,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         $doc->loadHTML($body);
         $uidDomElement = $doc->getElementById('userId');
 
-        return $uidDomElement?->textContent;
+        return $this->extractRealUid($uidDomElement?->textContent);
     }
 
     /**
@@ -170,5 +167,18 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         foreach ($entities as $entity) {
             $this->entityManager->remove($entity);
         }
+    }
+
+  /**
+   * Remove UID from front and back of id.
+   *
+   * @param $documentBodyUid
+   *
+   * @return string
+   */
+    private function extractRealUid($documentBodyUid): string {
+      $documentBodyUid = ltrim($documentBodyUid, 'UID-');
+
+      return rtrim($documentBodyUid, '-UID');
     }
 }

@@ -735,16 +735,46 @@
                 "description": "Retrieves user bookings entry from the cache table.",
                 "parameters": [
                     {
-                        "name": "userId",
+                        "name": "resource",
+                        "in": "query",
+                        "description": "Resource of the booking, (email address)",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "uid",
                         "in": "query",
                         "description": "ID of the user to retrieve bookings for",
-                        "required": true,
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Status of the booking i.e. ACCEPTED or AWAITING_APPROVAL",
+                        "required": false,
                         "deprecated": false,
                         "allowEmptyValue": false,
                         "schema": {
                             "type": "string",
                             "format": "string",
-                            "example": "1"
+                            "example": "ACCEPTED"
                         },
                         "style": "form",
                         "explode": false,
@@ -764,6 +794,204 @@
                         "style": "form",
                         "explode": false,
                         "allowReserved": false
+                    },
+                    {
+                        "name": "title",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "order[title]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "order[start]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "order[end]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "order[resource]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "start[before]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "start[strictly_before]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "start[after]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "start[strictly_after]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "end[before]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "end[strictly_before]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "end[after]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "end[strictly_after]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
                     }
                 ],
                 "deprecated": false
@@ -777,23 +1005,17 @@
                     "UserBookingCacheEntry"
                 ],
                 "responses": {
-                    "200": {
+                    "204": {
                         "description": "UserBookingCacheEntry resource",
                         "content": {
                             "application/ld+json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBookingCacheEntry.jsonld"
-                                }
+                                "schema": {}
                             },
                             "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBookingCacheEntry"
-                                }
+                                "schema": {}
                             },
                             "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBookingCacheEntry"
-                                }
+                                "schema": {}
                             }
                         }
                     },
@@ -801,8 +1023,8 @@
                         "description": "Resource not found"
                     }
                 },
-                "summary": "Retrieves a UserBookingCacheEntry resource.",
-                "description": "Retrieves a UserBookingCacheEntry resource.",
+                "summary": "Unsupported action.",
+                "description": "Unsupported action.",
                 "parameters": [
                     {
                         "name": "id",
@@ -819,115 +1041,6 @@
                         "allowReserved": false
                     }
                 ],
-                "deprecated": false
-            },
-            "delete": {
-                "operationId": "deleteUserBookingCacheEntryItem",
-                "tags": [
-                    "UserBookingCacheEntry"
-                ],
-                "responses": {
-                    "204": {
-                        "description": "UserBookingCacheEntry resource deleted"
-                    },
-                    "404": {
-                        "description": "Resource not found"
-                    }
-                },
-                "summary": "Removes the UserBookingCacheEntry resource.",
-                "description": "Removes the UserBookingCacheEntry resource.",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Resource identifier",
-                        "required": true,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "simple",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
-                "deprecated": false
-            },
-            "patch": {
-                "operationId": "patchUserBookingCacheEntryItem",
-                "tags": [
-                    "UserBookingCacheEntry"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "UserBookingCacheEntry resource updated",
-                        "content": {
-                            "application/ld+json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBookingCacheEntry.jsonld"
-                                }
-                            },
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBookingCacheEntry"
-                                }
-                            },
-                            "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBookingCacheEntry"
-                                }
-                            }
-                        },
-                        "links": {
-                            "GetUserBookingCacheEntryItem": {
-                                "operationId": "getUserBookingCacheEntryItem",
-                                "parameters": {
-                                    "id": "$response.body#/id"
-                                },
-                                "description": "The `id` value returned in the response can be used as the `id` parameter in `GET /v1/user-booking-cache-entries/{id}`."
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid input"
-                    },
-                    "422": {
-                        "description": "Unprocessable entity"
-                    },
-                    "404": {
-                        "description": "Resource not found"
-                    }
-                },
-                "summary": "Updates the UserBookingCacheEntry resource.",
-                "description": "Updates the UserBookingCacheEntry resource.",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Resource identifier",
-                        "required": true,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "simple",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
-                "requestBody": {
-                    "description": "The updated UserBookingCacheEntry resource",
-                    "content": {
-                        "application/merge-patch+json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UserBookingCacheEntry"
-                            }
-                        }
-                    },
-                    "required": true
-                },
                 "deprecated": false
             },
             "parameters": []
@@ -2143,33 +2256,6 @@
                     "@type": {
                         "readOnly": true,
                         "type": "string"
-                    },
-                    "@context": {
-                        "readOnly": true,
-                        "oneOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "object",
-                                "properties": {
-                                    "@vocab": {
-                                        "type": "string"
-                                    },
-                                    "hydra": {
-                                        "type": "string",
-                                        "enum": [
-                                            "http://www.w3.org/ns/hydra/core#"
-                                        ]
-                                    }
-                                },
-                                "required": [
-                                    "@vocab",
-                                    "hydra"
-                                ],
-                                "additionalProperties": true
-                            }
-                        ]
                     },
                     "id": {
                         "readOnly": true,

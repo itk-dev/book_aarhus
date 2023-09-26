@@ -30,21 +30,21 @@ interface UserBookingCacheServiceInterface
     /**
      * Change an entry in the cache table.
      *
-     * @param int $id
+     * @param string $exchangeId
      *   The id of the entity
      * @param array $changes
      *   An array of the changes to make [DB_FIELD, CHANGE]
      *
      * @return void
      */
-    public function changeCacheEntry(int $id, array $changes): void;
+    public function changeCacheEntry(string $exchangeId, array $changes): void;
 
     /**
      * Delete an entry from the cache table.
      *
-     * @param UserBookingCacheEntry $entry
+     * @param string $exchangeId
      *
      * @return void
      */
-    public function deleteCacheEntry(UserBookingCacheEntry $entry): void;
+    public function deleteCacheEntry(string $exchangeId): void;
 }
