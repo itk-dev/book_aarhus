@@ -13,6 +13,7 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 - Added User booking cache entity.
 - Added User booking cache service.
+- Added API for fetching cached user bookings.
 
 ## [1.1.2] - 2023-08-29
 
