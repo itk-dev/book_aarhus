@@ -517,20 +517,6 @@ paths:
       description: 'Retrieves user bookings entry from the cache table.'
       parameters:
         -
-          name: title
-          in: query
-          description: 'Title of the booking'
-          required: false
-          deprecated: false
-          allowEmptyValue: false
-          schema:
-            type: string
-            format: string
-            example: 'Lorem ipsum'
-          style: form
-          explode: false
-          allowReserved: false
-        -
           name: resource
           in: query
           description: 'Resource of the booking, (email address)'
@@ -540,7 +526,6 @@ paths:
           schema:
             type: string
             format: string
-            example: itkdev@aarhus.dk
           style: form
           explode: false
           allowReserved: false
@@ -554,35 +539,6 @@ paths:
           schema:
             type: string
             format: string
-            example: '1'
-          style: form
-          explode: false
-          allowReserved: false
-        -
-          name: start
-          in: query
-          description: 'Start time for the search interval (DateTime. Expected format: "2022-05-30T17:32:28Z")'
-          required: false
-          deprecated: false
-          allowEmptyValue: false
-          schema:
-            type: string
-            format: date-time
-            example: '2024-05-30T17:32:28Z'
-          style: form
-          explode: false
-          allowReserved: false
-        -
-          name: end
-          in: query
-          description: 'End time for the search interval (DateTime. Expected format: "2022-05-30T17:32:28Z")'
-          required: false
-          deprecated: false
-          allowEmptyValue: false
-          schema:
-            type: string
-            format: date-time
-            example: '2024-06-22T17:32:28Z'
           style: form
           explode: false
           allowReserved: false
@@ -610,6 +566,174 @@ paths:
           schema:
             type: integer
             default: 1
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: title
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'order[title]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'order[start]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'order[end]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'order[resource]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'start[before]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'start[strictly_before]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'start[after]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'start[strictly_after]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'end[before]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'end[strictly_before]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'end[after]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'end[strictly_after]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
           style: form
           explode: false
           allowReserved: false
