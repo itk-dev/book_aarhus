@@ -12,48 +12,26 @@ resources:
           summary: Unsupported action.
     collectionOperations:
       get:
+        filters: ['user_booking_cache_entry.search_filter', 'user_booking_cache_entry.order_filter', 'user_booking_cache_entry.date_filter']
         openapi_context:
           operationId: get-v1-bookings-cache-entry
           description: Retrieves user bookings entry from the cache table.
           summary: Retrieves user bookings entry from the cache table.
           tags:
-
+            - UserBookingCacheEntry
           parameters:
             - schema:
                 type: string
                 format: string
-                example: "Lorem ipsum"
-              in: query
-              name: title
-              description: "Title of the booking"
-            - schema:
-                type: string
-                format: string
-                example: "itkdev@aarhus.dk"
               in: query
               name: resource
               description: "Resource of the booking, (email address)"
             - schema:
                 type: string
                 format: string
-                example: "1"
               in: query
               name: uid
               description: "ID of the user to retrieve bookings for"
-            - schema:
-                type: string
-                format: date-time
-                example: "2024-05-30T17:32:28Z"
-              in: query
-              name: start
-              description: "Start time for the search interval (DateTime. Expected format: \"2022-05-30T17:32:28Z\")"
-            - schema:
-                type: string
-                format: date-time
-                example: "2024-06-22T17:32:28Z"
-              in: query
-              name: end
-              description: "End time for the search interval (DateTime. Expected format: \"2022-05-30T17:32:28Z\")"
             - schema:
                 type: string
                 format: string

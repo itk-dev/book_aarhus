@@ -47,17 +47,4 @@ interface UserBookingCacheServiceInterface
      * @return void
      */
     public function deleteCacheEntry(string $exchangeId): void;
-
-    /**
-     * Get user bookings
-     *
-     * @param string $userId
-     * @param array $filter
-     * @param int $page
-     * @param int $pageSize
-     *
-     * @return array
-     */
-    public function getUserCachedBookings(string $userId, array $filter = [], int $page = 0, int $pageSize = 25): array;
-
 }

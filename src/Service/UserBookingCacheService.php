@@ -124,22 +124,6 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
 
     }
 
-  /**
-   * {@inheritdoc}
-   */
-    public function getUserCachedBookings(string $userId, array $filter = [], int $page = 0, int $pageSize = 25): array {
-      unset($filter['page']);
-      if (isset($filter['start'])) {
-        $filter['start'] =  \DateTime::createFromFormat('Y-m-d\TH:i:s\Z', $filter['start']);
-      }
-      if (isset($filter['end'])) {
-        $filter['end'] =  \DateTime::createFromFormat('Y-m-d\TH:i:s\Z', $filter['end']);
-      }
-      return $this->entityManager
-        ->getRepository(UserBookingCacheEntry::class)
-        ->findBy($filter, ['start' => 'ASC'], $pageSize, $page * $pageSize);
-    }
-
     /**
      * Create cache entity.
      *
