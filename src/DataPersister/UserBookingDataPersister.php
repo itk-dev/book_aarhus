@@ -46,8 +46,8 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
                     NotificationTypeEnum::DELETE_SUCCESS
                 ));
 
-              // @todo enable cache deletion.
-              //$this->userBookingCacheService->deleteCacheEntry($exchangeId);
+                // @todo enable cache deletion.
+                // $this->userBookingCacheService->deleteCacheEntry($exchangeId);
             }
         } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
             throw new HttpException($e->getCode(), 'Booking could not be deleted.');
@@ -70,7 +70,7 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
                 ));
 
                 // @todo enable cache alteration.
-                //$this->userBookingCacheService->changeCacheEntry($exchangeId, $newData);
+                // $this->userBookingCacheService->changeCacheEntry($exchangeId, $newData);
             }
 
             return $data;

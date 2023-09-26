@@ -16,6 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class UserBookingCacheChangeCommand extends Command
 {
     public const DATE_FORMAT = 'Y-m-d\TH:i:s';
+
     public function __construct(
     private readonly UserBookingCacheServiceInterface $userBookingCacheServiceInterface
   ) {
@@ -44,7 +45,7 @@ class UserBookingCacheChangeCommand extends Command
                   0
               );
 
-              $fieldValue = $io->ask('Please enter the value for ' .$field .' field (In case of date fields use format ' . UserBookingCacheChangeCommand::DATE_FORMAT . ')');
+              $fieldValue = $io->ask('Please enter the value for '.$field.' field (In case of date fields use format '.UserBookingCacheChangeCommand::DATE_FORMAT.')');
 
               // Date fields expect Datetime object.
               if ('start' === $field || 'end' === $field) {
@@ -53,7 +54,7 @@ class UserBookingCacheChangeCommand extends Command
               $data[$field] = $fieldValue;
 
               // Info on current state to be changed.
-              $io->writeln('Making the following changes to Cache Entry with id: ' . $entityId);
+              $io->writeln('Making the following changes to Cache Entry with id: '.$entityId);
               $io->info(json_encode($data));
 
               $another = $io->confirm(

@@ -120,10 +120,10 @@ interface BookingServiceInterface
      */
     public function createBodyUserId(string $id): string;
 
-  /**
-   * Get all future bookings.
-   *
-   * @return mixed
-   */
+    /**
+     * Get all future bookings.
+     *
+     * @return mixed
+     */
     public function getAllFutureBookings(string $token): GraphResponse;
 }

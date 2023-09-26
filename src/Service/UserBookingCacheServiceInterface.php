@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Entity\Main\UserBooking;
-use App\Entity\Main\UserBookingCacheEntry;
 
 /**
  * @see https://github.com/microsoftgraph/msgraph-sdk-php

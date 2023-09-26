@@ -509,23 +509,24 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         }
     }
 
-  /**
-   * {@inheritdoc}
-   */
-    public function getAllFutureBookings($token): GraphResponse {
-      $now = new \DateTime();
-      $nowFormatted = $now->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
+    /**
+     * {@inheritdoc}
+     */
+    public function getAllFutureBookings($token): GraphResponse
+    {
+        $now = new \DateTime();
+        $nowFormatted = $now->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
 
-      $query = implode('&', [
-          "\$filter=end/dateTime gt '$nowFormatted'",
-          '$top=100',
+        $query = implode('&', [
+            "\$filter=end/dateTime gt '$nowFormatted'",
+            '$top=100',
         ]
-      );
+        );
 
-      return $this->graphHelperService->request("/me/events?$query", $token);
+        return $this->graphHelperService->request("/me/events?$query", $token);
     }
 
-  /**
+    /**
      * {@inheritdoc}
      */
     public function createBodyUserId(string $id): string

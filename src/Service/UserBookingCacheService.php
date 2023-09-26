@@ -81,10 +81,10 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
     public function changeCacheEntry(string $exchangeId, array $changes): void
     {
         $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)
-          ->findOneBy(['exchangeId' => $exchangeId]);
+            ->findOneBy(['exchangeId' => $exchangeId]);
 
         if (!$entity) {
-            throw new \Exception('No cache entry found for exchangeId: '. $exchangeId);
+            throw new \Exception('No cache entry found for exchangeId: '.$exchangeId);
         }
 
         foreach ($changes as $field => $value) {
@@ -107,12 +107,11 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function deleteCacheEntry(string $exchangeId): void
     {
-      $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)
-        ->findOneBy(['exchangeId' => $exchangeId]);
-      if ($entity) {
-        $this->entityManager->remove($entity);
-      }
-
+        $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)
+            ->findOneBy(['exchangeId' => $exchangeId]);
+        if ($entity) {
+            $this->entityManager->remove($entity);
+        }
     }
 
     /**
@@ -169,16 +168,17 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         }
     }
 
-  /**
-   * Remove UID from front and back of id.
-   *
-   * @param $documentBodyUid
-   *
-   * @return string
-   */
-    private function extractRealUid($documentBodyUid): string {
-      $documentBodyUid = ltrim($documentBodyUid, 'UID-');
+    /**
+     * Remove UID from front and back of id.
+     *
+     * @param $documentBodyUid
+     *
+     * @return string
+     */
+    private function extractRealUid($documentBodyUid): string
+    {
+        $documentBodyUid = ltrim($documentBodyUid, 'UID-');
 
-      return rtrim($documentBodyUid, '-UID');
+        return rtrim($documentBodyUid, '-UID');
     }
 }
