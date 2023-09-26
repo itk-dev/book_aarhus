@@ -32,16 +32,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         try {
             $this->clearUserBookingCache();
             $token = $this->graphHelperService->authenticateAsServiceAccount();
-            $now = new \DateTime('now');
-            $nowFormatted = $now->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
-
-            $query = implode('&', [
-                "\$filter=end/dateTime gt '$nowFormatted'",
-                '$top=100',
-            ]
-            );
-            $response = $this->graphHelperService->request("/me/events?$query", $token);
-            $nextResponse = $response;
+            $nextResponse = $this->microsoftGraphBookingService->getAllFutureBookings($token);
 
             // Loop over all pages of request.
             while (isset($nextResponse)) {
