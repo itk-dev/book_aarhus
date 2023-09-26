@@ -2,13 +2,11 @@
 
 namespace App\Entity\Main;
 
-use ApiPlatform\Metadata\ApiResource;
 use App\Repository\Main\UserBookingCacheEntryRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserBookingCacheEntryRepository::class)]
-#[ApiResource]
 class UserBookingCacheEntry
 {
     #[ORM\Id]
@@ -18,6 +16,9 @@ class UserBookingCacheEntry
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $exchangeId = null;
 
     #[ORM\Column(length: 255)]
     private ?string $uid = null;
@@ -47,6 +48,18 @@ class UserBookingCacheEntry
     public function setTitle(string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getExchangeId(): ?string
+    {
+        return $this->exchangeId;
+    }
+
+    public function setExchangeId(string $exchangeId): static
+    {
+        $this->exchangeId = $exchangeId;
 
         return $this;
     }

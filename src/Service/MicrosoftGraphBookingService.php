@@ -464,7 +464,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             }
 
             if (empty($resourceMail)) {
-                throw new UserBookingException('resourceMail not set in event.body');
+                throw new UserBookingException('ID:'.$cleanedBookingId.', resourceMail not set in event.body');
             }
 
             $userBooking->resourceMail = $resourceMail;

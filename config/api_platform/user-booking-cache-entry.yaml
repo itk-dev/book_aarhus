@@ -2,8 +2,6 @@
 resources:
   App\Entity\Main\UserBookingCacheEntry:
     attributes:
-      normalization_context:
-        groups: ['userBookingCacheEntry']
     itemOperations:
       get: ~
       delete: ~
