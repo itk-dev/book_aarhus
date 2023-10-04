@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Main\UserBooking;
 use App\Entity\Main\UserBookingCacheEntry;
 use App\Exception\MicrosoftGraphCommunicationException;
+use App\Exception\UserBookingException;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -31,8 +32,25 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
     {
         try {
             $this->clearUserBookingCache();
+            $this->updateCache(false);
+        } catch (\Exception $e) {
+            throw new MicrosoftGraphCommunicationException($e->getMessage(), (int) $e->getCode());
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return void
+     *
+     * @throws \App\Exception\MicrosoftGraphCommunicationException
+     */
+    public function updateCache($removeOutdated = true): void
+    {
+        try {
             $token = $this->graphHelperService->authenticateAsServiceAccount();
             $nextResponse = $this->microsoftGraphBookingService->getAllFutureBookings($token);
+            $exchangeBookings = [];
 
             // Loop over all pages of request.
             while (isset($nextResponse)) {
@@ -40,9 +58,17 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
 
                 // Loop over all elements on page.
                 foreach ($resultBody['value'] as $booking) {
+                    $exchangeBookings[] = $booking['id'];
                     try {
                         $userBooking = $this->microsoftGraphBookingService->getUserBookingFromApiData($booking);
-                        $this->entityManager->persist($this->createCacheEntity($userBooking));
+                        $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)
+                            ->findOneBy(['exchangeId' => $userBooking->id]);
+
+                        if (null === $entity) {
+                            $entity = new UserBookingCacheEntry();
+                        }
+
+                        $this->entityManager->persist($this->setCacheEntityValues($entity, $userBooking));
                     } catch (\Exception $e) {
                         $this->logger->error($e->getMessage());
                     }
@@ -57,8 +83,12 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
                 }
             }
 
-            // Add elements to db.
+            if ($removeOutdated) {
+                $this->removeOutdatedEntries($exchangeBookings);
+            }
+
             $this->entityManager->flush();
+        } catch (UserBookingException $e) {
         } catch (\Exception $e) {
             throw new MicrosoftGraphCommunicationException($e->getMessage(), (int) $e->getCode());
         }
@@ -69,7 +99,8 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function addCacheEntry(UserBooking $userBooking): void
     {
-        $this->entityManager->persist($this->createCacheEntity($userBooking));
+        $entity = new UserBookingCacheEntry();
+        $this->entityManager->persist($this->setCacheEntityValues($entity, $userBooking));
         $this->entityManager->flush();
     }
 
@@ -115,26 +146,26 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
     }
 
     /**
-     * Create cache entity.
+     * Set values for cache entity.
      *
-     * @param UserBooking $userBooking
+     * @param $entity
+     * @param \App\Entity\Main\UserBooking $userBooking
      *
      * @return \App\Entity\Main\UserBookingCacheEntry
      */
-    private function createCacheEntity(UserBooking $userBooking): UserBookingCacheEntry
+    private function setCacheEntityValues($entity, UserBooking $userBooking): UserBookingCacheEntry
     {
-        $cacheEntry = new UserBookingCacheEntry();
         if ($userBooking->resourceMail) {
-            $cacheEntry->setTitle($userBooking->subject);
-            $cacheEntry->setExchangeId($userBooking->id);
-            $cacheEntry->setUid($this->retrieveUidFromBody($userBooking->body) ?? '');
-            $cacheEntry->setStart($userBooking->start);
-            $cacheEntry->setEnd($userBooking->end);
-            $cacheEntry->setStatus($userBooking->status);
-            $cacheEntry->setResource($userBooking->resourceMail);
+            $entity->setTitle($userBooking->subject);
+            $entity->setExchangeId($userBooking->id);
+            $entity->setUid($this->retrieveUidFromBody($userBooking->body) ?? '');
+            $entity->setStart($userBooking->start);
+            $entity->setEnd($userBooking->end);
+            $entity->setStatus($userBooking->status);
+            $entity->setResource($userBooking->resourceMail);
         }
 
-        return $cacheEntry;
+        return $entity;
     }
 
     /**
@@ -166,6 +197,8 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         foreach ($entities as $entity) {
             $this->entityManager->remove($entity);
         }
+
+        $this->entityManager->flush();
     }
 
     /**
@@ -180,5 +213,23 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         $documentBodyUid = ltrim($documentBodyUid, 'UID-');
 
         return rtrim($documentBodyUid, '-UID');
+    }
+
+    /**
+     * Remove outdated entries in cache.
+     *
+     * @param $exchangeBookings
+     */
+    private function removeOutdatedEntries($exchangeBookings): void
+    {
+        $repository = $this->entityManager->getRepository(UserBookingCacheEntry::class);
+        $entities = $repository->findAll();
+
+        foreach ($entities as $entity) {
+            if (!in_array($entity->getExchangeId(), $exchangeBookings)) {
+                $this->entityManager->remove($entity);
+            }
+        }
+        $this->entityManager->flush();
     }
 }

@@ -18,6 +18,13 @@ interface UserBookingCacheServiceInterface
     public function rebuildCache(): void;
 
     /**
+     * Update the user bookings cache.
+     *
+     * @return void
+     */
+    public function updateCache(): void;
+
+    /**
      * Add an entry to the cache table.
      *
      * @param UserBooking $userBooking a user booking to add to cache
