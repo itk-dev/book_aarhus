@@ -119,27 +119,26 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         }
 
         foreach ($changes as $field => $value) {
-          switch ($field) {
-            case 'title':
-              $entity->setTitle($value);
-              break;
-            case 'uid':
+            switch ($field) {
+                case 'title':
+                    $entity->setTitle($value);
+                    break;
+                case 'uid':
+                    break;
+                case 'start':
+                    $entity->setStart($value);
 
-              break;
-            case 'start':
-              $entity->setStart($value);
-
-              break;
-            case 'end':
-              $entity->setEnd($value);
-              break;
-            case 'status':
-              $entity->setStatus($value);
-              break;
-            case 'resource':
-              $entity->setResource($value);
-              break;
-          }
+                    break;
+                case 'end':
+                    $entity->setEnd($value);
+                    break;
+                case 'status':
+                    $entity->setStatus($value);
+                    break;
+                case 'resource':
+                    $entity->setResource($value);
+                    break;
+            }
         }
 
         $this->entityManager->flush();

@@ -69,8 +69,8 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
                 ));
 
                 $this->userBookingCacheService->changeCacheEntry($data->id, [
-                  'start' => $data->start,
-                  'end' => $data->end
+                    'start' => $data->start,
+                    'end' => $data->end,
                 ]);
             }
 
