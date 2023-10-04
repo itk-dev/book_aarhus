@@ -119,15 +119,27 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         }
 
         foreach ($changes as $field => $value) {
-            $field = ucfirst($field);
-            $methodName = "set{$field}";
+          switch ($field) {
+            case 'title':
+              $entity->setTitle($value);
+              break;
+            case 'uid':
 
-            // check method
-            if (!\method_exists($entity, $methodName)) {
-                throw new \Exception($methodName.' not found.');
-            }
+              break;
+            case 'start':
+              $entity->setStart($value);
 
-            $entity->{$methodName}($value);
+              break;
+            case 'end':
+              $entity->setEnd($value);
+              break;
+            case 'status':
+              $entity->setStatus($value);
+              break;
+            case 'resource':
+              $entity->setResource($value);
+              break;
+          }
         }
 
         $this->entityManager->flush();

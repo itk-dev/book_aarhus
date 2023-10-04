@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class UserBookingCacheChangeCommand extends Command
 {
-    public const DATE_FORMAT = 'Y-m-d\TH:i:s';
+    public const DATE_FORMAT = 'Y-m-d H:i:s';
 
     public function __construct(
     private readonly UserBookingCacheServiceInterface $userBookingCacheServiceInterface
@@ -51,6 +51,7 @@ class UserBookingCacheChangeCommand extends Command
               if ('start' === $field || 'end' === $field) {
                   $fieldValue = \DateTime::createFromFormat(UserBookingCacheChangeCommand::DATE_FORMAT, $fieldValue);
               }
+
               $data[$field] = $fieldValue;
 
               // Info on current state to be changed.
