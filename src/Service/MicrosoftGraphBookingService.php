@@ -512,18 +512,38 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getAllFutureBookings($token): GraphResponse
+    public function getAllFutureBookings($token, $request = null): array
     {
+        $data = [];
         $now = new \DateTime();
         $nowFormatted = $now->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
 
-        $query = implode('&', [
-            "\$filter=end/dateTime gt '$nowFormatted'",
-            '$top=100',
-        ]
-        );
+        if (empty($request)) {
+          $query = implode('&', [
+              "\$filter=end/dateTime gt '$nowFormatted'",
+              '$top=100',
+            ]
+          );
 
-        return $this->graphHelperService->request("/me/events?$query", $token);
+          $request = "/me/events?$query";
+        }
+
+
+        $response = $this->graphHelperService->request($request, $token);
+        $resultBody = $response->getBody();
+        try {
+          foreach ($resultBody['value'] as $booking) {
+            $data[] = $this->getUserBookingFromApiData($booking);
+          }
+
+        } catch (UserBookingException $e) {
+          $this->logger->error($e->getMessage());
+        }
+
+      return [
+        'data' => $data,
+        'next_link' => isset($resultBody['@odata.nextLink']) ? strstr($resultBody['@odata.nextLink'], '/me/events') : null
+      ];
     }
 
     /**

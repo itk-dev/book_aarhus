@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Entity\Main\UserBooking;
 use App\Entity\Main\UserBookingCacheEntry;
 use App\Exception\MicrosoftGraphCommunicationException;
-use App\Exception\UserBookingException;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -49,18 +48,15 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
     {
         try {
             $token = $this->graphHelperService->authenticateAsServiceAccount();
-            $nextResponse = $this->microsoftGraphBookingService->getAllFutureBookings($token);
+            $result = $this->microsoftGraphBookingService->getAllFutureBookings($token);
             $exchangeBookings = [];
 
             // Loop over all pages of request.
-            while (isset($nextResponse)) {
-                $resultBody = $nextResponse->getBody();
-
+            while (isset($result['next_link'])) {
                 // Loop over all elements on page.
-                foreach ($resultBody['value'] as $booking) {
-                    $exchangeBookings[] = $booking['id'];
+                foreach ($result['data'] as $userBooking) {
+                    $exchangeBookings[] = $userBooking->id;
                     try {
-                        $userBooking = $this->microsoftGraphBookingService->getUserBookingFromApiData($booking);
                         $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)
                             ->findOneBy(['exchangeId' => $userBooking->id]);
 
@@ -74,13 +70,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
                     }
                 }
 
-                // Determine next page.
-                if (isset($resultBody['@odata.nextLink'])) {
-                    $nextQuery = strstr($resultBody['@odata.nextLink'], '/me/events');
-                    $nextResponse = $this->graphHelperService->request($nextQuery, $token);
-                } else {
-                    $nextResponse = null;
-                }
+                $result = $this->microsoftGraphBookingService->getAllFutureBookings($token, $result['next_link']);
             }
 
             if ($removeOutdated) {
@@ -88,7 +78,6 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
             }
 
             $this->entityManager->flush();
-        } catch (UserBookingException $e) {
         } catch (\Exception $e) {
             throw new MicrosoftGraphCommunicationException($e->getMessage(), (int) $e->getCode());
         }
@@ -127,7 +116,6 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
                     break;
                 case 'start':
                     $entity->setStart($value);
-
                     break;
                 case 'end':
                     $entity->setEnd($value);
@@ -166,15 +154,13 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     private function setCacheEntityValues($entity, UserBooking $userBooking): UserBookingCacheEntry
     {
-        if ($userBooking->resourceMail) {
-            $entity->setTitle($userBooking->subject);
-            $entity->setExchangeId($userBooking->id);
-            $entity->setUid($this->retrieveUidFromBody($userBooking->body) ?? '');
-            $entity->setStart($userBooking->start);
-            $entity->setEnd($userBooking->end);
-            $entity->setStatus($userBooking->status);
-            $entity->setResource($userBooking->resourceMail);
-        }
+        $entity->setTitle($userBooking->subject);
+        $entity->setExchangeId($userBooking->id);
+        $entity->setUid($this->retrieveUidFromBody($userBooking->body) ?? '');
+        $entity->setStart($userBooking->start);
+        $entity->setEnd($userBooking->end);
+        $entity->setStatus($userBooking->status);
+        $entity->setResource($userBooking->resourceMail);
 
         return $entity;
     }
@@ -215,23 +201,23 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
     /**
      * Remove UID from front and back of id.
      *
-     * @param $documentBodyUid
+     * @param string $documentBodyUid
+     *   The uid found in mail body.
      *
      * @return string
      */
-    private function extractRealUid($documentBodyUid): string
+    private function extractRealUid(string $documentBodyUid): string
     {
-        $documentBodyUid = ltrim($documentBodyUid, 'UID-');
-
-        return rtrim($documentBodyUid, '-UID');
+        return preg_replace('/^UID-|\-UID$/', '', $documentBodyUid);
     }
 
     /**
      * Remove outdated entries in cache.
      *
-     * @param $exchangeBookings
+     * @param array $exchangeBookings
+     *   A list of exchange IDs.
      */
-    private function removeOutdatedEntries($exchangeBookings): void
+    private function removeOutdatedEntries(array $exchangeBookings): void
     {
         $repository = $this->entityManager->getRepository(UserBookingCacheEntry::class);
         $entities = $repository->findAll();

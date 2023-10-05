@@ -47,18 +47,12 @@ class GetStatusByIdsController extends AbstractController
               'status' => $userBooking->status,
           ];
 
-          // Update booking cache on accepted bookings.
-          if ('ACCEPTED' === $userBooking->status) {
-              $this->userBookingCacheService->changeCacheEntry($id, ['status' => 'ACCEPTED']);
-          }
+          // Update booking cache status.
+          $this->userBookingCacheService->changeCacheEntry($id, ['status' => $userBooking->status]);
       }
 
       $data = $this->serializer->serialize($statuses, 'json', ['groups' => 'resource']);
 
       return new Response($data, 200);
   }
-
-    private function updateBookingCache($userBooking)
-    {
-    }
 }

@@ -17,65 +17,66 @@ class UserBookingCacheChangeCommand extends Command
 {
     public const DATE_FORMAT = 'Y-m-d H:i:s';
 
-    public function __construct(
-    private readonly UserBookingCacheServiceInterface $userBookingCacheServiceInterface
-  ) {
+    public function __construct
+    (
+        private readonly UserBookingCacheServiceInterface $userBookingCacheServiceInterface
+    ) {
         parent::__construct();
     }
 
-      protected function configure(): void
-      {
-      }
+    protected function configure(): void
+    {
+    }
 
-      protected function execute(InputInterface $input, OutputInterface $output): int
-      {
-          $io = new SymfonyStyle($input, $output);
-          $data = [];
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $io = new SymfonyStyle($input, $output);
+        $data = [];
 
-          $entityId = $io->ask('Please enter the exchangeId of the entity to change');
+        $entityId = $io->ask('Please enter the exchangeId of the entity to change');
 
-          // Whether to change another field after this one.
-          $another = true;
+        // Whether to change another field after this one.
+        $another = true;
 
-          while ($another) {
-              // Options are used in the entity set methods, ie setTitle, setUid etc.
-              $field = $io->choice(
-                  'Please select the field to update',
-                  ['title', 'uid', 'start', 'end', 'status', 'resource'],
-                  0
-              );
+        while ($another) {
+            // Options are used in the entity set methods, ie setTitle, setUid etc.
+            $field = $io->choice(
+                'Please select the field to update',
+                ['title', 'uid', 'start', 'end', 'status', 'resource'],
+                0
+            );
 
-              $fieldValue = $io->ask('Please enter the value for '.$field.' field (In case of date fields use format '.UserBookingCacheChangeCommand::DATE_FORMAT.')');
+            $fieldValue = $io->ask('Please enter the value for '.$field.' field (In case of date fields use format '.UserBookingCacheChangeCommand::DATE_FORMAT.')');
 
-              // Date fields expect Datetime object.
-              if ('start' === $field || 'end' === $field) {
-                  $fieldValue = \DateTime::createFromFormat(UserBookingCacheChangeCommand::DATE_FORMAT, $fieldValue);
-              }
+            // Date fields expect Datetime object.
+            if ('start' === $field || 'end' === $field) {
+                $fieldValue = \DateTime::createFromFormat(UserBookingCacheChangeCommand::DATE_FORMAT, $fieldValue);
+            }
 
-              $data[$field] = $fieldValue;
+            $data[$field] = $fieldValue;
 
-              // Info on current state to be changed.
-              $io->writeln('Making the following changes to Cache Entry with id: '.$entityId);
-              $io->info(json_encode($data));
+            // Info on current state to be changed.
+            $io->writeln('Making the following changes to Cache Entry with id: '.$entityId);
+            $io->info(json_encode($data));
 
-              $another = $io->confirm(
-                  'Change another field for this entity?',
-                  false
-              );
-          }
+            $another = $io->confirm(
+                'Change another field for this entity?',
+                false
+            );
+        }
 
-          $write = $io->confirm(
-              'Continue? Select yes to write changes to DB, select no to abort.',
-              false
-          );
+        $write = $io->confirm(
+            'Continue? Select yes to write changes to DB, select no to abort.',
+            false
+        );
 
-          if ($write) {
-              $this->userBookingCacheServiceInterface->changeCacheEntry($entityId, $data);
-              $io->writeln($entityId.' was changed.');
-          } else {
-              $io->writeln('Aborted.');
-          }
+        if ($write) {
+            $this->userBookingCacheServiceInterface->changeCacheEntry($entityId, $data);
+            $io->writeln($entityId.' was changed.');
+        } else {
+            $io->writeln('Aborted.');
+        }
 
-          return Command::SUCCESS;
-      }
+        return Command::SUCCESS;
+    }
 }

@@ -15,22 +15,23 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class UserBookingCacheRebuildCommand extends Command
 {
-    public function __construct(
-    private readonly UserBookingCacheServiceInterface $userBookingCacheServiceInterface
-  ) {
+    public function __construct
+    (
+        private readonly UserBookingCacheServiceInterface $userBookingCacheServiceInterface
+    ) {
         parent::__construct();
     }
 
-      protected function configure(): void
-      {
-      }
+    protected function configure(): void
+    {
+    }
 
-      protected function execute(InputInterface $input, OutputInterface $output): int
-      {
-          $this->userBookingCacheServiceInterface->rebuildCache();
-          $io = new SymfonyStyle($input, $output);
-          $io->success('Rebuilt user booking cache.');
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $this->userBookingCacheServiceInterface->rebuildCache();
+        $io = new SymfonyStyle($input, $output);
+        $io->success('Rebuilt user booking cache.');
 
-          return Command::SUCCESS;
-      }
+        return Command::SUCCESS;
+    }
 }
