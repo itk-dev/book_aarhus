@@ -8,7 +8,6 @@ use App\Enum\UserBookingTypeEnum;
 use App\Exception\BookingCreateConflictException;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
-use Microsoft\Graph\Http\GraphResponse;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -519,30 +518,28 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         $nowFormatted = $now->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
 
         if (empty($request)) {
-          $query = implode('&', [
-              "\$filter=end/dateTime gt '$nowFormatted'",
-              '$top=100',
+            $query = implode('&', [
+                "\$filter=end/dateTime gt '$nowFormatted'",
+                '$top=100',
             ]
-          );
+            );
 
-          $request = "/me/events?$query";
+            $request = "/me/events?$query";
         }
-
 
         $response = $this->graphHelperService->request($request, $token);
         $resultBody = $response->getBody();
         try {
-          foreach ($resultBody['value'] as $booking) {
-            $data[] = $this->getUserBookingFromApiData($booking);
-          }
-
+            foreach ($resultBody['value'] as $booking) {
+                $data[] = $this->getUserBookingFromApiData($booking);
+            }
         } catch (UserBookingException $e) {
-          $this->logger->error($e->getMessage());
+            $this->logger->error($e->getMessage());
         }
 
       return [
-        'data' => $data,
-        'next_link' => isset($resultBody['@odata.nextLink']) ? strstr($resultBody['@odata.nextLink'], '/me/events') : null
+          'data' => $data,
+          'next_link' => isset($resultBody['@odata.nextLink']) ? strstr($resultBody['@odata.nextLink'], '/me/events') : null,
       ];
     }
 

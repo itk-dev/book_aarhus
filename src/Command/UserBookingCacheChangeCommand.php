@@ -17,8 +17,7 @@ class UserBookingCacheChangeCommand extends Command
 {
     public const DATE_FORMAT = 'Y-m-d H:i:s';
 
-    public function __construct
-    (
+    public function __construct(
         private readonly UserBookingCacheServiceInterface $userBookingCacheServiceInterface
     ) {
         parent::__construct();

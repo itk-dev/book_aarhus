@@ -202,7 +202,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      * Remove UID from front and back of id.
      *
      * @param string $documentBodyUid
-     *   The uid found in mail body.
+     *   The uid found in mail body
      *
      * @return string
      */
@@ -215,7 +215,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      * Remove outdated entries in cache.
      *
      * @param array $exchangeBookings
-     *   A list of exchange IDs.
+     *   A list of exchange IDs
      */
     private function removeOutdatedEntries(array $exchangeBookings): void
     {

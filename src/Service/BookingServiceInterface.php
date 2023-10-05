@@ -6,7 +6,6 @@ use App\Entity\Main\UserBooking;
 use App\Exception\BookingCreateConflictException;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
-use Microsoft\Graph\Http\GraphResponse;
 
 interface BookingServiceInterface
 {
@@ -120,11 +119,11 @@ interface BookingServiceInterface
      */
     public function createBodyUserId(string $id): string;
 
-  /**
-   * @param string $token
-   * @param string|null $request
-   *
-   * @return array
-   */
+    /**
+     * @param string $token
+     * @param string|null $request
+     *
+     * @return array
+     */
     public function getAllFutureBookings(string $token, ?string $request): array;
 }

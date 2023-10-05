@@ -15,8 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class UserBookingCacheRebuildCommand extends Command
 {
-    public function __construct
-    (
+    public function __construct(
         private readonly UserBookingCacheServiceInterface $userBookingCacheServiceInterface
     ) {
         parent::__construct();
