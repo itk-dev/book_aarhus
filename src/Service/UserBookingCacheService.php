@@ -198,17 +198,17 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         $this->entityManager->flush();
     }
 
-    /**
-     * Remove UID from front and back of id.
-     *
-     * @param string $documentBodyUid
-     *   The uid found in mail body
-     *
-     * @return string
-     */
-    private function extractRealUid(string $documentBodyUid): string
+  /**
+   * Remove UID from front and back of id.
+   *
+   * @param string|null $documentBodyUid
+   *   The uid found in mail body
+   *
+   * @return string|null
+   */
+    private function extractRealUid(?string $documentBodyUid): ?string
     {
-        return preg_replace('/^UID-|-UID$/', '', $documentBodyUid);
+        return $documentBodyUid ? preg_replace('/^UID-|-UID$/', '', $documentBodyUid) : null;
     }
 
     /**
