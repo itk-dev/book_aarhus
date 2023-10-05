@@ -208,7 +208,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     private function extractRealUid(string $documentBodyUid): string
     {
-        return preg_replace('/^UID-|\-UID$/', '', $documentBodyUid);
+        return preg_replace('/^UID-|-UID$/', '', $documentBodyUid);
     }
 
     /**
