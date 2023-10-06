@@ -36,7 +36,7 @@ final class UserBookingCacheEntryExtension implements QueryCollectionExtensionIn
      */
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass): void
     {
-        if (UserBookingCacheEntry::class !== $resourceClass || null === $this->security->getUser()) {
+        if (UserBookingCacheEntry::class !== $resourceClass) {
             return;
         }
         $currentRequest = $this->requestStack->getCurrentRequest();
