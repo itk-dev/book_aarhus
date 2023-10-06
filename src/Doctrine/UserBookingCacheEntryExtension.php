@@ -39,6 +39,7 @@ final class UserBookingCacheEntryExtension implements QueryCollectionExtensionIn
         if (UserBookingCacheEntry::class !== $resourceClass) {
             return;
         }
+        
         $currentRequest = $this->requestStack->getCurrentRequest();
         $userId = $currentRequest?->headers?->get('authorization-userid');
 
