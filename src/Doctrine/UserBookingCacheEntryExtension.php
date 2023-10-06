@@ -40,7 +40,7 @@ final class UserBookingCacheEntryExtension implements QueryCollectionExtensionIn
             return;
         }
         $currentRequest = $this->requestStack->getCurrentRequest();
-        $userId = $currentRequest->headers?->get('authorization-userid');
+        $userId = $currentRequest?->headers?->get('authorization-userid');
 
         if (empty($userId)) {
             throw new UnauthorizedHttpException('authorization-userid', 'Missing userid in header');
