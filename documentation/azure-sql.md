@@ -1,4 +1,4 @@
-# Azure SQL
+    # Azure SQL
 
 Booking resources - e.g. anything that can be booked by the system - are exposed in an Azure SQL Edge database. This
 database is read only.

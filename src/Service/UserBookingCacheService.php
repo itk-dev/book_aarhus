@@ -86,10 +86,10 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function addCacheEntry(UserBooking $userBooking): void
+    public function addCacheEntry(UserBooking|array $booking): void
     {
         $entity = new UserBookingCacheEntry();
-        $this->entityManager->persist($this->setCacheEntityValues($entity, $userBooking));
+        $this->entityManager->persist($this->setCacheEntityValues($entity, $booking));
         $this->entityManager->flush();
     }
 
@@ -148,21 +148,32 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      * Set values for cache entity.
      *
      * @param $entity
-     * @param \App\Entity\Main\UserBooking $userBooking
+     * @param \App\Entity\Main\UserBooking|array $data
      *
      * @return \App\Entity\Main\UserBookingCacheEntry
      */
-    private function setCacheEntityValues($entity, UserBooking $userBooking): UserBookingCacheEntry
+    private function setCacheEntityValues($entity, UserBooking|array $data): UserBookingCacheEntry
     {
-        $entity->setTitle($userBooking->subject);
-        $entity->setExchangeId($userBooking->id);
-        $entity->setUid($this->retrieveUidFromBody($userBooking->body) ?? '');
-        $entity->setStart($userBooking->start);
-        $entity->setEnd($userBooking->end);
-        $entity->setStatus($userBooking->status);
-        $entity->setResource($userBooking->resourceMail);
+      if (is_array($data)) {
+        $entity->setTitle($data['subject']);
+        $entity->setExchangeId($data['id']);
+        $entity->setUid($this->retrieveUidFromBody($data['body']) ?? '');
+        $entity->setStart($data['start']);
+        $entity->setEnd($data['end']);
+        $entity->setStatus($data['status']);
+        $entity->setResource($data['resourceMail']);
+      }
+      elseif ($data instanceof UserBooking) {
+        $entity->setTitle($data->subject);
+        $entity->setExchangeId($data->id);
+        $entity->setUid($this->retrieveUidFromBody($data->body) ?? '');
+        $entity->setStart($data->start);
+        $entity->setEnd($data->end);
+        $entity->setStatus($data->status);
+        $entity->setResource($data->resourceMail);
+      }
 
-        return $entity;
+      return $entity;
     }
 
     /**
@@ -175,6 +186,9 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
     private function retrieveUidFromBody(string $body): ?string
     {
         $doc = new \DOMDocument();
+        if (empty($body)) {
+          return null;
+        }
         $doc->loadHTML($body);
         $uidDomElement = $doc->getElementById('userId');
 
