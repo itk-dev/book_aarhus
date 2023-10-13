@@ -116,7 +116,7 @@ class CreateBookingHandler
 
             $this->userBookingCacheService->addCacheEntryFromArray([
                 'subject' => $booking->getSubject(),
-                'id' => $response['id'],
+                'id' => $response['id'] ?? 0,
                 'body' => $booking->getBody(),
                 'start' => $booking->getStartTime(),
                 'end' => $booking->getEndTime(),
