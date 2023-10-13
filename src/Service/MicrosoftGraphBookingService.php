@@ -447,6 +447,11 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             // Assumption: event body contains td with id = resourceMail.
             $body = $data['body']['content'];
             $doc = new \DOMDocument();
+
+            if (empty($body)) {
+                throw new UserBookingException('ID:'.$cleanedBookingId.', email body empty');
+            }
+
             $doc->loadHTML($body);
             $xpath = new \DOMXPath($doc);
 
