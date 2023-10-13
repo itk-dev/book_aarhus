@@ -449,7 +449,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             $doc = new \DOMDocument();
 
             if (empty($body)) {
-              throw new UserBookingException('ID:'.$cleanedBookingId.', email body empty');
+                throw new UserBookingException('ID:'.$cleanedBookingId.', email body empty');
             }
 
             $doc->loadHTML($body);

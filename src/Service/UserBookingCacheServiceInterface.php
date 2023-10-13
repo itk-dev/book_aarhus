@@ -33,13 +33,13 @@ interface UserBookingCacheServiceInterface
      */
     public function addCacheEntry(UserBooking $userBooking): void;
 
-  /**
-   * Add a cache entry from array data.
-   *
-   * @param array $data
-   *
-   * @return void
-   */
+    /**
+     * Add a cache entry from array data.
+     *
+     * @param array $data
+     *
+     * @return void
+     */
     public function addCacheEntryFromArray(array $data): void;
 
     /**

@@ -103,7 +103,6 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         $this->entityManager->flush();
     }
 
-
     /**
      * {@inheritdoc}
      *
@@ -208,7 +207,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
     {
         $doc = new \DOMDocument();
         if (empty($body)) {
-          return null;
+            return null;
         }
         $doc->loadHTML($body);
         $uidDomElement = $doc->getElementById('userId');

@@ -2,13 +2,9 @@
 
 namespace App\MessageHandler;
 
-use App\Doctrine\UserBookingCacheEntryExtension;
-use App\Entity\Main\UserBooking;
-use App\Entity\Main\UserBookingCacheEntry;
 use App\Entity\Resources\AAKResource;
 use App\Enum\NotificationTypeEnum;
 use App\Exception\BookingCreateConflictException;
-use App\Exception\UserBookingException;
 use App\Message\CreateBookingMessage;
 use App\Message\SendBookingNotificationMessage;
 use App\Repository\Resources\AAKResourceRepository;
@@ -119,15 +115,14 @@ class CreateBookingHandler
             }
 
             $this->userBookingCacheService->addCacheEntryFromArray([
-              'subject' => $booking->getSubject(),
-              'id' => $response['id'],
-              'body' => $booking->getBody(),
-              'start' => $booking->getStartTime(),
-              'end' => $booking->getEndTime(),
-              'status' => 'AWAITING_APPROVAL',
-              'resourceMail' => $booking->getResourceEmail(),
+                'subject' => $booking->getSubject(),
+                'id' => $response['id'],
+                'body' => $booking->getBody(),
+                'start' => $booking->getStartTime(),
+                'end' => $booking->getEndTime(),
+                'status' => 'AWAITING_APPROVAL',
+                'resourceMail' => $booking->getResourceEmail(),
             ]);
-
         } catch (BookingCreateConflictException $exception) {
             // If it is a BookingCreateConflictException the booking should be rejected.
             $this->logger->notice(sprintf('Booking conflict detected: %d %s', $exception->getCode(), $exception->getMessage()));
