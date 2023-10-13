@@ -118,7 +118,7 @@ class CreateBookingHandler
                 ));
             }
 
-            $this->userBookingCacheService->addCacheEntry([
+            $this->userBookingCacheService->addCacheEntryFromArray([
               'subject' => $booking->getSubject(),
               'id' => $response['id'],
               'body' => $booking->getBody(),
