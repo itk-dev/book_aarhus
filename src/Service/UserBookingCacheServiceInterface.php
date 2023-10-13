@@ -27,7 +27,8 @@ interface UserBookingCacheServiceInterface
     /**
      * Add an entry to the cache table.
      *
-     * @param UserBooking|array $userBooking a user booking to add to cache
+     * @param UserBooking $userBooking
+     *   A user booking to add to cache.
      *
      * @return void
      */
