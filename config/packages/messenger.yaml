@@ -12,12 +12,6 @@ framework:
                     delay: 60000 # 1 minutes
                     multiplier: 3
                     max_delay: 3600000 # 1 hour
-                options:
-                    exchange:
-                        name: high
-                        type: fanout
-                    queues:
-                        async: ~
 
             failed:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN_FAILED)%'
