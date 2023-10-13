@@ -27,11 +27,21 @@ interface UserBookingCacheServiceInterface
     /**
      * Add an entry to the cache table.
      *
-     * @param UserBooking $userBooking a user booking to add to cache
+     * @param userBooking $userBooking
+     *   A user booking to add to cache
      *
      * @return void
      */
     public function addCacheEntry(UserBooking $userBooking): void;
+
+    /**
+     * Add a cache entry from array data.
+     *
+     * @param array $data
+     *
+     * @return void
+     */
+    public function addCacheEntryFromArray(array $data): void;
 
     /**
      * Change an entry in the cache table.

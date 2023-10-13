@@ -15,6 +15,7 @@ use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
 use App\Service\MicrosoftGraphBookingService;
 use App\Service\NotificationServiceInterface;
+use App\Service\UserBookingCacheServiceInterface;
 use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
 use App\Utils\ValidationUtils;
@@ -276,7 +277,8 @@ class BookingTest extends AbstractBaseApiTestCase
 
         $cvrWhitelistRepositoryMock = $this->createMock(CvrWhitelistRepository::class);
 
-        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock, $security, $bus, $cvrWhitelistRepositoryMock);
+        $userBookingCacheService = $container->get(UserBookingCacheServiceInterface::class);
+        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock, $security, $bus, $cvrWhitelistRepositoryMock, $userBookingCacheService);
         $createBookingHandler->__invoke(new CreateBookingMessage($booking));
     }
 

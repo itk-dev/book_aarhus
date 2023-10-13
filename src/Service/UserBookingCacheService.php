@@ -95,6 +95,16 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
 
     /**
      * {@inheritdoc}
+     */
+    public function addCacheEntryFromArray(array $data): void
+    {
+        $entity = new UserBookingCacheEntry();
+        $this->entityManager->persist($this->setCacheEntityValuesFromArray($entity, $data));
+        $this->entityManager->flush();
+    }
+
+    /**
+     * {@inheritdoc}
      *
      * @throws \Exception
      */
@@ -166,6 +176,27 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
     }
 
     /**
+     * Set values for cache entity.
+     *
+     * @param $entity
+     * @param array $data
+     *
+     * @return \App\Entity\Main\UserBookingCacheEntry
+     */
+    private function setCacheEntityValuesFromArray($entity, array $data): UserBookingCacheEntry
+    {
+        $entity->setTitle($data['subject']);
+        $entity->setExchangeId($data['id']);
+        $entity->setUid($this->retrieveUidFromBody($data['body']) ?? '');
+        $entity->setStart($data['start']);
+        $entity->setEnd($data['end']);
+        $entity->setStatus($data['status']);
+        $entity->setResource($data['resourceMail']);
+
+        return $entity;
+    }
+
+    /**
      * Get uid from mail body.
      *
      * @param string $body
@@ -175,6 +206,9 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
     private function retrieveUidFromBody(string $body): ?string
     {
         $doc = new \DOMDocument();
+        if (empty($body)) {
+            return null;
+        }
         $doc->loadHTML($body);
         $uidDomElement = $doc->getElementById('userId');
 

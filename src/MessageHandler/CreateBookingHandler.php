@@ -11,6 +11,7 @@ use App\Repository\Resources\AAKResourceRepository;
 use App\Repository\Resources\CvrWhitelistRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
+use App\Service\UserBookingCacheServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -30,6 +31,7 @@ class CreateBookingHandler
         private readonly Security $security,
         private readonly MessageBusInterface $bus,
         private readonly CvrWhitelistRepository $whitelistRepository,
+        private readonly UserBookingCacheServiceInterface $userBookingCacheService,
     ) {
     }
 
@@ -80,7 +82,7 @@ class CreateBookingHandler
 
         try {
             if ($acceptanceFlow) {
-                $this->bookingService->createBookingInviteResource(
+                $response = $this->bookingService->createBookingInviteResource(
                     $booking->getResourceEmail(),
                     $booking->getResourceName(),
                     $booking->getSubject(),
@@ -95,7 +97,7 @@ class CreateBookingHandler
                     NotificationTypeEnum::REQUEST_RECEIVED
                 ));
             } else {
-                $this->bookingService->createBookingForResource(
+                $response = $this->bookingService->createBookingForResource(
                     $booking->getResourceEmail(),
                     $booking->getResourceName(),
                     $booking->getSubject(),
@@ -111,6 +113,16 @@ class CreateBookingHandler
                     NotificationTypeEnum::SUCCESS
                 ));
             }
+
+            $this->userBookingCacheService->addCacheEntryFromArray([
+                'subject' => $booking->getSubject(),
+                'id' => $response['id'] ?? 0,
+                'body' => $booking->getBody(),
+                'start' => $booking->getStartTime(),
+                'end' => $booking->getEndTime(),
+                'status' => 'AWAITING_APPROVAL',
+                'resourceMail' => $booking->getResourceEmail(),
+            ]);
         } catch (BookingCreateConflictException $exception) {
             // If it is a BookingCreateConflictException the booking should be rejected.
             $this->logger->notice(sprintf('Booking conflict detected: %d %s', $exception->getCode(), $exception->getMessage()));
