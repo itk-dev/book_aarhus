@@ -96,6 +96,7 @@ class CreateBookingHandler
                     $booking,
                     NotificationTypeEnum::REQUEST_RECEIVED
                 ));
+                $id = $response['id'];
             } else {
                 $response = $this->bookingService->createBookingForResource(
                     $booking->getResourceEmail(),
@@ -112,17 +113,22 @@ class CreateBookingHandler
                     $booking,
                     NotificationTypeEnum::SUCCESS
                 ));
+
+                $id = $this->bookingService->getExchangeIdFromICalUid($booking->getResourceEmail(), $booking->getStartTime(), $booking->getEndTime(), $response['iCalUid']);
             }
 
-            $this->userBookingCacheService->addCacheEntryFromArray([
+            if ($id != null) {
+              $this->userBookingCacheService->addCacheEntryFromArray([
                 'subject' => $booking->getSubject(),
-                'id' => $response['id'] ?? 0,
+                'id' => $id,
                 'body' => $booking->getBody(),
                 'start' => $booking->getStartTime(),
                 'end' => $booking->getEndTime(),
                 'status' => 'AWAITING_APPROVAL',
                 'resourceMail' => $booking->getResourceEmail(),
-            ]);
+              ]);
+            }
+
         } catch (BookingCreateConflictException $exception) {
             // If it is a BookingCreateConflictException the booking should be rejected.
             $this->logger->notice(sprintf('Booking conflict detected: %d %s', $exception->getCode(), $exception->getMessage()));

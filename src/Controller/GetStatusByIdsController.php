@@ -22,9 +22,6 @@ class GetStatusByIdsController extends AbstractController
     ) {
     }
 
-  /**
-   * @throws \App\Exception\MicrosoftGraphCommunicationException
-   */
   public function __invoke(Request $request): Response
   {
       $exchangeIds = json_decode($request->getContent())->ids;
@@ -36,19 +33,19 @@ class GetStatusByIdsController extends AbstractController
 
       foreach ($exchangeIds as $id) {
           try {
-              $booking = $this->bookingService->getBooking($id);
-              $userBooking = $this->bookingService->getUserBookingFromApiData($booking);
-          } catch (\Exception $e) {
-              throw new MicrosoftGraphCommunicationException($e->getMessage(), (int) $e->getCode());
-          }
-
-          $statuses[] = [
+            $booking = $this->bookingService->getBooking($id);
+            $userBooking = $this->bookingService->getUserBookingFromApiData($booking);
+            $statuses[] = [
               'exchangeId' => $id,
               'status' => $userBooking->status,
-          ];
+            ];
 
-          // Update booking cache status.
-          $this->userBookingCacheService->changeCacheEntry($id, ['status' => $userBooking->status]);
+            // Update booking cache status.
+            $this->userBookingCacheService->changeCacheEntry($id, ['status' => $userBooking->status]);
+          } catch (\Exception $e) {
+            $statuses['exchangeId'] = NULL;
+            $statuses['status'] = NULL;
+          }
       }
 
       $data = $this->serializer->serialize($statuses, 'json', ['groups' => 'resource']);
