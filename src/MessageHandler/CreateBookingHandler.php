@@ -113,8 +113,8 @@ class CreateBookingHandler
                     $booking,
                     NotificationTypeEnum::SUCCESS
                 ));
-
-                $id = $this->bookingService->getExchangeIdFromICalUid($booking->getResourceEmail(), $booking->getStartTime(), $booking->getEndTime(), $response['iCalUid']);
+                
+                $id = $this->bookingService->getExchangeIdFromICalUid($booking->getResourceEmail(), $booking->getStartTime(), $booking->getEndTime(), $response['iCalUId']);
             }
 
             if ($id != null) {
