@@ -26,3 +26,10 @@ services:
       # Database user: sa
       MSSQL_SA_PASSWORD: P@ssword123 # (Minimum length 8 characters, strength required)
       ACCEPT_EULA: Y
+
+  redis:
+    image: 'redis:6'
+    networks:
+      - app
+    ports:
+      - '6379'

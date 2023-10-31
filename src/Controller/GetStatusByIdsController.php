@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Exception\MicrosoftGraphCommunicationException;
 use App\Service\BookingServiceInterface;
 use App\Service\UserBookingCacheServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,18 +32,20 @@ class GetStatusByIdsController extends AbstractController
 
       foreach ($exchangeIds as $id) {
           try {
-            $booking = $this->bookingService->getBooking($id);
-            $userBooking = $this->bookingService->getUserBookingFromApiData($booking);
-            $statuses[] = [
-              'exchangeId' => $id,
-              'status' => $userBooking->status,
-            ];
+              $booking = $this->bookingService->getBooking($id);
+              $userBooking = $this->bookingService->getUserBookingFromApiData($booking);
+              $statuses[] = [
+                  'exchangeId' => $id,
+                  'status' => $userBooking->status,
+              ];
 
-            // Update booking cache status.
-            $this->userBookingCacheService->changeCacheEntry($id, ['status' => $userBooking->status]);
+              // Update booking cache status.
+              $this->userBookingCacheService->changeCacheEntry($id, ['status' => $userBooking->status]);
           } catch (\Exception $e) {
-            $statuses['exchangeId'] = NULL;
-            $statuses['status'] = NULL;
+              $statuses[] = [
+                  'exchangeId' => $id,
+                  'status' => null,
+              ];
           }
       }
 
