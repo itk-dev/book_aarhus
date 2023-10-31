@@ -43,8 +43,10 @@ class GetStatusByIdsController extends AbstractController
             // Update booking cache status.
             $this->userBookingCacheService->changeCacheEntry($id, ['status' => $userBooking->status]);
           } catch (\Exception $e) {
-            $statuses['exchangeId'] = NULL;
-            $statuses['status'] = NULL;
+              $statuses[] = [
+                  'exchangeId' => $id,
+                  'status' => NULL,
+              ];
           }
       }
 
