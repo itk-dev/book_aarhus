@@ -556,7 +556,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         return "UID-$id-UID";
     }
 
-
     /**
      * Get exchange id from i cal uid.
      *
@@ -565,33 +564,33 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      * @param \DateTime $endTime end of interval
      * @param string $searchedICalUid the iCalUid to search for
      *
-     * @return ?string The exchange id.
+     * @return ?string the exchange id
      *
      * @throws MicrosoftGraphCommunicationException
      */
     public function getExchangeIdFromICalUid(string $resourceEmail, \DateTime $startTime, \DateTime $endTime, string $searchedICalUid): ?string
     {
-      $token = $this->graphHelperService->authenticateAsServiceAccount();
-      $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
-      $endString = $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
+        $token = $this->graphHelperService->authenticateAsServiceAccount();
+        $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
+        $endString = $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
 
-      $filterString = "\$filter=start/dateTime lt '$endString' and end/dateTime gt '$startString'";
+        $filterString = "\$filter=start/dateTime lt '$endString' and end/dateTime gt '$startString'";
 
-      $response = $this->graphHelperService->request("/users/$resourceEmail/calendar/events?$filterString", $token);
+        $response = $this->graphHelperService->request("/users/$resourceEmail/calendar/events?$filterString", $token);
 
-      $body = $response->getBody();
+        $body = $response->getBody();
 
-      $entries = $body['value'];
+        $entries = $body['value'];
 
-      if (count($entries) > 0) {
-        foreach ($entries as $entry) {
-          if ($entry['iCalUId'] === $searchedICalUid) {
-            return $entry['id'];
-          }
+        if (count($entries) > 0) {
+            foreach ($entries as $entry) {
+                if ($entry['iCalUId'] === $searchedICalUid) {
+                    return $entry['id'];
+                }
+            }
         }
-      }
 
-      return null;
+        return null;
     }
 
     /**

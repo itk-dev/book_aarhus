@@ -216,9 +216,13 @@ class BookingTest extends AbstractBaseApiTestCase
     {
         $microsoftGraphServiceMock = $this->getMockBuilder(MicrosoftGraphBookingService::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['createBookingForResource'])
+            ->onlyMethods(['createBookingForResource', 'getExchangeIdFromICalUid'])
             ->getMock();
-        $microsoftGraphServiceMock->expects($this->exactly(1))->method('createBookingForResource')->willReturn([]);
+        $microsoftGraphServiceMock->expects($this->exactly(1))->method('createBookingForResource')->willReturn([
+            'iCalUId' => '12345',
+        ]);
+
+        $microsoftGraphServiceMock->expects($this->exactly(1))->method('getExchangeIdFromICalUid')->willReturn('12345');
 
         $container = self::getContainer();
         $logger = $container->get(LoggerInterface::class);

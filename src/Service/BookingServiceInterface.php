@@ -135,7 +135,7 @@ interface BookingServiceInterface
      * @param \DateTime $endTime end of interval
      * @param string $searchedICalUid the icaluid to search for
      *
-     * @return ?string The exchange id.
+     * @return ?string the exchange id
      *
      * @throws MicrosoftGraphCommunicationException
      */
