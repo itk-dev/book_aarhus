@@ -606,9 +606,32 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
         $path = "/users/$resourceEmail/events?\$filter=iCalUId eq '$iCalUId'";
 
-        $r = $this->graphHelperService->request($path, $token);
+        $response = $this->graphHelperService->request($path, $token);
 
-        $body = $r->getBody();
+        $body = $response->getBody();
+
+        if (isset($body['value'])) {
+            $numberOfResults = count($body['value']);
+
+            if (1 == $numberOfResults) {
+                return array_pop($body['value']);
+            } elseif ($numberOfResults > 1) {
+                throw new UserBookingException('More than one event found with iCalUId', 500);
+            }
+        }
+
+        return null;
+    }
+
+    public function getEventFromServiceAccountByICalUid(string $iCalUId): ?array
+    {
+        $token = $this->graphHelperService->authenticateAsServiceAccount();
+
+        $path = "/me/events?\$filter=iCalUId eq '$iCalUId'";
+
+        $response = $this->graphHelperService->request($path, $token);
+
+        $body = $response->getBody();
 
         if (isset($body['value'])) {
             $numberOfResults = count($body['value']);
