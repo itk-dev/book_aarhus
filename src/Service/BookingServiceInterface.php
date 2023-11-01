@@ -128,16 +128,11 @@ interface BookingServiceInterface
     public function getAllFutureBookings(string $token, ?string $request): array;
 
     /**
-     * Get exchange id from i cal uid.
+     * Get exchange id from iCalUId.
      *
-     * @param string $resourceEmail resource to check for conflict in
-     * @param \DateTime $startTime start of interval
-     * @param \DateTime $endTime end of interval
-     * @param string $searchedICalUid the icaluid to search for
+     * @param string $iCalUId the iCalUId to search for
      *
      * @return ?string the exchange id
-     *
-     * @throws MicrosoftGraphCommunicationException
      */
-    public function getExchangeIdFromICalUid(string $resourceEmail, \DateTime $startTime, \DateTime $endTime, string $searchedICalUid): ?string;
+    public function getBookingIdFromICalUid(string $iCalUId): ?string;
 }

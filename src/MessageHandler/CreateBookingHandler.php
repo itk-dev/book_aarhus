@@ -115,7 +115,7 @@ class CreateBookingHandler
                     NotificationTypeEnum::SUCCESS
                 ));
 
-                $id = $this->bookingService->getEventFromServiceAccountByICalUid($response['iCalUId'])['id'] ?? null;
+                $id = $this->bookingService->getBookingIdFromICalUid($response['iCalUId']) ?? null;
             }
 
             if (null != $id) {
@@ -123,7 +123,7 @@ class CreateBookingHandler
                     'subject' => $booking->getSubject(),
                     'id' => $id,
                     'body' => $booking->getBody(),
-                    'start' =>  $booking->getStartTime(),
+                    'start' => $booking->getStartTime(),
                     'end' => $booking->getEndTime(),
                     'status' => 'AWAITING_APPROVAL',
                     'resourceMail' => $booking->getResourceEmail(),
