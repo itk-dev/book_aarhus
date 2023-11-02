@@ -557,36 +557,28 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * Get exchange id from i cal uid.
+     * {@inheritdoc}
      *
-     * @param string $resourceEmail resource to check for conflict in
-     * @param \DateTime $startTime start of interval
-     * @param \DateTime $endTime end of interval
-     * @param string $searchedICalUid the iCalUid to search for
-     *
-     * @return ?string the exchange id
-     *
+     * @throws UserBookingException
      * @throws MicrosoftGraphCommunicationException
      */
-    public function getExchangeIdFromICalUid(string $resourceEmail, \DateTime $startTime, \DateTime $endTime, string $searchedICalUid): ?string
+    public function getBookingIdFromICalUid(string $iCalUId): ?string
     {
         $token = $this->graphHelperService->authenticateAsServiceAccount();
-        $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
-        $endString = $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
 
-        $filterString = "\$filter=start/dateTime lt '$endString' and end/dateTime gt '$startString'";
+        $path = "/me/events?\$filter=iCalUId eq '$iCalUId'";
 
-        $response = $this->graphHelperService->request("/users/$resourceEmail/calendar/events?$filterString", $token);
+        $response = $this->graphHelperService->request($path, $token);
 
         $body = $response->getBody();
 
-        $entries = $body['value'];
+        if (isset($body['value'])) {
+            $numberOfResults = count($body['value']);
 
-        if (count($entries) > 0) {
-            foreach ($entries as $entry) {
-                if ($entry['iCalUId'] === $searchedICalUid) {
-                    return $entry['id'];
-                }
+            if (1 == $numberOfResults) {
+                return array_pop($body['value'])['id'];
+            } elseif ($numberOfResults > 1) {
+                throw new UserBookingException('More than one event found with iCalUId', 500);
             }
         }
 
@@ -606,9 +598,9 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
         $path = "/users/$resourceEmail/events?\$filter=iCalUId eq '$iCalUId'";
 
-        $r = $this->graphHelperService->request($path, $token);
+        $response = $this->graphHelperService->request($path, $token);
 
-        $body = $r->getBody();
+        $body = $response->getBody();
 
         if (isset($body['value'])) {
             $numberOfResults = count($body['value']);

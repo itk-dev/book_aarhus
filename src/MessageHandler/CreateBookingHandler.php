@@ -96,6 +96,7 @@ class CreateBookingHandler
                     $booking,
                     NotificationTypeEnum::REQUEST_RECEIVED
                 ));
+
                 $id = $response['id'];
             } else {
                 $response = $this->bookingService->createBookingForResource(
@@ -114,7 +115,7 @@ class CreateBookingHandler
                     NotificationTypeEnum::SUCCESS
                 ));
 
-                $id = $this->bookingService->getExchangeIdFromICalUid($booking->getResourceEmail(), $booking->getStartTime(), $booking->getEndTime(), $response['iCalUId']);
+                $id = $this->bookingService->getBookingIdFromICalUid($response['iCalUId']) ?? null;
             }
 
             if (null != $id) {
