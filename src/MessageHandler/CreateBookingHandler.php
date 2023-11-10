@@ -5,13 +5,13 @@ namespace App\MessageHandler;
 use App\Entity\Resources\AAKResource;
 use App\Enum\NotificationTypeEnum;
 use App\Exception\BookingCreateConflictException;
+use App\Message\AddBookingToCacheMessage;
 use App\Message\CreateBookingMessage;
 use App\Message\SendBookingNotificationMessage;
 use App\Repository\Resources\AAKResourceRepository;
 use App\Repository\Resources\CvrWhitelistRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
-use App\Service\UserBookingCacheServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -31,7 +31,6 @@ class CreateBookingHandler
         private readonly Security $security,
         private readonly MessageBusInterface $bus,
         private readonly CvrWhitelistRepository $whitelistRepository,
-        private readonly UserBookingCacheServiceInterface $userBookingCacheService,
     ) {
     }
 
@@ -96,8 +95,6 @@ class CreateBookingHandler
                     $booking,
                     NotificationTypeEnum::REQUEST_RECEIVED
                 ));
-
-                $id = $response['id'];
             } else {
                 $response = $this->bookingService->createBookingForResource(
                     $booking->getResourceEmail(),
@@ -114,20 +111,15 @@ class CreateBookingHandler
                     $booking,
                     NotificationTypeEnum::SUCCESS
                 ));
-
-                $id = $this->bookingService->getBookingIdFromICalUid($response['iCalUId']) ?? null;
             }
 
-            if (null != $id) {
-                $this->userBookingCacheService->addCacheEntryFromArray([
-                    'subject' => $booking->getSubject(),
-                    'id' => $id,
-                    'body' => $booking->getBody(),
-                    'start' => $booking->getStartTime(),
-                    'end' => $booking->getEndTime(),
-                    'status' => 'AWAITING_APPROVAL',
-                    'resourceMail' => $booking->getResourceEmail(),
-                ]);
+            if (isset($response['iCalUId'])) {
+                $this->bus->dispatch(new AddBookingToCacheMessage(
+                    $booking,
+                    $response['iCalUId'],
+                ));
+            } else {
+                $this->logger->error(sprintf("Booking iCalUID could not be retrieved for booking with subject: %s", $booking->getSubject()));
             }
         } catch (BookingCreateConflictException $exception) {
             // If it is a BookingCreateConflictException the booking should be rejected.

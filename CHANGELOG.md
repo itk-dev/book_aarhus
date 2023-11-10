@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 
 See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information about writing changes to this log.
 
-## [develop]
+## [Unreleased]
 
 ### Added
 
@@ -16,6 +16,7 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 - Added API for fetching cached user bookings.
 - Removed Rabbit MQ (remeber to update the DSN in local .env)
 - Updated docker compose setup to newest version
+- Fixed issue with booking cache entries not being created.
 
 ## [1.1.2] - 2023-08-29
 
