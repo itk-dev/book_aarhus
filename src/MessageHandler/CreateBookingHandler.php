@@ -119,7 +119,7 @@ class CreateBookingHandler
                     $response['iCalUId'],
                 ));
             } else {
-                $this->logger->error(sprintf("Booking iCalUID could not be retrieved for booking with subject: %s", $booking->getSubject()));
+                $this->logger->error(sprintf('Booking iCalUID could not be retrieved for booking with subject: %s', $booking->getSubject()));
             }
         } catch (BookingCreateConflictException $exception) {
             // If it is a BookingCreateConflictException the booking should be rejected.

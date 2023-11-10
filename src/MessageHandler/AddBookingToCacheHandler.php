@@ -42,9 +42,8 @@ class AddBookingToCacheHandler
                 'status' => 'AWAITING_APPROVAL',
                 'resourceMail' => $booking->getResourceEmail(),
             ]);
-        }
-        else {
-            throw new RecoverableMessageHandlingException(sprintf("Booking id could not be retrieved for booking with iCalUID: %s", $message->getICalUID()));
+        } else {
+            throw new RecoverableMessageHandlingException(sprintf('Booking id could not be retrieved for booking with iCalUID: %s', $message->getICalUID()));
         }
     }
 }
