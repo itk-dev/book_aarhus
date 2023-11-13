@@ -2,31 +2,14 @@
 
 namespace App\Tests\Handler;
 
-use App\Entity\Main\ApiKeyUser;
 use App\Entity\Main\Booking;
-use App\Entity\Resources\AAKResource;
 use App\Message\AddBookingToCacheMessage;
-use App\Message\CreateBookingMessage;
-use App\Message\WebformSubmitMessage;
 use App\MessageHandler\AddBookingToCacheHandler;
-use App\MessageHandler\CreateBookingHandler;
-use App\MessageHandler\WebformSubmitHandler;
-use App\Repository\Resources\AAKResourceRepository;
-use App\Repository\Resources\CvrWhitelistRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
-use App\Service\MicrosoftGraphBookingService;
-use App\Service\NotificationServiceInterface;
 use App\Service\UserBookingCacheServiceInterface;
-use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
-use App\Utils\ValidationUtils;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Twig\Environment;
-use Zenstruck\Messenger\Test\InteractsWithMessenger;
 
 class AddBookingToCacheHandlerTest extends AbstractBaseApiTestCase
 {
@@ -35,7 +18,7 @@ class AddBookingToCacheHandlerTest extends AbstractBaseApiTestCase
         $bookingServiceMock = $this->getMockBuilder(BookingServiceInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $bookingServiceMock->expects($this->exactly(1))->method('getBookingIdFromICalUid')->willReturn("abcde");
+        $bookingServiceMock->expects($this->exactly(1))->method('getBookingIdFromICalUid')->willReturn('abcde');
 
         $userBookingCacheServiceMock = $this->getMockBuilder(UserBookingCacheServiceInterface::class)
             ->disableOriginalConstructor()
@@ -71,7 +54,7 @@ class AddBookingToCacheHandlerTest extends AbstractBaseApiTestCase
 
         $message = new AddBookingToCacheMessage(
             $booking,
-            "12345"
+            '12345'
         );
 
         $handler->__invoke($message);

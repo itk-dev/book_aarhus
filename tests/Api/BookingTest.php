@@ -16,7 +16,6 @@ use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
 use App\Service\MicrosoftGraphBookingService;
 use App\Service\NotificationServiceInterface;
-use App\Service\UserBookingCacheServiceInterface;
 use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
 use App\Utils\ValidationUtils;
