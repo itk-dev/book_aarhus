@@ -129,7 +129,7 @@
             "./vendor/bin/psalm --no-cache --alter --issues=MissingReturnType,MissingParamType --dry-run"
         ],
         "queues": [
-            "bin/console messenger:consume async --failure-limit=1 -vvv"
+            "bin/console messenger:consume async cache --failure-limit=3 -vvv"
         ],
         "tests": [
             "bin/console --env=test doctrine:database:drop --if-exists --force --quiet",
