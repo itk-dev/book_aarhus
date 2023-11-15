@@ -118,4 +118,21 @@ interface BookingServiceInterface
      * @return string
      */
     public function createBodyUserId(string $id): string;
+
+    /**
+     * @param string $token
+     * @param string|null $request
+     *
+     * @return array
+     */
+    public function getAllFutureBookings(string $token, ?string $request): array;
+
+    /**
+     * Get exchange id from iCalUId.
+     *
+     * @param string $iCalUId the iCalUId to search for
+     *
+     * @return ?string the exchange id
+     */
+    public function getBookingIdFromICalUid(string $iCalUId): ?string;
 }

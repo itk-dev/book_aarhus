@@ -10,6 +10,7 @@ use App\Exception\UserBookingException;
 use App\Message\SendUserBookingNotificationMessage;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
+use App\Service\UserBookingCacheServiceInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -21,6 +22,7 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
         private readonly BookingServiceInterface $bookingService,
         private readonly Security $security,
         private readonly MessageBusInterface $bus,
+        private readonly UserBookingCacheServiceInterface $userBookingCacheService
     ) {
     }
 
@@ -43,6 +45,8 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
                     $data,
                     NotificationTypeEnum::DELETE_SUCCESS
                 ));
+
+                $this->userBookingCacheService->deleteCacheEntry($data->id);
             }
         } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
             throw new HttpException($e->getCode(), 'Booking could not be deleted.');
@@ -63,6 +67,11 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
                     $data,
                     NotificationTypeEnum::UPDATE_SUCCESS
                 ));
+
+                $this->userBookingCacheService->changeCacheEntry($data->id, [
+                    'start' => $data->start,
+                    'end' => $data->end,
+                ]);
             }
 
             return $data;

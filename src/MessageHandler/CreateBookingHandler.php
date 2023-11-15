@@ -5,6 +5,7 @@ namespace App\MessageHandler;
 use App\Entity\Resources\AAKResource;
 use App\Enum\NotificationTypeEnum;
 use App\Exception\BookingCreateConflictException;
+use App\Message\AddBookingToCacheMessage;
 use App\Message\CreateBookingMessage;
 use App\Message\SendBookingNotificationMessage;
 use App\Repository\Resources\AAKResourceRepository;
@@ -80,7 +81,7 @@ class CreateBookingHandler
 
         try {
             if ($acceptanceFlow) {
-                $this->bookingService->createBookingInviteResource(
+                $response = $this->bookingService->createBookingInviteResource(
                     $booking->getResourceEmail(),
                     $booking->getResourceName(),
                     $booking->getSubject(),
@@ -95,7 +96,7 @@ class CreateBookingHandler
                     NotificationTypeEnum::REQUEST_RECEIVED
                 ));
             } else {
-                $this->bookingService->createBookingForResource(
+                $response = $this->bookingService->createBookingForResource(
                     $booking->getResourceEmail(),
                     $booking->getResourceName(),
                     $booking->getSubject(),
@@ -110,6 +111,15 @@ class CreateBookingHandler
                     $booking,
                     NotificationTypeEnum::SUCCESS
                 ));
+            }
+
+            if (isset($response['iCalUId'])) {
+                $this->bus->dispatch(new AddBookingToCacheMessage(
+                    $booking,
+                    $response['iCalUId'],
+                ));
+            } else {
+                $this->logger->error(sprintf('Booking iCalUID could not be retrieved for booking with subject: %s', $booking->getSubject()));
             }
         } catch (BookingCreateConflictException $exception) {
             // If it is a BookingCreateConflictException the booking should be rejected.

@@ -96,6 +96,33 @@ services:
         autoconfigure: false
         public: false
 
+    user_booking_cache_entry.search_filter:
+      # https://api-platform.com/docs/core/filters/#search-filter
+      parent: 'api_platform.doctrine.orm.search_filter'
+      arguments: [ { title: 'partial' } ]
+      tags:  [ 'api_platform.filter' ]
+      autowire: false
+      autoconfigure: false
+      public: false
+
+    user_booking_cache_entry.date_filter:
+      parent: 'api_platform.doctrine.orm.date_filter'
+      arguments: [ { start: ~, end: ~ } ]
+      tags:  [ 'api_platform.filter' ]
+      autowire: false
+      autoconfigure: false
+      public: false
+
+    user_booking_cache_entry.order_filter:
+      parent: 'api_platform.doctrine.orm.order_filter'
+      arguments:
+        $properties: { title: ~, start: ~, end: ~, resourceMail: ~, resourceDisplayName: ~  }
+        $orderParameterName: order
+      tags: [ 'api_platform.filter' ]
+      autowire: false
+      autoconfigure: false
+      public: false
+
     App\OpenApi\OpenApiFactory:
         decorates: 'api_platform.openapi.factory'
         arguments: [ '@App\OpenApi\OpenApiFactory.inner' ]

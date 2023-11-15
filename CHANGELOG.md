@@ -7,10 +7,18 @@ All notable changes to this project will be documented in this file.
 
 See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information about writing changes to this log.
 
-## Unreleased
+## [Unreleased]
 
+### Added
+
+- Added User booking cache entity.
+- Added User booking cache service.
+- Added API for fetching cached user bookings.
 - Removed Rabbit MQ (remeber to update the DSN in local .env)
 - Updated docker compose setup to newest version
+- Fixed issue with booking cache entries not being created.
+- Added resourceDisplayName to cache.
+- Moved AddBookingToCacheMessage handling to own queue.
 
 ## [1.1.2] - 2023-08-29
 
@@ -31,6 +39,7 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 - Added acceptConflict field to resource.
 - Added tests for acceptConflict.
 - Ignore deprecation warnings in production.
+- Added commands related to user booking cache.
 
 ### Changed
 

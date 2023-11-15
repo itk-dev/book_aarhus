@@ -31,3 +31,15 @@ resources:
                 application/ld+json:
                   examples:
               headers: { }
+      get_status_by_ids:
+        input: App\Dto\UserBookingStatusInput
+        method: POST
+        path: '/status-by-ids'
+        controller: App\Controller\GetStatusByIdsController
+        openapi_context:
+          description: Get status on bookings by ids
+          summary: Get status on bookings
+          operationId: post-v1-status-by-ids
+          tags:
+          responses:
+            '200':

@@ -75,7 +75,7 @@ class BookingTest extends AbstractBaseApiTestCase
 
     public function testBookingWebform(): void
     {
-        $this->messenger('async')->queue()->assertEmpty();
+        $this->transport('async')->queue()->assertEmpty();
 
         $client = $this->getAuthenticatedClient();
 
@@ -101,15 +101,15 @@ class BookingTest extends AbstractBaseApiTestCase
         $this->assertResponseStatusCodeSame(201);
 
         /** @var WebformSubmitMessage $message */
-        $message = $this->messenger('async')->queue()->first(WebformSubmitMessage::class)->getMessage();
+        $message = $this->transport('async')->queue()->first(WebformSubmitMessage::class)->getMessage();
         $this->assertEquals('booking', $message->getWebformId());
         $this->assertEquals('795f5a1c-a0ac-4f8a-8834-bb71fca8585d', $message->getSubmissionUuid());
         $this->assertEquals('https://bookaarhus.local.itkdev.dk', $message->getSender());
         $this->assertEquals('https://bookaarhus.local.itkdev.dk/webform_rest/booking/submission/123123123', $message->getSubmissionUrl());
         $this->assertEquals(1, $message->getApiKeyUserId());
 
-        $this->messenger('async')->queue()->assertCount(1);
-        $this->messenger('async')->queue()->assertContains(WebformSubmitMessage::class);
+        $this->transport('async')->queue()->assertCount(1);
+        $this->transport('async')->queue()->assertContains(WebformSubmitMessage::class);
     }
 
     /**
@@ -117,7 +117,7 @@ class BookingTest extends AbstractBaseApiTestCase
      */
     public function testWebformSubmitMessageHandler(): void
     {
-        $this->messenger('async')->queue()->assertEmpty();
+        $this->transport('async')->queue()->assertEmpty();
 
         $webformServiceMock = $this->getMockBuilder(WebformService::class)
             ->onlyMethods(['getWebformSubmission', 'getData'])
@@ -207,8 +207,8 @@ class BookingTest extends AbstractBaseApiTestCase
             $testUser->getId()
         ));
 
-        $this->messenger('async')->queue()->assertContains(CreateBookingMessage::class);
-        $this->messenger('async')->queue()->assertCount(1);
+        $this->transport('async')->queue()->assertContains(CreateBookingMessage::class);
+        $this->transport('async')->queue()->assertCount(1);
     }
 
     public function testCreateBookingHandler(): void
@@ -217,7 +217,9 @@ class BookingTest extends AbstractBaseApiTestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['createBookingForResource'])
             ->getMock();
-        $microsoftGraphServiceMock->expects($this->exactly(1))->method('createBookingForResource')->willReturn([]);
+        $microsoftGraphServiceMock->expects($this->exactly(1))->method('createBookingForResource')->willReturn([
+            'iCalUId' => '12345',
+        ]);
 
         $container = self::getContainer();
         $logger = $container->get(LoggerInterface::class);
@@ -282,7 +284,7 @@ class BookingTest extends AbstractBaseApiTestCase
 
     public function testInvalidBookingWebform(): void
     {
-        $this->messenger('async')->queue()->assertEmpty();
+        $this->transport('async')->queue()->assertEmpty();
 
         $client = $this->getAuthenticatedClient();
 
@@ -303,6 +305,6 @@ class BookingTest extends AbstractBaseApiTestCase
 
         $this->assertResponseStatusCodeSame(400);
 
-        $this->messenger('async')->queue()->assertCount(0);
+        $this->transport('async')->queue()->assertCount(0);
     }
 }
