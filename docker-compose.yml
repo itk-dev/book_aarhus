@@ -1,4 +1,4 @@
-# itk-version: 3.0.0
+# itk-version: 3.1.0
 version: "3"
 
 networks:
@@ -22,49 +22,27 @@ services:
       - MYSQL_DATABASE=db
       #- ENCRYPT=1 # Uncomment to enable database encryption.
 
-  azure-sql:
-    image: mcr.microsoft.com/azure-sql-edge:latest
-    networks:
-      - app
-    ports:
-      - '1433'
-    environment:
-      # Database user: sa
-      MSSQL_SA_PASSWORD: P@ssword123 # (Minimum length 8 characters, strength required)
-      ACCEPT_EULA: Y
-
   phpfpm:
     image: itkdev/php8.1-fpm:latest
     networks:
       - app
+      - frontend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
-      - XDEBUG_MODE=${XDEBUG_MODE:-off}
+      - PHP_XDEBUG_MODE=${PHP_XDEBUG_MODE:-off}
       - XDEBUG_SESSION=${XDEBUG_SESSION:-0}
       - PHP_MAX_EXECUTION_TIME=30
       - PHP_MEMORY_LIMIT=256M
-      # - PHP_MAIL=1 # Uncomment to enable mailhog.
+      # Depending on the setup you may have to remove --read-envelope-from from msmtp (cf. https://marlam.de/msmtp/msmtp.html) or use SMTP to send mail
+      - PHP_SENDMAIL_PATH=/usr/bin/msmtp --host=mail --port=1025 --read-recipients --read-envelope-from
       - DOCKER_HOST_DOMAIN=${COMPOSE_DOMAIN}
       - COMPOSER_VERSION=2
       - PHP_IDE_CONFIG=serverName=localhost
     depends_on:
       - mariadb
-      - azure-sql
-      - redis
     volumes:
       - .:/app
-
-    extra_hosts:
-      # Used by ssh tunnel to Azure SQL Server
-      #
-      # Run these commands to make it actually work:
-      #
-      ## Copy ssh keys to container
-      # $ docker-compose exec phpfpm mkdir -p /root/.ssh
-      # $ docker-compose cp ~/.ssh/id_rsa phpfpm:/root/.ssh/id_rsa
-      # $ docker-compose cp ~/.ssh/id_rsa-cert.pub phpfpm:/root/.ssh/id_rsa-cert.pub
-      ## Create ssh tunnel using IPv4 (`-4`)
-      # $ docker-compose exec phpfpm ssh -4 -f deploy@admwebstgitk01.admnonwin.aarhuskommune.dk -L 1433:externalbooking.database.windows.net:1433 -N
-      - "externalbooking.database.windows.net:127.0.0.1"
 
   nginx:
     image: nginxinc/nginx-unprivileged:alpine
@@ -82,24 +60,12 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=frontend"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${COMPOSE_DOMAIN}`)"
-  #      HTTPS config - uncomment to enable redirect from :80 to :443
-  #      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=redirect-to-https"
-  #      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+#      HTTPS config - uncomment to enable redirect from :80 to :443
+#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=redirect-to-https"
+#      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
 
-  rabbit:
-    image: rabbitmq:3.9-management
-    networks:
-      - app
-      - frontend
-    ports:
-      - "15672"
-    environment:
-      - RABBITMQ_DEFAULT_USER=user
-      - RABBITMQ_DEFAULT_PASS=password
-      - RABBITMQ_ERLANG_COOKIE='d53f319cd7376f8f840aaf9889f315ab'
-
-  mailhog:
-    image: itkdev/mailhog
+  mail:
+    image: axllent/mailpit
     networks:
       - app
       - frontend
@@ -109,12 +75,5 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=frontend"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}Mailhog.rule=Host(`mailhog-${COMPOSE_DOMAIN}`)"
-      - "traefik.http.services.${COMPOSE_PROJECT_NAME}Mailhog.loadbalancer.server.port=8025"
-
-  redis:
-    image: 'redis:6'
-    networks:
-      - app
-    ports:
-      - '6379'
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}mail.rule=Host(`mail-${COMPOSE_DOMAIN}`)"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}mail.loadbalancer.server.port=8025"

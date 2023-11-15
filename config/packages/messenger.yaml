@@ -12,12 +12,15 @@ framework:
                     delay: 60000 # 1 minutes
                     multiplier: 3
                     max_delay: 3600000 # 1 hour
-                options:
-                    exchange:
-                        name: high
-                        type: fanout
-                    queues:
-                        async: ~
+
+            cache:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                retry_strategy:
+                    # 1, 2, 4, 8
+                    max_retries: 4
+                    delay: 60000 # 1 minutes
+                    multiplier: 2
+                    max_delay: 3600000 # 1 hour
 
             failed:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN_FAILED)%'
@@ -29,6 +32,7 @@ framework:
             'App\Message\CreateBookingMessage': async
             'App\Message\SendBookingNotificationMessage': async
             'App\Message\SendUserBookingNotificationMessage': async
+            'App\Message\AddBookingToCacheMessage': cache
 
 when@test:
    framework:

@@ -447,6 +447,11 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             // Assumption: event body contains td with id = resourceMail.
             $body = $data['body']['content'];
             $doc = new \DOMDocument();
+
+            if (empty($body)) {
+                throw new UserBookingException('ID:'.$cleanedBookingId.', email body empty');
+            }
+
             $doc->loadHTML($body);
             $xpath = new \DOMXPath($doc);
 
@@ -464,7 +469,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             }
 
             if (empty($resourceMail)) {
-                throw new UserBookingException('resourceMail not set in event.body');
+                throw new UserBookingException('ID:'.$cleanedBookingId.', resourceMail not set in event.body');
             }
 
             $userBooking->resourceMail = $resourceMail;
@@ -511,9 +516,73 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     /**
      * {@inheritdoc}
      */
+    public function getAllFutureBookings($token, $request = null): array
+    {
+        $data = [];
+        $now = new \DateTime();
+        $nowFormatted = $now->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
+
+        if (empty($request)) {
+            $query = implode('&', [
+                "\$filter=end/dateTime gt '$nowFormatted'",
+                '$top=100',
+            ]
+            );
+
+            $request = "/me/events?$query";
+        }
+
+        $response = $this->graphHelperService->request($request, $token);
+        $resultBody = $response->getBody();
+        try {
+            foreach ($resultBody['value'] as $booking) {
+                $data[] = $this->getUserBookingFromApiData($booking);
+            }
+        } catch (UserBookingException $e) {
+            $this->logger->error($e->getMessage());
+        }
+
+      return [
+          'data' => $data,
+          'next_link' => isset($resultBody['@odata.nextLink']) ? strstr($resultBody['@odata.nextLink'], '/me/events') : null,
+      ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function createBodyUserId(string $id): string
     {
         return "UID-$id-UID";
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws UserBookingException
+     * @throws MicrosoftGraphCommunicationException
+     */
+    public function getBookingIdFromICalUid(string $iCalUId): ?string
+    {
+        $token = $this->graphHelperService->authenticateAsServiceAccount();
+
+        $path = "/me/events?\$filter=iCalUId eq '$iCalUId'";
+
+        $response = $this->graphHelperService->request($path, $token);
+
+        $body = $response->getBody();
+
+        if (isset($body['value'])) {
+            $numberOfResults = count($body['value']);
+
+            if (1 == $numberOfResults) {
+                return array_pop($body['value'])['id'];
+            } elseif ($numberOfResults > 1) {
+                throw new UserBookingException('More than one event found with iCalUId', 500);
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -529,9 +598,9 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
         $path = "/users/$resourceEmail/events?\$filter=iCalUId eq '$iCalUId'";
 
-        $r = $this->graphHelperService->request($path, $token);
+        $response = $this->graphHelperService->request($path, $token);
 
-        $body = $r->getBody();
+        $body = $response->getBody();
 
         if (isset($body['value'])) {
             $numberOfResults = count($body['value']);

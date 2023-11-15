@@ -57,14 +57,14 @@ class WebformSubmitHandler
                     throw new WebformSubmissionRetrievalException('Resource does not exist', 404);
                 }
 
-                $body = $this->composeBookingContents($data, $resource, $dataSubmission['metaData']);
+                $body = $this->composeBookingContents($data, $resource, $dataSubmission['metaData'] ?? []);
                 $htmlContents = $this->renderContentsAsHtml($body);
 
                 $booking = new Booking();
                 $booking->setBody($htmlContents);
                 $booking->setUserName($data['name']);
                 $booking->setUserMail($data['email']);
-                $booking->setMetaData($dataSubmission['metaData']);
+                $booking->setMetaData($dataSubmission['metaData'] ?? []);
                 $booking->setSubject($data['subject'] ?? '');
                 $booking->setResourceEmail($email);
                 $booking->setResourceName($resource->getResourceName());

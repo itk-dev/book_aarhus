@@ -47,7 +47,7 @@ final class AAKResourceExtension implements QueryCollectionExtensionInterface, Q
 
     private function applyWhitelistPermission(QueryBuilder $queryBuilder, string $resourceClass): void
     {
-        if (AAKResource::class !== $resourceClass || null === $this->security->getUser()) {
+        if (AAKResource::class !== $resourceClass) {
             return;
         }
 
