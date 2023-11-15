@@ -5,35 +5,48 @@ namespace App\Entity\Main;
 use App\Repository\Main\UserBookingCacheEntryRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserBookingCacheEntryRepository::class)]
 class UserBookingCacheEntry
 {
+    #[Groups('userBookingCacheEntry')]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups('userBookingCacheEntry')]
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
+    // TODO: Remove Groups. ExchangeId should not be used in the frontend.
+    #[Groups('userBookingCacheEntry')]
     #[ORM\Column(length: 255)]
     private ?string $exchangeId = null;
 
     #[ORM\Column(length: 255)]
     private ?string $uid = null;
 
+    #[Groups('userBookingCacheEntry')]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $start = null;
 
+    #[Groups('userBookingCacheEntry')]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $end = null;
 
+    #[Groups('userBookingCacheEntry')]
     #[ORM\Column(length: 255)]
     private ?string $status = null;
 
+    #[Groups('userBookingCacheEntry')]
     #[ORM\Column(length: 255)]
-    private ?string $resource = null;
+    private ?string $resourceMail = null;
+
+    #[Groups('userBookingCacheEntry')]
+    #[ORM\Column(length: 255)]
+    private ?string $resourceDisplayName = null;
 
     public function getId(): ?int
     {
@@ -112,14 +125,26 @@ class UserBookingCacheEntry
         return $this;
     }
 
-    public function getResource(): ?string
+    public function getResourceMail(): ?string
     {
-        return $this->resource;
+        return $this->resourceMail;
     }
 
-    public function setResource(string $resource): static
+    public function setResourceMail(string $resourceMail): static
     {
-        $this->resource = $resource;
+        $this->resourceMail = $resourceMail;
+
+        return $this;
+    }
+
+    public function getResourceDisplayName(): ?string
+    {
+        return $this->resourceDisplayName;
+    }
+
+    public function setResourceDisplayName(?string $resourceDisplayName): static
+    {
+        $this->resourceDisplayName = $resourceDisplayName;
 
         return $this;
     }

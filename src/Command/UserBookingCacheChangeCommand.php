@@ -41,7 +41,7 @@ class UserBookingCacheChangeCommand extends Command
             // Options are used in the entity set methods, ie setTitle, setUid etc.
             $field = $io->choice(
                 'Please select the field to update',
-                ['title', 'uid', 'start', 'end', 'status', 'resource'],
+                ['title', 'uid', 'start', 'end', 'status', 'resourceMail', 'resourceDisplayName'],
                 0
             );
 

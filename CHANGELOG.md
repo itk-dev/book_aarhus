@@ -17,6 +17,8 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 - Removed Rabbit MQ (remeber to update the DSN in local .env)
 - Updated docker compose setup to newest version
 - Fixed issue with booking cache entries not being created.
+- Added resourceDisplayName to cache.
+- Moved AddBookingToCacheMessage handling to own queue.
 
 ## [1.1.2] - 2023-08-29
 

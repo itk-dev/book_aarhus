@@ -947,7 +947,25 @@
                         "allowReserved": false
                     },
                     {
-                        "name": "order[resource]",
+                        "name": "order[resourceMail]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "order[resourceDisplayName]",
                         "in": "query",
                         "description": "",
                         "required": false,
@@ -2354,7 +2372,7 @@
                     }
                 }
             },
-            "UserBookingCacheEntry": {
+            "UserBookingCacheEntry-userBookingCacheEntry": {
                 "type": "object",
                 "description": "",
                 "properties": {
@@ -2368,9 +2386,6 @@
                     "exchangeId": {
                         "type": "string"
                     },
-                    "uid": {
-                        "type": "string"
-                    },
                     "start": {
                         "type": "string",
                         "format": "date-time"
@@ -2382,12 +2397,15 @@
                     "status": {
                         "type": "string"
                     },
-                    "resource": {
+                    "resourceMail": {
+                        "type": "string"
+                    },
+                    "resourceDisplayName": {
                         "type": "string"
                     }
                 }
             },
-            "UserBookingCacheEntry.jsonld": {
+            "UserBookingCacheEntry.jsonld-userBookingCacheEntry": {
                 "type": "object",
                 "description": "",
                 "properties": {
@@ -2409,9 +2427,6 @@
                     "exchangeId": {
                         "type": "string"
                     },
-                    "uid": {
-                        "type": "string"
-                    },
                     "start": {
                         "type": "string",
                         "format": "date-time"
@@ -2423,7 +2438,10 @@
                     "status": {
                         "type": "string"
                     },
-                    "resource": {
+                    "resourceMail": {
+                        "type": "string"
+                    },
+                    "resourceDisplayName": {
                         "type": "string"
                     }
                 }

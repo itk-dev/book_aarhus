@@ -677,7 +677,22 @@ paths:
           explode: false
           allowReserved: false
         -
-          name: 'order[resource]'
+          name: 'order[resourceMail]'
+          in: query
+          description: ''
+          required: false
+          deprecated: false
+          allowEmptyValue: true
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          style: form
+          explode: false
+          allowReserved: false
+        -
+          name: 'order[resourceDisplayName]'
           in: query
           description: ''
           required: false
@@ -1679,7 +1694,7 @@ components:
           type: string
         resourceName:
           type: string
-    UserBookingCacheEntry:
+    UserBookingCacheEntry-userBookingCacheEntry:
       type: object
       description: ''
       properties:
@@ -1690,8 +1705,6 @@ components:
           type: string
         exchangeId:
           type: string
-        uid:
-          type: string
         start:
           type: string
           format: date-time
@@ -1700,9 +1713,11 @@ components:
           format: date-time
         status:
           type: string
-        resource:
+        resourceMail:
           type: string
-    UserBookingCacheEntry.jsonld:
+        resourceDisplayName:
+          type: string
+    UserBookingCacheEntry.jsonld-userBookingCacheEntry:
       type: object
       description: ''
       properties:
@@ -1719,8 +1734,6 @@ components:
           type: string
         exchangeId:
           type: string
-        uid:
-          type: string
         start:
           type: string
           format: date-time
@@ -1729,7 +1742,9 @@ components:
           format: date-time
         status:
           type: string
-        resource:
+        resourceMail:
+          type: string
+        resourceDisplayName:
           type: string
   responses: {  }
   parameters: {  }

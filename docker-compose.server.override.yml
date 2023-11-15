@@ -4,7 +4,7 @@ services:
     restart: unless-stopped
     stop_grace_period: 20s
     environment:
-      - APP_SUPERVISOR_COMMAND=/app/bin/console messenger:consume --env=prod --no-debug --time-limit=900 --failure-limit=1 async
+      - APP_SUPERVISOR_COMMAND=/app/bin/console messenger:consume --env=prod --no-debug --time-limit=900 --failure-limit=1 async cache
       - APP_SUPERVISOR_WORKERS=1
       - APP_SUPERVISOR_USER=deploy
     networks:

@@ -133,8 +133,11 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
                 case 'status':
                     $entity->setStatus($value);
                     break;
-                case 'resource':
-                    $entity->setResource($value);
+                case 'resourceMail':
+                    $entity->setResourceMail($value);
+                    break;
+                case 'resourceDisplayName':
+                    $entity->setResourceDisplayName($value);
                     break;
             }
         }
@@ -162,7 +165,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      *
      * @return \App\Entity\Main\UserBookingCacheEntry
      */
-    private function setCacheEntityValues($entity, UserBooking $userBooking): UserBookingCacheEntry
+    private function setCacheEntityValues(UserBookingCacheEntry $entity, UserBooking $userBooking): UserBookingCacheEntry
     {
         $entity->setTitle($userBooking->subject);
         $entity->setExchangeId($userBooking->id);
@@ -170,7 +173,8 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         $entity->setStart($userBooking->start);
         $entity->setEnd($userBooking->end);
         $entity->setStatus($userBooking->status);
-        $entity->setResource($userBooking->resourceMail);
+        $entity->setResourceMail($userBooking->resourceMail);
+        $entity->setResourceDisplayName($userBooking->displayName);
 
         return $entity;
     }
@@ -191,7 +195,8 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         $entity->setStart($data['start']);
         $entity->setEnd($data['end']);
         $entity->setStatus($data['status']);
-        $entity->setResource($data['resourceMail']);
+        $entity->setResourceMail($data['resourceMail']);
+        $entity->setResourceDisplayName($data['resourceDisplayName']);
 
         return $entity;
     }
