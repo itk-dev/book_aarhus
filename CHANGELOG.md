@@ -9,6 +9,8 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+## [1.2.0] - 2023-11-15
+
 ### Added
 
 - Added User booking cache entity.
