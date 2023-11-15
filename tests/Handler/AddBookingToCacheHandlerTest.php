@@ -3,8 +3,10 @@
 namespace App\Tests\Handler;
 
 use App\Entity\Main\Booking;
+use App\Entity\Resources\AAKResource;
 use App\Message\AddBookingToCacheMessage;
 use App\MessageHandler\AddBookingToCacheHandler;
+use App\Repository\Resources\AAKResourceRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
 use App\Service\UserBookingCacheServiceInterface;
@@ -27,10 +29,20 @@ class AddBookingToCacheHandlerTest extends AbstractBaseApiTestCase
 
         $loggerMock = $this->createMock(LoggerInterface::class);
 
+        $res = new AAKResource();
+        $res->setResourceDisplayName('Cool resource name');
+
+        $aakResourceRepositoryMock = $this->getMockBuilder(AAKResourceRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['findOneBy'])
+            ->getMock();
+        $aakResourceRepositoryMock->expects($this->exactly(1))->method('findOneBy')->willReturn($res);
+
         $handler = new AddBookingToCacheHandler(
             $bookingServiceMock,
             $userBookingCacheServiceMock,
             $loggerMock,
+            $aakResourceRepositoryMock,
         );
 
         $booking = new Booking();

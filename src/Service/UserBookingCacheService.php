@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Entity\Main\UserBooking;
 use App\Entity\Main\UserBookingCacheEntry;
 use App\Exception\MicrosoftGraphCommunicationException;
-use App\Repository\Resources\AAKResourceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 

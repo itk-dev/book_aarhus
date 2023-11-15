@@ -43,7 +43,7 @@ class AddBookingToCacheHandler
         /** @var AAKResource $resource */
         $resource = $this->resourceRepository->findOneBy(['resourceMail' => $resourceEmail]);
 
-        if ($resource != null && $resource->getResourceDisplayName()) {
+        if (null != $resource && $resource->getResourceDisplayName()) {
             $resourceDisplayName = $resource->getResourceDisplayName();
         }
 

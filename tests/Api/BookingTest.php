@@ -7,7 +7,6 @@ use App\Entity\Main\Booking;
 use App\Entity\Resources\AAKResource;
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
-use App\MessageHandler\AddBookingToCacheHandler;
 use App\MessageHandler\CreateBookingHandler;
 use App\MessageHandler\WebformSubmitHandler;
 use App\Repository\Resources\AAKResourceRepository;
@@ -273,13 +272,6 @@ class BookingTest extends AbstractBaseApiTestCase
         $security = $container->get(Security::class);
 
         $container->set(AAKResourceRepository::class, $aakResourceRepositoryMock);
-
-        $addBookingToCacheHandlerMock = $this->getMockBuilder(AddBookingToCacheHandler::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['__invoke'])
-            ->getMock();
-        $addBookingToCacheHandlerMock->expects($this->exactly(1))->method('__invoke');
-        $container->set(AddBookingToCacheHandler::class, $addBookingToCacheHandlerMock);
 
         $notificationServiceMock = $this->createMock(NotificationServiceInterface::class);
         $container->set(NotificationServiceInterface::class, $notificationServiceMock);

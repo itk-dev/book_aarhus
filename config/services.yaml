@@ -116,7 +116,7 @@ services:
     user_booking_cache_entry.order_filter:
       parent: 'api_platform.doctrine.orm.order_filter'
       arguments:
-        $properties: { title: ~, start: ~, end: ~, resource: ~  }
+        $properties: { title: ~, start: ~, end: ~, resourceMail: ~, resourceDisplayName: ~  }
         $orderParameterName: order
       tags: [ 'api_platform.filter' ]
       autowire: false

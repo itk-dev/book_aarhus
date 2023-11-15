@@ -10,41 +10,41 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: UserBookingCacheEntryRepository::class)]
 class UserBookingCacheEntry
 {
-    #[Groups("userBookingCacheEntry")]
+    #[Groups('userBookingCacheEntry')]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups("userBookingCacheEntry")]
+    #[Groups('userBookingCacheEntry')]
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
     // TODO: Remove Groups. ExchangeId should not be used in the frontend.
-    #[Groups("userBookingCacheEntry")]
+    #[Groups('userBookingCacheEntry')]
     #[ORM\Column(length: 255)]
     private ?string $exchangeId = null;
 
     #[ORM\Column(length: 255)]
     private ?string $uid = null;
 
-    #[Groups("userBookingCacheEntry")]
+    #[Groups('userBookingCacheEntry')]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $start = null;
 
-    #[Groups("userBookingCacheEntry")]
+    #[Groups('userBookingCacheEntry')]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $end = null;
 
-    #[Groups("userBookingCacheEntry")]
+    #[Groups('userBookingCacheEntry')]
     #[ORM\Column(length: 255)]
     private ?string $status = null;
 
-    #[Groups("userBookingCacheEntry")]
+    #[Groups('userBookingCacheEntry')]
     #[ORM\Column(length: 255)]
     private ?string $resourceMail = null;
 
-    #[Groups("userBookingCacheEntry")]
+    #[Groups('userBookingCacheEntry')]
     #[ORM\Column(length: 255)]
     private ?string $resourceDisplayName = null;
 
