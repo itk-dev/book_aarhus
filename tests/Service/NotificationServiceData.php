@@ -31,6 +31,7 @@ class NotificationServiceData
         $resource->setId(1);
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
         $resource->setResourceName('DOKK1-Lokale-Test1');
+        $resource->setResourceDisplayName('DOKK1 Lokale Test1');
         $resource->setResourceDescription('description');
         $resource->setResourceEmailText('email text');
         $resource->setLocation('Dokk1');

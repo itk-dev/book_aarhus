@@ -103,6 +103,8 @@ class NotificationService implements NotificationServiceInterface
         $dateStart->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
         $dateEnd->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
 
+        $resourceName = $resource?->getResourceDisplayName() ?? $userBooking->displayName;
+
         $notificationData = [
             'from' => $this->emailFromAddress,
             'to' => $email,
@@ -120,7 +122,7 @@ class NotificationService implements NotificationServiceInterface
                     'endTime' => $userBooking->end,
                 ],
                 'resource' => [
-                    'resourceName' => $userBooking->resourceName,
+                    'resourceName' => $resourceName,
                 ],
                 'startFormatted' => $dateStart->format($this->bindNotificationDateFormat),
                 'endFormatted' => $dateEnd->format($this->bindNotificationDateFormat),
@@ -255,12 +257,16 @@ class NotificationService implements NotificationServiceInterface
     {
         $fileAttachments = [];
         $to = $data['user']['mail'];
+        /** @var AAKResource $resource */
+        $resource = $data['resource'];
+        $resourceName = $resource->getResourceDisplayName() ?? $resource->getResourceName();
+        $location = $resource->getLocation();
+        $resourceLocationString = $resourceName.' - '.$location;
 
         switch ($type) {
             case NotificationTypeEnum::SUCCESS:
                 $template = 'email-booking-success.html.twig';
-                $subject = 'Booking bekræftelse: '.$data['resource']
-                    ->getResourceName().' - '.$data['resource']->getLocation();
+                $subject = 'Booking bekræftelse: '.$resourceLocationString;
 
                 $event = $this->prepareICalEvent($data);
                 $iCalendarComponent = $this->createCalendarComponent($event);
@@ -271,18 +277,15 @@ class NotificationService implements NotificationServiceInterface
                 break;
             case NotificationTypeEnum::REQUEST_RECEIVED:
                 $template = 'email-booking-request-received-receipt.html.twig';
-                $subject = 'Booking anmodning modtaget: '.$data['resource']
-                    ->getResourceName().' - '.$data['resource']->getLocation();
+                $subject = 'Booking anmodning modtaget: '.$resourceLocationString;
                 break;
             case NotificationTypeEnum::FAILED:
                 $template = 'email-booking-failed.html.twig';
-                $subject = 'Booking lykkedes ikke: '.$data['resource']
-                    ->getResourceName().' - '.$data['resource']->getLocation();
+                $subject = 'Booking lykkedes ikke: '.$resourceLocationString;
                 break;
             case NotificationTypeEnum::CONFLICT:
                 $template = 'email-booking-failed.html.twig';
-                $subject = 'Booking lykkedes ikke. Intervallet er optaget: '.$data['resource']
-                    ->getResourceName().' - '.$data['resource']->getLocation();
+                $subject = 'Booking lykkedes ikke. Intervallet er optaget: '.$resourceLocationString;
                 break;
             default:
                 throw new BuildNotificationException('Unsupported NotificationTypeEnum');
