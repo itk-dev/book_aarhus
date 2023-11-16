@@ -103,7 +103,7 @@ class NotificationService implements NotificationServiceInterface
         $dateStart->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
         $dateEnd->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
 
-        $resourceName = $resource->getResourceDisplayName() ?? $userBooking->displayName;
+        $resourceName = $resource?->getResourceDisplayName() ?? $userBooking->displayName;
 
         $notificationData = [
             'from' => $this->emailFromAddress,
