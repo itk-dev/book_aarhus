@@ -39,22 +39,26 @@
                                     <table class="header" role="presentation" cellspacing="0" cellpadding="6" border="0" align="left" width="100%">
                                         <tr>
                                             <td>
-                                                <h2>Ny booking af {{ resource.resourceName }} - {{ resource.location }}</h2>
+                                                <h2>Ny booking af {{ resource.resourceDisplayName }} - {{ resource.location }}</h2>
                                             </td>
                                         </tr>
                                     </table>
                                     <table class="resource zebra" cellspacing="0" cellpadding="6" border="0" align="left" width="100%" style="border-bottom: 1px solid #E9ECEF;">
                                         <tr>
                                             <td>
-                                                <h3>Resource</h3>
+                                                <h3>Ressource</h3>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>Resource navn:</td>
+                                            <td>Navn:</td>
+                                            <td class="hasData" id="resourceDisplayName">{{ resource.resourceDisplayName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>ID:</td>
                                             <td class="hasData" id="resourceName">{{ resource.resourceName }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Resource email:</td>
+                                            <td>Email:</td>
                                             <td class="hasData" id="resourceMail">{{ resource.resourceMail }}</td>
                                         </tr>
                                     </table>
@@ -66,15 +70,15 @@
                                             </td>
                                         </tr>
                                         <tr class="subject">
-                                            <td>Booking emne:</td>
+                                            <td>Emne:</td>
                                             <td class="hasData" id="subject">{{ submission.subject }}</td>
                                         </tr>
                                         <tr class="start-time">
-                                            <td>Booking starttidspunkt:</td>
+                                            <td>Starttidspunkt:</td>
                                             <td>{{ submission.fromObj|date("d/m/Y - H:i") }}<span id="start" class="hidden hasData" data-format="ISO-8601">{{ submission.start }}</span></td>
                                         </tr>
                                         <tr class="end-time">
-                                            <td>Booking sluttidspunkt:</td>
+                                            <td>Sluttidspunkt:</td>
                                             <td>{{ submission.toObj|date("d/m/Y - H:i") }}<span id="end" class="hidden hasData" data-format="ISO-8601">{{ submission.end }}</span></td>
                                         </tr>
                                         {# Metadata fields #}
@@ -92,15 +96,15 @@
                                             </td>
                                         </tr>
                                         <tr class="booker-name">
-                                            <td>Booking bruger navn:</td>
+                                            <td>Navn:</td>
                                             <td id="name" class="hasData">{{ submission.name }}</td>
                                         </tr>
                                         <tr class="booker-email">
-                                            <td>Booking bruger email:</td>
+                                            <td>Email:</td>
                                             <td><a id="email" class="hasData" href="mailto:{{ submission.email }}?subject=Vdr. Booking af {{ resource.resourceName }} - {{ resource.location }}">{{ submission.email }}</a></td>
                                         </tr>
                                         <tr class="user-id">
-                                            <td>Booking bruger id:</td>
+                                            <td>ID:</td>
                                             <td id="userId" class="hasData">{{ userUniqueId }}</td>
                                         </tr>
                                     </table>
