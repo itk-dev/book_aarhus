@@ -351,7 +351,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     /**
      * @throws MicrosoftGraphCommunicationException
      */
-    public function getUserBookings(string $userId, ?string $search = null, int $page = 0, int $pageSize = 25): array
+    public function getUserBookings(string $userId, string $search = null, int $page = 0, int $pageSize = 25): array
     {
         try {
             $token = $this->graphHelperService->authenticateAsServiceAccount();

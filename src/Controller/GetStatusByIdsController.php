@@ -21,36 +21,36 @@ class GetStatusByIdsController extends AbstractController
     ) {
     }
 
-  public function __invoke(Request $request): Response
-  {
-      $exchangeIds = json_decode($request->getContent())->ids;
-      if (empty($exchangeIds)) {
-          throw new HttpException(404, 'Resource not found');
-      }
+    public function __invoke(Request $request): Response
+    {
+        $exchangeIds = json_decode($request->getContent())->ids;
+        if (empty($exchangeIds)) {
+            throw new HttpException(404, 'Resource not found');
+        }
 
-      $statuses = [];
+        $statuses = [];
 
-      foreach ($exchangeIds as $id) {
-          try {
-              $booking = $this->bookingService->getBooking($id);
-              $userBooking = $this->bookingService->getUserBookingFromApiData($booking);
-              $statuses[] = [
-                  'exchangeId' => $id,
-                  'status' => $userBooking->status,
-              ];
+        foreach ($exchangeIds as $id) {
+            try {
+                $booking = $this->bookingService->getBooking($id);
+                $userBooking = $this->bookingService->getUserBookingFromApiData($booking);
+                $statuses[] = [
+                    'exchangeId' => $id,
+                    'status' => $userBooking->status,
+                ];
 
-              // Update booking cache status.
-              $this->userBookingCacheService->changeCacheEntry($id, ['status' => $userBooking->status]);
-          } catch (\Exception $e) {
-              $statuses[] = [
-                  'exchangeId' => $id,
-                  'status' => null,
-              ];
-          }
-      }
+                // Update booking cache status.
+                $this->userBookingCacheService->changeCacheEntry($id, ['status' => $userBooking->status]);
+            } catch (\Exception $e) {
+                $statuses[] = [
+                    'exchangeId' => $id,
+                    'status' => null,
+                ];
+            }
+        }
 
-      $data = $this->serializer->serialize($statuses, 'json', ['groups' => 'resource']);
+        $data = $this->serializer->serialize($statuses, 'json', ['groups' => 'resource']);
 
-      return new Response($data, 200);
-  }
+        return new Response($data, 200);
+    }
 }

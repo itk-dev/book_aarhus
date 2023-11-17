@@ -34,6 +34,7 @@ framework:
             'App\Message\SendUserBookingNotificationMessage': async
             'App\Message\AddBookingToCacheMessage': cache
             'App\Message\RemoveBookingFromCacheMessage': cache
+            'App\Message\UpdateBookingInCacheMessage': cache
 
 when@test:
    framework:

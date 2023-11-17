@@ -1,0 +1,24 @@
+<?php
+
+namespace App\MessageHandler;
+
+use App\Message\UpdateBookingInCacheMessage;
+use App\Service\UserBookingCacheServiceInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+
+#[AsMessageHandler]
+class UpdateBookingInCacheHandler
+{
+    public function __construct(
+        private readonly UserBookingCacheServiceInterface $userBookingCacheService,
+    ) {
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function __invoke(UpdateBookingInCacheMessage $message): void
+    {
+        $this->userBookingCacheService->changeCacheEntry($message->getExchangeId(), $message->getChanges());
+    }
+}
