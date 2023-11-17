@@ -7,6 +7,7 @@ use App\Entity\Main\UserBooking;
 use App\Enum\NotificationTypeEnum;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
+use App\Message\RemoveBookingFromCacheMessage;
 use App\Message\SendUserBookingNotificationMessage;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
@@ -46,7 +47,9 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
                     NotificationTypeEnum::DELETE_SUCCESS
                 ));
 
-                $this->userBookingCacheService->deleteCacheEntry($data->id);
+                $this->bus->dispatch(new RemoveBookingFromCacheMessage(
+                    $data->id
+                ));
             }
         } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
             throw new HttpException($e->getCode(), 'Booking could not be deleted.');

@@ -33,6 +33,7 @@ framework:
             'App\Message\SendBookingNotificationMessage': async
             'App\Message\SendUserBookingNotificationMessage': async
             'App\Message\AddBookingToCacheMessage': cache
+            'App\Message\RemoveBookingFromCacheMessage': cache
 
 when@test:
    framework:

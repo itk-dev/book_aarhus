@@ -152,8 +152,10 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
     {
         $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)
             ->findOneBy(['exchangeId' => $exchangeId]);
+
         if ($entity) {
             $this->entityManager->remove($entity);
+            $this->entityManager->flush();
         }
     }
 
