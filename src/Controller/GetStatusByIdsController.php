@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsController]
@@ -25,7 +25,7 @@ class GetStatusByIdsController extends AbstractController
     {
         $exchangeIds = json_decode($request->getContent())->ids;
         if (empty($exchangeIds)) {
-            throw new HttpException(404, 'Resource not found');
+            throw new NotFoundHttpException('Resource not found');
         }
 
         $statuses = [];
