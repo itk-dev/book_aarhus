@@ -16,21 +16,17 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class UserBookingUpdateCacheCommand extends Command
 {
     public function __construct(
-    private readonly UserBookingCacheServiceInterface $userBookingCacheServiceInterface
-  ) {
+        private readonly UserBookingCacheServiceInterface $userBookingCacheServiceInterface
+    ) {
         parent::__construct();
     }
 
-      protected function configure(): void
-      {
-      }
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $this->userBookingCacheServiceInterface->updateCache();
+        $io = new SymfonyStyle($input, $output);
+        $io->success('Updated user booking cache.');
 
-      protected function execute(InputInterface $input, OutputInterface $output): int
-      {
-          $this->userBookingCacheServiceInterface->updateCache();
-          $io = new SymfonyStyle($input, $output);
-          $io->success('Updated user booking cache.');
-
-          return Command::SUCCESS;
-      }
+        return Command::SUCCESS;
+    }
 }
