@@ -13,9 +13,9 @@ use Symfony\Component\Security\Core\Security;
 final class UserBookingCacheEntryExtension implements QueryCollectionExtensionInterface
 {
     public function __construct(
-        private readonly Security $security,
-        private readonly RequestStack $requestStack,
-    ) {
+    private readonly Security $security,
+    private readonly RequestStack $requestStack,
+  ) {
     }
 
     /**
