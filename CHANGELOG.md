@@ -9,6 +9,14 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+## [1.2.1] - 2023-11-23
+
+### Changed
+
+- Changed resource display name in notifications.
+- Fixed remove from cache table on booking delete.
+- Moved handling of delete/update user booking cache entry into messages.
+
 ## [1.2.0] - 2023-11-15
 
 ### Added
