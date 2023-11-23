@@ -15,11 +15,11 @@ use Psr\Log\LoggerInterface;
 class UserBookingCacheService implements UserBookingCacheServiceInterface
 {
     public function __construct(
-    private readonly MicrosoftGraphHelperService $graphHelperService,
-    private readonly EntityManagerInterface $entityManager,
-    private readonly MicrosoftGraphBookingService $microsoftGraphBookingService,
-    private readonly LoggerInterface $logger,
-  ) {
+        private readonly MicrosoftGraphHelperService $graphHelperService,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly MicrosoftGraphBookingService $microsoftGraphBookingService,
+        private readonly LoggerInterface $logger,
+    ) {
     }
 
     /**
@@ -152,8 +152,10 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
     {
         $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)
             ->findOneBy(['exchangeId' => $exchangeId]);
+
         if ($entity) {
             $this->entityManager->remove($entity);
+            $this->entityManager->flush();
         }
     }
 

@@ -59,27 +59,27 @@
                                             </tr>
                                         {% endif %}
                                         <tr class="subject">
-                                            <td>{{ 'Booking emne:' }}</td>
+                                            <td>{{ 'Emne:' }}</td>
                                             <td>{{ data.booking.subject }}</td>
                                         </tr>
                                         <tr class="start-time">
-                                            <td>{{ 'Booking starttidspunkt:' }}</td>
+                                            <td>{{ 'Starttidspunkt:' }}</td>
                                             <td>{{ data.startFormatted }}</td>
                                         </tr>
                                         <tr class="end-time">
-                                            <td>{{ 'Booking sluttidspunkt:' }}</td>
+                                            <td>{{ 'Sluttidspunkt:' }}</td>
                                             <td>{{ data.endFormatted }}</td>
                                         </tr>
                                     </table>
                                     <table class="resource zebra" cellspacing="0" cellpadding="6" border="0" align="left" width="100%" style="border-bottom: 1px solid #E9ECEF;">
                                         <tr>
                                             <td>
-                                                <h3>{{ 'Resource / Lokale' }}</h3>
+                                                <h3>{{ 'Ressource / Lokale' }}</h3>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>{{ 'Resource / Lokale:' }}</td>
-                                            <td>{{ data.resource.resourceName }}</td>
+                                            <td>{{ 'Ressource / Lokale:' }}</td>
+                                            <td>{{ data.resource.resourceDisplayName ?? data.resource.resourceName }}</td>
                                         </tr>
                                     </table>
                                 </td>

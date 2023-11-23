@@ -93,7 +93,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             }
         }
 
-        $body = [
+        $requestBody = [
             'subject' => $subject,
             'body' => [
                 'contentType' => 'HTML',
@@ -125,7 +125,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             ],
         ];
 
-        $response = $this->graphHelperService->request("/users/$resourceEmail/events", $token, 'POST', $body);
+        $response = $this->graphHelperService->request("/users/$resourceEmail/events", $token, 'POST', $requestBody);
 
         $status = (int) $response->getStatus();
 
@@ -163,7 +163,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     {
         $token = $this->graphHelperService->authenticateAsServiceAccount();
 
-        $body = [
+        $requestBody = [
             'subject' => $subject,
             'body' => [
                 'contentType' => 'HTML',
@@ -194,7 +194,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             ],
         ];
 
-        $response = $this->graphHelperService->request('/me/events', $token, 'POST', $body);
+        $response = $this->graphHelperService->request('/me/events', $token, 'POST', $requestBody);
 
         $status = (int) $response->getStatus();
 
@@ -351,7 +351,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     /**
      * @throws MicrosoftGraphCommunicationException
      */
-    public function getUserBookings(string $userId, ?string $search = null, int $page = 0, int $pageSize = 25): array
+    public function getUserBookings(string $userId, string $search = null, int $page = 0, int $pageSize = 25): array
     {
         try {
             $token = $this->graphHelperService->authenticateAsServiceAccount();

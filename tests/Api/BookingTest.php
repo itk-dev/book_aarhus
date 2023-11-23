@@ -188,6 +188,7 @@ class BookingTest extends AbstractBaseApiTestCase
             ->getMock();
         $resource = new AAKResource();
         $resource->setResourceName('DOKK1-Lokale-Test1');
+        $resource->setResourceDisplayName('DOKK1 Lokale Test1');
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
         $resource->setLocation('Dokk1');
         $aakBookingRepository->method('findOneBy')->willReturn($resource);
