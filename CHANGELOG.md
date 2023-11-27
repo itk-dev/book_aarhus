@@ -13,7 +13,6 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 - Fixed issue where resource display was not set when rebuilding user booking entry cache.
 - Added "responseRequested" to booking invitations to fix issue with status.
-- 
 
 ## [1.2.1] - 2023-11-23
 
