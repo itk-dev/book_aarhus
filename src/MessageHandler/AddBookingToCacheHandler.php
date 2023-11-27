@@ -33,21 +33,21 @@ class AddBookingToCacheHandler
     {
         $this->logger->info('AddBookingToCacheHandler invoked.');
 
-        $booking = $message->getBooking();
         $id = $this->bookingService->getBookingIdFromICalUid($message->getICalUID()) ?? null;
 
-        $resourceEmail = $booking->getResourceEmail();
-
-        $resourceDisplayName = $booking->getResourceName();
-
-        /** @var AAKResource $resource */
-        $resource = $this->resourceRepository->findOneBy(['resourceMail' => $resourceEmail]);
-
-        if (null != $resource && $resource->getResourceDisplayName()) {
-            $resourceDisplayName = $resource->getResourceDisplayName();
-        }
-
         if (null != $id) {
+            $booking = $message->getBooking();
+
+            $resourceEmail = $booking->getResourceEmail();
+            $resourceDisplayName = $booking->getResourceName();
+
+            /** @var AAKResource $resource */
+            $resource = $this->resourceRepository->findOneBy(['resourceMail' => $resourceEmail]);
+
+            if (null != $resource && $resource->getResourceDisplayName()) {
+                $resourceDisplayName = $resource->getResourceDisplayName();
+            }
+
             $this->userBookingCacheService->addCacheEntryFromArray([
                 'subject' => $booking->getSubject(),
                 'id' => $id,
