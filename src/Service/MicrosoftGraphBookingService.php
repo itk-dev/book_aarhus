@@ -183,6 +183,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
                 'displayName' => $resourceName,
                 'locationEmailAddress' => $resourceEmail,
             ],
+            'responseRequested' => true,
             'attendees' => [
                 [
                     'emailAddress' => [
@@ -479,7 +480,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             $attendeeResource = [];
 
             foreach ($data['attendees'] as $attendee) {
-                if (mb_strtolower($attendee['emailAddress']['address']) === mb_strtolower($userBooking->resourceMail)) {
+                if (mb_strtolower($attendee['emailAddress']['address']) == mb_strtolower($userBooking->resourceMail)) {
                     $attendeeResource = $attendee;
                     break;
                 }
