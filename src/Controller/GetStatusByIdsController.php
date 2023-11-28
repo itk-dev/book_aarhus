@@ -6,8 +6,8 @@ use App\Enum\UserBookingStatusEnum;
 use App\Service\BookingServiceInterface;
 use App\Service\UserBookingCacheServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -22,7 +22,7 @@ class GetStatusByIdsController extends AbstractController
     ) {
     }
 
-    public function __invoke(Request $request): Response
+    public function __invoke(Request $request): JsonResponse
     {
         $exchangeIds = json_decode($request->getContent())->ids;
         if (empty($exchangeIds)) {
@@ -59,8 +59,6 @@ class GetStatusByIdsController extends AbstractController
             }
         }
 
-        $data = $this->serializer->serialize($statuses, 'json', ['groups' => 'resource']);
-
-        return new Response($data, 200);
+        return new JsonResponse($statuses);
     }
 }
