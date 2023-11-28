@@ -2,11 +2,12 @@
 
 namespace App\Controller;
 
+use App\Enum\UserBookingStatusEnum;
 use App\Service\BookingServiceInterface;
 use App\Service\UserBookingCacheServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -21,7 +22,7 @@ class GetStatusByIdsController extends AbstractController
     ) {
     }
 
-    public function __invoke(Request $request): Response
+    public function __invoke(Request $request): JsonResponse
     {
         $exchangeIds = json_decode($request->getContent())->ids;
         if (empty($exchangeIds)) {
@@ -34,14 +35,23 @@ class GetStatusByIdsController extends AbstractController
             try {
                 $booking = $this->bookingService->getBooking($id);
                 $userBooking = $this->bookingService->getUserBookingFromApiData($booking);
+
+                $status = in_array($userBooking->status, [
+                    UserBookingStatusEnum::ACCEPTED->name,
+                    UserBookingStatusEnum::DECLINED->name,
+                ]) ? $userBooking->status : UserBookingStatusEnum::AWAITING_APPROVAL->name;
+
                 $statuses[] = [
                     'exchangeId' => $id,
-                    'status' => $userBooking->status,
+                    'status' => $status,
                 ];
 
-                // Update booking cache status.
-                $this->userBookingCacheService->changeCacheEntry($id, ['status' => $userBooking->status]);
-            } catch (\Exception $e) {
+                // Update booking cache status if accepted or declined.
+                // Possible event statuses: https://learn.microsoft.com/en-us/graph/api/resources/responsestatus?view=graph-rest-1.0#properties
+                if ($status != UserBookingStatusEnum::AWAITING_APPROVAL->name) {
+                    $this->userBookingCacheService->changeCacheEntry($id, ['status' => $userBooking->status]);
+                }
+            } catch (\Exception) {
                 $statuses[] = [
                     'exchangeId' => $id,
                     'status' => null,
@@ -49,8 +59,6 @@ class GetStatusByIdsController extends AbstractController
             }
         }
 
-        $data = $this->serializer->serialize($statuses, 'json', ['groups' => 'resource']);
-
-        return new Response($data, 200);
+        return new JsonResponse($statuses);
     }
 }

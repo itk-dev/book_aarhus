@@ -4,7 +4,9 @@ namespace App\Service;
 
 use App\Entity\Main\UserBooking;
 use App\Entity\Main\UserBookingCacheEntry;
+use App\Entity\Resources\AAKResource;
 use App\Exception\MicrosoftGraphCommunicationException;
+use App\Repository\Resources\AAKResourceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -19,6 +21,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly MicrosoftGraphBookingService $microsoftGraphBookingService,
         private readonly LoggerInterface $logger,
+        private readonly AAKResourceRepository $resourceRepository,
     ) {
     }
 
@@ -55,6 +58,13 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
             while (isset($result['next_link'])) {
                 // Loop over all elements on page.
                 foreach ($result['data'] as $userBooking) {
+                    // Set resource display name.
+                    /** @var AAKResource $resource */
+                    $resource = $this->resourceRepository->findOneBy(['resourceMail' => $userBooking->resourceMail]);
+                    if (null !== $resource) {
+                        $userBooking->displayName = $resource->getResourceDisplayName() ?? $userBooking->displayName;
+                    }
+
                     $exchangeBookings[] = $userBooking->id;
                     try {
                         $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)
