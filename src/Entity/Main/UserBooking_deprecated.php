@@ -5,7 +5,7 @@ namespace App\Entity\Main;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-class UserBooking
+class UserBooking_deprecated
 {
     /**
      * @Groups({"userBooking"})
