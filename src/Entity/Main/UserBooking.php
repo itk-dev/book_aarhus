@@ -2,69 +2,21 @@
 
 namespace App\Entity\Main;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\ApiResource;
+use App\Repository\UserBookingRepository;
+use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\Entity(repositoryClass: UserBookingRepository::class)]
+#[ApiResource]
 class UserBooking
 {
-    /**
-     * @Groups({"userBooking"})
-     */
-    #[ApiProperty(identifier: true)]
-    public string $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
-    public string $iCalUId;
-
-    /**
-     * @Groups({"userBooking"})
-     */
-    public string $subject;
-
-    /**
-     * @Groups({"userBooking"})
-     */
-    public string $displayName;
-
-    public string $body;
-
-    /**
-     * @Groups({"userBooking"})
-     */
-    public string $status;
-
-    /**
-     * @Groups({"userBooking"})
-     */
-    public string $bookingType;
-
-    /**
-     * @Groups({"userBooking"})
-     */
-    public bool $expired;
-
-    /**
-     * @Groups({"userBooking"})
-     */
-    public \DateTime $start;
-
-    /**
-     * @Groups({"userBooking"})
-     */
-    public \DateTime $end;
-
-    /**
-     * @Groups({"userBooking"})
-     */
-    public string $resourceMail;
-
-    /**
-     * @Groups({"userBooking"})
-     */
-    public string $resourceName;
-
-    public bool $ownedByServiceAccount;
-
-    public string $userEmail;
-
-    public string $userName;
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 }
