@@ -6,7 +6,6 @@ api_platform:
         route_prefix: 'v1'
     mapping:
         paths:
-#            - '%kernel.project_dir%/config/api_platform'
             - '%kernel.project_dir%/src/Entity/Main'
             - '%kernel.project_dir%/src/Entity/Resources'
     patch_formats:
@@ -35,3 +34,4 @@ api_platform:
         graphql_playground:
             enabled: false
     enable_re_doc: false
+    metadata_backward_compatibility_layer: false
