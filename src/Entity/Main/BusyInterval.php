@@ -2,6 +2,7 @@
 
 namespace App\Entity\Main;
 
+use ApiPlatform\Action\NotFoundAction;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
