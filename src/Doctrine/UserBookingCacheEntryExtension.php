@@ -7,9 +7,9 @@ use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
 use App\Entity\Main\UserBookingCacheEntry;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
-use Symfony\Bundle\SecurityBundle\Security;
 
 final class UserBookingCacheEntryExtension implements QueryCollectionExtensionInterface
 {

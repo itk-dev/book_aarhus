@@ -29,7 +29,6 @@ class UserBookingItemProvider implements ProviderInterface
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
-
         if (!isset($uriVariables['id']) || !is_string($uriVariables['id'])) {
             throw new BadRequestHttpException('Required booking id is not set');
         }
