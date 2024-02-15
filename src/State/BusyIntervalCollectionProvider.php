@@ -2,25 +2,19 @@
 
 namespace App\State;
 
-use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Metadata\CollectionOperationInterface;
-use App\Entity\Main\BusyInterval;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
+use App\Entity\Main\BusyInterval;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Service\BookingServiceInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Uid\Ulid;
-use function PHPUnit\Framework\throwException;
 
 final class BusyIntervalCollectionProvider implements ProviderInterface
-//final class BusyIntervalCollectionProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-
     public function __construct(private readonly BookingServiceInterface $bookingService)
     {
-
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -28,25 +22,20 @@ final class BusyIntervalCollectionProvider implements ProviderInterface
         return BusyInterval::class === $resourceClass;
     }
 
-
-
-
-//      /**
-//       * {@inheritDoc}
-//       * @throws MicrosoftGraphCommunicationException
-//       */
+    /**
+     * @throws MicrosoftGraphCommunicationException
+     * @throws \Exception
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): iterable
     {
-
-        if( $operation instanceof CollectionOperationInterface){
-
-            if(!isset($context['filters'])){
+        if ($operation instanceof CollectionOperationInterface) {
+            if (!isset($context['filters'])) {
                 throw new BadRequestHttpException('Required filters are not set');
             }
 
             $filters = $context['filters'];
 
-            if(!isset($filters['dateStart'])){
+            if (!isset($filters['dateStart'])) {
                 throw new BadRequestHttpException('Required dateStart filters not set');
             }
 
@@ -58,12 +47,9 @@ final class BusyIntervalCollectionProvider implements ProviderInterface
                 throw new BadRequestHttpException('Required resources filter not set.');
             }
 
-
-
             $dateStart = new \DateTime($filters['dateStart']);
             $dateEnd = new \DateTime($filters['dateStart']);
-            $resources =  explode(',', $filters['resources']);
-
+            $resources = explode(',', $filters['resources']);
 
             $busyIntervals = $this->bookingService->getBusyIntervals($resources, $dateStart, $dateEnd);
 
@@ -79,12 +65,8 @@ final class BusyIntervalCollectionProvider implements ProviderInterface
                     yield $busyInterval;
                 }
             }
-         }
+        }
 
-//        throw new BadRequestHttpException('Bad Request !');
-
-
-
+        throw new BadRequestHttpException('Bad Request !');
     }
-
 }

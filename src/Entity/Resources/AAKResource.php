@@ -19,7 +19,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity
  */
 #[ApiResource(
-
     shortName: 'Resource',
     description: 'Resource test',
     operations: [
@@ -37,38 +36,36 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'summary' => 'Get a resource by email',
                 'operationId' => 'get-v1-resource-by-email',
 
-                'parameters'=> [
+                'parameters' => [
                     [
                         'schema' => [
                             'type' => 'string',
                             'format' => 'string',
-                            'example' => "test@example.com"
+                            'example' => 'test@example.com',
                         ],
                         'in' => 'path',
                         'required' => true,
-                        'description' => "Resource mail",
-                        'name' => 'resourceMail'
+                        'description' => 'Resource mail',
+                        'name' => 'resourceMail',
                     ],
                 ],
 
-                'response' =>[
+                'response' => [
                     '200' => [
                         'description' => 'OK',
-                    ]
+                    ],
                 ],
             ],
             normalizationContext: [
                 'groups' => ['resource'],
             ],
             name: 'get_by_email',
-
         ),
 
         new GetCollection(
             uriTemplate: '/resources',
             normalizationContext: ['groups' => ['resource']],
             filters: ['resource.search_filter', 'resource.boolean_filter', 'resource.range_filter'],
-
         ),
 
         new GetCollection(
@@ -79,19 +76,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'summary' => 'Get all resources.',
                 'operationId' => 'get-v1-all-resources',
 
-                'parameters'=> [],
-                'response' =>[
+                'parameters' => [],
+                'response' => [
                     '200' => [
                         'description' => 'OK',
-                    ]
+                    ],
                 ],
-
             ],
             normalizationContext: ['groups' => ['resource']],
             name: 'get_all'
-
-        )
-
+        ),
     ],
     normalizationContext: [
         'groups' => ['resource'],

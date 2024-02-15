@@ -25,12 +25,10 @@ class UserBookingCollectionProvider implements ProviderInterface
     ) {
     }
 
-
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return UserBooking::class === $resourceClass;
     }
-
 
     /**
      * @throws MicrosoftGraphCommunicationException
@@ -44,8 +42,6 @@ class UserBookingCollectionProvider implements ProviderInterface
         }
 
         $userId = $request->headers->get('Authorization-UserId') ?? null;
-
-
 
         if (is_null($userId)) {
             throw new BadRequestHttpException('Required Authorization-UserId header is not set.');

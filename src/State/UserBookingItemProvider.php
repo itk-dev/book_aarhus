@@ -13,7 +13,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class UserBookingItemProvider implements ProviderInterface
 {
-
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
         private readonly Security $security,

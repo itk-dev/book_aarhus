@@ -3,17 +3,16 @@
 namespace App\Entity\Main;
 
 use ApiPlatform\Action\NotFoundAction;
-use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use App\DataProvider\LocationCollectionDataProvider;
 use App\State\LocationCollectionProvider;
 
-#[ApiResource(operations:[
+#[ApiResource(operations: [
     new Get(
         controller: NotFoundAction::class,
-        openapiContext: ['description' => 'unsupported action', ],
+        openapiContext: ['description' => 'unsupported action'],
         output: false,
         read: false
     ),
@@ -23,7 +22,7 @@ use App\State\LocationCollectionProvider;
             'description' => 'Retrieves locations.',
             'summary' => 'Retrieves locations.',
             'operationId' => 'get-v1-locations',
-            'parameters'=> [],
+            'parameters' => [],
 
             'responses' => [
                 '200' => [
@@ -46,11 +45,8 @@ use App\State\LocationCollectionProvider;
             ],
             'headers' => [],
         ],
-//        provider: LocationCollectionDataProvider::class
         provider: LocationCollectionProvider::class,
-
     ),
-
 ])]
 class Location
 {

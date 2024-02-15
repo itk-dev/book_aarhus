@@ -31,11 +31,9 @@ class UserBookingPersister implements ProcessorInterface
         return $data instanceof UserBooking;
     }
 
-
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
         if ($operation instanceof DeleteOperationInterface) {
-
             try {
                 if ($data instanceof UserBooking) {
                     if (!$this->security->isGranted(UserBookingVoter::DELETE, $data)) {
@@ -72,7 +70,5 @@ class UserBookingPersister implements ProcessorInterface
         } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
             throw new HttpException($e->getCode(), 'Booking could not be updated.');
         }
-
-
     }
 }

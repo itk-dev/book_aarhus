@@ -11,7 +11,6 @@ class LocationCollectionProvider implements ProviderInterface
 {
     public function __construct(private readonly AAKResourceRepository $AAKResourceRepository)
     {
-
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -19,8 +18,7 @@ class LocationCollectionProvider implements ProviderInterface
         return Location::class === $resourceClass;
     }
 
-
-    public function provide(Operation $operation, array $uriVariables = [],  array $context = []): iterable
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): iterable
     {
         $whitelistKey = $context['filters']['whitelistKey'] ?? null;
 
