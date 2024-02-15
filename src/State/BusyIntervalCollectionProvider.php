@@ -11,6 +11,9 @@ use App\Service\BookingServiceInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Uid\Ulid;
 
+/**
+ * @template-implements ProviderInterface<object>
+ */
 final class BusyIntervalCollectionProvider implements ProviderInterface
 {
     public function __construct(private readonly BookingServiceInterface $bookingService)

@@ -7,6 +7,9 @@ use ApiPlatform\State\ProviderInterface;
 use App\Entity\Main\Location;
 use App\Repository\Resources\AAKResourceRepository;
 
+/**
+ * @template-implements ProviderInterface<object>
+ */
 class LocationCollectionProvider implements ProviderInterface
 {
     public function __construct(private readonly AAKResourceRepository $AAKResourceRepository)

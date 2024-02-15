@@ -11,6 +11,9 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+/**
+ * @template-implements ProviderInterface<object>
+ */
 class UserBookingItemProvider implements ProviderInterface
 {
     public function __construct(
