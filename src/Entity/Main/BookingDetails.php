@@ -2,8 +2,7 @@
 
 namespace App\Entity\Main;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-
+use ApiPlatform\Metadata\ApiProperty;
 class BookingDetails
 {
     #[ApiProperty(identifier: true)]
