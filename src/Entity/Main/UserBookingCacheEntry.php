@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 [
                     'schema' => [
                         'type' => 'string',
-                        'format' => 'string'
+                        'format' => 'string',
                     ],
                     'name' => 'resources',
                     'in' => 'query',
@@ -38,7 +38,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 [
                     'schema' => [
                         'type' => 'string',
-                        'format' => 'string'
+                        'format' => 'string',
                     ],
                     'name' => 'uid',
                     'in' => 'query',
@@ -48,8 +48,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
                     'schema' => [
                         'type' => 'string',
                         'format' => 'string',
-                        'example' => 'ACCEPTED'
-
+                        'example' => 'ACCEPTED',
                     ],
                     'name' => 'status',
                     'in' => 'query',
@@ -66,7 +65,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
                                 'example1' => [
                                     'value' => [
                                         'exchangeId' => 'value1',
-                                        'status' => 'value2'
+                                        'status' => 'value2',
                                     ],
                                     'summary' => 'An example of a JSON-LD response',
                                 ],
@@ -80,11 +79,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
         filters: ['user_booking_cache_entry.search_filter', 'user_booking_cache_entry.order_filter', 'user_booking_cache_entry.date_filter'],
         provider: LocationCollectionProvider::class,
     ),
-
 ],
     normalizationContext: [
-    'groups' => ['userBookingCacheEntry'],
-]
+        'groups' => ['userBookingCacheEntry'],
+    ]
 )]
 #[ORM\Entity(repositoryClass: UserBookingCacheEntryRepository::class)]
 class UserBookingCacheEntry

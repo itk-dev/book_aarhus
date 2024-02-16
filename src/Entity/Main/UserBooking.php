@@ -43,8 +43,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'summary' => 'Get status on bookings',
                 'operationId' => 'post-v1-status-by-ids',
                 'response' => [
-                    '200' => []
-                    ]
+                    '200' => [],
+                ],
             ],
             input: UserBookingStatusInput::class,
         ),
