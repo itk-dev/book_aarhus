@@ -20,7 +20,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 #[ApiResource(
     shortName: 'Resource',
-    description: 'Resource test',
+    description: 'Resource',
     operations: [
         new Get(
 
