@@ -40,7 +40,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
                         'type' => 'string',
                         'format' => 'string'
                     ],
-                    'name' => 'uuid',
+                    'name' => 'uid',
                     'in' => 'query',
                     'description' => 'ID of the user to retrieve bookings for',
                 ],

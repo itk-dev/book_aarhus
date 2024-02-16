@@ -9,6 +9,8 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use App\Controller\GetStatusByIdsController;
+use App\Dto\UserBookingStatusInput;
 use App\State\UserBookingCollectionProvider;
 use App\State\UserBookingPersister;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -35,9 +37,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Post(
             uriTemplate: '/status-by-ids',
-            controller: 'App\Controller\GetStatusByIdsController',
-            openapiContext: [],
-            input: 'App\Dto\UserBookingStatusInput',
+            controller: GetStatusByIdsController::class,
+            openapiContext: [
+                'description' => 'Get status on bookings by ids',
+                'summary' => 'Get status on bookings',
+                'operationId' => 'post-v1-status-by-ids',
+                'response' => [
+                    '200' => []
+                    ]
+            ],
+            input: UserBookingStatusInput::class,
         ),
         new GetCollection(
             uriTemplate: '/user-bookings',

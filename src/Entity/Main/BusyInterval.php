@@ -20,6 +20,7 @@ use App\State\BusyIntervalCollectionProvider;
         new GetCollection(
             uriTemplate: '/busy-intervals',
             openapiContext: [
+                "operationId" => "get-v1-busy-intervals",
                 'description' => 'Retrieves busy intervals.',
                 'summary' => 'Retrieves busy intervals.',
 

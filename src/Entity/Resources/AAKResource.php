@@ -23,10 +23,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
     description: 'Resource test',
     operations: [
         new Get(
+
             uriTemplate: '/resources/{id}',
+            openapiContext: ['operationId'=>'getResourceItem',],
             normalizationContext: [
                 'groups' => ['resource'],
-            ],
+            ]
         ),
         new Get(
             uriTemplate: '/resource-by-email/{resourceMail}',
@@ -64,6 +66,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
         new GetCollection(
             uriTemplate: '/resources',
+            openapiContext: ['operationId' => 'getResourceCollection'],
             normalizationContext: ['groups' => ['resource']],
             filters: ['resource.search_filter', 'resource.boolean_filter', 'resource.range_filter'],
         ),
@@ -75,7 +78,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'description' => 'Get all resources in a minified view.',
                 'summary' => 'Get all resources.',
                 'operationId' => 'get-v1-all-resources',
-
                 'parameters' => [],
                 'response' => [
                     '200' => [
