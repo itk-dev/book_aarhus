@@ -2110,7 +2110,7 @@
             },
             "Resource-resource": {
                 "type": "object",
-                "description": "Resource test",
+                "description": "Resource",
                 "deprecated": false,
                 "properties": {
                     "id": {
@@ -2241,7 +2241,7 @@
             },
             "Resource.jsonld-resource": {
                 "type": "object",
-                "description": "Resource test",
+                "description": "Resource",
                 "deprecated": false,
                 "properties": {
                     "@id": {

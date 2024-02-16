@@ -1394,7 +1394,7 @@ components:
           format: date-time
     Resource-resource:
       type: object
-      description: 'Resource test'
+      description: Resource
       deprecated: false
       properties:
         id:
@@ -1489,7 +1489,7 @@ components:
           nullable: true
     Resource.jsonld-resource:
       type: object
-      description: 'Resource test'
+      description: Resource
       deprecated: false
       properties:
         '@id':
