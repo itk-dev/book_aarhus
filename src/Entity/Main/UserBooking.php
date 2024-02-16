@@ -37,7 +37,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
             uriTemplate: '/status-by-ids',
             controller: 'App\Controller\GetStatusByIdsController',
             openapiContext: [],
-            shortName: 'Userbooking',
             input: 'App\Dto\UserBookingStatusInput',
         ),
         new GetCollection(
@@ -88,7 +87,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
                     ],
                 ],
             ],
-            shortName: 'Userbooking',
             normalizationContext: [
                 'groups' => ['userBooking'],
             ],
