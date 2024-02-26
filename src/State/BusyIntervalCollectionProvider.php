@@ -69,7 +69,5 @@ final class BusyIntervalCollectionProvider implements ProviderInterface
                 }
             }
         }
-
-        throw new BadRequestHttpException('Bad Request !');
     }
 }
