@@ -14,8 +14,16 @@ MICROSOFT_GRAPH_SERVICE_ACCOUNT_PASSWORD=""
 ###< App ###
 ```
 
-A command is available to test requests in Microsoft Graph:
+There are several commands available to test requests in Microsoft Graph:
+
+```
+app:test:graph-busy            Get busy intervals for resource
+app:test:graph-create-booking  Create a booking
+app:test:graph-user-booking    Get user booking for given UserId
+```
+
+eg.
 
 ```shell
-docker compose exec phpfpm bin/console app:graph:test
+docker compose exec phpfpm bin/console app:test:graph-create-booking
 ```
