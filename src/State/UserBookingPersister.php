@@ -17,6 +17,9 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
+/**
+ * @template-implements ProcessorInterface<UserBooking, UserBooking>
+ */
 class UserBookingPersister implements ProcessorInterface
 {
     public function __construct(
@@ -26,7 +29,7 @@ class UserBookingPersister implements ProcessorInterface
     ) {
     }
 
-    public function supports($data, array $context = []): bool
+    public function supports($data): bool
     {
         return $data instanceof UserBooking;
     }

@@ -16,22 +16,26 @@ class LocationCollectionProvider implements ProviderInterface
     {
     }
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    public function supports(string $resourceClass): bool
     {
         return Location::class === $resourceClass;
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): iterable
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
     {
         $whitelistKey = $context['filters']['whitelistKey'] ?? null;
 
         $locationNames = $this->AAKResourceRepository->findAllLocations($whitelistKey);
 
+        $result = [];
+
         foreach ($locationNames as $entry) {
             $location = new Location();
             $location->name = $entry['location'];
 
-            yield $location;
+            $result[] = $location;
         }
+
+        return $result;
     }
 }

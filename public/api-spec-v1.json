@@ -1,5 +1,5 @@
 {
-    "openapi": "3.0.0",
+    "openapi": "3.1.0",
     "info": {
         "title": "Book Aarhus API Service",
         "description": "API Service for Book Aarhus",
@@ -34,11 +34,6 @@
                                 "schema": {
                                     "$ref": "#/components/schemas/Booking"
                                 }
-                            },
-                            "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Booking"
-                                }
                             }
                         },
                         "links": {}
@@ -65,16 +60,16 @@
                             "schema": {
                                 "$ref": "#/components/schemas/Booking.WebformBookingInput"
                             }
-                        },
-                        "text/html": {
-                            "schema": {
-                                "$ref": "#/components/schemas/Booking.WebformBookingInput"
-                            }
                         }
                     },
                     "required": true
                 },
-                "deprecated": false
+                "deprecated": false,
+                "x-response": {
+                    "200": {
+                        "description": "Created"
+                    }
+                }
             },
             "parameters": []
         },
@@ -175,7 +170,8 @@
                         "allowReserved": false
                     }
                 ],
-                "deprecated": false
+                "deprecated": false,
+                "x-headers": []
             },
             "parameters": []
         },
@@ -223,7 +219,8 @@
                         "allowReserved": false
                     }
                 ],
-                "deprecated": false
+                "deprecated": false,
+                "x-headers": []
             },
             "parameters": []
         },
@@ -243,11 +240,6 @@
                                 }
                             },
                             "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Resource-resource"
-                                }
-                            },
-                            "text/html": {
                                 "schema": {
                                     "$ref": "#/components/schemas/Resource-resource"
                                 }
@@ -280,7 +272,7 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "AAKResource identifier",
+                        "description": "Resource identifier",
                         "required": true,
                         "deprecated": false,
                         "allowEmptyValue": false,
@@ -292,7 +284,12 @@
                         "allowReserved": false
                     }
                 ],
-                "deprecated": false
+                "deprecated": false,
+                "x-response": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
             },
             "parameters": []
         },
@@ -380,8 +377,10 @@
                                                                 "type": "string"
                                                             },
                                                             "property": {
-                                                                "type": "string",
-                                                                "nullable": true
+                                                                "type": [
+                                                                    "string",
+                                                                    "null"
+                                                                ]
                                                             },
                                                             "required": {
                                                                 "type": "boolean"
@@ -398,14 +397,6 @@
                                 }
                             },
                             "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Resource-resource"
-                                    }
-                                }
-                            },
-                            "text/html": {
                                 "schema": {
                                     "type": "array",
                                     "items": {
@@ -767,8 +758,10 @@
                                                                 "type": "string"
                                                             },
                                                             "property": {
-                                                                "type": "string",
-                                                                "nullable": true
+                                                                "type": [
+                                                                    "string",
+                                                                    "null"
+                                                                ]
                                                             },
                                                             "required": {
                                                                 "type": "boolean"
@@ -785,14 +778,6 @@
                                 }
                             },
                             "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Resource-resource"
-                                    }
-                                }
-                            },
-                            "text/html": {
                                 "schema": {
                                     "type": "array",
                                     "items": {
@@ -822,7 +807,12 @@
                         "allowReserved": false
                     }
                 ],
-                "deprecated": false
+                "deprecated": false,
+                "x-response": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
             },
             "parameters": []
         },
@@ -845,11 +835,6 @@
                                 "schema": {
                                     "$ref": "#/components/schemas/Resource-resource"
                                 }
-                            },
-                            "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Resource-resource"
-                                }
                             }
                         }
                     },
@@ -863,7 +848,7 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "AAKResource identifier",
+                        "description": "Resource identifier",
                         "required": true,
                         "deprecated": false,
                         "allowEmptyValue": false,
@@ -898,11 +883,6 @@
                                 "schema": {
                                     "$ref": "#/components/schemas/UserBooking-userBooking"
                                 }
-                            },
-                            "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBooking-userBooking"
-                                }
                             }
                         },
                         "links": {}
@@ -929,16 +909,14 @@
                             "schema": {
                                 "$ref": "#/components/schemas/UserBooking.UserBookingStatusInput"
                             }
-                        },
-                        "text/html": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UserBooking.UserBookingStatusInput"
-                            }
                         }
                     },
                     "required": true
                 },
-                "deprecated": false
+                "deprecated": false,
+                "x-response": {
+                    "200": []
+                }
             },
             "parameters": []
         },
@@ -1247,13 +1225,14 @@
                         "allowReserved": false
                     }
                 ],
-                "deprecated": false
+                "deprecated": false,
+                "x-headers": []
             },
             "parameters": []
         },
         "/v1/user-booking-cache-entries/{id}": {
             "get": {
-                "operationId": "api_user-booking-cache-entries_id_get",
+                "operationId": "api_v1user-booking-cache-entries_id_get",
                 "tags": [
                     "UserBookingCacheEntry"
                 ],
@@ -1265,9 +1244,6 @@
                                 "schema": {}
                             },
                             "application/json": {
-                                "schema": {}
-                            },
-                            "text/html": {
                                 "schema": {}
                             }
                         }
@@ -1382,8 +1358,10 @@
                                                                 "type": "string"
                                                             },
                                                             "property": {
-                                                                "type": "string",
-                                                                "nullable": true
+                                                                "type": [
+                                                                    "string",
+                                                                    "null"
+                                                                ]
                                                             },
                                                             "required": {
                                                                 "type": "boolean"
@@ -1400,14 +1378,6 @@
                                 }
                             },
                             "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/UserBooking-userBooking"
-                                    }
-                                }
-                            },
-                            "text/html": {
                                 "schema": {
                                     "type": "array",
                                     "items": {
@@ -1453,13 +1423,40 @@
                         "allowReserved": false
                     }
                 ],
-                "deprecated": false
+                "deprecated": false,
+                "x-headers": [],
+                "x-response": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/ld+json": {
+                                "examples": {
+                                    "example1": {
+                                        "value": {
+                                            "id": "1",
+                                            "subject": "Horse species",
+                                            "displayName": "Pony",
+                                            "status": "away from keyboard",
+                                            "bookingType": "Rent",
+                                            "expired": false,
+                                            "start": "2024-01-16T08:02:25.084Z",
+                                            "end": "2024-01-16T08:02:25.084Z",
+                                            "resourceMail": "Horse@Pony.dk",
+                                            "resourceName": "Book about Hors species"
+                                        },
+                                        "summary": "An example of a JSON-LD response"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             },
             "parameters": []
         },
         "/v1/user-bookings/{id}": {
             "get": {
-                "operationId": "api_user-bookings_id_get",
+                "operationId": "api_v1user-bookings_id_get",
                 "tags": [
                     "UserBooking"
                 ],
@@ -1473,11 +1470,6 @@
                                 }
                             },
                             "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBooking-userBooking"
-                                }
-                            },
-                            "text/html": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UserBooking-userBooking"
                                 }
@@ -1509,7 +1501,7 @@
                 "deprecated": false
             },
             "delete": {
-                "operationId": "api_user-bookings_id_delete",
+                "operationId": "api_v1user-bookings_id_delete",
                 "tags": [
                     "UserBooking"
                 ],
@@ -1542,7 +1534,7 @@
                 "deprecated": false
             },
             "patch": {
-                "operationId": "api_user-bookings_id_patch",
+                "operationId": "api_v1user-bookings_id_patch",
                 "tags": [
                     "UserBooking"
                 ],
@@ -1556,11 +1548,6 @@
                                 }
                             },
                             "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBooking-userBooking"
-                                }
-                            },
-                            "text/html": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UserBooking-userBooking"
                                 }
@@ -1661,8 +1648,10 @@
                         "type": "string"
                     },
                     "whitelistKey": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     }
                 }
             },
@@ -1714,41 +1703,6 @@
                 "description": "",
                 "deprecated": false,
                 "properties": {
-                    "@context": {
-                        "readOnly": true,
-                        "oneOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "object",
-                                "properties": {
-                                    "@vocab": {
-                                        "type": "string"
-                                    },
-                                    "hydra": {
-                                        "type": "string",
-                                        "enum": [
-                                            "http://www.w3.org/ns/hydra/core#"
-                                        ]
-                                    }
-                                },
-                                "required": [
-                                    "@vocab",
-                                    "hydra"
-                                ],
-                                "additionalProperties": true
-                            }
-                        ]
-                    },
-                    "@id": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
-                    "@type": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
                     "data": {
                         "default": {
                             "webform": {
@@ -1869,8 +1823,10 @@
                         "type": "string"
                     },
                     "whitelistKey": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     }
                 }
             },
@@ -1886,14 +1842,18 @@
                         "type": "string"
                     },
                     "startTime": {
-                        "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
                     },
                     "endTime": {
-                        "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
                     }
                 }
             },
@@ -1917,14 +1877,18 @@
                         "type": "string"
                     },
                     "startTime": {
-                        "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
                     },
                     "endTime": {
-                        "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
                     }
                 }
             },
@@ -2136,27 +2100,37 @@
                         "type": "string"
                     },
                     "resourceImage": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "resourceEmailText": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "location": {
                         "type": "string"
                     },
                     "geoCoordinates": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "capacity": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "resourceDescription": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "wheelchairAccessible": {
                         "type": "boolean"
@@ -2174,68 +2148,98 @@
                         "type": "boolean"
                     },
                     "formId": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "hasHolidayOpen": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "hasOpen": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "hasWhitelist": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "permissionEmployee": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "permissionCitizen": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "permissionBusinessPartner": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "updateTimestamp": {
                         "type": "string",
                         "format": "date-time"
                     },
                     "displayName": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "city": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "streetName": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "postalCode": {
-                        "type": "integer",
-                        "nullable": true
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
                     },
                     "resourceCategory": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "resourceDisplayName": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "locationDisplayName": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "acceptConflict": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     }
                 }
             },
@@ -2302,27 +2306,37 @@
                         "type": "string"
                     },
                     "resourceImage": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "resourceEmailText": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "location": {
                         "type": "string"
                     },
                     "geoCoordinates": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "capacity": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "resourceDescription": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "wheelchairAccessible": {
                         "type": "boolean"
@@ -2340,68 +2354,98 @@
                         "type": "boolean"
                     },
                     "formId": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "hasHolidayOpen": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "hasOpen": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "hasWhitelist": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "permissionEmployee": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "permissionCitizen": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "permissionBusinessPartner": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "updateTimestamp": {
                         "type": "string",
                         "format": "date-time"
                     },
                     "displayName": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "city": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "streetName": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "postalCode": {
-                        "type": "integer",
-                        "nullable": true
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
                     },
                     "resourceCategory": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "resourceDisplayName": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "locationDisplayName": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "acceptConflict": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     }
                 }
             },
@@ -2516,41 +2560,6 @@
                 "description": "",
                 "deprecated": false,
                 "properties": {
-                    "@context": {
-                        "readOnly": true,
-                        "oneOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "object",
-                                "properties": {
-                                    "@vocab": {
-                                        "type": "string"
-                                    },
-                                    "hydra": {
-                                        "type": "string",
-                                        "enum": [
-                                            "http://www.w3.org/ns/hydra/core#"
-                                        ]
-                                    }
-                                },
-                                "required": [
-                                    "@vocab",
-                                    "hydra"
-                                ],
-                                "additionalProperties": true
-                            }
-                        ]
-                    },
-                    "@id": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
-                    "@type": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
                     "ids": {
                         "type": "array",
                         "items": {
