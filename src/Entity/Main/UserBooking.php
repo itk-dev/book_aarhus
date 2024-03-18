@@ -12,7 +12,7 @@ use ApiPlatform\Metadata\Post;
 use App\Controller\GetStatusByIdsController;
 use App\Dto\UserBookingStatusInput;
 use App\State\UserBookingCollectionProvider;
-use App\State\UserBookingPersister;
+use App\State\UserBookingProcessor;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
@@ -105,7 +105,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'groups' => ['userBooking'],
     ],
     provider: UserBookingCollectionProvider::class,
-    processor: UserBookingPersister::class,
+    processor: UserBookingProcessor::class,
 )]
 class UserBooking
 {

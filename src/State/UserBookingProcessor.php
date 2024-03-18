@@ -20,7 +20,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 /**
  * @template-implements ProcessorInterface<UserBooking, UserBooking>
  */
-class UserBookingPersister implements ProcessorInterface
+class UserBookingProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
