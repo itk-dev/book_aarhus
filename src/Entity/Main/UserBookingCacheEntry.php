@@ -77,7 +77,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'headers' => [],
         ],
         filters: ['user_booking_cache_entry.search_filter', 'user_booking_cache_entry.order_filter', 'user_booking_cache_entry.date_filter'],
-        provider: LocationCollectionProvider::class,
     ),
 ],
     normalizationContext: [

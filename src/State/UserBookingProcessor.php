@@ -53,25 +53,26 @@ class UserBookingPersister implements ProcessorInterface
             } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
                 throw new HttpException($e->getCode(), 'Booking could not be deleted.');
             }
-        }
+        } else {
+            try {
+                if ($data instanceof UserBooking) {
+                    if (!$this->security->isGranted(UserBookingVoter::EDIT, $data)) {
+                        throw new AccessDeniedHttpException('Access denied');
+                    }
 
-        try {
-            if ($data instanceof UserBooking) {
-                if (!$this->security->isGranted(UserBookingVoter::EDIT, $data)) {
-                    throw new AccessDeniedHttpException('Access denied');
+                    $this->bookingService->updateBooking($data);
+
+                    $this->bus->dispatch(new SendUserBookingNotificationMessage(
+                        $data,
+                        NotificationTypeEnum::UPDATE_SUCCESS
+                    ));
                 }
 
-                $this->bookingService->updateBooking($data);
-
-                $this->bus->dispatch(new SendUserBookingNotificationMessage(
-                    $data,
-                    NotificationTypeEnum::UPDATE_SUCCESS
-                ));
+            } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
+                throw new HttpException($e->getCode(), 'Booking could not be updated.');
             }
-
-            return $data;
-        } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
-            throw new HttpException($e->getCode(), 'Booking could not be updated.');
         }
+
+        return $data;
     }
 }
