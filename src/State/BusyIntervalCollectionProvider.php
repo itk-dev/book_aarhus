@@ -53,7 +53,7 @@ class BusyIntervalCollectionProvider implements ProviderInterface
             }
 
             $dateStart = new \DateTime($filters['dateStart']);
-            $dateEnd = new \DateTime($filters['dateStart']);
+            $dateEnd = new \DateTime($filters['dateEnd']);
             $resources = explode(',', $filters['resources']);
 
             $busyIntervals = $this->bookingService->getBusyIntervals($resources, $dateStart, $dateEnd);
