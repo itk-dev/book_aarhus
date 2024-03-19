@@ -47,7 +47,6 @@ class UserBookingProcessor implements ProcessorInterface
 
                     $this->bookingService->deleteBooking($data);
 
-
                     $this->bus->dispatch(new SendUserBookingNotificationMessage(
                         $data,
                         NotificationTypeEnum::DELETE_SUCCESS
@@ -56,9 +55,7 @@ class UserBookingProcessor implements ProcessorInterface
                     $this->bus->dispatch(new RemoveBookingFromCacheMessage(
                         $data->id
                     ));
-
                 }
-
             } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
                 throw new HttpException($e->getCode(), 'Booking could not be deleted.');
             }
@@ -84,7 +81,6 @@ class UserBookingProcessor implements ProcessorInterface
                         ],
                     ));
                 }
-
             } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
                 throw new HttpException($e->getCode(), 'Booking could not be updated.');
             }
