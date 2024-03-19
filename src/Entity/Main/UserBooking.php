@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\Post;
 use App\Controller\GetStatusByIdsController;
 use App\Dto\UserBookingStatusInput;
 use App\State\UserBookingCollectionProvider;
+use App\State\UserBookingItemProvider;
 use App\State\UserBookingProcessor;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -28,12 +29,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
             normalizationContext: [
                 'groups' => ['userBooking'],
             ],
+            provider: UserBookingItemProvider::class,
         ),
         new Patch(
             uriTemplate: '/user-bookings/{id}',
             normalizationContext: [
                 'groups' => ['userBooking'],
             ],
+            provider: UserBookingItemProvider::class,
         ),
         new Post(
             uriTemplate: '/status-by-ids',

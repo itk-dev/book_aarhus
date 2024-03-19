@@ -38,6 +38,8 @@ class UserBookingCollectionProvider implements ProviderInterface
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object
     {
+//        var_dump($operation);
+//        die(__FILE__);
         $request = $this->requestStack->getCurrentRequest();
 
         if (is_null($request)) {

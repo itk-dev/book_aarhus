@@ -9,7 +9,9 @@ use App\Entity\Main\UserBooking;
 use App\Enum\NotificationTypeEnum;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
+use App\Message\RemoveBookingFromCacheMessage;
 use App\Message\SendUserBookingNotificationMessage;
+use App\Message\UpdateBookingInCacheMessage;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -45,11 +47,18 @@ class UserBookingProcessor implements ProcessorInterface
 
                     $this->bookingService->deleteBooking($data);
 
+
                     $this->bus->dispatch(new SendUserBookingNotificationMessage(
                         $data,
                         NotificationTypeEnum::DELETE_SUCCESS
                     ));
+
+                    $this->bus->dispatch(new RemoveBookingFromCacheMessage(
+                        $data->id
+                    ));
+
                 }
+
             } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
                 throw new HttpException($e->getCode(), 'Booking could not be deleted.');
             }
@@ -65,6 +74,14 @@ class UserBookingProcessor implements ProcessorInterface
                     $this->bus->dispatch(new SendUserBookingNotificationMessage(
                         $data,
                         NotificationTypeEnum::UPDATE_SUCCESS
+                    ));
+
+                    $this->bus->dispatch(new UpdateBookingInCacheMessage(
+                        $data->id,
+                        [
+                            'start' => $data->start,
+                            'end' => $data->end,
+                        ],
                     ));
                 }
 

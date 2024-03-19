@@ -60,6 +60,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             normalizationContext: [
                 'groups' => ['resource'],
             ],
+            read: false,
             name: 'get_by_email',
         ),
 
