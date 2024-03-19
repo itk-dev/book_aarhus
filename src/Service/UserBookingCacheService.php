@@ -47,7 +47,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      *
      * @throws \App\Exception\MicrosoftGraphCommunicationException
      */
-    public function updateCache($removeOutdated = true): void
+    public function updateCache(bool $removeOutdated = true): void
     {
         try {
             $token = $this->graphHelperService->authenticateAsServiceAccount();
@@ -199,7 +199,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      *
      * @return \App\Entity\Main\UserBookingCacheEntry
      */
-    private function setCacheEntityValuesFromArray($entity, array $data): UserBookingCacheEntry
+    private function setCacheEntityValuesFromArray(UserBookingCacheEntry $entity, array $data): UserBookingCacheEntry
     {
         $entity->setTitle($data['subject']);
         $entity->setExchangeId($data['id']);

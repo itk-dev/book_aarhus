@@ -2,6 +2,11 @@
 
 namespace App\Entity\Resources;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use App\Controller\GetAllResourcesController;
+use App\Controller\GetResourceByEmailController;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,6 +18,81 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table(name="ExtBooking.AAKResources")
  * @ORM\Entity
  */
+#[ApiResource(
+    shortName: 'Resource',
+    description: 'Resource',
+    operations: [
+        new Get(
+            uriTemplate: '/resources/{id}',
+            openapiContext: ['operationId' => 'getResourceItem'],
+            normalizationContext: [
+                'groups' => ['resource'],
+            ]
+        ),
+        new Get(
+            uriTemplate: '/resource-by-email/{resourceMail}',
+            controller: GetResourceByEmailController::class,
+            openapiContext: [
+                'description' => 'Get a resource by email',
+                'summary' => 'Get a resource by email',
+                'operationId' => 'get-v1-resource-by-email',
+
+                'parameters' => [
+                    [
+                        'schema' => [
+                            'type' => 'string',
+                            'format' => 'string',
+                            'example' => 'test@example.com',
+                        ],
+                        'in' => 'path',
+                        'required' => true,
+                        'description' => 'Resource mail',
+                        'name' => 'resourceMail',
+                    ],
+                ],
+
+                'response' => [
+                    '200' => [
+                        'description' => 'OK',
+                    ],
+                ],
+            ],
+            normalizationContext: [
+                'groups' => ['resource'],
+            ],
+            read: false,
+            name: 'get_by_email',
+        ),
+
+        new GetCollection(
+            uriTemplate: '/resources',
+            openapiContext: ['operationId' => 'getResourceCollection'],
+            normalizationContext: ['groups' => ['resource']],
+            filters: ['resource.search_filter', 'resource.boolean_filter', 'resource.range_filter'],
+        ),
+
+        new GetCollection(
+            uriTemplate: '/resources-all',
+            controller: GetAllResourcesController::class,
+            openapiContext: [
+                'description' => 'Get all resources in a minified view.',
+                'summary' => 'Get all resources.',
+                'operationId' => 'get-v1-all-resources',
+                'parameters' => [],
+                'response' => [
+                    '200' => [
+                        'description' => 'OK',
+                    ],
+                ],
+            ],
+            normalizationContext: ['groups' => ['resource']],
+            name: 'get_all'
+        ),
+    ],
+    normalizationContext: [
+        'groups' => ['resource'],
+    ]
+)]
 class AAKResource
 {
     /**
