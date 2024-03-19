@@ -5,6 +5,8 @@ namespace App\State;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Entity\Main\UserBooking;
+use App\Exception\MicrosoftGraphCommunicationException;
+use App\Exception\UserBookingException;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -22,11 +24,15 @@ class UserBookingItemProvider implements ProviderInterface
     ) {
     }
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    public function supports(string $resourceClass): bool
     {
         return UserBooking::class === $resourceClass;
     }
 
+    /**
+     * @throws MicrosoftGraphCommunicationException
+     * @throws UserBookingException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
         if (!isset($uriVariables['id']) || !is_string($uriVariables['id'])) {

@@ -28,7 +28,7 @@ class UserBookingCollectionProvider implements ProviderInterface
     ) {
     }
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    public function supports(string $resourceClass): bool
     {
         return UserBooking::class === $resourceClass;
     }
@@ -36,7 +36,7 @@ class UserBookingCollectionProvider implements ProviderInterface
     /**
      * @throws MicrosoftGraphCommunicationException
      */
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): iterable
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object
     {
         $request = $this->requestStack->getCurrentRequest();
 

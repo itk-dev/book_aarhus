@@ -7,7 +7,6 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\Main\UserBookingCacheEntryRepository;
-use App\State\LocationCollectionProvider;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -77,7 +76,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'headers' => [],
         ],
         filters: ['user_booking_cache_entry.search_filter', 'user_booking_cache_entry.order_filter', 'user_booking_cache_entry.date_filter'],
-        provider: LocationCollectionProvider::class,
     ),
 ],
     normalizationContext: [

@@ -14,13 +14,13 @@ use Symfony\Component\Uid\Ulid;
 /**
  * @template-implements ProviderInterface<object>
  */
-final class BusyIntervalCollectionProvider implements ProviderInterface
+class BusyIntervalCollectionProvider implements ProviderInterface
 {
     public function __construct(private readonly BookingServiceInterface $bookingService)
     {
     }
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    public function supports(string $resourceClass): bool
     {
         return BusyInterval::class === $resourceClass;
     }
@@ -29,8 +29,10 @@ final class BusyIntervalCollectionProvider implements ProviderInterface
      * @throws MicrosoftGraphCommunicationException
      * @throws \Exception
      */
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): iterable
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
     {
+        $result = [];
+
         if ($operation instanceof CollectionOperationInterface) {
             if (!isset($context['filters'])) {
                 throw new BadRequestHttpException('Required filters are not set');
@@ -51,7 +53,7 @@ final class BusyIntervalCollectionProvider implements ProviderInterface
             }
 
             $dateStart = new \DateTime($filters['dateStart']);
-            $dateEnd = new \DateTime($filters['dateStart']);
+            $dateEnd = new \DateTime($filters['dateEnd']);
             $resources = explode(',', $filters['resources']);
 
             $busyIntervals = $this->bookingService->getBusyIntervals($resources, $dateStart, $dateEnd);
@@ -65,9 +67,11 @@ final class BusyIntervalCollectionProvider implements ProviderInterface
                     $busyInterval->startTime = new \DateTime($entry['startTime']['dateTime'], new \DateTimeZone($entry['startTime']['timeZone']));
                     $busyInterval->endTime = new \DateTime($entry['endTime']['dateTime'], new \DateTimeZone($entry['endTime']['timeZone']));
 
-                    yield $busyInterval;
+                    $result[] = $busyInterval;
                 }
             }
         }
+
+        return $result;
     }
 }

@@ -9,22 +9,14 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
-## [1.2.3] - 2024-02-16
-
 ### Changed
 
-- Updated the project, it now uses ApiResource instead of config/.yml
-- Updated class Extensions and fucntions.
-- Updated api/core to version 3.0.0
-
-### Added
-
-- Added State.
-- RemovedDataProvider and DataPersister.
-
-### Fixed
-
-- Fixed breaking api-spec differences after the update.
+- Updated api/core to version 3.2.x
+  - Updated to use ApiResource attributes instead of yaml.
+  - Updated class extensions and functions.
+  - Updated data providers and persisters to
+    state providers and processers respectively.
+- Removed locations and GET user bookings endpoints.
 
 ## [1.2.2] - 2023-11-28
 

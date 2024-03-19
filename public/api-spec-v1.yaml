@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.1.0
 info:
   title: 'Book Aarhus API Service'
   description: 'API Service for Book Aarhus'
@@ -25,9 +25,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Booking'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/Booking'
           links: {  }
         400:
           description: 'Invalid input'
@@ -45,11 +42,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Booking.WebformBookingInput'
-          text/html:
-            schema:
-              $ref: '#/components/schemas/Booking.WebformBookingInput'
         required: true
       deprecated: false
+      x-response:
+        200:
+          description: Created
     parameters: []
   /v1/busy-intervals:
     get:
@@ -125,38 +122,7 @@ paths:
           explode: false
           allowReserved: false
       deprecated: false
-    parameters: []
-  /v1/locations:
-    get:
-      operationId: get-v1-locations
-      tags:
-        - Location
-      responses:
-        200:
-          description: OK
-          content:
-            application/ld+json:
-              examples:
-                example1:
-                  value: { '@id': /v1/locations/LOCATION1, '@type': Location, name: 'Example Location' }
-                  summary: 'An example of a JSON-LD response'
-      summary: 'Retrieves locations.'
-      description: 'Retrieves locations.'
-      parameters:
-        -
-          name: page
-          in: query
-          description: 'The collection page number'
-          required: false
-          deprecated: false
-          allowEmptyValue: true
-          schema:
-            type: integer
-            default: 1
-          style: form
-          explode: false
-          allowReserved: false
-      deprecated: false
+      x-headers: []
     parameters: []
   '/v1/resource-by-email/{resourceMail}':
     get:
@@ -171,9 +137,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Resource.jsonld-resource'
             application/json:
-              schema:
-                $ref: '#/components/schemas/Resource-resource'
-            text/html:
               schema:
                 $ref: '#/components/schemas/Resource-resource'
         404:
@@ -198,7 +161,7 @@ paths:
         -
           name: id
           in: path
-          description: 'AAKResource identifier'
+          description: 'Resource identifier'
           required: true
           deprecated: false
           allowEmptyValue: false
@@ -208,6 +171,9 @@ paths:
           explode: false
           allowReserved: false
       deprecated: false
+      x-response:
+        200:
+          description: OK
     parameters: []
   /v1/resources:
     get:
@@ -225,15 +191,10 @@ paths:
                   'hydra:member': { type: array, items: { $ref: '#/components/schemas/Resource.jsonld-resource' } }
                   'hydra:totalItems': { type: integer, minimum: 0 }
                   'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } }, example: { '@id': string, type: string, 'hydra:first': string, 'hydra:last': string, 'hydra:previous': string, 'hydra:next': string } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: [string, 'null'] }, required: { type: boolean } } } } } }
                 required:
                   - 'hydra:member'
             application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Resource-resource'
-            text/html:
               schema:
                 type: array
                 items:
@@ -480,15 +441,10 @@ paths:
                   'hydra:member': { type: array, items: { $ref: '#/components/schemas/Resource.jsonld-resource' } }
                   'hydra:totalItems': { type: integer, minimum: 0 }
                   'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } }, example: { '@id': string, type: string, 'hydra:first': string, 'hydra:last': string, 'hydra:previous': string, 'hydra:next': string } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: [string, 'null'] }, required: { type: boolean } } } } } }
                 required:
                   - 'hydra:member'
             application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Resource-resource'
-            text/html:
               schema:
                 type: array
                 items:
@@ -510,6 +466,9 @@ paths:
           explode: false
           allowReserved: false
       deprecated: false
+      x-response:
+        200:
+          description: OK
     parameters: []
   '/v1/resources/{id}':
     get:
@@ -526,9 +485,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Resource-resource'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/Resource-resource'
         404:
           description: 'Resource not found'
       summary: 'Retrieves a Resource resource.'
@@ -537,7 +493,7 @@ paths:
         -
           name: id
           in: path
-          description: 'AAKResource identifier'
+          description: 'Resource identifier'
           required: true
           deprecated: false
           allowEmptyValue: false
@@ -563,9 +519,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserBooking-userBooking'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/UserBooking-userBooking'
           links: {  }
         400:
           description: 'Invalid input'
@@ -583,11 +536,10 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserBooking.UserBookingStatusInput'
-          text/html:
-            schema:
-              $ref: '#/components/schemas/UserBooking.UserBookingStatusInput'
         required: true
       deprecated: false
+      x-response:
+        200: []
     parameters: []
   /v1/user-booking-cache-entries:
     get:
@@ -843,10 +795,11 @@ paths:
           explode: false
           allowReserved: false
       deprecated: false
+      x-headers: []
     parameters: []
   '/v1/user-booking-cache-entries/{id}':
     get:
-      operationId: api_user-booking-cache-entries_id_get
+      operationId: api_v1user-booking-cache-entries_id_get
       tags:
         - UserBookingCacheEntry
       responses:
@@ -856,8 +809,6 @@ paths:
             application/ld+json:
               schema: {  }
             application/json:
-              schema: {  }
-            text/html:
               schema: {  }
         404:
           description: 'Resource not found'
@@ -894,15 +845,10 @@ paths:
                   'hydra:member': { type: array, items: { $ref: '#/components/schemas/UserBooking.jsonld-userBooking' } }
                   'hydra:totalItems': { type: integer, minimum: 0 }
                   'hydra:view': { type: object, properties: { '@id': { type: string, format: iri-reference }, '@type': { type: string }, 'hydra:first': { type: string, format: iri-reference }, 'hydra:last': { type: string, format: iri-reference }, 'hydra:previous': { type: string, format: iri-reference }, 'hydra:next': { type: string, format: iri-reference } }, example: { '@id': string, type: string, 'hydra:first': string, 'hydra:last': string, 'hydra:previous': string, 'hydra:next': string } }
-                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: string, nullable: true }, required: { type: boolean } } } } } }
+                  'hydra:search': { type: object, properties: { '@type': { type: string }, 'hydra:template': { type: string }, 'hydra:variableRepresentation': { type: string }, 'hydra:mapping': { type: array, items: { type: object, properties: { '@type': { type: string }, variable: { type: string }, property: { type: [string, 'null'] }, required: { type: boolean } } } } } }
                 required:
                   - 'hydra:member'
             application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserBooking-userBooking'
-            text/html:
               schema:
                 type: array
                 items:
@@ -938,45 +884,20 @@ paths:
           explode: false
           allowReserved: false
       deprecated: false
-    parameters: []
-  '/v1/user-bookings/{id}':
-    get:
-      operationId: api_user-bookings_id_get
-      tags:
-        - UserBooking
-      responses:
+      x-headers: []
+      x-response:
         200:
-          description: 'UserBooking resource'
+          description: OK
           content:
             application/ld+json:
-              schema:
-                $ref: '#/components/schemas/UserBooking.jsonld-userBooking'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserBooking-userBooking'
-            text/html:
-              schema:
-                $ref: '#/components/schemas/UserBooking-userBooking'
-        404:
-          description: 'Resource not found'
-      summary: 'Retrieves a UserBooking resource.'
-      description: 'Retrieves a UserBooking resource.'
-      parameters:
-        -
-          name: id
-          in: path
-          description: 'UserBooking identifier'
-          required: true
-          deprecated: false
-          allowEmptyValue: false
-          schema:
-            type: string
-          style: simple
-          explode: false
-          allowReserved: false
-      deprecated: false
+              examples:
+                example1:
+                  value: { id: '1', subject: 'Horse species', displayName: Pony, status: 'away from keyboard', bookingType: Rent, expired: false, start: '2024-01-16T08:02:25.084Z', end: '2024-01-16T08:02:25.084Z', resourceMail: Horse@Pony.dk, resourceName: 'Book about Hors species' }
+                  summary: 'An example of a JSON-LD response'
+    parameters: []
+  '/v1/user-bookings/{id}':
     delete:
-      operationId: api_user-bookings_id_delete
+      operationId: api_v1user-bookings_id_delete
       tags:
         - UserBooking
       responses:
@@ -1001,7 +922,7 @@ paths:
           allowReserved: false
       deprecated: false
     patch:
-      operationId: api_user-bookings_id_patch
+      operationId: api_v1user-bookings_id_patch
       tags:
         - UserBooking
       responses:
@@ -1012,9 +933,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserBooking.jsonld-userBooking'
             application/json:
-              schema:
-                $ref: '#/components/schemas/UserBooking-userBooking'
-            text/html:
               schema:
                 $ref: '#/components/schemas/UserBooking-userBooking'
           links: {  }
@@ -1084,8 +1002,9 @@ components:
         userPermission:
           type: string
         whitelistKey:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
     Booking.WebformBookingInput:
       type: object
       description: ''
@@ -1120,29 +1039,6 @@ components:
       description: ''
       deprecated: false
       properties:
-        '@context':
-          readOnly: true
-          oneOf:
-            -
-              type: string
-            -
-              type: object
-              properties:
-                '@vocab':
-                  type: string
-                hydra:
-                  type: string
-                  enum: ['http://www.w3.org/ns/hydra/core#']
-              required:
-                - '@vocab'
-                - hydra
-              additionalProperties: true
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
         data:
           default:
             webform:
@@ -1224,8 +1120,9 @@ components:
         userPermission:
           type: string
         whitelistKey:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
     BusyInterval:
       type: object
       description: ''
@@ -1236,13 +1133,15 @@ components:
         resource:
           type: string
         startTime:
-          type: string
+          type:
+            - string
+            - 'null'
           format: date-time
-          nullable: true
         endTime:
-          type: string
+          type:
+            - string
+            - 'null'
           format: date-time
-          nullable: true
     BusyInterval.jsonld:
       type: object
       description: ''
@@ -1259,13 +1158,15 @@ components:
         resource:
           type: string
         startTime:
-          type: string
+          type:
+            - string
+            - 'null'
           format: date-time
-          nullable: true
         endTime:
-          type: string
+          type:
+            - string
+            - 'null'
           format: date-time
-          nullable: true
     HolidayOpenHours-resource:
       type: object
       description: ''
@@ -1317,26 +1218,6 @@ components:
         updateTimestamp:
           type: string
           format: date-time
-    Location:
-      type: object
-      description: ''
-      deprecated: false
-      properties:
-        name:
-          type: string
-    Location.jsonld:
-      type: object
-      description: ''
-      deprecated: false
-      properties:
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
-        name:
-          type: string
     OpenHours-resource:
       type: object
       description: ''
@@ -1413,22 +1294,27 @@ components:
         resourceName:
           type: string
         resourceImage:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         resourceEmailText:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         location:
           type: string
         geoCoordinates:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         capacity:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         resourceDescription:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         wheelchairAccessible:
           type: boolean
         videoConferenceEquipment:
@@ -1440,53 +1326,68 @@ components:
         catering:
           type: boolean
         formId:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         hasHolidayOpen:
-          type: boolean
-          nullable: true
+          type:
+            - boolean
+            - 'null'
         hasOpen:
-          type: boolean
-          nullable: true
+          type:
+            - boolean
+            - 'null'
         hasWhitelist:
-          type: boolean
-          nullable: true
+          type:
+            - boolean
+            - 'null'
         permissionEmployee:
-          type: boolean
-          nullable: true
+          type:
+            - boolean
+            - 'null'
         permissionCitizen:
-          type: boolean
-          nullable: true
+          type:
+            - boolean
+            - 'null'
         permissionBusinessPartner:
-          type: boolean
-          nullable: true
+          type:
+            - boolean
+            - 'null'
         updateTimestamp:
           type: string
           format: date-time
         displayName:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         city:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         streetName:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         postalCode:
-          type: integer
-          nullable: true
+          type:
+            - integer
+            - 'null'
         resourceCategory:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         resourceDisplayName:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         locationDisplayName:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         acceptConflict:
-          type: boolean
-          nullable: true
+          type:
+            - boolean
+            - 'null'
     Resource.jsonld-resource:
       type: object
       description: Resource
@@ -1531,22 +1432,27 @@ components:
         resourceName:
           type: string
         resourceImage:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         resourceEmailText:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         location:
           type: string
         geoCoordinates:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         capacity:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         resourceDescription:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         wheelchairAccessible:
           type: boolean
         videoConferenceEquipment:
@@ -1558,53 +1464,68 @@ components:
         catering:
           type: boolean
         formId:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         hasHolidayOpen:
-          type: boolean
-          nullable: true
+          type:
+            - boolean
+            - 'null'
         hasOpen:
-          type: boolean
-          nullable: true
+          type:
+            - boolean
+            - 'null'
         hasWhitelist:
-          type: boolean
-          nullable: true
+          type:
+            - boolean
+            - 'null'
         permissionEmployee:
-          type: boolean
-          nullable: true
+          type:
+            - boolean
+            - 'null'
         permissionCitizen:
-          type: boolean
-          nullable: true
+          type:
+            - boolean
+            - 'null'
         permissionBusinessPartner:
-          type: boolean
-          nullable: true
+          type:
+            - boolean
+            - 'null'
         updateTimestamp:
           type: string
           format: date-time
         displayName:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         city:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         streetName:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         postalCode:
-          type: integer
-          nullable: true
+          type:
+            - integer
+            - 'null'
         resourceCategory:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         resourceDisplayName:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         locationDisplayName:
-          type: string
-          nullable: true
+          type:
+            - string
+            - 'null'
         acceptConflict:
-          type: boolean
-          nullable: true
+          type:
+            - boolean
+            - 'null'
     UserBooking:
       type: object
       description: ''
@@ -1683,29 +1604,6 @@ components:
       description: ''
       deprecated: false
       properties:
-        '@context':
-          readOnly: true
-          oneOf:
-            -
-              type: string
-            -
-              type: object
-              properties:
-                '@vocab':
-                  type: string
-                hydra:
-                  type: string
-                  enum: ['http://www.w3.org/ns/hydra/core#']
-              required:
-                - '@vocab'
-                - hydra
-              additionalProperties: true
-        '@id':
-          readOnly: true
-          type: string
-        '@type':
-          readOnly: true
-          type: string
         ids:
           type: array
           items:

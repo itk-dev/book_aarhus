@@ -9,7 +9,9 @@ use App\Entity\Main\UserBooking;
 use App\Enum\NotificationTypeEnum;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
+use App\Message\RemoveBookingFromCacheMessage;
 use App\Message\SendUserBookingNotificationMessage;
+use App\Message\UpdateBookingInCacheMessage;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -17,7 +19,10 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class UserBookingPersister implements ProcessorInterface
+/**
+ * @template-implements ProcessorInterface<UserBooking, UserBooking>
+ */
+class UserBookingProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
@@ -26,7 +31,7 @@ class UserBookingPersister implements ProcessorInterface
     ) {
     }
 
-    public function supports($data, array $context = []): bool
+    public function supports($data): bool
     {
         return $data instanceof UserBooking;
     }
@@ -46,29 +51,41 @@ class UserBookingPersister implements ProcessorInterface
                         $data,
                         NotificationTypeEnum::DELETE_SUCCESS
                     ));
+
+                    $this->bus->dispatch(new RemoveBookingFromCacheMessage(
+                        $data->id
+                    ));
                 }
             } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
                 throw new HttpException($e->getCode(), 'Booking could not be deleted.');
             }
-        }
+        } else {
+            try {
+                if ($data instanceof UserBooking) {
+                    if (!$this->security->isGranted(UserBookingVoter::EDIT, $data)) {
+                        throw new AccessDeniedHttpException('Access denied');
+                    }
 
-        try {
-            if ($data instanceof UserBooking) {
-                if (!$this->security->isGranted(UserBookingVoter::EDIT, $data)) {
-                    throw new AccessDeniedHttpException('Access denied');
+                    $this->bookingService->updateBooking($data);
+
+                    $this->bus->dispatch(new SendUserBookingNotificationMessage(
+                        $data,
+                        NotificationTypeEnum::UPDATE_SUCCESS
+                    ));
+
+                    $this->bus->dispatch(new UpdateBookingInCacheMessage(
+                        $data->id,
+                        [
+                            'start' => $data->start,
+                            'end' => $data->end,
+                        ],
+                    ));
                 }
-
-                $this->bookingService->updateBooking($data);
-
-                $this->bus->dispatch(new SendUserBookingNotificationMessage(
-                    $data,
-                    NotificationTypeEnum::UPDATE_SUCCESS
-                ));
+            } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
+                throw new HttpException($e->getCode(), 'Booking could not be updated.');
             }
-
-            return $data;
-        } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
-            throw new HttpException($e->getCode(), 'Booking could not be updated.');
         }
+
+        return $data;
     }
 }
