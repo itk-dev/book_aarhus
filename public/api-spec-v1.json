@@ -175,55 +175,6 @@
             },
             "parameters": []
         },
-        "/v1/locations": {
-            "get": {
-                "operationId": "get-v1-locations",
-                "tags": [
-                    "Location"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/ld+json": {
-                                "examples": {
-                                    "example1": {
-                                        "value": {
-                                            "@id": "/v1/locations/LOCATION1",
-                                            "@type": "Location",
-                                            "name": "Example Location"
-                                        },
-                                        "summary": "An example of a JSON-LD response"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "summary": "Retrieves locations.",
-                "description": "Retrieves locations.",
-                "parameters": [
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "The collection page number",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "integer",
-                            "default": 1
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
-                "deprecated": false,
-                "x-headers": []
-            },
-            "parameters": []
-        },
         "/v1/resource-by-email/{resourceMail}": {
             "get": {
                 "operationId": "get-v1-resource-by-email",
@@ -1455,51 +1406,6 @@
             "parameters": []
         },
         "/v1/user-bookings/{id}": {
-            "get": {
-                "operationId": "api_v1user-bookings_id_get",
-                "tags": [
-                    "UserBooking"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "UserBooking resource",
-                        "content": {
-                            "application/ld+json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBooking.jsonld-userBooking"
-                                }
-                            },
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBooking-userBooking"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Resource not found"
-                    }
-                },
-                "summary": "Retrieves a UserBooking resource.",
-                "description": "Retrieves a UserBooking resource.",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "UserBooking identifier",
-                        "required": true,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "simple",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
-                "deprecated": false
-            },
             "delete": {
                 "operationId": "api_v1user-bookings_id_delete",
                 "tags": [
@@ -1962,34 +1868,6 @@
                     "updateTimestamp": {
                         "type": "string",
                         "format": "date-time"
-                    }
-                }
-            },
-            "Location": {
-                "type": "object",
-                "description": "",
-                "deprecated": false,
-                "properties": {
-                    "name": {
-                        "type": "string"
-                    }
-                }
-            },
-            "Location.jsonld": {
-                "type": "object",
-                "description": "",
-                "deprecated": false,
-                "properties": {
-                    "@id": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
-                    "@type": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
-                    "name": {
-                        "type": "string"
                     }
                 }
             },

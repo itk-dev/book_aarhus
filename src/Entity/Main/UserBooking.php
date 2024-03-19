@@ -5,7 +5,6 @@ namespace App\Entity\Main;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
@@ -18,12 +17,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
     operations: [
-        new Get(
-            uriTemplate: '/user-bookings/{id}',
-            normalizationContext: [
-                'groups' => ['userBooking'],
-            ],
-        ),
         new Delete(
             uriTemplate: '/user-bookings/{id}',
             normalizationContext: [
