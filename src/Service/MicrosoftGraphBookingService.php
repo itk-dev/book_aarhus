@@ -596,7 +596,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     {
         $token = $this->graphHelperService->authenticateAsServiceAccount();
 
-        $path = "/users/$resourceEmail/events?\$filter=iCalUId eq '$iCalUId'";
+        $path = "/users/$resourceEmail/events?\$filter=uid eq '$iCalUId'";
 
         $response = $this->graphHelperService->request($path, $token);
 
