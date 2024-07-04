@@ -566,8 +566,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     public function getBookingIdFromICalUid(string $iCalUId): ?string
     {
         $token = $this->graphHelperService->authenticateAsServiceAccount();
-
-        $path = "/me/events?\$filter=iCalUId eq '$iCalUId'";
+        $path = "/users/$this->serviceAccountUsername/events?\$filter=uid eq '$iCalUId'";
 
         $response = $this->graphHelperService->request($path, $token);
 

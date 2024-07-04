@@ -9,6 +9,11 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+### Changed
+
+- Changed getBookingIdFromICalUid graph call from /me/events to /users/*/events
+- Add test command for getting booking from uid.
+
 ## [1.2.2] - 2023-11-28
 
 ### Changed
