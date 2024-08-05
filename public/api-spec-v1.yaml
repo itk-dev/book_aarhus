@@ -16,7 +16,7 @@ paths:
       tags:
         - Booking
       responses:
-        201:
+        '201':
           description: 'Booking resource created'
           content:
             application/ld+json:
@@ -26,9 +26,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Booking'
           links: {  }
-        400:
+        '400':
           description: 'Invalid input'
-        422:
+        '422':
           description: 'Unprocessable entity'
       summary: 'Create a booking from a Drupal Webform submit.'
       description: 'Create a booking from a Drupal Webform submit.'
@@ -45,16 +45,15 @@ paths:
         required: true
       deprecated: false
       x-response:
-        200:
+        '200':
           description: Created
-    parameters: []
   /v1/busy-intervals:
     get:
       operationId: get-v1-busy-intervals
       tags:
         - BusyInterval
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/ld+json:
@@ -123,14 +122,13 @@ paths:
           allowReserved: false
       deprecated: false
       x-headers: []
-    parameters: []
   '/v1/resource-by-email/{resourceMail}':
     get:
       operationId: get-v1-resource-by-email
       tags:
         - Resource
       responses:
-        200:
+        '200':
           description: 'Resource resource'
           content:
             application/ld+json:
@@ -139,7 +137,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Resource-resource'
-        404:
+        '404':
           description: 'Resource not found'
       summary: 'Get a resource by email'
       description: 'Get a resource by email'
@@ -172,16 +170,15 @@ paths:
           allowReserved: false
       deprecated: false
       x-response:
-        200:
+        '200':
           description: OK
-    parameters: []
   /v1/resources:
     get:
       operationId: getResourceCollection
       tags:
         - Resource
       responses:
-        200:
+        '200':
           description: 'Resource collection'
           content:
             application/ld+json:
@@ -424,14 +421,13 @@ paths:
           explode: false
           allowReserved: false
       deprecated: false
-    parameters: []
   /v1/resources-all:
     get:
       operationId: get-v1-all-resources
       tags:
         - Resource
       responses:
-        200:
+        '200':
           description: 'Resource collection'
           content:
             application/ld+json:
@@ -467,16 +463,15 @@ paths:
           allowReserved: false
       deprecated: false
       x-response:
-        200:
+        '200':
           description: OK
-    parameters: []
   '/v1/resources/{id}':
     get:
       operationId: getResourceItem
       tags:
         - Resource
       responses:
-        200:
+        '200':
           description: 'Resource resource'
           content:
             application/ld+json:
@@ -485,7 +480,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Resource-resource'
-        404:
+        '404':
           description: 'Resource not found'
       summary: 'Retrieves a Resource resource.'
       description: 'Retrieves a Resource resource.'
@@ -503,14 +498,13 @@ paths:
           explode: false
           allowReserved: false
       deprecated: false
-    parameters: []
   /v1/status-by-ids:
     post:
       operationId: post-v1-status-by-ids
       tags:
         - UserBooking
       responses:
-        201:
+        '201':
           description: 'UserBooking resource created'
           content:
             application/ld+json:
@@ -520,9 +514,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserBooking-userBooking'
           links: {  }
-        400:
+        '400':
           description: 'Invalid input'
-        422:
+        '422':
           description: 'Unprocessable entity'
       summary: 'Get status on bookings'
       description: 'Get status on bookings by ids'
@@ -539,15 +533,14 @@ paths:
         required: true
       deprecated: false
       x-response:
-        200: []
-    parameters: []
+        '200': []
   /v1/user-booking-cache-entries:
     get:
       operationId: get-v1-bookings-cache-entry
       tags:
         - UserBookingCacheEntry
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/ld+json:
@@ -796,21 +789,20 @@ paths:
           allowReserved: false
       deprecated: false
       x-headers: []
-    parameters: []
   '/v1/user-booking-cache-entries/{id}':
     get:
       operationId: api_v1user-booking-cache-entries_id_get
       tags:
         - UserBookingCacheEntry
       responses:
-        204:
+        '204':
           description: 'UserBookingCacheEntry resource'
           content:
             application/ld+json:
               schema: {  }
             application/json:
               schema: {  }
-        404:
+        '404':
           description: 'Resource not found'
       summary: 'unsupported action'
       description: 'unsupported action'
@@ -828,14 +820,13 @@ paths:
           explode: false
           allowReserved: false
       deprecated: false
-    parameters: []
   /v1/user-bookings:
     get:
       operationId: get-v1-bookings
       tags:
         - UserBooking
       responses:
-        200:
+        '200':
           description: 'UserBooking collection'
           content:
             application/ld+json:
@@ -886,7 +877,7 @@ paths:
       deprecated: false
       x-headers: []
       x-response:
-        200:
+        '200':
           description: OK
           content:
             application/ld+json:
@@ -894,16 +885,15 @@ paths:
                 example1:
                   value: { id: '1', subject: 'Horse species', displayName: Pony, status: 'away from keyboard', bookingType: Rent, expired: false, start: '2024-01-16T08:02:25.084Z', end: '2024-01-16T08:02:25.084Z', resourceMail: Horse@Pony.dk, resourceName: 'Book about Hors species' }
                   summary: 'An example of a JSON-LD response'
-    parameters: []
   '/v1/user-bookings/{id}':
     delete:
       operationId: api_v1user-bookings_id_delete
       tags:
         - UserBooking
       responses:
-        204:
+        '204':
           description: 'UserBooking resource deleted'
-        404:
+        '404':
           description: 'Resource not found'
       summary: 'Removes the UserBooking resource.'
       description: 'Removes the UserBooking resource.'
@@ -926,7 +916,7 @@ paths:
       tags:
         - UserBooking
       responses:
-        200:
+        '200':
           description: 'UserBooking resource updated'
           content:
             application/ld+json:
@@ -936,11 +926,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserBooking-userBooking'
           links: {  }
-        400:
+        '400':
           description: 'Invalid input'
-        422:
+        '422':
           description: 'Unprocessable entity'
-        404:
+        '404':
           description: 'Resource not found'
       summary: 'Updates the UserBooking resource.'
       description: 'Updates the UserBooking resource.'
@@ -962,10 +952,9 @@ paths:
         content:
           application/merge-patch+json:
             schema:
-              $ref: '#/components/schemas/UserBooking'
+              $ref: '#/components/schemas/UserBooking.patch'
         required: true
       deprecated: false
-    parameters: []
 components:
   schemas:
     Booking:
@@ -1526,43 +1515,6 @@ components:
           type:
             - boolean
             - 'null'
-    UserBooking:
-      type: object
-      description: ''
-      deprecated: false
-      properties:
-        id:
-          type: string
-        iCalUId:
-          type: string
-        subject:
-          type: string
-        displayName:
-          type: string
-        body:
-          type: string
-        status:
-          type: string
-        bookingType:
-          type: string
-        expired:
-          type: boolean
-        start:
-          type: string
-          format: date-time
-        end:
-          type: string
-          format: date-time
-        resourceMail:
-          type: string
-        resourceName:
-          type: string
-        ownedByServiceAccount:
-          type: boolean
-        userEmail:
-          type: string
-        userName:
-          type: string
     UserBooking-userBooking:
       type: object
       description: ''
@@ -1658,6 +1610,43 @@ components:
           type: string
         resourceName:
           type: string
+    UserBooking.patch:
+      type: object
+      description: ''
+      deprecated: false
+      properties:
+        id:
+          type: string
+        iCalUId:
+          type: string
+        subject:
+          type: string
+        displayName:
+          type: string
+        body:
+          type: string
+        status:
+          type: string
+        bookingType:
+          type: string
+        expired:
+          type: boolean
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        resourceMail:
+          type: string
+        resourceName:
+          type: string
+        ownedByServiceAccount:
+          type: boolean
+        userEmail:
+          type: string
+        userName:
+          type: string
     UserBookingCacheEntry-userBookingCacheEntry:
       type: object
       description: ''
@@ -1727,3 +1716,4 @@ security:
   -
     apiKey: []
 tags: []
+webhooks: {  }

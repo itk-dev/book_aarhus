@@ -54,7 +54,7 @@ interface BookingServiceInterface
      *
      * @throws MicrosoftGraphCommunicationException
      */
-    public function getUserBookings(string $userId, string $search = null, int $page = 0, int $pageSize = 25): array;
+    public function getUserBookings(string $userId, ?string $search = null, int $page = 0, int $pageSize = 25): array;
 
     /**
      * Get busy intervals for a given number of schedules.
@@ -68,7 +68,7 @@ interface BookingServiceInterface
      *
      * @throws MicrosoftGraphCommunicationException
      */
-    public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, string $accessToken = null): array;
+    public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, ?string $accessToken = null): array;
 
     /**
      * @param string $resourceEmail
