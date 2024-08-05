@@ -31,6 +31,9 @@ class NotificationService implements NotificationServiceInterface
 {
     private ?string $validatedAdminNotificationEmail;
 
+    /**
+     * @param non-empty-string $bindNotificationTimezone
+     */
     public function __construct(
         private readonly string $emailFromAddress,
         private readonly string $emailAdminNotification,
