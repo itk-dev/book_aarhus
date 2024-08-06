@@ -31,9 +31,6 @@ class NotificationService implements NotificationServiceInterface
 {
     private ?string $validatedAdminNotificationEmail;
 
-    /**
-     * @param non-empty-string $bindNotificationTimezone
-     */
     public function __construct(
         private readonly string $emailFromAddress,
         private readonly string $emailAdminNotification,
@@ -103,8 +100,13 @@ class NotificationService implements NotificationServiceInterface
         $dateStart = $userBooking->start;
         $dateEnd = $userBooking->end;
 
-        $dateStart->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
-        $dateEnd->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+        if (!empty($this->bindNotificationTimezone)) {
+            $dateStart->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+            $dateEnd->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+        } else {
+            // Handle the case where bindNotificationTimezone is empty
+            throw new \InvalidArgumentException('bindNotificationTimezone cannot be empty');
+        }
 
         $resourceName = $resource?->getResourceDisplayName() ?? $userBooking->displayName;
 
@@ -185,8 +187,13 @@ class NotificationService implements NotificationServiceInterface
         $event->setDescription($eventData['description']);
         $event->setLocation($location);
 
-        $dateFrom = $eventData['start']->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
-        $dateTo = $eventData['end']->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+        if (!empty($this->bindNotificationTimezone)) {
+            $dateFrom = $eventData['start']->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+            $dateTo = $eventData['end']->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+        } else {
+            // Handle the case where bindNotificationTimezone is empty
+            throw new \InvalidArgumentException('bindNotificationTimezone cannot be empty');
+        }
 
         $start = new ICalDateTime($dateFrom, true);
         $end = new ICalDateTime($dateTo, true);
@@ -219,6 +226,14 @@ class NotificationService implements NotificationServiceInterface
             if (null !== $booking) {
                 $dateStart = $booking->getStartTime();
                 $dateEnd = $booking->getEndTime();
+
+                if (!empty($this->bindNotificationTimezone)) {
+                    $dateStart->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+                    $dateEnd->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+                } else {
+                    // Handle the case where bindNotificationTimezone is empty
+                    throw new \InvalidArgumentException('bindNotificationTimezone cannot be empty');
+                }
 
                 $dateStart->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
                 $dateEnd->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
@@ -300,9 +315,14 @@ class NotificationService implements NotificationServiceInterface
 
             $dateStart = $booking->getStartTime();
             $dateEnd = $booking->getEndTime();
-
-            $dateStart->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
-            $dateEnd->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+            if (!empty($this->bindNotificationTimezone)) {
+                $dateStart->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+                $dateEnd->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+            } else {
+                // Handle the case where bindNotificationTimezone is empty
+                // For example, you can throw an exception or set a default timezone
+                throw new \InvalidArgumentException('bindNotificationTimezone cannot be empty');
+            }
 
             $data['startFormatted'] = $dateStart->format($this->bindNotificationDateFormat);
             $data['endFormatted'] = $dateEnd->format($this->bindNotificationDateFormat);
