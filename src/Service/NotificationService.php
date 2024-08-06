@@ -235,9 +235,6 @@ class NotificationService implements NotificationServiceInterface
                     throw new \InvalidArgumentException('bindNotificationTimezone cannot be empty');
                 }
 
-                $dateStart->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
-                $dateEnd->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
-
                 $dateStartString = $dateStart->format($this->bindNotificationDateFormat);
                 $dateEndString = $dateEnd->format($this->bindNotificationDateFormat);
             }
@@ -320,7 +317,6 @@ class NotificationService implements NotificationServiceInterface
                 $dateEnd->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
             } else {
                 // Handle the case where bindNotificationTimezone is empty
-                // For example, you can throw an exception or set a default timezone
                 throw new \InvalidArgumentException('bindNotificationTimezone cannot be empty');
             }
 
