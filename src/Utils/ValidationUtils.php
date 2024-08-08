@@ -17,7 +17,7 @@ class ValidationUtils implements ValidationUtilsInterface
     /**
      * {@inheritdoc}
      */
-    public function validateDate(string $dateString, string $format = null): \DateTime
+    public function validateDate(string $dateString, ?string $format = null): \DateTime
     {
         $format = $format ?? $this->bindDefaultDateFormat;
 

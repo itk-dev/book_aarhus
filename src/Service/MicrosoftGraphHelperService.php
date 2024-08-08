@@ -61,7 +61,7 @@ class MicrosoftGraphHelperService
     /**
      * @throws MicrosoftGraphCommunicationException
      */
-    public function request(string $path, string $accessToken, string $requestType = 'GET', array $body = null): GraphResponse
+    public function request(string $path, string $accessToken, string $requestType = 'GET', ?array $body = null): GraphResponse
     {
         try {
             $graph = $this->clientFactory->getGraph();
@@ -92,7 +92,7 @@ class MicrosoftGraphHelperService
      *
      * @throws MicrosoftGraphCommunicationException
      */
-    public function isBookingConflict(string $resourceEmail, \DateTime $startTime, \DateTime $endTime, string $accessToken = null, array $ignoreICalUIds = null): bool
+    public function isBookingConflict(string $resourceEmail, \DateTime $startTime, \DateTime $endTime, ?string $accessToken = null, ?array $ignoreICalUIds = null): bool
     {
         $token = $accessToken ?: $this->authenticateAsServiceAccount();
         $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';

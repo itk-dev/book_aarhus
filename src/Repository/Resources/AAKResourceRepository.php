@@ -24,7 +24,7 @@ class AAKResourceRepository extends ServiceEntityRepository
         }
     }
 
-    public function findOneByEmail(string $email): AAKResource|null
+    public function findOneByEmail(string $email): ?AAKResource
     {
         $resource = $this->findOneBy(['resourceMail' => $email]);
 
@@ -35,7 +35,7 @@ class AAKResourceRepository extends ServiceEntityRepository
         return null;
     }
 
-    public function getAllByPermission(string $permission = null): array
+    public function getAllByPermission(?string $permission = null): array
     {
         $qb = $this->createQueryBuilder('res');
 
@@ -55,7 +55,7 @@ class AAKResourceRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function getOnlyWhitelisted(string $permission = null, string $whitelistKey = null)
+    public function getOnlyWhitelisted(?string $permission = null, ?string $whitelistKey = null)
     {
         $qb = $this->createQueryBuilder('res');
 

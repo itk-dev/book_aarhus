@@ -28,7 +28,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
     /**
      * {@inheritdoc}
      *
-     * @throws \App\Exception\MicrosoftGraphCommunicationException
+     * @throws MicrosoftGraphCommunicationException
      */
     public function rebuildCache(): void
     {
@@ -45,7 +45,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      *
      * @return void
      *
-     * @throws \App\Exception\MicrosoftGraphCommunicationException
+     * @throws MicrosoftGraphCommunicationException
      */
     public function updateCache(bool $removeOutdated = true): void
     {
@@ -173,9 +173,9 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      * Set values for cache entity.
      *
      * @param $entity
-     * @param \App\Entity\Main\UserBooking $userBooking
+     * @param UserBooking $userBooking
      *
-     * @return \App\Entity\Main\UserBookingCacheEntry
+     * @return UserBookingCacheEntry
      */
     private function setCacheEntityValues(UserBookingCacheEntry $entity, UserBooking $userBooking): UserBookingCacheEntry
     {
@@ -197,7 +197,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      * @param $entity
      * @param array $data
      *
-     * @return \App\Entity\Main\UserBookingCacheEntry
+     * @return UserBookingCacheEntry
      */
     private function setCacheEntityValuesFromArray(UserBookingCacheEntry $entity, array $data): UserBookingCacheEntry
     {

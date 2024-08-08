@@ -31,6 +31,9 @@ class NotificationService implements NotificationServiceInterface
 {
     private ?string $validatedAdminNotificationEmail;
 
+    /**
+     * @param non-empty-string $bindNotificationTimezone
+     */
     public function __construct(
         private readonly string $emailFromAddress,
         private readonly string $emailAdminNotification,
@@ -46,6 +49,10 @@ class NotificationService implements NotificationServiceInterface
             );
         } catch (\Exception $exception) {
             $this->logger->warning('No admin notification email set.');
+        }
+
+        if (!$this->bindNotificationTimezone) {
+            throw new \InvalidArgumentException('bindNotificationTimezone cannot be empty');
         }
     }
 
@@ -100,8 +107,8 @@ class NotificationService implements NotificationServiceInterface
         $dateStart = $userBooking->start;
         $dateEnd = $userBooking->end;
 
-        $dateStart->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
-        $dateEnd->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+        $dateStart->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+        $dateEnd->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
 
         $resourceName = $resource?->getResourceDisplayName() ?? $userBooking->displayName;
 
@@ -182,8 +189,8 @@ class NotificationService implements NotificationServiceInterface
         $event->setDescription($eventData['description']);
         $event->setLocation($location);
 
-        $dateFrom = $eventData['start']->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
-        $dateTo = $eventData['end']->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+        $dateFrom = $eventData['start']->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+        $dateTo = $eventData['end']->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
 
         $start = new ICalDateTime($dateFrom, true);
         $end = new ICalDateTime($dateTo, true);
@@ -217,8 +224,8 @@ class NotificationService implements NotificationServiceInterface
                 $dateStart = $booking->getStartTime();
                 $dateEnd = $booking->getEndTime();
 
-                $dateStart->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
-                $dateEnd->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+                $dateStart->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+                $dateEnd->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
 
                 $dateStartString = $dateStart->format($this->bindNotificationDateFormat);
                 $dateEndString = $dateEnd->format($this->bindNotificationDateFormat);
@@ -298,8 +305,8 @@ class NotificationService implements NotificationServiceInterface
             $dateStart = $booking->getStartTime();
             $dateEnd = $booking->getEndTime();
 
-            $dateStart->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
-            $dateEnd->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+            $dateStart->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+            $dateEnd->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
 
             $data['startFormatted'] = $dateStart->format($this->bindNotificationDateFormat);
             $data['endFormatted'] = $dateEnd->format($this->bindNotificationDateFormat);
