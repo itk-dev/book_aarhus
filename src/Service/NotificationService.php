@@ -50,6 +50,10 @@ class NotificationService implements NotificationServiceInterface
         } catch (\Exception $exception) {
             $this->logger->warning('No admin notification email set.');
         }
+
+        if (!$this->bindNotificationTimezone) {
+            throw new \InvalidArgumentException('bindNotificationTimezone cannot be empty');
+        }
     }
 
     /**
