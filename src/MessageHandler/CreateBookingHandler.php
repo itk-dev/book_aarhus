@@ -12,11 +12,12 @@ use App\Repository\Resources\AAKResourceRepository;
 use App\Repository\Resources\CvrWhitelistRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
+use App\Service\Metric;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 /**
  * @see https://github.com/itk-dev/os2forms_selvbetjening/blob/develop/web/modules/custom/os2forms_rest_api/README.md
@@ -31,6 +32,7 @@ class CreateBookingHandler
         private readonly Security $security,
         private readonly MessageBusInterface $bus,
         private readonly CvrWhitelistRepository $whitelistRepository,
+        private readonly Metric $metric,
     ) {
     }
 
@@ -40,12 +42,15 @@ class CreateBookingHandler
     public function __invoke(CreateBookingMessage $message): void
     {
         $this->logger->info('CreateBookingHandler invoked.');
+        $this->metric->counter('invoke', null, $this);
 
         $booking = $message->getBooking();
 
         if (!$this->security->isGranted(BookingVoter::CREATE, $booking)) {
             $this->logger->error('User does not have permission to create bookings for the given resource.');
 
+            $this->metric->counter('generalUnrecoverableMessageHandlingException');
+            $this->metric->counter('forbidden', 'User does not have permission to create bookings for the given resource.', $this);
             throw new UnrecoverableMessageHandlingException('User does not have permission to create bookings for the given resource.', 403);
         }
 
@@ -56,6 +61,8 @@ class CreateBookingHandler
         if (null == $resource) {
             $this->logger->error("Resource $email not found.");
 
+            $this->metric->counter('generalUnrecoverableMessageHandlingException');
+            $this->metric->counter('resource_not_found', 'Resource not found.', $this);
             throw new UnrecoverableMessageHandlingException("Resource $email not found.", 404);
         }
 
@@ -119,11 +126,14 @@ class CreateBookingHandler
                     $response['iCalUId'],
                 ));
             } else {
+                $this->metric->counter('icaluid_not_found', 'Booking iCalUID could not be retrieved for booking with subject.', $this);
                 $this->logger->error(sprintf('Booking iCalUID could not be retrieved for booking with subject: %s', $booking->getSubject()));
             }
         } catch (BookingCreateConflictException $exception) {
             // If it is a BookingCreateConflictException the booking should be rejected.
             $this->logger->notice(sprintf('Booking conflict detected: %d %s', $exception->getCode(), $exception->getMessage()));
+            $this->metric->counter('BookingCreateConflictException');
+            $this->metric->counter('booking_conflict_detected', 'Booking conflict detected.', $this);
 
             $this->bus->dispatch(new SendBookingNotificationMessage(
                 $booking,
@@ -132,6 +142,9 @@ class CreateBookingHandler
         } catch (\Exception $exception) {
             // Other exceptions should logged, then re-thrown for the message to be re-queued.
             $this->logger->error(sprintf('CreateBookingHandler exception: %d %s', $exception->getCode(), $exception->getMessage()));
+
+            $this->metric->counter('Exception');
+            $this->metric->counter('unexpected_exception', null, $this);
 
             throw $exception;
         }

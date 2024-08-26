@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Main\ApiKeyUser;
 use App\Message\WebformSubmitMessage;
+use App\Service\Metric;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -17,13 +18,15 @@ class CreateBookingWebformSubmitController extends AbstractController
 {
     public function __construct(
         private readonly MessageBusInterface $bus,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly Metric $metric,
     ) {
     }
 
     public function __invoke(Request $request): Response
     {
         $this->logger->info('CreateBookingWebformSubmitController invoked.');
+        $this->metric->counter('invoke', null, $this);
 
         $user = $this->getUser();
         if ($user instanceof ApiKeyUser) {
@@ -38,15 +41,19 @@ class CreateBookingWebformSubmitController extends AbstractController
         $apiKeyUserId = $userId ?? $user?->getUserIdentifier();
 
         if (null === $webformId) {
+            $this->metric->counter('badRequestError', 'Webform submission data not valid.', $this);
             throw new BadRequestException('data->webform->id should not be null');
         }
         if (null === $submissionUuid) {
+            $this->metric->counter('badRequestError', 'Webform submission data not valid.', $this);
             throw new BadRequestException('data->submission->uuid should not be null');
         }
         if (null === $sender) {
+            $this->metric->counter('badRequestError', 'Webform submission data not valid.', $this);
             throw new BadRequestException('links->sender should not be null');
         }
         if (null === $getSubmissionUrl) {
+            $this->metric->counter('badRequestError', 'Webform submission data not valid.', $this);
             throw new BadRequestException('links->get_submission_url should not be null');
         }
 

@@ -19,6 +19,7 @@ class MicrosoftGraphHelperService
         private readonly string $serviceAccountPassword,
         private readonly CacheInterface $graphCache,
         private readonly ClientFactory $clientFactory,
+        private readonly Metric $metric,
     ) {
     }
 
@@ -63,6 +64,8 @@ class MicrosoftGraphHelperService
      */
     public function request(string $path, string $accessToken, string $requestType = 'GET', array $body = null): GraphResponse
     {
+        $this->metric->counter('request', null, $this);
+
         try {
             $graph = $this->clientFactory->getGraph();
             $graph->setAccessToken($accessToken);
@@ -94,6 +97,8 @@ class MicrosoftGraphHelperService
      */
     public function isBookingConflict(string $resourceEmail, \DateTime $startTime, \DateTime $endTime, string $accessToken = null, array $ignoreICalUIds = null): bool
     {
+        $this->metric->counter('isBookingConflict', null, $this);
+
         $token = $accessToken ?: $this->authenticateAsServiceAccount();
         $startString = $startTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
         $endString = $endTime->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
@@ -110,14 +115,17 @@ class MicrosoftGraphHelperService
             if (null != $ignoreICalUIds) {
                 foreach ($entries as $entry) {
                     if (!in_array($entry['iCalUId'], $ignoreICalUIds)) {
+                        $this->metric->counter('isBookingConflictTrue', null, $this);
                         return true;
                     }
                 }
             } else {
+                $this->metric->counter('isBookingConflictTrue', null, $this);
                 return true;
             }
         }
 
+        $this->metric->counter('isBookingConflictFalse', null, $this);
         return false;
     }
 }

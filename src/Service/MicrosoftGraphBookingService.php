@@ -25,6 +25,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         private readonly string $serviceAccountName,
         private readonly MicrosoftGraphHelperService $graphHelperService,
         private readonly LoggerInterface $logger,
+        private readonly Metric $metric,
     ) {
     }
 
@@ -35,6 +36,8 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, string $accessToken = null): array
     {
+        $this->metric->counter('getBusyIntervals_invoke', null, $this);
+
         // Use service account if accessToken is not set.
         $token = $accessToken ?: $this->graphHelperService->authenticateAsServiceAccount();
 
@@ -83,6 +86,8 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime, bool $acceptConflict = false): array
     {
+        $this->metric->counter('createBookingForResource_invoke', null, $this);
+
         $token = $this->graphHelperService->authenticateAsServiceAccount();
 
         if (!$acceptConflict) {
@@ -161,6 +166,8 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function createBookingInviteResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array
     {
+        $this->metric->counter('createBookingInviteResource_invoke', null, $this);
+
         $token = $this->graphHelperService->authenticateAsServiceAccount();
 
         $requestBody = [
@@ -213,6 +220,8 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function updateBooking(UserBooking $booking): ?string
     {
+        $this->metric->counter('updateBooking_invoke', null, $this);
+
         if ($booking->expired) {
             throw new UserBookingException('Booking is expired. Cannot be updated.', 400);
         }
@@ -274,6 +283,8 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function deleteBooking(UserBooking $booking): void
     {
+        $this->metric->counter('deleteBooking_invoke', null, $this);
+
         if ($booking->expired) {
             throw new UserBookingException('Booking is expired. Cannot be deleted.', 400);
         }
@@ -337,6 +348,8 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function getBooking(string $bookingId): array
     {
+        $this->metric->counter('getBooking_invoke', null, $this);
+
         $token = $this->graphHelperService->authenticateAsServiceAccount();
 
         // TODO: Move this out of the service an in to the code receiving the request.
@@ -354,6 +367,8 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function getUserBookings(string $userId, string $search = null, int $page = 0, int $pageSize = 25): array
     {
+        $this->metric->counter('getUserBookings_invoke', null, $this);
+
         try {
             $token = $this->graphHelperService->authenticateAsServiceAccount();
 
@@ -422,6 +437,8 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function getUserBookingFromApiData(array $data): UserBooking
     {
+        $this->metric->counter('getUserBookingFromApiData_invoke', null, $this);
+
         try {
             // Formatting the url decoded booking id, replacing "/" with "-" as this is graph-compatible, and replacing
             // " " with "+", as some encoding issue between javascript and php replaces "+" with " ".
@@ -519,6 +536,8 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function getAllFutureBookings($token, $request = null): array
     {
+        $this->metric->counter('getAllFutureBookings_invoke', null, $this);
+
         $data = [];
         $now = new \DateTime();
         $nowFormatted = $now->setTimezone(new \DateTimeZone('UTC'))->format(MicrosoftGraphBookingService::DATE_FORMAT).'Z';
@@ -565,6 +584,8 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     public function getBookingIdFromICalUid(string $iCalUId): ?string
     {
+        $this->metric->counter('getBookingIdFromICalUid_invoke', null, $this);
+
         $token = $this->graphHelperService->authenticateAsServiceAccount();
 
         $path = "/me/events?\$filter=iCalUId eq '$iCalUId'";
@@ -595,6 +616,8 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      */
     private function getEventFromResourceByICalUid(string $resourceEmail, string $iCalUId): ?array
     {
+        $this->metric->counter('getEventFromResourceByICalUid_invoke', null, $this);
+
         $token = $this->graphHelperService->authenticateAsServiceAccount();
 
         $path = "/users/$resourceEmail/events?\$filter=iCalUId eq '$iCalUId'";

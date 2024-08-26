@@ -22,6 +22,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         private readonly MicrosoftGraphBookingService $microsoftGraphBookingService,
         private readonly LoggerInterface $logger,
         private readonly AAKResourceRepository $resourceRepository,
+        private readonly Metric $metric,
     ) {
     }
 
@@ -32,6 +33,8 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function rebuildCache(): void
     {
+        $this->metric->counter('rebuildCache', null, $this);
+
         try {
             $this->clearUserBookingCache();
             $this->updateCache(false);
@@ -49,6 +52,8 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function updateCache($removeOutdated = true): void
     {
+        $this->metric->counter('updateCache', null, $this);
+
         try {
             $token = $this->graphHelperService->authenticateAsServiceAccount();
             $result = $this->microsoftGraphBookingService->getAllFutureBookings($token);
@@ -98,6 +103,8 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function addCacheEntry(UserBooking $userBooking): void
     {
+        $this->metric->counter('addCacheEntry', null, $this);
+
         $entity = new UserBookingCacheEntry();
         $this->entityManager->persist($this->setCacheEntityValues($entity, $userBooking));
         $this->entityManager->flush();
@@ -108,6 +115,8 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function addCacheEntryFromArray(array $data): void
     {
+        $this->metric->counter('addCacheEntryFromArray', null, $this);
+
         $entity = new UserBookingCacheEntry();
         $this->entityManager->persist($this->setCacheEntityValuesFromArray($entity, $data));
         $this->entityManager->flush();
@@ -120,6 +129,8 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function changeCacheEntry(string $exchangeId, array $changes): void
     {
+        $this->metric->counter('changeCacheEntry', null, $this);
+
         $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)
             ->findOneBy(['exchangeId' => $exchangeId]);
 
@@ -160,6 +171,8 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function deleteCacheEntry(string $exchangeId): void
     {
+        $this->metric->counter('deleteCacheEntry', null, $this);
+
         $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)
             ->findOneBy(['exchangeId' => $exchangeId]);
 

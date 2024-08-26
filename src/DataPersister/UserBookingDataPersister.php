@@ -12,11 +12,11 @@ use App\Message\SendUserBookingNotificationMessage;
 use App\Message\UpdateBookingInCacheMessage;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
-use App\Service\UserBookingCacheServiceInterface;
+use App\Service\Metric;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class UserBookingDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -24,7 +24,7 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
         private readonly BookingServiceInterface $bookingService,
         private readonly Security $security,
         private readonly MessageBusInterface $bus,
-        private readonly UserBookingCacheServiceInterface $userBookingCacheService
+        private readonly Metric $metric,
     ) {
     }
 
@@ -35,6 +35,8 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
 
     public function remove($data, array $context = []): void
     {
+        $this->metric->counter('remove', null, $this);
+
         try {
             if ($data instanceof UserBooking) {
                 if (!$this->security->isGranted(UserBookingVoter::DELETE, $data)) {
@@ -59,6 +61,8 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
 
     public function persist($data, array $context = []): mixed
     {
+        $this->metric->counter('persist', null, $this);
+
         try {
             if ($data instanceof UserBooking) {
                 if (!$this->security->isGranted(UserBookingVoter::EDIT, $data)) {

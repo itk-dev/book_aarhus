@@ -7,15 +7,17 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
+use App\Service\Metric;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 final class UserBookingItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
         private readonly Security $security,
+        private readonly Metric $metric,
     ) {
     }
 
@@ -29,6 +31,8 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
      */
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): UserBooking|null
     {
+        $this->metric->counter('getItem', null, $this);
+
         if (!isset($id) || !is_string($id)) {
             throw new BadRequestHttpException('Required booking id is not set');
         }

@@ -9,6 +9,11 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+- Added metric to system.
+- Added webformId to notification mail.
+- Upgraded bundles.
+- Added retry when retrieving webform submissions.
+
 ## [1.2.2] - 2023-11-28
 
 ### Changed

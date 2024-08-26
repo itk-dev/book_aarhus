@@ -10,9 +10,10 @@ use App\Entity\Resources\AAKResource;
 use App\Repository\Resources\AAKResourceRepository;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
+use App\Service\Metric;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 final class UserBookingCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -21,6 +22,7 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
         private readonly Security $security,
         private readonly RequestStack $requestStack,
         private readonly AAKResourceRepository $resourceRepository,
+        private readonly Metric $metric,
     ) {
     }
 
@@ -34,6 +36,8 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
      */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
+        $this->metric->counter('getCollection', null, $this);
+
         $request = $this->requestStack->getCurrentRequest();
 
         if (is_null($request)) {

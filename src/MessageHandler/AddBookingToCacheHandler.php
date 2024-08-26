@@ -7,6 +7,7 @@ use App\Enum\UserBookingStatusEnum;
 use App\Message\AddBookingToCacheMessage;
 use App\Repository\Resources\AAKResourceRepository;
 use App\Service\BookingServiceInterface;
+use App\Service\Metric;
 use App\Service\UserBookingCacheServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -23,6 +24,7 @@ class AddBookingToCacheHandler
         private readonly UserBookingCacheServiceInterface $userBookingCacheService,
         private readonly LoggerInterface $logger,
         private readonly AAKResourceRepository $resourceRepository,
+        private readonly Metric $metric,
     ) {
     }
 
@@ -32,6 +34,7 @@ class AddBookingToCacheHandler
     public function __invoke(AddBookingToCacheMessage $message): void
     {
         $this->logger->info('AddBookingToCacheHandler invoked.');
+        $this->metric->counter('invoke', null, $this);
 
         $id = $this->bookingService->getBookingIdFromICalUid($message->getICalUID()) ?? null;
 
@@ -58,7 +61,11 @@ class AddBookingToCacheHandler
                 'resourceMail' => $booking->getResourceEmail(),
                 'resourceDisplayName' => $resourceDisplayName,
             ]);
+
+            $this->metric->counter('cacheEntryAdded', 'Cache entry added.', $this);
         } else {
+            $this->metric->counter('recoverableErrorBookingIdNotFound', 'Booking id could not be retrieved for booking with iCalUID.', $this);
+            $this->metric->counter('generalRecoverableMessageHandlingException');
             throw new RecoverableMessageHandlingException(sprintf('Booking id could not be retrieved for booking with iCalUID: %s', $message->getICalUID()));
         }
     }

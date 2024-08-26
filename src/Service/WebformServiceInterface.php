@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Exception\WebformSubmissionRetrievalException;
 use App\Message\WebformSubmitMessage;
+use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 
 interface WebformServiceInterface
 {

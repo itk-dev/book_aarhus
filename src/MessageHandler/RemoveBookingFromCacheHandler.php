@@ -3,7 +3,9 @@
 namespace App\MessageHandler;
 
 use App\Message\RemoveBookingFromCacheMessage;
+use App\Service\Metric;
 use App\Service\UserBookingCacheServiceInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -11,6 +13,7 @@ class RemoveBookingFromCacheHandler
 {
     public function __construct(
         private readonly UserBookingCacheServiceInterface $userBookingCacheService,
+        private readonly Metric $metric,
     ) {
     }
 
@@ -19,6 +22,8 @@ class RemoveBookingFromCacheHandler
      */
     public function __invoke(RemoveBookingFromCacheMessage $message): void
     {
+        $this->metric->counter('invoke', null, $this);
         $this->userBookingCacheService->deleteCacheEntry($message->getExchangeId());
+        $this->metric->counter('cache_entry_deleted', "Cache entry has been deleted.", $this);
     }
 }

@@ -4,28 +4,32 @@ namespace App\Controller;
 
 use App\Enum\UserBookingStatusEnum;
 use App\Service\BookingServiceInterface;
+use App\Service\Metric;
 use App\Service\UserBookingCacheServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsController]
 class GetStatusByIdsController extends AbstractController
 {
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
-        private readonly SerializerInterface $serializer,
         private readonly UserBookingCacheServiceInterface $userBookingCacheService,
+        private readonly Metric $metric,
     ) {
     }
 
     public function __invoke(Request $request): JsonResponse
     {
+        $this->metric->counter('invoke', null, $this);
+
         $exchangeIds = json_decode($request->getContent())->ids;
+
         if (empty($exchangeIds)) {
+            $this->metric->counter('resourceNotFound', "Resource not found", $this);
             throw new NotFoundHttpException('Resource not found');
         }
 
@@ -52,6 +56,8 @@ class GetStatusByIdsController extends AbstractController
                     $this->userBookingCacheService->changeCacheEntry($id, ['status' => $userBooking->status]);
                 }
             } catch (\Exception) {
+                $this->metric->counter('ignoredException', null, $this);
+
                 $statuses[] = [
                     'exchangeId' => $id,
                     'status' => null,

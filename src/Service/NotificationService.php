@@ -39,12 +39,13 @@ class NotificationService implements NotificationServiceInterface
         private readonly MailerInterface $mailer,
         private readonly string $bindNotificationTimezone,
         private readonly string $bindNotificationDateFormat,
+        private readonly Metric $metric,
     ) {
         try {
             $this->validatedAdminNotificationEmail = $this->validationUtils->validateEmail(
                 $this->emailAdminNotification
             );
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             $this->logger->warning('No admin notification email set.');
         }
     }
@@ -54,6 +55,8 @@ class NotificationService implements NotificationServiceInterface
      */
     public function sendBookingNotification(Booking $booking, ?AAKResource $resource, NotificationTypeEnum $type): void
     {
+        $this->metric->counter('sendBookingNotification', null, $this);
+
         $data = [
             'booking' => $booking,
             'resource' => $resource,
@@ -77,6 +80,8 @@ class NotificationService implements NotificationServiceInterface
         ?AAKResource $resource,
         NotificationTypeEnum $type
     ): void {
+        $this->metric->counter('sendUserBookingNotification', null, $this);
+
         $body = $userBooking->body;
 
         $crawler = new Crawler($body);
@@ -209,6 +214,8 @@ class NotificationService implements NotificationServiceInterface
      */
     public function notifyAdmin(string $subject, string $message, ?Booking $booking, ?AAKResource $resource): void
     {
+        $this->metric->counter('notifyAdmin', null, $this);
+
         if ($this->validatedAdminNotificationEmail) {
             $to = $this->validatedAdminNotificationEmail;
             $template = 'email-notify-admin.html.twig';

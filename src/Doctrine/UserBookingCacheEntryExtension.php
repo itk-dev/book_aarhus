@@ -8,7 +8,7 @@ use App\Entity\Main\UserBookingCacheEntry;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 final class UserBookingCacheEntryExtension implements QueryCollectionExtensionInterface
 {

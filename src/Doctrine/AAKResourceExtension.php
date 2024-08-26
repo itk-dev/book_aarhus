@@ -9,7 +9,7 @@ use App\Entity\Resources\AAKResource;
 use App\Repository\Resources\CvrWhitelistRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 final class AAKResourceExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {

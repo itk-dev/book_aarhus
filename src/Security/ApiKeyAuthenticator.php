@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Service\Metric;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,6 +21,11 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
 {
     public const AUTH_HEADER = 'Authorization';
     public const AUTH_HEADER_PREFIX = 'Apikey ';
+
+    public function __construct(
+        private readonly Metric $metric,
+    ) {}
+
 
     /**
      * Called on every request to decide if this authenticator should be used for the request.
@@ -73,6 +79,8 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
+        $this->metric->counter('AuthenticationFailure', null, $this);
+
         $data = [
             'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),
         ];
