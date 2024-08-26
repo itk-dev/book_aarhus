@@ -62,7 +62,7 @@ class CreateBookingHandler
             $this->logger->error("Resource $email not found.");
 
             $this->metric->counter('generalUnrecoverableMessageHandlingException');
-            $this->metric->counter('resource_not_found', 'Resource not found.', $this);
+            $this->metric->counter('resourceNotFound', 'Resource not found.', $this);
             throw new UnrecoverableMessageHandlingException("Resource $email not found.", 404);
         }
 
@@ -126,14 +126,14 @@ class CreateBookingHandler
                     $response['iCalUId'],
                 ));
             } else {
-                $this->metric->counter('icaluid_not_found', 'Booking iCalUID could not be retrieved for booking with subject.', $this);
+                $this->metric->counter('icaluidNotFound', 'Booking iCalUID could not be retrieved for booking with subject.', $this);
                 $this->logger->error(sprintf('Booking iCalUID could not be retrieved for booking with subject: %s', $booking->getSubject()));
             }
         } catch (BookingCreateConflictException $exception) {
             // If it is a BookingCreateConflictException the booking should be rejected.
             $this->logger->notice(sprintf('Booking conflict detected: %d %s', $exception->getCode(), $exception->getMessage()));
-            $this->metric->counter('BookingCreateConflictException');
-            $this->metric->counter('booking_conflict_detected', 'Booking conflict detected.', $this);
+            $this->metric->counter('generalBookingCreateConflictException');
+            $this->metric->counter('bookingConflictDetected', 'Booking conflict detected.', $this);
 
             $this->bus->dispatch(new SendBookingNotificationMessage(
                 $booking,
@@ -143,8 +143,8 @@ class CreateBookingHandler
             // Other exceptions should logged, then re-thrown for the message to be re-queued.
             $this->logger->error(sprintf('CreateBookingHandler exception: %d %s', $exception->getCode(), $exception->getMessage()));
 
-            $this->metric->counter('Exception');
-            $this->metric->counter('unexpected_exception', null, $this);
+            $this->metric->counter('generalException');
+            $this->metric->counter('unexpectedException', null, $this);
 
             throw $exception;
         }

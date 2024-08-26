@@ -44,13 +44,13 @@ class SendUserBookingNotificationHandler
             $this->notificationService->sendUserBookingNotification($userBooking, $resource, $type);
         } catch (NoNotificationReceiverException|UnsupportedNotificationTypeException $e) {
             $this->metric->counter('generalUnrecoverableMessageHandlingException');
-            $this->metric->counter('UnrecoverableMessageHandlingException', null, $this);
+            $this->metric->counter('unrecoverableMessageHandlingException', null, $this);
             $this->logger->error(sprintf('SendUserBookingNotificationHandler exception: %d %s', $e->getCode(), $e->getMessage()));
 
             throw new UnrecoverableMessageHandlingException($e->getMessage(), $e->getCode(), $e);
         } catch (TransportExceptionInterface $e) {
-            $this->metric->counter('TransportExceptionInterface');
-            $this->metric->counter('TransportExceptionInterface', null, $this);
+            $this->metric->counter('generalTransportExceptionInterface');
+            $this->metric->counter('transportExceptionInterface', null, $this);
             $this->logger->error(sprintf('SendUserBookingNotificationHandler exception: %d %s', $e->getCode(), $e->getMessage()));
 
             throw $e;

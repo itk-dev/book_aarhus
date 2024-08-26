@@ -105,7 +105,7 @@ class WebformSubmitHandler
                     $envelope->with(new DispatchAfterCurrentBusStamp())
                 );
 
-                $this->metric->counter('create_booking_message_dispatched', 'Create booking message has been dispatched.', $this);
+                $this->metric->counter('createBookingMessageDispatched', 'Create booking message has been dispatched.', $this);
             }
         } catch (WebformSubmissionRetrievalException $e) {
             $this->metric->counter('generalUnrecoverableMessageHandlingException');
@@ -133,7 +133,7 @@ class WebformSubmitHandler
 
             return $body;
         } catch (\Exception $exception) {
-            $this->metric->counter('ERROR_composeBookingContents', null, $this);
+            $this->metric->counter('composeBookingContentsError', null, $this);
 
             throw new WebformSubmissionRetrievalException($exception->getMessage());
         }
@@ -147,7 +147,7 @@ class WebformSubmitHandler
         try {
             return $this->twig->render('booking.html.twig', $body);
         } catch (RuntimeError|SyntaxError|LoaderError $error) {
-            $this->metric->counter('ERROR_renderContentsAsHtml', null, $this);
+            $this->metric->counter('renderContentsAsHtmlError', null, $this);
 
             throw new WebformSubmissionRetrievalException($error->getMessage());
         }
