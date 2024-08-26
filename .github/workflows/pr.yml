@@ -221,10 +221,6 @@ jobs:
           MYSQL_DATABASE: db_test
           MYSQL_ROOT_PASSWORD: password
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
-      redis:
-        image: 'redis:6'
-        ports:
-          - '6379'
     strategy:
       fail-fast: false
       matrix:

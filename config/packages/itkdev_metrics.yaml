@@ -16,3 +16,7 @@ itkdev_metrics:
     extensions:
         opcache: false
         apcu: false
+
+when@test:
+    adapter:
+        type: memory
