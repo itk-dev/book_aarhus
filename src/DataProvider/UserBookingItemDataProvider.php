@@ -8,9 +8,9 @@ use App\Entity\Main\UserBooking;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
 use App\Service\Metric;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Bundle\SecurityBundle\Security;
 
 final class UserBookingItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {

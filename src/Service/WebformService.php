@@ -60,7 +60,7 @@ class WebformService implements WebformServiceInterface
             return $response->toArray();
         } catch (ExceptionInterface $exception) {
             $this->metric->counter('getWebformSubmission', 'Failed to get data from webform.', $this);
-            $this->logger->error("getWebformSubmission Exception (".$exception->getCode()."): " . $exception->getMessage());
+            $this->logger->error('getWebformSubmission Exception ('.$exception->getCode().'): '.$exception->getMessage());
 
             throw new WebformSubmissionRetrievalException($exception->getMessage(), $exception->getCode());
         }

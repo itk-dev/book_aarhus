@@ -24,8 +24,8 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
 
     public function __construct(
         private readonly Metric $metric,
-    ) {}
-
+    ) {
+    }
 
     /**
      * Called on every request to decide if this authenticator should be used for the request.

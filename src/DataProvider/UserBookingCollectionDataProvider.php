@@ -11,9 +11,9 @@ use App\Repository\Resources\AAKResourceRepository;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
 use App\Service\Metric;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Bundle\SecurityBundle\Security;
 
 final class UserBookingCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {

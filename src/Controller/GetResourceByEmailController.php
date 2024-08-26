@@ -28,7 +28,7 @@ class GetResourceByEmailController extends AbstractController
         $resource = $this->aakResourceRepository->findOneByEmail($resourceMail);
 
         if (is_null($resource)) {
-            $this->metric->counter('resourceNotFound', "Resource not found", $this);
+            $this->metric->counter('resourceNotFound', 'Resource not found', $this);
             throw new HttpException(404, 'Resource not found');
         }
 

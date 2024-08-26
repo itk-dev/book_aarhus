@@ -14,10 +14,10 @@ use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
 use App\Service\Metric;
 use Psr\Log\LoggerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 
 /**
  * @see https://github.com/itk-dev/os2forms_selvbetjening/blob/develop/web/modules/custom/os2forms_rest_api/README.md

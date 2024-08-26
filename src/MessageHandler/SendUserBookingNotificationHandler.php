@@ -22,7 +22,8 @@ class SendUserBookingNotificationHandler
         private readonly AAKResourceRepository $aakResourceRepository,
         private readonly NotificationServiceInterface $notificationService,
         private readonly Metric $metric,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws TransportExceptionInterface

@@ -9,6 +9,7 @@ use App\MessageHandler\AddBookingToCacheHandler;
 use App\Repository\Resources\AAKResourceRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
+use App\Service\Metric;
 use App\Service\UserBookingCacheServiceInterface;
 use App\Tests\AbstractBaseApiTestCase;
 use Psr\Log\LoggerInterface;
@@ -38,11 +39,14 @@ class AddBookingToCacheHandlerTest extends AbstractBaseApiTestCase
             ->getMock();
         $aakResourceRepositoryMock->expects($this->exactly(1))->method('findOneBy')->willReturn($res);
 
+        $metric = $this->createMock(Metric::class);
+
         $handler = new AddBookingToCacheHandler(
             $bookingServiceMock,
             $userBookingCacheServiceMock,
             $loggerMock,
             $aakResourceRepositoryMock,
+            $metric,
         );
 
         $booking = new Booking();

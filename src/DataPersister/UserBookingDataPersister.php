@@ -13,10 +13,10 @@ use App\Message\UpdateBookingInCacheMessage;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
 use App\Service\Metric;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 
 class UserBookingDataPersister implements ContextAwareDataPersisterInterface
 {

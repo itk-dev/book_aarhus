@@ -2,7 +2,6 @@
 
 namespace App\MessageHandler;
 
-use ApiPlatform\Exception\InvalidArgumentException;
 use App\Entity\Main\Booking;
 use App\Entity\Resources\AAKResource;
 use App\Exception\WebformSubmissionRetrievalException;
@@ -16,11 +15,9 @@ use App\Utils\ValidationUtilsInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\Exception\RecoverableMessageHandlingException;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
-use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -51,7 +48,7 @@ class WebformSubmitHandler
         try {
             $dataSubmission = $this->webformService->getData($message);
         } catch (WebformSubmissionRetrievalException $e) {
-            if ($e->getCode() == 403) {
+            if (403 == $e->getCode()) {
                 $this->metric->counter('forbiddenError', null, $this);
             }
 

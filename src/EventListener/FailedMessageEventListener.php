@@ -35,7 +35,7 @@ final class FailedMessageEventListener
             $webformId = $message->getWebformId();
             $throwable = $event->getThrowable();
 
-            $message = sprintf("Failed to extract data (Error: %d) from webform with id: %s.", $throwable->getCode(), $webformId);
+            $message = sprintf('Failed to extract data (Error: %d) from webform with id: %s.', $throwable->getCode(), $webformId);
 
             $this->notificationService->notifyAdmin(
                 'Webform data retrieval failed',

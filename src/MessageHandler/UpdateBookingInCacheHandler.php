@@ -25,6 +25,6 @@ class UpdateBookingInCacheHandler
 
         $this->userBookingCacheService->changeCacheEntry($message->getExchangeId(), $message->getChanges());
 
-        $this->metric->counter('cacheEntryUpdated', "Cache entry has been updated.", $this);
+        $this->metric->counter('cacheEntryUpdated', 'Cache entry has been updated.', $this);
     }
 }

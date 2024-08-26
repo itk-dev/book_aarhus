@@ -29,7 +29,7 @@ class GetStatusByIdsController extends AbstractController
         $exchangeIds = json_decode($request->getContent())->ids;
 
         if (empty($exchangeIds)) {
-            $this->metric->counter('resourceNotFound', "Resource not found", $this);
+            $this->metric->counter('resourceNotFound', 'Resource not found', $this);
             throw new NotFoundHttpException('Resource not found');
         }
 
