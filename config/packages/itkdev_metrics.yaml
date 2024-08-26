@@ -18,5 +18,6 @@ itkdev_metrics:
         apcu: false
 
 when@test:
-    adapter:
-        type: memory
+    itkdev_metrics:
+        adapter:
+            type: memory
