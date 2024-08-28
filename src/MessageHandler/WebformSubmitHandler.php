@@ -15,6 +15,7 @@ use App\Utils\ValidationUtilsInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Exception\RecoverableMessageHandlingException;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
@@ -43,20 +44,19 @@ class WebformSubmitHandler
 
     public function __invoke(WebformSubmitMessage $message): void
     {
-        $this->metric->counter('invoke', null, $this);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         try {
             $dataSubmission = $this->webformService->getData($message);
         } catch (WebformSubmissionRetrievalException $e) {
             if (403 == $e->getCode()) {
-                $this->metric->counter('forbiddenError', null, $this);
+               $this->metric->incMethodTotal(__METHOD__, 'forbidden');
             }
 
             // TODO: Handle other request actions as a retryable exception.
 
-            $this->metric->counter('generalUnrecoverableMessageHandlingException');
-            $this->metric->counter('webformSubmissionRetrievalException', null, $this);
             $this->logger->error(sprintf('Webform submission handling failed: %d %s', $e->getCode(), $e->getMessage()));
+            $this->metric->incExceptionTotal(UnrecoverableMessageHandlingException::class);
 
             throw new UnrecoverableMessageHandlingException($e->getMessage());
         }
@@ -102,16 +102,16 @@ class WebformSubmitHandler
                     $envelope->with(new DispatchAfterCurrentBusStamp())
                 );
 
-                $this->metric->counter('createBookingMessageDispatched', 'Create booking message has been dispatched.', $this);
+                $this->metric->totalIncByOne('create_booking_message_dispatched', 'Create booking message has been dispatched.', $this, ['complete' => 1]);
             }
         } catch (WebformSubmissionRetrievalException $e) {
-            $this->metric->counter('generalUnrecoverableMessageHandlingException');
-            $this->metric->counter('webformSubmissionRetrievalException', null, $this);
-
             $this->logger->error(sprintf('Webform submission handling failed: %d %s', $e->getCode(), $e->getMessage()));
+            $this->metric->incExceptionTotal(UnrecoverableMessageHandlingException::class);
 
             throw new UnrecoverableMessageHandlingException($e->getMessage());
         }
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 
     /**
@@ -130,8 +130,7 @@ class WebformSubmitHandler
 
             return $body;
         } catch (\Exception $exception) {
-            $this->metric->counter('composeBookingContentsError', null, $this);
-
+            $this->metric->incExceptionTotal(\Exception::class);
             throw new WebformSubmissionRetrievalException($exception->getMessage());
         }
     }
@@ -144,7 +143,7 @@ class WebformSubmitHandler
         try {
             return $this->twig->render('booking.html.twig', $body);
         } catch (RuntimeError|SyntaxError|LoaderError $error) {
-            $this->metric->counter('renderContentsAsHtmlError', null, $this);
+            $this->metric->totalIncByOne('render_contents_as_html_error', 'Render contents as html error.', $this, ['error' => 1]);
 
             throw new WebformSubmissionRetrievalException($error->getMessage());
         }

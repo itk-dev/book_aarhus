@@ -36,7 +36,7 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
      */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
-        $this->metric->counter('getCollection', null, $this);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $request = $this->requestStack->getCurrentRequest();
 
@@ -82,6 +82,8 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
 
         $obj = new \ArrayObject($userBookings);
         $it = $obj->getIterator();
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
 
         return new TraversablePaginator($it, $page, $responseData['pageSize'], $responseData['total']);
     }

@@ -24,14 +24,12 @@ final class FailedMessageEventListener
 
     public function __invoke(WorkerMessageFailedEvent $event): void
     {
-        $this->metric->counter('invoke', null, $this);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $envelope = $event->getEnvelope();
         $message = $envelope->getMessage();
 
         if ($message instanceof WebformSubmitMessage) {
-            $this->metric->counter('webformSubmitMessageError', 'Failed to extract data from webform.', $this);
-
             $webformId = $message->getWebformId();
             $throwable = $event->getThrowable();
 
@@ -44,8 +42,6 @@ final class FailedMessageEventListener
                 null
             );
         } elseif ($message instanceof CreateBookingMessage) {
-            $this->metric->counter('createBookingMessageError', 'Failed to create the booking in Exchange.', $this);
-
             $booking = $message->getBooking();
             $resource = $this->AAKResourceRepository->findOneByEmail($booking->getResourceEmail());
 
@@ -58,8 +54,6 @@ final class FailedMessageEventListener
                 $resource
             );
         } elseif ($message instanceof SendBookingNotificationMessage) {
-            $this->metric->counter('sendBookingNotificationError', 'Failed to send notification message to user.', $this);
-
             $booking = $message->getBooking();
             $resource = $this->AAKResourceRepository->findOneByEmail($booking->getResourceEmail());
 
@@ -70,5 +64,7 @@ final class FailedMessageEventListener
                 $resource
             );
         }
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 }

@@ -22,7 +22,6 @@ class AddBookingToCacheHandler
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
         private readonly UserBookingCacheServiceInterface $userBookingCacheService,
-        private readonly LoggerInterface $logger,
         private readonly AAKResourceRepository $resourceRepository,
         private readonly Metric $metric,
     ) {
@@ -33,8 +32,7 @@ class AddBookingToCacheHandler
      */
     public function __invoke(AddBookingToCacheMessage $message): void
     {
-        $this->logger->info('AddBookingToCacheHandler invoked.');
-        $this->metric->counter('invoke', null, $this);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $id = $this->bookingService->getBookingIdFromICalUid($message->getICalUID()) ?? null;
 
@@ -61,12 +59,12 @@ class AddBookingToCacheHandler
                 'resourceMail' => $booking->getResourceEmail(),
                 'resourceDisplayName' => $resourceDisplayName,
             ]);
-
-            $this->metric->counter('cacheEntryAdded', 'Cache entry added.', $this);
         } else {
-            $this->metric->counter('recoverableErrorBookingIdNotFound', 'Booking id could not be retrieved for booking with iCalUID.', $this);
-            $this->metric->counter('generalRecoverableMessageHandlingException');
+            $this->metric->incExceptionTotal(RecoverableMessageHandlingException::class);
+
             throw new RecoverableMessageHandlingException(sprintf('Booking id could not be retrieved for booking with iCalUID: %s', $message->getICalUID()));
         }
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 }

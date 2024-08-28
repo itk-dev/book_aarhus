@@ -23,7 +23,7 @@ final class LocationCollectionDataProvider implements ContextAwareCollectionData
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
-        $this->metric->counter('getCollection', null, $this);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $whitelistKey = $context['filters']['whitelistKey'] ?? null;
 
@@ -35,5 +35,7 @@ final class LocationCollectionDataProvider implements ContextAwareCollectionData
 
             yield $location;
         }
+
+       $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 }

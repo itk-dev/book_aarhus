@@ -21,7 +21,7 @@ class GetAllResourcesController extends AbstractController
 
     public function __invoke(Request $request): Response
     {
-        $this->metric->counter('invoke', null, $this);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $userPermissionHeader = $request->headers->get('Authorization-UserPermission');
         $whitelistKey = $request->query->get('whitelistKey');
@@ -38,6 +38,8 @@ class GetAllResourcesController extends AbstractController
             $whitelistedResources = $this->resourceService->getWhitelistedResources($permission, $whitelistKey);
             $resources = array_merge($resources, $whitelistedResources);
         }
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
 
         return new JsonResponse($resources, 200);
     }

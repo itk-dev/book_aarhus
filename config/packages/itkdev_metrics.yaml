@@ -1,6 +1,6 @@
 itkdev_metrics:
     # Prefix exported metrics (should be application name)
-    namespace: BookAarhus
+    namespace: bookaarhus
 
     # Storage adapter to use
     adapter:

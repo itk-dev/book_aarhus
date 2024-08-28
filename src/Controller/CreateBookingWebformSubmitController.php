@@ -25,8 +25,7 @@ class CreateBookingWebformSubmitController extends AbstractController
 
     public function __invoke(Request $request): Response
     {
-        $this->logger->info('CreateBookingWebformSubmitController invoked.');
-        $this->metric->counter('invoke', null, $this);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $user = $this->getUser();
         if ($user instanceof ApiKeyUser) {
@@ -41,19 +40,19 @@ class CreateBookingWebformSubmitController extends AbstractController
         $apiKeyUserId = $userId ?? $user?->getUserIdentifier();
 
         if (null === $webformId) {
-            $this->metric->counter('badRequestError', 'Webform submission data not valid.', $this);
+            $this->metric->incExceptionTotal(BadRequestException::class);
             throw new BadRequestException('data->webform->id should not be null');
         }
         if (null === $submissionUuid) {
-            $this->metric->counter('badRequestError', 'Webform submission data not valid.', $this);
+            $this->metric->incExceptionTotal(BadRequestException::class);
             throw new BadRequestException('data->submission->uuid should not be null');
         }
         if (null === $sender) {
-            $this->metric->counter('badRequestError', 'Webform submission data not valid.', $this);
+            $this->metric->incExceptionTotal(BadRequestException::class);
             throw new BadRequestException('links->sender should not be null');
         }
         if (null === $getSubmissionUrl) {
-            $this->metric->counter('badRequestError', 'Webform submission data not valid.', $this);
+            $this->metric->incExceptionTotal(BadRequestException::class);
             throw new BadRequestException('links->get_submission_url should not be null');
         }
 
@@ -67,6 +66,8 @@ class CreateBookingWebformSubmitController extends AbstractController
             $getSubmissionUrl,
             $apiKeyUserId ?? '',
         ));
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
 
         return new Response(null, 201);
     }

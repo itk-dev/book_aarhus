@@ -70,7 +70,7 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        $this->metric->counter('authenticationSuccess', null, $this);
+        $this->metric->totalIncByOne('authentication', "Authentication attempt", $this, ['result' => 'success']);
 
         // on success, let the request continue
         return null;
@@ -81,7 +81,7 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        $this->metric->counter('authenticationFailure', null, $this);
+        $this->metric->totalIncByOne('authentication', "Authentication attempt", $this, ['result' => 'failure']);
 
         $data = [
             'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),

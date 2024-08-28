@@ -35,7 +35,7 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
 
     public function remove($data, array $context = []): void
     {
-        $this->metric->counter('remove', null, $this);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         try {
             if ($data instanceof UserBooking) {
@@ -57,11 +57,13 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
         } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
             throw new HttpException($e->getCode(), 'Booking could not be deleted.');
         }
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 
     public function persist($data, array $context = []): mixed
     {
-        $this->metric->counter('persist', null, $this);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         try {
             if ($data instanceof UserBooking) {
@@ -84,6 +86,8 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
                     ],
                 ));
             }
+
+            $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
 
             return $data;
         } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {

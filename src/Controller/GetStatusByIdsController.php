@@ -24,12 +24,12 @@ class GetStatusByIdsController extends AbstractController
 
     public function __invoke(Request $request): JsonResponse
     {
-        $this->metric->counter('invoke', null, $this);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $exchangeIds = json_decode($request->getContent())->ids;
 
         if (empty($exchangeIds)) {
-            $this->metric->counter('resourceNotFound', 'Resource not found', $this);
+            $this->metric->incExceptionTotal(NotFoundHttpException::class);
             throw new NotFoundHttpException('Resource not found');
         }
 
@@ -56,7 +56,7 @@ class GetStatusByIdsController extends AbstractController
                     $this->userBookingCacheService->changeCacheEntry($id, ['status' => $userBooking->status]);
                 }
             } catch (\Exception) {
-                $this->metric->counter('ignoredException', null, $this);
+                $this->metric->incExceptionTotal(\Exception::class);
 
                 $statuses[] = [
                     'exchangeId' => $id,
@@ -64,6 +64,8 @@ class GetStatusByIdsController extends AbstractController
                 ];
             }
         }
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
 
         return new JsonResponse($statuses);
     }
