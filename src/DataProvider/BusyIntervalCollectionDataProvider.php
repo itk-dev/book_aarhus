@@ -28,7 +28,7 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
      */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         if (!isset($context['filters'])) {
             throw new BadRequestHttpException('Required filters not set.');
@@ -70,6 +70,6 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
             }
         }
 
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::COMPLETE);
+       $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 }

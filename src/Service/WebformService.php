@@ -24,7 +24,7 @@ class WebformService implements WebformServiceInterface
      */
     public function getData(WebformSubmitMessage $message): array
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $this->logger->info('WebformSubmitHandler.');
 
@@ -42,6 +42,8 @@ class WebformService implements WebformServiceInterface
         $this->logger->info("Fetching $submissionUrl");
 
         $webformSubmission = $this->getWebformSubmission($submissionUrl, $user->getWebformApiKey());
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
 
         return $this->getValidatedData($webformSubmission);
     }

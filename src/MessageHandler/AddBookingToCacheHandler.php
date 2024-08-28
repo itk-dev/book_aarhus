@@ -32,7 +32,7 @@ class AddBookingToCacheHandler
      */
     public function __invoke(AddBookingToCacheMessage $message): void
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $id = $this->bookingService->getBookingIdFromICalUid($message->getICalUID()) ?? null;
 
@@ -65,6 +65,6 @@ class AddBookingToCacheHandler
             throw new RecoverableMessageHandlingException(sprintf('Booking id could not be retrieved for booking with iCalUID: %s', $message->getICalUID()));
         }
 
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::COMPLETE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 }

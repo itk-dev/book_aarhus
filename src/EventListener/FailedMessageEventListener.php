@@ -24,7 +24,7 @@ final class FailedMessageEventListener
 
     public function __invoke(WorkerMessageFailedEvent $event): void
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $envelope = $event->getEnvelope();
         $message = $envelope->getMessage();
@@ -64,5 +64,7 @@ final class FailedMessageEventListener
                 $resource
             );
         }
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 }

@@ -21,10 +21,10 @@ class UpdateBookingInCacheHandler
      */
     public function __invoke(UpdateBookingInCacheMessage $message): void
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $this->userBookingCacheService->changeCacheEntry($message->getExchangeId(), $message->getChanges());
 
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::COMPLETE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 }

@@ -32,18 +32,19 @@ class Metric
         $this->metricsService->counter($prefix.$name.'_total', $description ?? '', 1, $labels);
     }
 
-    public function incFunctionTotal($invokingInstance, string $functionName, string $action): void
+    public function incMethodTotal(string $method, string $action): void
     {
-        $classShortName = (new \ReflectionClass($invokingInstance))->getShortName();
-        $className = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $classShortName));
-        $functionName = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $functionName));
+        $metrixMethod = preg_replace('/^.*\\\s*/', '', $method);
+        $metrixMethod = str_replace('::', '__', $metrixMethod);
+        $metrixMethod = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $metrixMethod));
 
-        $this->metricsService->counter('function_total', 'Function totals.', 1, [$className.'__'.$functionName => $action]);
+        $this->metricsService->counter('method_'.$metrixMethod.'_total', 'Method '.$method.' totals.', 1, ['action' => $action]);
     }
 
     public function incExceptionTotal($exceptionClassName): void
     {
+        $exceptionClassName = preg_replace('/^.*\\\s*/', '', $exceptionClassName);
         $exceptionClassName = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $exceptionClassName));
-        $this->metricsService->counter('exception', 'Exception totals.', 1, [self::EXCEPTION => $exceptionClassName]);
+        $this->metricsService->counter('exception_total', 'Exception totals.', 1, [self::EXCEPTION => $exceptionClassName]);
     }
 }

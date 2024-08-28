@@ -33,7 +33,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function rebuildCache(): void
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         try {
             $this->clearUserBookingCache();
@@ -41,6 +41,8 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         } catch (\Exception $e) {
             throw new MicrosoftGraphCommunicationException($e->getMessage(), (int) $e->getCode());
         }
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 
     /**
@@ -52,7 +54,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function updateCache($removeOutdated = true): void
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         try {
             $token = $this->graphHelperService->authenticateAsServiceAccount();
@@ -96,6 +98,8 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         } catch (\Exception $e) {
             throw new MicrosoftGraphCommunicationException($e->getMessage(), (int) $e->getCode());
         }
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 
     /**
@@ -103,11 +107,13 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function addCacheEntry(UserBooking $userBooking): void
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $entity = new UserBookingCacheEntry();
         $this->entityManager->persist($this->setCacheEntityValues($entity, $userBooking));
         $this->entityManager->flush();
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 
     /**
@@ -115,11 +121,13 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function addCacheEntryFromArray(array $data): void
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $entity = new UserBookingCacheEntry();
         $this->entityManager->persist($this->setCacheEntityValuesFromArray($entity, $data));
         $this->entityManager->flush();
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 
     /**
@@ -129,7 +137,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function changeCacheEntry(string $exchangeId, array $changes): void
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)
             ->findOneBy(['exchangeId' => $exchangeId]);
@@ -164,6 +172,8 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         }
 
         $this->entityManager->flush();
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 
     /**
@@ -171,7 +181,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function deleteCacheEntry(string $exchangeId): void
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)
             ->findOneBy(['exchangeId' => $exchangeId]);
@@ -180,6 +190,8 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
             $this->entityManager->remove($entity);
             $this->entityManager->flush();
         }
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 
     /**

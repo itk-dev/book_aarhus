@@ -41,7 +41,7 @@ class CreateBookingHandler
      */
     public function __invoke(CreateBookingMessage $message): void
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $booking = $message->getBooking();
 
@@ -123,13 +123,13 @@ class CreateBookingHandler
                     $response['iCalUId'],
                 ));
             } else {
-                $this->metric->incFunctionTotal($this, __FUNCTION__, 'icaluid_not_found');
                 $this->logger->error(sprintf('Booking iCalUID could not be retrieved for booking with subject: %s', $booking->getSubject()));
+                $this->metric->incMethodTotal(__METHOD__, 'icaluid_not_found');
             }
         } catch (BookingCreateConflictException $exception) {
             // If it is a BookingCreateConflictException the booking should be rejected.
             $this->logger->notice(sprintf('Booking conflict detected: %d %s', $exception->getCode(), $exception->getMessage()));
-            $this->metric->incFunctionTotal($this, __FUNCTION__, 'booking_conflict_detected');
+            $this->metric->incMethodTotal(__METHOD__, 'booking_conflict_detected');
 
             $this->bus->dispatch(new SendBookingNotificationMessage(
                 $booking,
@@ -143,5 +143,7 @@ class CreateBookingHandler
 
             throw $exception;
         }
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 }

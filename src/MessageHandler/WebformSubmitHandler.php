@@ -44,13 +44,13 @@ class WebformSubmitHandler
 
     public function __invoke(WebformSubmitMessage $message): void
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         try {
             $dataSubmission = $this->webformService->getData($message);
         } catch (WebformSubmissionRetrievalException $e) {
             if (403 == $e->getCode()) {
-                $this->metric->incFunctionTotal($this, __FUNCTION__, 'forbidden');
+               $this->metric->incMethodTotal(__METHOD__, 'forbidden');
             }
 
             // TODO: Handle other request actions as a retryable exception.
@@ -110,6 +110,8 @@ class WebformSubmitHandler
 
             throw new UnrecoverableMessageHandlingException($e->getMessage());
         }
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 
     /**

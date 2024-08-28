@@ -64,7 +64,7 @@ class MicrosoftGraphHelperService
      */
     public function request(string $path, string $accessToken, string $requestType = 'GET', array $body = null): GraphResponse
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         try {
             $graph = $this->clientFactory->getGraph();
@@ -75,6 +75,8 @@ class MicrosoftGraphHelperService
             if ($body) {
                 $graphRequest->attachBody($body);
             }
+
+            $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
 
             return $graphRequest->execute();
         } catch (GuzzleException|GraphException $e) {

@@ -31,7 +31,7 @@ class ResourceService implements ResourceServiceInterface
      */
     public function getAllResources(string $permission = null, int $cacheLifetime = 60 * 30): array
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $cachedResources = $this->resourceCache->get("resources-$permission", function (CacheItemInterface $cacheItem) use ($cacheLifetime, $permission) {
             $cacheItem->expiresAfter($cacheLifetime);
@@ -40,15 +40,19 @@ class ResourceService implements ResourceServiceInterface
             return $this->serializer->serialize($info, 'json', ['groups' => 'minimum']);
         });
 
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+
         return json_decode($cachedResources);
     }
 
     public function getWhitelistedResources($permission, $whitelistKey): array
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $info = $this->aakResourceRepository->getOnlyWhitelisted($permission, $whitelistKey);
         $serializedWhitelistedResources = $this->serializer->serialize($info, 'json', ['groups' => 'minimum']);
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
 
         return json_decode($serializedWhitelistedResources);
     }

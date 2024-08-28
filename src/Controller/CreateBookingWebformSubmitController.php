@@ -25,7 +25,7 @@ class CreateBookingWebformSubmitController extends AbstractController
 
     public function __invoke(Request $request): Response
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         $user = $this->getUser();
         if ($user instanceof ApiKeyUser) {
@@ -67,7 +67,7 @@ class CreateBookingWebformSubmitController extends AbstractController
             $apiKeyUserId ?? '',
         ));
 
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::COMPLETE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
 
         return new Response(null, 201);
     }

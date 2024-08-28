@@ -30,7 +30,7 @@ class SendBookingNotificationHandler
      */
     public function __invoke(SendBookingNotificationMessage $message): void
     {
-        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
 
         try {
             $this->logger->info('SendBookingNotificationHandler.');
@@ -54,5 +54,7 @@ class SendBookingNotificationHandler
 
             throw $e;
         }
+
+        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
     }
 }
