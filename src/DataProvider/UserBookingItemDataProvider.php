@@ -31,7 +31,7 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
      */
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): UserBooking|null
     {
-        $this->metric->counter('getItem', null, $this);
+        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
 
         if (!isset($id) || !is_string($id)) {
             throw new BadRequestHttpException('Required booking id is not set');
@@ -44,6 +44,8 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
         if (!$this->security->isGranted(UserBookingVoter::VIEW, $userBooking)) {
             throw new AccessDeniedHttpException('Access denied');
         }
+
+        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::COMPLETE);
 
         return $userBooking;
     }

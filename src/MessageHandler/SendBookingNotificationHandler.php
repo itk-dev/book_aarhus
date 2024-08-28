@@ -30,10 +30,10 @@ class SendBookingNotificationHandler
      */
     public function __invoke(SendBookingNotificationMessage $message): void
     {
-        $this->metric->counter('invoke', null, $this);
+        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
 
         try {
-            $this->logger->info('SendBookingNotificationHandler invoked.');
+            $this->logger->info('SendBookingNotificationHandler.');
 
             $booking = $message->getBooking();
             $type = $message->getType();
@@ -44,14 +44,13 @@ class SendBookingNotificationHandler
 
             $this->notificationService->sendBookingNotification($booking, $resource, $type);
         } catch (NoNotificationReceiverException|UnsupportedNotificationTypeException $e) {
-            $this->metric->counter('generalUnrecoverableMessageHandlingException');
             $this->logger->error(sprintf('SendBookingNotificationHandler exception: %d %s', $e->getCode(), $e->getMessage()));
+            $this->metric->incExceptionTotal(UnrecoverableMessageHandlingException::class);
 
             throw new UnrecoverableMessageHandlingException($e->getMessage(), $e->getCode(), $e);
         } catch (TransportExceptionInterface $e) {
-            $this->metric->counter('generalTransportExceptionInterface');
-            $this->metric->counter('transportExceptionInterface', null, $this);
             $this->logger->error(sprintf('SendBookingNotificationHandler exception: %d %s', $e->getCode(), $e->getMessage()));
+            $this->metric->incExceptionTotal(TransportExceptionInterface::class);
 
             throw $e;
         }

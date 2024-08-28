@@ -64,7 +64,7 @@ class MicrosoftGraphHelperService
      */
     public function request(string $path, string $accessToken, string $requestType = 'GET', array $body = null): GraphResponse
     {
-        $this->metric->counter('request', null, $this);
+        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
 
         try {
             $graph = $this->clientFactory->getGraph();

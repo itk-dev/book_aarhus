@@ -21,8 +21,9 @@ class RemoveBookingFromCacheHandler
      */
     public function __invoke(RemoveBookingFromCacheMessage $message): void
     {
-        $this->metric->counter('invoke', null, $this);
+        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
+
         $this->userBookingCacheService->deleteCacheEntry($message->getExchangeId());
-        $this->metric->counter('cacheEntryDeleted', 'Cache entry has been deleted.', $this);
+        $this->metric->totalIncByOne('cache_entry_deleted', 'Cache entry has been deleted.', $this, ['complete']);
     }
 }

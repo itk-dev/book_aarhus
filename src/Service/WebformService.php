@@ -24,9 +24,9 @@ class WebformService implements WebformServiceInterface
      */
     public function getData(WebformSubmitMessage $message): array
     {
-        $this->metric->counter('getData', null, $this);
+        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
 
-        $this->logger->info('WebformSubmitHandler invoked.');
+        $this->logger->info('WebformSubmitHandler.');
 
         $submissionUrl = $message->getSubmissionUrl();
         $apiKeyUserId = $message->getApiKeyUserId();
@@ -34,7 +34,8 @@ class WebformService implements WebformServiceInterface
         $user = $this->apiKeyUserRepository->find($apiKeyUserId);
 
         if (!$user) {
-            $this->metric->counter('apikeyUserNotSetError', null, $this);
+            $this->metric->incExceptionTotal(WebformSubmissionRetrievalException::class);
+
             throw new WebformSubmissionRetrievalException('ApiKeyUser not set.');
         }
 
@@ -59,8 +60,8 @@ class WebformService implements WebformServiceInterface
 
             return $response->toArray();
         } catch (ExceptionInterface $exception) {
-            $this->metric->counter('getWebformSubmission', 'Failed to get data from webform.', $this);
             $this->logger->error('getWebformSubmission Exception ('.$exception->getCode().'): '.$exception->getMessage());
+            $this->metric->incExceptionTotal(WebformSubmissionRetrievalException::class);
 
             throw new WebformSubmissionRetrievalException($exception->getMessage(), $exception->getCode());
         }

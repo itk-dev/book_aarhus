@@ -55,7 +55,7 @@ class NotificationService implements NotificationServiceInterface
      */
     public function sendBookingNotification(Booking $booking, ?AAKResource $resource, NotificationTypeEnum $type): void
     {
-        $this->metric->counter('sendBookingNotification', null, $this);
+        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
 
         $data = [
             'booking' => $booking,
@@ -80,7 +80,7 @@ class NotificationService implements NotificationServiceInterface
         ?AAKResource $resource,
         NotificationTypeEnum $type
     ): void {
-        $this->metric->counter('sendUserBookingNotification', null, $this);
+        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
 
         $body = $userBooking->body;
 
@@ -214,7 +214,7 @@ class NotificationService implements NotificationServiceInterface
      */
     public function notifyAdmin(string $subject, string $message, ?Booking $booking, ?AAKResource $resource): void
     {
-        $this->metric->counter('notifyAdmin', null, $this);
+        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
 
         if ($this->validatedAdminNotificationEmail) {
             $to = $this->validatedAdminNotificationEmail;

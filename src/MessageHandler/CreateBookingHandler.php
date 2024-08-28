@@ -41,16 +41,14 @@ class CreateBookingHandler
      */
     public function __invoke(CreateBookingMessage $message): void
     {
-        $this->logger->info('CreateBookingHandler invoked.');
-        $this->metric->counter('invoke', null, $this);
+        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
 
         $booking = $message->getBooking();
 
         if (!$this->security->isGranted(BookingVoter::CREATE, $booking)) {
             $this->logger->error('User does not have permission to create bookings for the given resource.');
+            $this->metric->incExceptionTotal(UnrecoverableMessageHandlingException::class);
 
-            $this->metric->counter('generalUnrecoverableMessageHandlingException');
-            $this->metric->counter('forbidden', 'User does not have permission to create bookings for the given resource.', $this);
             throw new UnrecoverableMessageHandlingException('User does not have permission to create bookings for the given resource.', 403);
         }
 
@@ -60,9 +58,8 @@ class CreateBookingHandler
 
         if (null == $resource) {
             $this->logger->error("Resource $email not found.");
+            $this->metric->incExceptionTotal(UnrecoverableMessageHandlingException::class);
 
-            $this->metric->counter('generalUnrecoverableMessageHandlingException');
-            $this->metric->counter('resourceNotFound', 'Resource not found.', $this);
             throw new UnrecoverableMessageHandlingException("Resource $email not found.", 404);
         }
 
@@ -126,14 +123,13 @@ class CreateBookingHandler
                     $response['iCalUId'],
                 ));
             } else {
-                $this->metric->counter('icaluidNotFound', 'Booking iCalUID could not be retrieved for booking with subject.', $this);
+                $this->metric->incFunctionTotal($this, __FUNCTION__, 'icaluid_not_found');
                 $this->logger->error(sprintf('Booking iCalUID could not be retrieved for booking with subject: %s', $booking->getSubject()));
             }
         } catch (BookingCreateConflictException $exception) {
             // If it is a BookingCreateConflictException the booking should be rejected.
             $this->logger->notice(sprintf('Booking conflict detected: %d %s', $exception->getCode(), $exception->getMessage()));
-            $this->metric->counter('generalBookingCreateConflictException');
-            $this->metric->counter('bookingConflictDetected', 'Booking conflict detected.', $this);
+            $this->metric->incFunctionTotal($this, __FUNCTION__, 'booking_conflict_detected');
 
             $this->bus->dispatch(new SendBookingNotificationMessage(
                 $booking,
@@ -143,8 +139,7 @@ class CreateBookingHandler
             // Other exceptions should logged, then re-thrown for the message to be re-queued.
             $this->logger->error(sprintf('CreateBookingHandler exception: %d %s', $exception->getCode(), $exception->getMessage()));
 
-            $this->metric->counter('generalException');
-            $this->metric->counter('unexpectedException', null, $this);
+            $this->metric->incExceptionTotal(\Exception::class);
 
             throw $exception;
         }

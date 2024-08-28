@@ -28,7 +28,7 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
      */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
-        $this->metric->counter('getCollection', null, $this);
+        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::INVOKE);
 
         if (!isset($context['filters'])) {
             throw new BadRequestHttpException('Required filters not set.');
@@ -69,5 +69,7 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
                 yield $busyInterval;
             }
         }
+
+        $this->metric->incFunctionTotal($this, __FUNCTION__, Metric::COMPLETE);
     }
 }
