@@ -22,7 +22,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         private readonly MicrosoftGraphBookingService $microsoftGraphBookingService,
         private readonly LoggerInterface $logger,
         private readonly AAKResourceRepository $resourceRepository,
-        private readonly Metric $metric,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -33,7 +33,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function rebuildCache(): void
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         try {
             $this->clearUserBookingCache();
@@ -42,7 +42,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
             throw new MicrosoftGraphCommunicationException($e->getMessage(), (int) $e->getCode());
         }
 
-        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
     /**
@@ -54,7 +54,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function updateCache($removeOutdated = true): void
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         try {
             $token = $this->graphHelperService->authenticateAsServiceAccount();
@@ -99,7 +99,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
             throw new MicrosoftGraphCommunicationException($e->getMessage(), (int) $e->getCode());
         }
 
-        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
     /**
@@ -107,13 +107,13 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function addCacheEntry(UserBooking $userBooking): void
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         $entity = new UserBookingCacheEntry();
         $this->entityManager->persist($this->setCacheEntityValues($entity, $userBooking));
         $this->entityManager->flush();
 
-        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
     /**
@@ -121,13 +121,13 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function addCacheEntryFromArray(array $data): void
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         $entity = new UserBookingCacheEntry();
         $this->entityManager->persist($this->setCacheEntityValuesFromArray($entity, $data));
         $this->entityManager->flush();
 
-        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
     /**
@@ -137,7 +137,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function changeCacheEntry(string $exchangeId, array $changes): void
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)
             ->findOneBy(['exchangeId' => $exchangeId]);
@@ -173,7 +173,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
 
         $this->entityManager->flush();
 
-        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
     /**
@@ -181,7 +181,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      */
     public function deleteCacheEntry(string $exchangeId): void
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)
             ->findOneBy(['exchangeId' => $exchangeId]);
@@ -191,7 +191,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
             $this->entityManager->flush();
         }
 
-        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
     /**

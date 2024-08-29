@@ -3,7 +3,7 @@
 namespace App\Tests\Service;
 
 use App\Repository\Resources\AAKResourceRepository;
-use App\Service\Metric;
+use App\Service\MetricsHelper;
 use App\Service\ResourceService;
 use App\Tests\AbstractBaseApiTestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -24,7 +24,7 @@ class ResourceServiceTest extends AbstractBaseApiTestCase
             NotificationServiceData::getResource(),
         ]);
 
-        $metric = $this->createMock(Metric::class);
+        $metric = $this->createMock(MetricsHelper::class);
 
         $service = new ResourceService($aakResourceRepository, $cache, $serializer, $metric);
 
@@ -57,7 +57,7 @@ class ResourceServiceTest extends AbstractBaseApiTestCase
             NotificationServiceData::getResource(),
         ]);
 
-        $metric = $this->createMock(Metric::class);
+        $metric = $this->createMock(MetricsHelper::class);
 
         $service = new ResourceService($aakResourceRepository, $cache, $serializer, $metric);
 

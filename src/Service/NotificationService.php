@@ -39,7 +39,7 @@ class NotificationService implements NotificationServiceInterface
         private readonly MailerInterface $mailer,
         private readonly string $bindNotificationTimezone,
         private readonly string $bindNotificationDateFormat,
-        private readonly Metric $metric,
+        private readonly MetricsHelper $metricsHelper,
     ) {
         try {
             $this->validatedAdminNotificationEmail = $this->validationUtils->validateEmail(
@@ -55,7 +55,7 @@ class NotificationService implements NotificationServiceInterface
      */
     public function sendBookingNotification(Booking $booking, ?AAKResource $resource, NotificationTypeEnum $type): void
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         $data = [
             'booking' => $booking,
@@ -71,7 +71,7 @@ class NotificationService implements NotificationServiceInterface
 
         $this->sendNotification($notification);
 
-        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
     /**
@@ -82,7 +82,7 @@ class NotificationService implements NotificationServiceInterface
         ?AAKResource $resource,
         NotificationTypeEnum $type
     ): void {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         $body = $userBooking->body;
 
@@ -165,7 +165,7 @@ class NotificationService implements NotificationServiceInterface
 
         $this->sendNotification($notificationData);
 
-        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
     /**
@@ -218,7 +218,7 @@ class NotificationService implements NotificationServiceInterface
      */
     public function notifyAdmin(string $subject, string $message, ?Booking $booking, ?AAKResource $resource): void
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         if ($this->validatedAdminNotificationEmail) {
             $to = $this->validatedAdminNotificationEmail;
@@ -255,7 +255,7 @@ class NotificationService implements NotificationServiceInterface
             $this->sendNotification($notificationData);
         }
 
-        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
     /**

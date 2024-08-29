@@ -15,7 +15,7 @@ class WebformService implements WebformServiceInterface
         private readonly HttpClientInterface $client,
         private readonly LoggerInterface $logger,
         private readonly ApiKeyUserRepository $apiKeyUserRepository,
-        private readonly Metric $metric,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -24,7 +24,7 @@ class WebformService implements WebformServiceInterface
      */
     public function getData(WebformSubmitMessage $message): array
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         $this->logger->info('WebformSubmitHandler.');
 
@@ -34,7 +34,7 @@ class WebformService implements WebformServiceInterface
         $user = $this->apiKeyUserRepository->find($apiKeyUserId);
 
         if (!$user) {
-            $this->metric->incExceptionTotal(WebformSubmissionRetrievalException::class);
+            $this->metricsHelper->incExceptionTotal(WebformSubmissionRetrievalException::class);
 
             throw new WebformSubmissionRetrievalException('ApiKeyUser not set.');
         }
@@ -43,7 +43,7 @@ class WebformService implements WebformServiceInterface
 
         $webformSubmission = $this->getWebformSubmission($submissionUrl, $user->getWebformApiKey());
 
-        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
         return $this->getValidatedData($webformSubmission);
     }
@@ -63,7 +63,7 @@ class WebformService implements WebformServiceInterface
             return $response->toArray();
         } catch (ExceptionInterface $exception) {
             $this->logger->error('getWebformSubmission Exception ('.$exception->getCode().'): '.$exception->getMessage());
-            $this->metric->incExceptionTotal(WebformSubmissionRetrievalException::class);
+            $this->metricsHelper->incExceptionTotal(WebformSubmissionRetrievalException::class);
 
             throw new WebformSubmissionRetrievalException($exception->getMessage(), $exception->getCode());
         }

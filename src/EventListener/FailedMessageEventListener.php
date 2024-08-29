@@ -7,7 +7,7 @@ use App\Message\CreateBookingMessage;
 use App\Message\SendBookingNotificationMessage;
 use App\Message\WebformSubmitMessage;
 use App\Repository\Resources\AAKResourceRepository;
-use App\Service\Metric;
+use App\Service\MetricsHelper;
 use App\Service\NotificationServiceInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
@@ -18,13 +18,13 @@ final class FailedMessageEventListener
     public function __construct(
         private readonly AAKResourceRepository $AAKResourceRepository,
         private readonly NotificationServiceInterface $notificationService,
-        private readonly Metric $metric,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
     public function __invoke(WorkerMessageFailedEvent $event): void
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         $envelope = $event->getEnvelope();
         $message = $envelope->getMessage();
@@ -65,6 +65,6 @@ final class FailedMessageEventListener
             );
         }
 
-        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 }

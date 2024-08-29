@@ -6,7 +6,7 @@ use App\Controller\GetStatusByIdsController;
 use App\Entity\Main\UserBooking;
 use App\Enum\UserBookingStatusEnum;
 use App\Service\BookingServiceInterface;
-use App\Service\Metric;
+use App\Service\MetricsHelper;
 use App\Service\UserBookingCacheServiceInterface;
 use App\Tests\AbstractBaseApiTestCase;
 use App\Tests\Service\MicrosoftGraphBookingServiceData;
@@ -37,7 +37,7 @@ class GetStatusByIdControllerTest extends AbstractBaseApiTestCase
             ->getMock();
         $userBookingCacheServiceMock->expects($this->exactly(1))->method('changeCacheEntry');
 
-        $metric = $this->createMock(Metric::class);
+        $metric = $this->createMock(MetricsHelper::class);
 
         $controller = new GetStatusByIdsController($bookingServiceMock, $userBookingCacheServiceMock, $metric);
 

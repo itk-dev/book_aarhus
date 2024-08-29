@@ -4,7 +4,7 @@ namespace App\Tests\Service;
 
 use App\Enum\NotificationTypeEnum;
 use App\Service\BookingServiceInterface;
-use App\Service\Metric;
+use App\Service\MetricsHelper;
 use App\Service\NotificationService;
 use App\Tests\AbstractBaseApiTestCase;
 use App\Utils\ValidationUtils;
@@ -25,7 +25,7 @@ class NotificationServiceTest extends AbstractBaseApiTestCase
 
         $validationUtils = self::getContainer()->get(ValidationUtils::class);
 
-        $metric = $this->createMock(Metric::class);
+        $metric = $this->createMock(MetricsHelper::class);
 
         new NotificationService('from@example.com', 'error', $validationUtils, $logger, $mailer, 'Europe/Copenhagen', 'd/m/Y - H:i', $metric);
     }
@@ -43,7 +43,7 @@ class NotificationServiceTest extends AbstractBaseApiTestCase
 
         $validationUtils = self::getContainer()->get(ValidationUtils::class);
 
-        $metric = $this->createMock(Metric::class);
+        $metric = $this->createMock(MetricsHelper::class);
 
         $notificationService = new NotificationService('from@example.com', 'admin@example.com', $validationUtils, $logger, $mailer, 'Europe/Copenhagen', 'd/m/Y - H:i', $metric);
 
@@ -72,7 +72,7 @@ class NotificationServiceTest extends AbstractBaseApiTestCase
 
         $validationUtils = self::getContainer()->get(ValidationUtils::class);
 
-        $metric = $this->createMock(Metric::class);
+        $metric = $this->createMock(MetricsHelper::class);
 
         $notificationService = new NotificationService('from@example.com', 'admin@example.com', $validationUtils, $logger, $mailer, 'Europe/Copenhagen', 'd/m/Y - H:i', $metric);
 
@@ -95,7 +95,7 @@ class NotificationServiceTest extends AbstractBaseApiTestCase
 
         $validationUtils = self::getContainer()->get(ValidationUtils::class);
 
-        $metric = $this->createMock(Metric::class);
+        $metric = $this->createMock(MetricsHelper::class);
 
         $notificationService = new NotificationService('from@example.com', 'admin@example.com', $validationUtils, $logger, $mailer, 'Europe/Copenhagen', 'd/m/Y - H:i', $metric);
 

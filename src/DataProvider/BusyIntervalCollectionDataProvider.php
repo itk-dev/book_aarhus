@@ -6,7 +6,7 @@ use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\BusyInterval;
 use App\Service\BookingServiceInterface;
-use App\Service\Metric;
+use App\Service\MetricsHelper;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Uid\Ulid;
 
@@ -14,7 +14,7 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
 {
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
-        private readonly Metric $metric,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -28,7 +28,7 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
      */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         if (!isset($context['filters'])) {
             throw new BadRequestHttpException('Required filters not set.');
@@ -70,6 +70,6 @@ final class BusyIntervalCollectionDataProvider implements ContextAwareCollection
             }
         }
 
-       $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 }

@@ -19,7 +19,7 @@ class MicrosoftGraphHelperService
         private readonly string $serviceAccountPassword,
         private readonly CacheInterface $graphCache,
         private readonly ClientFactory $clientFactory,
-        private readonly Metric $metric,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -64,7 +64,7 @@ class MicrosoftGraphHelperService
      */
     public function request(string $path, string $accessToken, string $requestType = 'GET', array $body = null): GraphResponse
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         try {
             $graph = $this->clientFactory->getGraph();
@@ -76,7 +76,7 @@ class MicrosoftGraphHelperService
                 $graphRequest->attachBody($body);
             }
 
-            $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+            $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
             return $graphRequest->execute();
         } catch (GuzzleException|GraphException $e) {

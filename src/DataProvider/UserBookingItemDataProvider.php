@@ -7,7 +7,7 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\UserBooking;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
-use App\Service\Metric;
+use App\Service\MetricsHelper;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -17,7 +17,7 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
         private readonly Security $security,
-        private readonly Metric $metric,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -31,7 +31,7 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
      */
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): UserBooking|null
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         if (!isset($id) || !is_string($id)) {
             throw new BadRequestHttpException('Required booking id is not set');
@@ -45,7 +45,7 @@ final class UserBookingItemDataProvider implements ItemDataProviderInterface, Re
             throw new AccessDeniedHttpException('Access denied');
         }
 
-        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
         return $userBooking;
     }

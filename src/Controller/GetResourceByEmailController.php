@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\Resources\AAKResourceRepository;
-use App\Service\Metric;
+use App\Service\MetricsHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,24 +17,24 @@ class GetResourceByEmailController extends AbstractController
     public function __construct(
         private readonly AAKResourceRepository $aakResourceRepository,
         private readonly SerializerInterface $serializer,
-        private readonly Metric $metric,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
     public function __invoke(Request $request, string $resourceMail): Response
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         $resource = $this->aakResourceRepository->findOneByEmail($resourceMail);
 
         if (is_null($resource)) {
-            $this->metric->incExceptionTotal(NotFoundHttpException::class);
+            $this->metricsHelper->incExceptionTotal(NotFoundHttpException::class);
             throw new NotFoundHttpException('Resource not found');
         }
 
         $data = $this->serializer->serialize($resource, 'json', ['groups' => 'resource']);
 
-        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
         return new Response($data, 200);
     }

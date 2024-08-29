@@ -2,7 +2,7 @@
 
 namespace App\Security;
 
-use App\Service\Metric;
+use App\Service\MetricsHelper;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +23,7 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
     public const AUTH_HEADER_PREFIX = 'Apikey ';
 
     public function __construct(
-        private readonly Metric $metric,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -70,7 +70,7 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        $this->metric->totalIncByOne('authentication', "Authentication attempt", $this, ['result' => 'success']);
+        $this->metricsHelper->incMethodTotal(__METHOD__, 'success');
 
         // on success, let the request continue
         return null;
@@ -81,7 +81,7 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        $this->metric->totalIncByOne('authentication', "Authentication attempt", $this, ['result' => 'failure']);
+        $this->metricsHelper->incMethodTotal(__METHOD__, 'failure');
 
         $data = [
             'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),

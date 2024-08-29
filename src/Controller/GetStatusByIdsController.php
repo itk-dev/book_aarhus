@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Enum\UserBookingStatusEnum;
 use App\Service\BookingServiceInterface;
-use App\Service\Metric;
+use App\Service\MetricsHelper;
 use App\Service\UserBookingCacheServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,18 +18,18 @@ class GetStatusByIdsController extends AbstractController
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
         private readonly UserBookingCacheServiceInterface $userBookingCacheService,
-        private readonly Metric $metric,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
     public function __invoke(Request $request): JsonResponse
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         $exchangeIds = json_decode($request->getContent())->ids;
 
         if (empty($exchangeIds)) {
-            $this->metric->incExceptionTotal(NotFoundHttpException::class);
+            $this->metricsHelper->incExceptionTotal(NotFoundHttpException::class);
             throw new NotFoundHttpException('Resource not found');
         }
 
@@ -56,7 +56,7 @@ class GetStatusByIdsController extends AbstractController
                     $this->userBookingCacheService->changeCacheEntry($id, ['status' => $userBooking->status]);
                 }
             } catch (\Exception) {
-                $this->metric->incExceptionTotal(\Exception::class);
+                $this->metricsHelper->incExceptionTotal(\Exception::class);
 
                 $statuses[] = [
                     'exchangeId' => $id,
@@ -65,7 +65,7 @@ class GetStatusByIdsController extends AbstractController
             }
         }
 
-        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
         return new JsonResponse($statuses);
     }

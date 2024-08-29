@@ -4,7 +4,7 @@ namespace App\Tests\Service;
 
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Factory\ClientFactory;
-use App\Service\Metric;
+use App\Service\MetricsHelper;
 use App\Service\MicrosoftGraphHelperService;
 use App\Tests\AbstractBaseApiTestCase;
 use GuzzleHttp\Client;
@@ -30,7 +30,7 @@ class MicrosoftGraphHelperServiceTest extends AbstractBaseApiTestCase
             ->getMock();
         $clientFactory->method('getGuzzleClient')->willReturn($guzzleClient);
 
-        $metric = $this->createMock(Metric::class);
+        $metric = $this->createMock(MetricsHelper::class);
 
         $service = new MicrosoftGraphHelperService('', '', '', '', $cache, $clientFactory, $metric);
 

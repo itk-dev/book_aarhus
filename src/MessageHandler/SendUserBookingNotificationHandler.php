@@ -7,7 +7,7 @@ use App\Exception\NoNotificationReceiverException;
 use App\Exception\UnsupportedNotificationTypeException;
 use App\Message\SendUserBookingNotificationMessage;
 use App\Repository\Resources\AAKResourceRepository;
-use App\Service\Metric;
+use App\Service\MetricsHelper;
 use App\Service\NotificationServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -21,7 +21,7 @@ class SendUserBookingNotificationHandler
         private readonly LoggerInterface $logger,
         private readonly AAKResourceRepository $aakResourceRepository,
         private readonly NotificationServiceInterface $notificationService,
-        private readonly Metric $metric,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -30,7 +30,7 @@ class SendUserBookingNotificationHandler
      */
     public function __invoke(SendUserBookingNotificationMessage $message): void
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         try {
             $this->logger->info('SendBookingNotificationHandler.');
@@ -45,16 +45,16 @@ class SendUserBookingNotificationHandler
             $this->notificationService->sendUserBookingNotification($userBooking, $resource, $type);
         } catch (NoNotificationReceiverException|UnsupportedNotificationTypeException $e) {
             $this->logger->error(sprintf('SendUserBookingNotificationHandler exception: %d %s', $e->getCode(), $e->getMessage()));
-            $this->metric->incExceptionTotal(UnrecoverableMessageHandlingException::class);
+            $this->metricsHelper->incExceptionTotal(UnrecoverableMessageHandlingException::class);
 
             throw new UnrecoverableMessageHandlingException($e->getMessage(), $e->getCode(), $e);
         } catch (TransportExceptionInterface $e) {
             $this->logger->error(sprintf('SendUserBookingNotificationHandler exception: %d %s', $e->getCode(), $e->getMessage()));
-            $this->metric->incExceptionTotal(TransportExceptionInterface::class);
+            $this->metricsHelper->incExceptionTotal(TransportExceptionInterface::class);
 
             throw $e;
         }
 
-        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 }

@@ -12,7 +12,7 @@ use App\Message\SendUserBookingNotificationMessage;
 use App\Message\UpdateBookingInCacheMessage;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
-use App\Service\Metric;
+use App\Service\MetricsHelper;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -24,7 +24,7 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
         private readonly BookingServiceInterface $bookingService,
         private readonly Security $security,
         private readonly MessageBusInterface $bus,
-        private readonly Metric $metric,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -35,7 +35,7 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
 
     public function remove($data, array $context = []): void
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         try {
             if ($data instanceof UserBooking) {
@@ -58,12 +58,12 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
             throw new HttpException($e->getCode(), 'Booking could not be deleted.');
         }
 
-        $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
     public function persist($data, array $context = []): mixed
     {
-        $this->metric->incMethodTotal(__METHOD__, Metric::INVOKE);
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         try {
             if ($data instanceof UserBooking) {
@@ -87,7 +87,7 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
                 ));
             }
 
-            $this->metric->incMethodTotal(__METHOD__, Metric::COMPLETE);
+            $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
             return $data;
         } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
