@@ -34,11 +34,11 @@ class Metric
 
     public function incMethodTotal(string $method, string $action): void
     {
-        $metrixMethod = preg_replace('/^.*\\\s*/', '', $method);
-        $metrixMethod = str_replace('::', '__', $metrixMethod);
-        $metrixMethod = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $metrixMethod));
+        $metricMethodName = preg_replace('/^.*\\\s*/', '', $method);
+        $metricMethodName = str_replace('::', '__', $metricMethodName);
+        $metricMethodName = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $metricMethodName));
 
-        $this->metricsService->counter('method_'.$metrixMethod.'_total', 'Method '.$method.' totals.', 1, ['action' => $action]);
+        $this->metricsService->counter('method_'.$metricMethodName.'_total', 'Method '.$method.' totals.', 1, ['action' => $action]);
     }
 
     public function incExceptionTotal($exceptionClassName): void
