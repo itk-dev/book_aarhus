@@ -59,6 +59,7 @@ class AddBookingToCacheHandler
                 'resourceDisplayName' => $resourceDisplayName,
             ]);
         } else {
+            $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
             $this->metricsHelper->incExceptionTotal(RecoverableMessageHandlingException::class);
 
             throw new RecoverableMessageHandlingException(sprintf('Booking id could not be retrieved for booking with iCalUID: %s', $message->getICalUID()));
