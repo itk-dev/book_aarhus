@@ -102,6 +102,10 @@ They can be accessed with the command:
 itkdev-docker-compose mail:open
 ```
 
+The mail received should look like:
+![Mail 1](assets/test-guide11.png "Mail 1")
+
+
 ## T3 Setting up a "My Bookings" form in selvbetjening
 
 * Navigate to selvbetjening: `/da/admin/structure/webform`.
@@ -128,11 +132,17 @@ NB! Changes to bookings requires that the queue run in BookAarhus.
   ![Anmod om ændring af tidspunkt](assets/test-guide7.png "Anmod om ændring af tidspunkt")
 * Select a time in the future. Click "Anmod om ændring af tidspunkt".
 * See that success popup appears.
-  ![Succes 1](assets/test-guide8.png "Succes").
+  ![Succes 1](assets/test-guide8.png "Succes")
   and that the booking time has changed.
+
+  The mail received should look like:
+  ![Mail 2](assets/test-guide12.png "Mail 2")
 * Click "Anmod om sletning".
   ![Anmod om sletning](assets/test-guide9.png "Anmod om sletning").
 * Click "Ja, slet den!"
 * See that the succes popup appears
   ![Succes 2](assets/test-guide10.png "Succes")
   and that the booking is not in the list anymore.
+
+  The mail received should look like:
+  ![Mail 3](assets/test-guide13.png "Mail 3")
