@@ -11,6 +11,7 @@ use App\Exception\MicrosoftGraphCommunicationException;
 use App\Repository\Resources\AAKResourceRepository;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
+use App\Service\MetricsHelper;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -25,6 +26,7 @@ class UserBookingCollectionProvider implements ProviderInterface
         private readonly Security $security,
         private readonly RequestStack $requestStack,
         private readonly AAKResourceRepository $resourceRepository,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -38,6 +40,8 @@ class UserBookingCollectionProvider implements ProviderInterface
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object
     {
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
+
         $request = $this->requestStack->getCurrentRequest();
 
         if (is_null($request)) {
@@ -82,6 +86,8 @@ class UserBookingCollectionProvider implements ProviderInterface
 
         $obj = new \ArrayObject($userBookings);
         $it = $obj->getIterator();
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
         return new TraversablePaginator($it, $page, $responseData['pageSize'], $responseData['total']);
     }

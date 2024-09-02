@@ -1484,7 +1484,7 @@
                     "content": {
                         "application/merge-patch+json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UserBooking.patch"
+                                "$ref": "#/components/schemas/UserBooking"
                             }
                         }
                     },
@@ -2316,6 +2316,60 @@
                     }
                 }
             },
+            "UserBooking": {
+                "type": "object",
+                "description": "",
+                "deprecated": false,
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "iCalUId": {
+                        "type": "string"
+                    },
+                    "subject": {
+                        "type": "string"
+                    },
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "body": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "bookingType": {
+                        "type": "string"
+                    },
+                    "expired": {
+                        "type": "boolean"
+                    },
+                    "start": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "end": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "resourceMail": {
+                        "type": "string"
+                    },
+                    "resourceName": {
+                        "type": "string"
+                    },
+                    "ownedByServiceAccount": {
+                        "type": "boolean"
+                    },
+                    "userEmail": {
+                        "type": "string"
+                    },
+                    "userName": {
+                        "type": "string"
+                    }
+                }
+            },
             "UserBooking-userBooking": {
                 "type": "object",
                 "description": "",
@@ -2451,60 +2505,6 @@
                         "type": "string"
                     },
                     "resourceName": {
-                        "type": "string"
-                    }
-                }
-            },
-            "UserBooking.patch": {
-                "type": "object",
-                "description": "",
-                "deprecated": false,
-                "properties": {
-                    "id": {
-                        "type": "string"
-                    },
-                    "iCalUId": {
-                        "type": "string"
-                    },
-                    "subject": {
-                        "type": "string"
-                    },
-                    "displayName": {
-                        "type": "string"
-                    },
-                    "body": {
-                        "type": "string"
-                    },
-                    "status": {
-                        "type": "string"
-                    },
-                    "bookingType": {
-                        "type": "string"
-                    },
-                    "expired": {
-                        "type": "boolean"
-                    },
-                    "start": {
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "end": {
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "resourceMail": {
-                        "type": "string"
-                    },
-                    "resourceName": {
-                        "type": "string"
-                    },
-                    "ownedByServiceAccount": {
-                        "type": "boolean"
-                    },
-                    "userEmail": {
-                        "type": "string"
-                    },
-                    "userName": {
                         "type": "string"
                     }
                 }

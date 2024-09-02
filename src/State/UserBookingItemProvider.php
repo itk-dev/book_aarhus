@@ -9,6 +9,7 @@ use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
+use App\Service\MetricsHelper;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -21,6 +22,7 @@ class UserBookingItemProvider implements ProviderInterface
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
         private readonly Security $security,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -35,6 +37,8 @@ class UserBookingItemProvider implements ProviderInterface
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
+
         if (!isset($uriVariables['id']) || !is_string($uriVariables['id'])) {
             throw new BadRequestHttpException('Required booking id is not set');
         }
@@ -46,6 +50,8 @@ class UserBookingItemProvider implements ProviderInterface
         if (!$this->security->isGranted(UserBookingVoter::VIEW, $userBooking)) {
             throw new AccessDeniedHttpException('Access denied');
         }
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
         return $userBooking;
     }

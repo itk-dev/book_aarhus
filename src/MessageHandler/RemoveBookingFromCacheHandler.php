@@ -3,6 +3,7 @@
 namespace App\MessageHandler;
 
 use App\Message\RemoveBookingFromCacheMessage;
+use App\Service\MetricsHelper;
 use App\Service\UserBookingCacheServiceInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -11,6 +12,7 @@ class RemoveBookingFromCacheHandler
 {
     public function __construct(
         private readonly UserBookingCacheServiceInterface $userBookingCacheService,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -19,6 +21,10 @@ class RemoveBookingFromCacheHandler
      */
     public function __invoke(RemoveBookingFromCacheMessage $message): void
     {
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
+
         $this->userBookingCacheService->deleteCacheEntry($message->getExchangeId());
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 }

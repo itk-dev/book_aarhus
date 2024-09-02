@@ -9,7 +9,7 @@ use ApiPlatform\OpenApi\OpenApi;
 class OpenApiFactory implements OpenApiFactoryInterface
 {
     public function __construct(
-        private readonly OpenApiFactoryInterface $decorated
+        private readonly OpenApiFactoryInterface $decorated,
     ) {
     }
 

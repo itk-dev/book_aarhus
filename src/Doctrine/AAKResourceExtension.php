@@ -17,7 +17,7 @@ final class AAKResourceExtension implements QueryCollectionExtensionInterface, Q
     public function __construct(
         private readonly Security $security,
         private readonly RequestStack $requestStack,
-        private readonly CvrWhitelistRepository $cvrWhitelistRepository
+        private readonly CvrWhitelistRepository $cvrWhitelistRepository,
     ) {
     }
 

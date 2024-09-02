@@ -6,11 +6,11 @@ use App\Controller\GetStatusByIdsController;
 use App\Entity\Main\UserBooking;
 use App\Enum\UserBookingStatusEnum;
 use App\Service\BookingServiceInterface;
+use App\Service\MetricsHelper;
 use App\Service\UserBookingCacheServiceInterface;
 use App\Tests\AbstractBaseApiTestCase;
 use App\Tests\Service\MicrosoftGraphBookingServiceData;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Serializer\SerializerInterface;
 use Zenstruck\Messenger\Test\InteractsWithMessenger;
 
 class GetStatusByIdControllerTest extends AbstractBaseApiTestCase
@@ -37,10 +37,9 @@ class GetStatusByIdControllerTest extends AbstractBaseApiTestCase
             ->getMock();
         $userBookingCacheServiceMock->expects($this->exactly(1))->method('changeCacheEntry');
 
-        $container = self::getContainer();
-        $serializer = $container->get(SerializerInterface::class);
+        $metric = $this->createMock(MetricsHelper::class);
 
-        $controller = new GetStatusByIdsController($bookingServiceMock, $serializer, $userBookingCacheServiceMock);
+        $controller = new GetStatusByIdsController($bookingServiceMock, $userBookingCacheServiceMock, $metric);
 
         $response = $controller->__invoke(new Request([], [], [], [], [], [], json_encode([
             'ids' => ['1234567890'],

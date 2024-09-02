@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Main\ApiKeyUser;
 use App\Message\WebformSubmitMessage;
+use App\Service\MetricsHelper;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -17,13 +18,14 @@ class CreateBookingWebformSubmitController extends AbstractController
 {
     public function __construct(
         private readonly MessageBusInterface $bus,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
     public function __invoke(Request $request): Response
     {
-        $this->logger->info('CreateBookingWebformSubmitController invoked.');
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         $user = $this->getUser();
         if ($user instanceof ApiKeyUser) {
@@ -38,15 +40,19 @@ class CreateBookingWebformSubmitController extends AbstractController
         $apiKeyUserId = $userId ?? $user?->getUserIdentifier();
 
         if (null === $webformId) {
+            $this->metricsHelper->incExceptionTotal(BadRequestException::class);
             throw new BadRequestException('data->webform->id should not be null');
         }
         if (null === $submissionUuid) {
+            $this->metricsHelper->incExceptionTotal(BadRequestException::class);
             throw new BadRequestException('data->submission->uuid should not be null');
         }
         if (null === $sender) {
+            $this->metricsHelper->incExceptionTotal(BadRequestException::class);
             throw new BadRequestException('links->sender should not be null');
         }
         if (null === $getSubmissionUrl) {
+            $this->metricsHelper->incExceptionTotal(BadRequestException::class);
             throw new BadRequestException('links->get_submission_url should not be null');
         }
 
@@ -60,6 +66,8 @@ class CreateBookingWebformSubmitController extends AbstractController
             $getSubmissionUrl,
             $apiKeyUserId ?? '',
         ));
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
         return new Response(null, 201);
     }

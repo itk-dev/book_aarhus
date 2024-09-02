@@ -10,7 +10,7 @@ class ValidationUtils implements ValidationUtilsInterface
 {
     public function __construct(
         private readonly ValidatorInterface $validator,
-        private readonly string $bindDefaultDateFormat
+        private readonly string $bindDefaultDateFormat,
     ) {
     }
 

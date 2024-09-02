@@ -6,6 +6,7 @@ use App\Entity\Main\ApiKeyUser;
 use App\Exception\WebformSubmissionRetrievalException;
 use App\Message\WebformSubmitMessage;
 use App\Repository\Main\ApiKeyUserRepository;
+use App\Service\MetricsHelper;
 use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
 use Psr\Log\LoggerInterface;
@@ -175,7 +176,9 @@ class WebformServiceTest extends AbstractBaseApiTestCase
         $user->setWebformApiKey('webformapikey');
         $repo->method('find')->willReturn($user);
 
-        $service = new WebformService($client, $logger, $repo);
+        $metric = $this->createMock(MetricsHelper::class);
+
+        $service = new WebformService($client, $logger, $repo, $metric);
 
         $message = new WebformSubmitMessage(
             '1234',
@@ -297,7 +300,9 @@ class WebformServiceTest extends AbstractBaseApiTestCase
         $logger = $this->createMock(LoggerInterface::class);
         $client = $this->createMock(HttpClientInterface::class);
         $repo = $this->createMock(ApiKeyUserRepository::class);
-        $service = new WebformService($client, $logger, $repo);
+        $metric = $this->createMock(MetricsHelper::class);
+
+        $service = new WebformService($client, $logger, $repo, $metric);
 
         $result = $service->sortWebformSubmissionDataByType(['data' => [
             'test1' => 'test2',
@@ -325,7 +330,9 @@ class WebformServiceTest extends AbstractBaseApiTestCase
 
         $repo = $this->createMock(ApiKeyUserRepository::class);
 
-        $service = new WebformService($client, $logger, $repo);
+        $metric = $this->createMock(MetricsHelper::class);
+
+        $service = new WebformService($client, $logger, $repo, $metric);
 
         $errorMessage = null;
         try {
@@ -346,7 +353,9 @@ class WebformServiceTest extends AbstractBaseApiTestCase
             ->getMock();
         $repo->method('find')->willReturn(null);
 
-        $service = new WebformService($client, $logger, $repo);
+        $metric = $this->createMock(MetricsHelper::class);
+
+        $service = new WebformService($client, $logger, $repo, $metric);
 
         $message = new WebformSubmitMessage(
             '1234',
