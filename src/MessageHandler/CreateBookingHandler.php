@@ -12,11 +12,14 @@ use App\Repository\Resources\AAKResourceRepository;
 use App\Repository\Resources\CvrWhitelistRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
+use App\Service\MetricsHelper;
 use Psr\Log\LoggerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 
 /**
  * @see https://github.com/itk-dev/os2forms_selvbetjening/blob/develop/web/modules/custom/os2forms_rest_api/README.md
@@ -31,6 +34,7 @@ class CreateBookingHandler
         private readonly Security $security,
         private readonly MessageBusInterface $bus,
         private readonly CvrWhitelistRepository $whitelistRepository,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -39,12 +43,13 @@ class CreateBookingHandler
      */
     public function __invoke(CreateBookingMessage $message): void
     {
-        $this->logger->info('CreateBookingHandler invoked.');
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         $booking = $message->getBooking();
 
         if (!$this->security->isGranted(BookingVoter::CREATE, $booking)) {
             $this->logger->error('User does not have permission to create bookings for the given resource.');
+            $this->metricsHelper->incExceptionTotal(UnrecoverableMessageHandlingException::class);
 
             throw new UnrecoverableMessageHandlingException('User does not have permission to create bookings for the given resource.', 403);
         }
@@ -55,6 +60,7 @@ class CreateBookingHandler
 
         if (null == $resource) {
             $this->logger->error("Resource $email not found.");
+            $this->metricsHelper->incExceptionTotal(UnrecoverableMessageHandlingException::class);
 
             throw new UnrecoverableMessageHandlingException("Resource $email not found.", 404);
         }
@@ -114,16 +120,25 @@ class CreateBookingHandler
             }
 
             if (isset($response['iCalUId'])) {
-                $this->bus->dispatch(new AddBookingToCacheMessage(
+                $message = new AddBookingToCacheMessage(
                     $booking,
                     $response['iCalUId'],
-                ));
+                );
+
+                $envelope = new Envelope($message, [
+                    new DelayStamp(5000),
+                ]);
+
+                $this->bus->dispatch($envelope);
             } else {
                 $this->logger->error(sprintf('Booking iCalUID could not be retrieved for booking with subject: %s', $booking->getSubject()));
+                $this->metricsHelper->incMethodTotal(__METHOD__, 'icaluid_not_found');
             }
         } catch (BookingCreateConflictException $exception) {
             // If it is a BookingCreateConflictException the booking should be rejected.
             $this->logger->notice(sprintf('Booking conflict detected: %d %s', $exception->getCode(), $exception->getMessage()));
+            $this->metricsHelper->incExceptionTotal(BookingCreateConflictException::class);
+            $this->metricsHelper->incMethodTotal(__METHOD__, 'booking_conflict_detected');
 
             $this->bus->dispatch(new SendBookingNotificationMessage(
                 $booking,
@@ -133,7 +148,12 @@ class CreateBookingHandler
             // Other exceptions should logged, then re-thrown for the message to be re-queued.
             $this->logger->error(sprintf('CreateBookingHandler exception: %d %s', $exception->getCode(), $exception->getMessage()));
 
+            $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
+            $this->metricsHelper->incExceptionTotal(\Exception::class);
+
             throw $exception;
         }
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 }

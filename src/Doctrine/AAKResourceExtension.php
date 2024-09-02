@@ -8,8 +8,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Entity\Resources\AAKResource;
 use App\Repository\Resources\CvrWhitelistRepository;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
 
 final class AAKResourceExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {

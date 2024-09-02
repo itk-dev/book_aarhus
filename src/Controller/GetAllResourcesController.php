@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\MetricsHelper;
 use App\Service\ResourceServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,11 +15,14 @@ class GetAllResourcesController extends AbstractController
 {
     public function __construct(
         private readonly ResourceServiceInterface $resourceService,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
     public function __invoke(Request $request): Response
     {
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
+
         $userPermissionHeader = $request->headers->get('Authorization-UserPermission');
         $whitelistKey = $request->query->get('whitelistKey');
 
@@ -34,6 +38,8 @@ class GetAllResourcesController extends AbstractController
             $whitelistedResources = $this->resourceService->getWhitelistedResources($permission, $whitelistKey);
             $resources = array_merge($resources, $whitelistedResources);
         }
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
         return new JsonResponse($resources, 200);
     }

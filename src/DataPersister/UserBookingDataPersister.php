@@ -12,11 +12,11 @@ use App\Message\SendUserBookingNotificationMessage;
 use App\Message\UpdateBookingInCacheMessage;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
-use App\Service\UserBookingCacheServiceInterface;
+use App\Service\MetricsHelper;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Security\Core\Security;
 
 class UserBookingDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -24,7 +24,7 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
         private readonly BookingServiceInterface $bookingService,
         private readonly Security $security,
         private readonly MessageBusInterface $bus,
-        private readonly UserBookingCacheServiceInterface $userBookingCacheService
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -35,6 +35,8 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
 
     public function remove($data, array $context = []): void
     {
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
+
         try {
             if ($data instanceof UserBooking) {
                 if (!$this->security->isGranted(UserBookingVoter::DELETE, $data)) {
@@ -55,10 +57,14 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
         } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {
             throw new HttpException($e->getCode(), 'Booking could not be deleted.');
         }
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
     public function persist($data, array $context = []): mixed
     {
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
+
         try {
             if ($data instanceof UserBooking) {
                 if (!$this->security->isGranted(UserBookingVoter::EDIT, $data)) {
@@ -80,6 +86,8 @@ class UserBookingDataPersister implements ContextAwareDataPersisterInterface
                     ],
                 ));
             }
+
+            $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
             return $data;
         } catch (MicrosoftGraphCommunicationException|UserBookingException $e) {

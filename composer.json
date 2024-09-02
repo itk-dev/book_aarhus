@@ -14,6 +14,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.12",
         "eluceo/ical": "^2.7",
+        "itk-dev/metrics-bundle": "^1.0",
         "microsoft/microsoft-graph": "^1.66",
         "nelmio/cors-bundle": "^2.2",
         "phpdocumentor/reflection-docblock": "^5.3",
@@ -52,6 +53,8 @@
         "symfony/browser-kit": "~6.3.0",
         "symfony/maker-bundle": "^1.43",
         "symfony/phpunit-bridge": "^6.0",
+        "symfony/stopwatch": "~6.3.0",
+        "symfony/web-profiler-bundle": "~6.3.0",
         "vimeo/psalm": "^5.14",
         "weirdan/doctrine-psalm-plugin": "^2.9",
         "zenstruck/messenger-test": "^1.4"
