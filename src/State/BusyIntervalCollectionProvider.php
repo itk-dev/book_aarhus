@@ -20,7 +20,8 @@ class BusyIntervalCollectionProvider implements ProviderInterface
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
         private readonly MetricsHelper $metricsHelper,
-    ) {}
+    ) {
+    }
 
     public function supports(string $resourceClass): bool
     {
