@@ -8,6 +8,7 @@ use ApiPlatform\State\ProviderInterface;
 use App\Entity\Main\BusyInterval;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Service\BookingServiceInterface;
+use App\Service\MetricsHelper;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Uid\Ulid;
 
@@ -16,9 +17,10 @@ use Symfony\Component\Uid\Ulid;
  */
 class BusyIntervalCollectionProvider implements ProviderInterface
 {
-    public function __construct(private readonly BookingServiceInterface $bookingService)
-    {
-    }
+    public function __construct(
+        private readonly BookingServiceInterface $bookingService,
+        private readonly MetricsHelper $metricsHelper,
+    ) {}
 
     public function supports(string $resourceClass): bool
     {
@@ -31,24 +33,34 @@ class BusyIntervalCollectionProvider implements ProviderInterface
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
     {
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
+
         $result = [];
 
         if ($operation instanceof CollectionOperationInterface) {
             if (!isset($context['filters'])) {
+                $this->metricsHelper->incExceptionTotal(BadRequestHttpException::class);
+                $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
                 throw new BadRequestHttpException('Required filters are not set');
             }
 
             $filters = $context['filters'];
 
             if (!isset($filters['dateStart'])) {
+                $this->metricsHelper->incExceptionTotal(BadRequestHttpException::class);
+                $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
                 throw new BadRequestHttpException('Required dateStart filters not set');
             }
 
             if (!isset($filters['dateEnd'])) {
+                $this->metricsHelper->incExceptionTotal(BadRequestHttpException::class);
+                $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
                 throw new BadRequestHttpException('Required dateEnd filter not set.');
             }
 
             if (!isset($filters['resources'])) {
+                $this->metricsHelper->incExceptionTotal(BadRequestHttpException::class);
+                $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
                 throw new BadRequestHttpException('Required resources filter not set.');
             }
 
@@ -71,6 +83,8 @@ class BusyIntervalCollectionProvider implements ProviderInterface
                 }
             }
         }
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
         return $result;
     }

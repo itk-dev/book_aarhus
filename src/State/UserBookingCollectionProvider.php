@@ -45,12 +45,14 @@ class UserBookingCollectionProvider implements ProviderInterface
         $request = $this->requestStack->getCurrentRequest();
 
         if (is_null($request)) {
+            $this->metricsHelper->incExceptionTotal(BadRequestHttpException::class);
             throw new BadRequestHttpException('Request not set.');
         }
 
         $userId = $request->headers->get('Authorization-UserId') ?? null;
 
         if (is_null($userId)) {
+            $this->metricsHelper->incExceptionTotal(BadRequestHttpException::class);
             throw new BadRequestHttpException('Required Authorization-UserId header is not set.');
         }
 

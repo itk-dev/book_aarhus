@@ -14,6 +14,7 @@ use App\Message\SendUserBookingNotificationMessage;
 use App\Message\UpdateBookingInCacheMessage;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
+use App\Service\MetricsHelper;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -28,6 +29,7 @@ class UserBookingProcessor implements ProcessorInterface
         private readonly BookingServiceInterface $bookingService,
         private readonly Security $security,
         private readonly MessageBusInterface $bus,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -38,10 +40,15 @@ class UserBookingProcessor implements ProcessorInterface
 
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
+
         if ($operation instanceof DeleteOperationInterface) {
+            $this->metricsHelper->incMethodTotal(__METHOD__, 'delete');
+
             try {
                 if ($data instanceof UserBooking) {
                     if (!$this->security->isGranted(UserBookingVoter::DELETE, $data)) {
+                        $this->metricsHelper->incExceptionTotal(AccessDeniedHttpException::class);
                         throw new AccessDeniedHttpException('Access denied');
                     }
 
@@ -60,9 +67,12 @@ class UserBookingProcessor implements ProcessorInterface
                 throw new HttpException($e->getCode(), 'Booking could not be deleted.');
             }
         } else {
+            $this->metricsHelper->incMethodTotal(__METHOD__, 'edit');
+
             try {
                 if ($data instanceof UserBooking) {
                     if (!$this->security->isGranted(UserBookingVoter::EDIT, $data)) {
+                        $this->metricsHelper->incExceptionTotal(AccessDeniedHttpException::class);
                         throw new AccessDeniedHttpException('Access denied');
                     }
 
@@ -85,6 +95,8 @@ class UserBookingProcessor implements ProcessorInterface
                 throw new HttpException($e->getCode(), 'Booking could not be updated.');
             }
         }
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
         return $data;
     }

@@ -40,6 +40,7 @@ class UserBookingItemProvider implements ProviderInterface
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         if (!isset($uriVariables['id']) || !is_string($uriVariables['id'])) {
+            $this->metricsHelper->incExceptionTotal(BadRequestHttpException::class);
             throw new BadRequestHttpException('Required booking id is not set');
         }
 
@@ -48,6 +49,7 @@ class UserBookingItemProvider implements ProviderInterface
         $userBooking = $this->bookingService->getUserBookingFromApiData($userBookingGraphData);
 
         if (!$this->security->isGranted(UserBookingVoter::VIEW, $userBooking)) {
+            $this->metricsHelper->incExceptionTotal(AccessDeniedHttpException::class);
             throw new AccessDeniedHttpException('Access denied');
         }
 
