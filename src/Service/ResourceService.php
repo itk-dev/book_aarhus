@@ -21,7 +21,7 @@ class ResourceService implements ResourceServiceInterface
     /**
      * @throws InvalidArgumentException
      */
-    public function removeResourcesCacheEntry(string $permission = null): void
+    public function removeResourcesCacheEntry(?string $permission = null): void
     {
         $this->resourceCache->delete("resources-$permission");
     }
@@ -29,7 +29,7 @@ class ResourceService implements ResourceServiceInterface
     /**
      * @throws InvalidArgumentException
      */
-    public function getAllResources(string $permission = null, int $cacheLifetime = 60 * 30): array
+    public function getAllResources(?string $permission = null, int $cacheLifetime = 60 * 30): array
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 

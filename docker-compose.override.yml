@@ -3,7 +3,6 @@ version: "3"
 services:
   phpfpm:
     extra_hosts:
-      - "host.docker.internal:host-gateway"
       # Used by ssh tunnel to Azure SQL Server
       #
       # Run these commands to make it actually work:

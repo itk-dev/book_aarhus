@@ -2,14 +2,14 @@
 
 namespace App\OpenApi;
 
-use ApiPlatform\Core\OpenApi\Model\Paths;
 use ApiPlatform\OpenApi\Factory\OpenApiFactoryInterface;
+use ApiPlatform\OpenApi\Model\Paths;
 use ApiPlatform\OpenApi\OpenApi;
 
 class OpenApiFactory implements OpenApiFactoryInterface
 {
     public function __construct(
-        private readonly OpenApiFactoryInterface $decorated
+        private readonly OpenApiFactoryInterface $decorated,
     ) {
     }
 

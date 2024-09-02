@@ -18,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class TestGraphCreateBookingCommand extends Command
 {
     public function __construct(
-        private readonly BookingServiceInterface $bookingService
+        private readonly BookingServiceInterface $bookingService,
     ) {
         parent::__construct();
     }

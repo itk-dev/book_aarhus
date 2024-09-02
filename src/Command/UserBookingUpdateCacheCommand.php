@@ -16,7 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class UserBookingUpdateCacheCommand extends Command
 {
     public function __construct(
-        private readonly UserBookingCacheServiceInterface $userBookingCacheServiceInterface
+        private readonly UserBookingCacheServiceInterface $userBookingCacheServiceInterface,
     ) {
         parent::__construct();
     }

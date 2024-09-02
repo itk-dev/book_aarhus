@@ -15,7 +15,7 @@ interface ResourceServiceInterface
      *
      * @return void
      */
-    public function removeResourcesCacheEntry(string $permission = null): void;
+    public function removeResourcesCacheEntry(?string $permission = null): void;
 
     /**
      * Get all resources.
@@ -25,7 +25,7 @@ interface ResourceServiceInterface
      *
      * @return array Array of AAKResource
      */
-    public function getAllResources(string $permission = null, int $cacheLifetime = 1800): array;
+    public function getAllResources(?string $permission = null, int $cacheLifetime = 1800): array;
 
     /**
      * Get whitelisted resources.
