@@ -10,9 +10,10 @@ use App\Entity\Resources\AAKResource;
 use App\Repository\Resources\AAKResourceRepository;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
+use App\Service\MetricsHelper;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Core\Security;
 
 final class UserBookingCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -21,6 +22,7 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
         private readonly Security $security,
         private readonly RequestStack $requestStack,
         private readonly AAKResourceRepository $resourceRepository,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -34,6 +36,8 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
      */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
+
         $request = $this->requestStack->getCurrentRequest();
 
         if (is_null($request)) {
@@ -78,6 +82,8 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
 
         $obj = new \ArrayObject($userBookings);
         $it = $obj->getIterator();
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
         return new TraversablePaginator($it, $page, $responseData['pageSize'], $responseData['total']);
     }

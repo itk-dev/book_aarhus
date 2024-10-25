@@ -7,8 +7,8 @@ use App\Enum\UserBookingStatusEnum;
 use App\Message\AddBookingToCacheMessage;
 use App\Repository\Resources\AAKResourceRepository;
 use App\Service\BookingServiceInterface;
+use App\Service\MetricsHelper;
 use App\Service\UserBookingCacheServiceInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\RecoverableMessageHandlingException;
 
@@ -21,8 +21,8 @@ class AddBookingToCacheHandler
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
         private readonly UserBookingCacheServiceInterface $userBookingCacheService,
-        private readonly LoggerInterface $logger,
         private readonly AAKResourceRepository $resourceRepository,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -31,7 +31,7 @@ class AddBookingToCacheHandler
      */
     public function __invoke(AddBookingToCacheMessage $message): void
     {
-        $this->logger->info('AddBookingToCacheHandler invoked.');
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         $id = $this->bookingService->getBookingIdFromICalUid($message->getICalUID()) ?? null;
 
@@ -59,7 +59,12 @@ class AddBookingToCacheHandler
                 'resourceDisplayName' => $resourceDisplayName,
             ]);
         } else {
+            $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
+            $this->metricsHelper->incExceptionTotal(RecoverableMessageHandlingException::class);
+
             throw new RecoverableMessageHandlingException(sprintf('Booking id could not be retrieved for booking with iCalUID: %s', $message->getICalUID()));
         }
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 }

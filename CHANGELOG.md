@@ -9,6 +9,10 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+- Added metric to system.
+- Added webformId to notification mail.
+- Upgraded bundles.
+
 ## [1.2.3] - 2024-10-25
 
 - Upgrade `symfony/cache` to `6.4.12` because of PHP Redis driver error

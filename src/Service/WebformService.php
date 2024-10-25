@@ -11,17 +11,11 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class WebformService implements WebformServiceInterface
 {
-    /**
-     * WebformService constructor.
-     *
-     * @param HttpClientInterface $client
-     * @param LoggerInterface $logger
-     * @param ApiKeyUserRepository $apiKeyUserRepository
-     */
     public function __construct(
         private readonly HttpClientInterface $client,
         private readonly LoggerInterface $logger,
         private readonly ApiKeyUserRepository $apiKeyUserRepository,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -30,7 +24,9 @@ class WebformService implements WebformServiceInterface
      */
     public function getData(WebformSubmitMessage $message): array
     {
-        $this->logger->info('WebformSubmitHandler invoked.');
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
+
+        $this->logger->info('WebformSubmitHandler.');
 
         $submissionUrl = $message->getSubmissionUrl();
         $apiKeyUserId = $message->getApiKeyUserId();
@@ -38,12 +34,16 @@ class WebformService implements WebformServiceInterface
         $user = $this->apiKeyUserRepository->find($apiKeyUserId);
 
         if (!$user) {
+            $this->metricsHelper->incExceptionTotal(WebformSubmissionRetrievalException::class);
+
             throw new WebformSubmissionRetrievalException('ApiKeyUser not set.');
         }
 
         $this->logger->info("Fetching $submissionUrl");
 
         $webformSubmission = $this->getWebformSubmission($submissionUrl, $user->getWebformApiKey());
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
         return $this->getValidatedData($webformSubmission);
     }
@@ -62,6 +62,9 @@ class WebformService implements WebformServiceInterface
 
             return $response->toArray();
         } catch (ExceptionInterface $exception) {
+            $this->logger->error('getWebformSubmission Exception ('.$exception->getCode().'): '.$exception->getMessage());
+            $this->metricsHelper->incExceptionTotal(WebformSubmissionRetrievalException::class);
+
             throw new WebformSubmissionRetrievalException($exception->getMessage(), $exception->getCode());
         }
     }

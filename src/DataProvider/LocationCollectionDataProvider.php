@@ -6,11 +6,13 @@ use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Main\Location;
 use App\Repository\Resources\AAKResourceRepository;
+use App\Service\MetricsHelper;
 
 final class LocationCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     public function __construct(
-        private readonly AAKResourceRepository $AAKResourceRepository
+        private readonly AAKResourceRepository $AAKResourceRepository,
+        private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -21,6 +23,8 @@ final class LocationCollectionDataProvider implements ContextAwareCollectionData
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
+
         $whitelistKey = $context['filters']['whitelistKey'] ?? null;
 
         $locationNames = $this->AAKResourceRepository->findAllLocations($whitelistKey);
@@ -31,5 +35,7 @@ final class LocationCollectionDataProvider implements ContextAwareCollectionData
 
             yield $location;
         }
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 }
