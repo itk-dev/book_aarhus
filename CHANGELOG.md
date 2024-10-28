@@ -18,6 +18,12 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 - Updated data providers and persisters to state providers and processers respectively.
 - Removed locations and GET user bookings endpoints.
 
+## [1.2.3] - 2024-10-25
+
+### Changed
+
+- Upgrade `symfony/cache` to `6.4.12` because of PHP Redis driver error
+
 ## [1.2.2] - 2023-11-28
 
 - Fixed issue where resource display was not set when rebuilding user booking entry cache.
