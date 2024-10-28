@@ -10,7 +10,6 @@ use App\Exception\BuildNotificationException;
 use App\Exception\NoNotificationReceiverException;
 use App\Exception\UnsupportedNotificationTypeException;
 use App\Utils\ValidationUtils;
-use DateTimeZone as PhpDateTimeZone;
 use Eluceo\iCal\Domain\Entity;
 use Eluceo\iCal\Domain\Entity\TimeZone;
 use Eluceo\iCal\Domain\ValueObject\DateTime as ICalDateTime;
@@ -114,8 +113,8 @@ class NotificationService implements NotificationServiceInterface
         $dateStart = $userBooking->start;
         $dateEnd = $userBooking->end;
 
-        $dateStart->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
-        $dateEnd->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+        $dateStart->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+        $dateEnd->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
 
         $resourceName = $resource?->getResourceDisplayName() ?? $userBooking->displayName;
 
@@ -198,8 +197,8 @@ class NotificationService implements NotificationServiceInterface
         $event->setDescription($eventData['description']);
         $event->setLocation($location);
 
-        $dateFrom = $eventData['start']->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
-        $dateTo = $eventData['end']->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+        $dateFrom = $eventData['start']->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+        $dateTo = $eventData['end']->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
 
         $start = new ICalDateTime($dateFrom, true);
         $end = new ICalDateTime($dateTo, true);
@@ -209,7 +208,7 @@ class NotificationService implements NotificationServiceInterface
 
         $calendar = new Entity\Calendar([$event]);
 
-        $phpDateTimeZone = new PhpDateTimeZone($this->bindNotificationTimezone);
+        $phpDateTimeZone = new \DateTimeZone($this->bindNotificationTimezone);
         $timeZone = TimeZone::createFromPhpDateTimeZone(
             $phpDateTimeZone,
             $dateFrom,
@@ -235,8 +234,8 @@ class NotificationService implements NotificationServiceInterface
                 $dateStart = $booking->getStartTime();
                 $dateEnd = $booking->getEndTime();
 
-                $dateStart->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
-                $dateEnd->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+                $dateStart->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+                $dateEnd->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
 
                 $dateStartString = $dateStart->format($this->bindNotificationDateFormat);
                 $dateEndString = $dateEnd->format($this->bindNotificationDateFormat);
@@ -318,8 +317,8 @@ class NotificationService implements NotificationServiceInterface
             $dateStart = $booking->getStartTime();
             $dateEnd = $booking->getEndTime();
 
-            $dateStart->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
-            $dateEnd->setTimezone(new PhpDateTimeZone($this->bindNotificationTimezone));
+            $dateStart->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+            $dateEnd->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
 
             $data['startFormatted'] = $dateStart->format($this->bindNotificationDateFormat);
             $data['endFormatted'] = $dateEnd->format($this->bindNotificationDateFormat);
