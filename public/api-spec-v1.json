@@ -379,7 +379,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -393,7 +393,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "array",
                             "items": {
@@ -410,7 +410,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -424,7 +424,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -438,7 +438,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "array",
                             "items": {
@@ -455,7 +455,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "boolean"
                         },
@@ -469,7 +469,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "boolean"
                         },
@@ -483,7 +483,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "boolean"
                         },
@@ -497,7 +497,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "boolean"
                         },
@@ -511,7 +511,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "boolean"
                         },
@@ -525,7 +525,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "boolean"
                         },
@@ -539,7 +539,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "boolean"
                         },
@@ -553,7 +553,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -567,7 +567,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -581,7 +581,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -595,7 +595,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -609,7 +609,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -862,358 +862,6 @@
                 "x-response": {
                     "200": []
                 }
-            }
-        },
-        "/v1/user-booking-cache-entries": {
-            "get": {
-                "operationId": "get-v1-bookings-cache-entry",
-                "tags": [
-                    "UserBookingCacheEntry"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/ld+json": {
-                                "examples": {
-                                    "example1": {
-                                        "value": {
-                                            "exchangeId": "value1",
-                                            "status": "value2"
-                                        },
-                                        "summary": "An example of a JSON-LD response"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "summary": "Retrieves user bookings entry from the cache table.",
-                "description": "Retrieves user bookings entry from the cache table.",
-                "parameters": [
-                    {
-                        "name": "resources",
-                        "in": "query",
-                        "description": "Resource of the booking, (email address)",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string",
-                            "format": "string"
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "uid",
-                        "in": "query",
-                        "description": "ID of the user to retrieve bookings for",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string",
-                            "format": "string"
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "status",
-                        "in": "query",
-                        "description": "Status of the booking i.e. ACCEPTED or AWAITING_APPROVAL",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string",
-                            "format": "string",
-                            "example": "ACCEPTED"
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "The collection page number",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "integer",
-                            "default": 1
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "title",
-                        "in": "query",
-                        "description": "",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "order[title]",
-                        "in": "query",
-                        "description": "",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "asc",
-                                "desc"
-                            ]
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "order[start]",
-                        "in": "query",
-                        "description": "",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "asc",
-                                "desc"
-                            ]
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "order[end]",
-                        "in": "query",
-                        "description": "",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "asc",
-                                "desc"
-                            ]
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "order[resourceMail]",
-                        "in": "query",
-                        "description": "",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "asc",
-                                "desc"
-                            ]
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "order[resourceDisplayName]",
-                        "in": "query",
-                        "description": "",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "asc",
-                                "desc"
-                            ]
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "start[before]",
-                        "in": "query",
-                        "description": "",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "start[strictly_before]",
-                        "in": "query",
-                        "description": "",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "start[after]",
-                        "in": "query",
-                        "description": "",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "start[strictly_after]",
-                        "in": "query",
-                        "description": "",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "end[before]",
-                        "in": "query",
-                        "description": "",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "end[strictly_before]",
-                        "in": "query",
-                        "description": "",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "end[after]",
-                        "in": "query",
-                        "description": "",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "end[strictly_after]",
-                        "in": "query",
-                        "description": "",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
-                "deprecated": false,
-                "x-headers": []
-            }
-        },
-        "/v1/user-booking-cache-entries/{id}": {
-            "get": {
-                "operationId": "api_v1user-booking-cache-entries_id_get",
-                "tags": [
-                    "UserBookingCacheEntry"
-                ],
-                "responses": {
-                    "204": {
-                        "description": "UserBookingCacheEntry resource",
-                        "content": {
-                            "application/ld+json": {
-                                "schema": {}
-                            },
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Resource not found"
-                    }
-                },
-                "summary": "unsupported action",
-                "description": "unsupported action",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "UserBookingCacheEntry identifier",
-                        "required": true,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "simple",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
-                "deprecated": false
             }
         },
         "/v1/user-bookings": {
@@ -1490,6 +1138,363 @@
                     },
                     "required": true
                 },
+                "deprecated": false
+            }
+        },
+        "/v1/user-booking-cache-entries": {
+            "get": {
+                "operationId": "get-v1-bookings-cache-entry",
+                "tags": [
+                    "UserBookingCacheEntry"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/ld+json": {
+                                "examples": {
+                                    "example1": {
+                                        "value": {
+                                            "exchangeId": "value1",
+                                            "status": "value2"
+                                        },
+                                        "summary": "An example of a JSON-LD response"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "Retrieves user bookings entry from the cache table.",
+                "description": "Retrieves user bookings entry from the cache table.",
+                "parameters": [
+                    {
+                        "name": "resources",
+                        "in": "query",
+                        "description": "Resource of the booking, (email address)",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "uid",
+                        "in": "query",
+                        "description": "ID of the user to retrieve bookings for",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Status of the booking i.e. ACCEPTED or AWAITING_APPROVAL",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "string",
+                            "example": "ACCEPTED"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The collection page number",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "title",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "order[title]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "asc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "order[start]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "asc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "order[end]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "asc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "order[resourceMail]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "asc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "order[resourceDisplayName]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "asc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "start[before]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "start[strictly_before]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "start[after]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "start[strictly_after]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "end[before]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "end[strictly_before]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "end[after]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "end[strictly_after]",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    }
+                ],
+                "deprecated": false,
+                "x-headers": []
+            }
+        },
+        "/v1/user-booking-cache-entries/{id}": {
+            "get": {
+                "operationId": "api_v1user-booking-cache-entries_id_get",
+                "tags": [
+                    "UserBookingCacheEntry"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "UserBookingCacheEntry resource",
+                        "content": {
+                            "application/ld+json": {
+                                "schema": {}
+                            },
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "summary": "unsupported action",
+                "description": "unsupported action",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "UserBookingCacheEntry identifier",
+                        "required": true,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "simple",
+                        "explode": false,
+                        "allowReserved": false
+                    }
+                ],
                 "deprecated": false
             }
         }
