@@ -45,7 +45,8 @@ The following scenarios are covered:
 * [T1 Setting up a booking form in Selvbetjening](#t1-setting-up-a-booking-form-in-selvbetjening)
 * [T2 Test create booking](#t2-test-create-booking)
 * [T3 Setting up a "My Bookings" form in selvbetjening](#t3-setting-up-a-my-bookings-form-in-selvbetjening)
-* [T4 Updating and deleting a booking from "My Bookings](#t4-updating-and-deleting-a-booking-from-my-bookings)
+* [T4 Updating and deleting a booking from "My Bookings"](#t4-updating-and-deleting-a-booking-from-my-bookings)
+* [T5 Setting up a select before login flow](#t5-setting-up-booking-before-log-in)
 
 ## T1 Setting up a booking form in Selvbetjening
 
@@ -122,7 +123,7 @@ The mail received should look like:
 * Click "Vis". It should look as follows:
   ![Mine bookinger](assets/test-guide6.png "Mine bookinger")
 
-## T4 Updating and deleting a booking from "My Bookings
+## T4 Updating and deleting a booking from "My Bookings"
 
 NB! Changes to bookings requires that the queue run in BookAarhus.
 
@@ -146,3 +147,19 @@ NB! Changes to bookings requires that the queue run in BookAarhus.
 
   The mail received should look like:
   ![Mail 3](assets/test-guide13.png "Mail 3")
+
+## T5 Setting up booking before log in
+
+It is possible to create a start form that displays available resources before logging in.
+This will be an extra form that is configured to send selected results to another form.
+![Setup step 1](assets/test-guide14.png "Step 1 form").
+
+* Create a booking form (see T1).
+* Select "View only (No booking)"
+* In "Redirect url" set the url of the form that has login. E.g.: https://selvbetjening.local.itkdev.dk/da/form/booking .
+* Save the form.
+
+When the form is submitted, it will redirect to the form set in "Redirect url" with the selections
+from the first form set as query parameters in the url.
+In this second form the resource and time has already been selected and the user should enter required
+information and submit the booking request.
