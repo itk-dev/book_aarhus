@@ -29,7 +29,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
     /**
      * {@inheritdoc}
      *
-     * @throws \App\Exception\MicrosoftGraphCommunicationException
+     * @throws MicrosoftGraphCommunicationException
      */
     public function rebuildCache(): void
     {
@@ -50,9 +50,9 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      *
      * @return void
      *
-     * @throws \App\Exception\MicrosoftGraphCommunicationException
+     * @throws MicrosoftGraphCommunicationException
      */
-    public function updateCache($removeOutdated = true): void
+    public function updateCache(bool $removeOutdated = true): void
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
@@ -198,9 +198,9 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      * Set values for cache entity.
      *
      * @param $entity
-     * @param \App\Entity\Main\UserBooking $userBooking
+     * @param UserBooking $userBooking
      *
-     * @return \App\Entity\Main\UserBookingCacheEntry
+     * @return UserBookingCacheEntry
      */
     private function setCacheEntityValues(UserBookingCacheEntry $entity, UserBooking $userBooking): UserBookingCacheEntry
     {
@@ -222,9 +222,9 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      * @param $entity
      * @param array $data
      *
-     * @return \App\Entity\Main\UserBookingCacheEntry
+     * @return UserBookingCacheEntry
      */
-    private function setCacheEntityValuesFromArray($entity, array $data): UserBookingCacheEntry
+    private function setCacheEntityValuesFromArray(UserBookingCacheEntry $entity, array $data): UserBookingCacheEntry
     {
         $entity->setTitle($data['subject']);
         $entity->setExchangeId($data['id']);

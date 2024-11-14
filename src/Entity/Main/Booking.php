@@ -2,9 +2,39 @@
 
 namespace App\Entity\Main;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Action\NotFoundAction;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use App\Controller\CreateBookingWebformSubmitController;
+use App\Dto\WebformBookingInput;
 use Symfony\Component\Uid\Ulid;
 
+#[ApiResource(operations: [
+    new Get(
+        controller: NotFoundAction::class,
+        openapiContext: ['description' => 'unsupported action', 'summary' => 'unsupported action'],
+        output: false,
+        read: false
+    ),
+    new Post(
+        uriTemplate: '/bookings-webform',
+        controller: CreateBookingWebformSubmitController::class,
+        openapiContext: [
+            'description' => 'Create a booking from a Drupal Webform submit.',
+            'summary' => 'Create a booking from a Drupal Webform submit.',
+            'operationId' => 'post-v1-create-booking-webform-submit',
+            'parameters' => [],
+            'response' => [
+                '200' => [
+                    'description' => 'Created',
+                ],
+            ],
+        ],
+        input: WebformBookingInput::class
+    ),
+])]
 class Booking
 {
     #[ApiProperty(identifier: true)]

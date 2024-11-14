@@ -34,7 +34,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
      *
      * @see https://docs.microsoft.com/en-us/graph/api/calendar-getschedule?view=graph-rest-1.0&tabs=http
      */
-    public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, string $accessToken = null): array
+    public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, ?string $accessToken = null): array
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
@@ -377,7 +377,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     /**
      * @throws MicrosoftGraphCommunicationException
      */
-    public function getUserBookings(string $userId, string $search = null, int $page = 0, int $pageSize = 25): array
+    public function getUserBookings(string $userId, ?string $search = null, int $page = 0, int $pageSize = 25): array
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 

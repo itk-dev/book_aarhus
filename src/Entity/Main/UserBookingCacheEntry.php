@@ -2,11 +2,86 @@
 
 namespace App\Entity\Main;
 
+use ApiPlatform\Action\NotFoundAction;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\Main\UserBookingCacheEntryRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiResource(operations: [
+    new Get(
+        controller: NotFoundAction::class,
+        openapiContext: ['description' => 'unsupported action', 'summary' => 'unsupported action'],
+        output: false,
+        read: false
+    ),
+    new GetCollection(
+        uriTemplate: '/user-booking-cache-entries',
+        openapiContext: [
+            'description' => 'Retrieves user bookings entry from the cache table.',
+            'summary' => 'Retrieves user bookings entry from the cache table.',
+            'operationId' => 'get-v1-bookings-cache-entry',
+            'parameters' => [
+                [
+                    'schema' => [
+                        'type' => 'string',
+                        'format' => 'string',
+                    ],
+                    'name' => 'resources',
+                    'in' => 'query',
+                    'description' => 'Resource of the booking, (email address)',
+                ],
+                [
+                    'schema' => [
+                        'type' => 'string',
+                        'format' => 'string',
+                    ],
+                    'name' => 'uid',
+                    'in' => 'query',
+                    'description' => 'ID of the user to retrieve bookings for',
+                ],
+                [
+                    'schema' => [
+                        'type' => 'string',
+                        'format' => 'string',
+                        'example' => 'ACCEPTED',
+                    ],
+                    'name' => 'status',
+                    'in' => 'query',
+                    'description' => 'Status of the booking i.e. ACCEPTED or AWAITING_APPROVAL',
+                ],
+            ],
+
+            'responses' => [
+                '200' => [
+                    'description' => 'OK',
+                    'content' => [
+                        'application/ld+json' => [
+                            'examples' => [
+                                'example1' => [
+                                    'value' => [
+                                        'exchangeId' => 'value1',
+                                        'status' => 'value2',
+                                    ],
+                                    'summary' => 'An example of a JSON-LD response',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'headers' => [],
+        ],
+        filters: ['user_booking_cache_entry.search_filter', 'user_booking_cache_entry.order_filter', 'user_booking_cache_entry.date_filter'],
+    ),
+],
+    normalizationContext: [
+        'groups' => ['userBookingCacheEntry'],
+    ]
+)]
 #[ORM\Entity(repositoryClass: UserBookingCacheEntryRepository::class)]
 class UserBookingCacheEntry
 {

@@ -1,12 +1,13 @@
 <?php
 
-namespace App\DataProvider;
+namespace App\State;
 
-use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\Pagination\TraversablePaginator;
+use ApiPlatform\State\ProviderInterface;
 use App\Entity\Main\UserBooking;
 use App\Entity\Resources\AAKResource;
+use App\Exception\MicrosoftGraphCommunicationException;
 use App\Repository\Resources\AAKResourceRepository;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
@@ -15,7 +16,10 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-final class UserBookingCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
+/**
+ * @template-implements ProviderInterface<object>
+ */
+class UserBookingCollectionProvider implements ProviderInterface
 {
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
@@ -26,27 +30,29 @@ final class UserBookingCollectionDataProvider implements ContextAwareCollectionD
     ) {
     }
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    public function supports(string $resourceClass): bool
     {
         return UserBooking::class === $resourceClass;
     }
 
     /**
-     * @throws \Exception
+     * @throws MicrosoftGraphCommunicationException
      */
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
         $request = $this->requestStack->getCurrentRequest();
 
         if (is_null($request)) {
+            $this->metricsHelper->incExceptionTotal(BadRequestHttpException::class);
             throw new BadRequestHttpException('Request not set.');
         }
 
         $userId = $request->headers->get('Authorization-UserId') ?? null;
 
         if (is_null($userId)) {
+            $this->metricsHelper->incExceptionTotal(BadRequestHttpException::class);
             throw new BadRequestHttpException('Required Authorization-UserId header is not set.');
         }
 

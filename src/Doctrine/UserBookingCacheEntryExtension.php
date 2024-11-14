@@ -2,8 +2,9 @@
 
 namespace App\Doctrine;
 
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
+use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use ApiPlatform\Metadata\Operation;
 use App\Entity\Main\UserBookingCacheEntry;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -21,7 +22,7 @@ final class UserBookingCacheEntryExtension implements QueryCollectionExtensionIn
     /**
      * {@inheritdoc}
      */
-    public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null): void
+    public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
     {
         $this->addWhere($queryBuilder, $resourceClass);
     }
@@ -29,7 +30,7 @@ final class UserBookingCacheEntryExtension implements QueryCollectionExtensionIn
     /**
      * WHere condition to ensure display of users personal bookings.
      *
-     * @param \Doctrine\ORM\QueryBuilder $queryBuilder
+     * @param QueryBuilder $queryBuilder
      * @param string $resourceClass
      *
      * @return void

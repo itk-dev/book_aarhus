@@ -10,7 +10,6 @@ use App\Exception\BuildNotificationException;
 use App\Exception\NoNotificationReceiverException;
 use App\Exception\UnsupportedNotificationTypeException;
 use App\Utils\ValidationUtils;
-use DateTimeZone as PhpDateTimeZone;
 use Eluceo\iCal\Domain\Entity;
 use Eluceo\iCal\Domain\Entity\TimeZone;
 use Eluceo\iCal\Domain\ValueObject\DateTime as ICalDateTime;
@@ -31,6 +30,9 @@ class NotificationService implements NotificationServiceInterface
 {
     private ?string $validatedAdminNotificationEmail;
 
+    /**
+     * @param non-empty-string $bindNotificationTimezone
+     */
     public function __construct(
         private readonly string $emailFromAddress,
         private readonly string $emailAdminNotification,
@@ -47,6 +49,10 @@ class NotificationService implements NotificationServiceInterface
             );
         } catch (\Exception) {
             $this->logger->warning('No admin notification email set.');
+        }
+
+        if (!$this->bindNotificationTimezone) {
+            throw new \InvalidArgumentException('bindNotificationTimezone cannot be empty');
         }
     }
 
@@ -80,7 +86,7 @@ class NotificationService implements NotificationServiceInterface
     public function sendUserBookingNotification(
         UserBooking $userBooking,
         ?AAKResource $resource,
-        NotificationTypeEnum $type
+        NotificationTypeEnum $type,
     ): void {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
@@ -202,7 +208,7 @@ class NotificationService implements NotificationServiceInterface
 
         $calendar = new Entity\Calendar([$event]);
 
-        $phpDateTimeZone = new PhpDateTimeZone($this->bindNotificationTimezone);
+        $phpDateTimeZone = new \DateTimeZone($this->bindNotificationTimezone);
         $timeZone = TimeZone::createFromPhpDateTimeZone(
             $phpDateTimeZone,
             $dateFrom,
