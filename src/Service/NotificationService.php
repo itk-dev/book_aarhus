@@ -10,7 +10,6 @@ use App\Exception\BuildNotificationException;
 use App\Exception\NoNotificationReceiverException;
 use App\Exception\UnsupportedNotificationTypeException;
 use App\Utils\ValidationUtils;
-use DateTimeZone as PhpDateTimeZone;
 use Eluceo\iCal\Domain\Entity;
 use Eluceo\iCal\Domain\Entity\TimeZone;
 use Eluceo\iCal\Domain\ValueObject\DateTime as ICalDateTime;
@@ -31,6 +30,9 @@ class NotificationService implements NotificationServiceInterface
 {
     private ?string $validatedAdminNotificationEmail;
 
+    /**
+     * @param non-empty-string $bindNotificationTimezone
+     */
     public function __construct(
         private readonly string $emailFromAddress,
         private readonly string $emailAdminNotification,
@@ -39,13 +41,18 @@ class NotificationService implements NotificationServiceInterface
         private readonly MailerInterface $mailer,
         private readonly string $bindNotificationTimezone,
         private readonly string $bindNotificationDateFormat,
+        private readonly MetricsHelper $metricsHelper,
     ) {
         try {
             $this->validatedAdminNotificationEmail = $this->validationUtils->validateEmail(
                 $this->emailAdminNotification
             );
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             $this->logger->warning('No admin notification email set.');
+        }
+
+        if (!$this->bindNotificationTimezone) {
+            throw new \InvalidArgumentException('bindNotificationTimezone cannot be empty');
         }
     }
 
@@ -54,6 +61,8 @@ class NotificationService implements NotificationServiceInterface
      */
     public function sendBookingNotification(Booking $booking, ?AAKResource $resource, NotificationTypeEnum $type): void
     {
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
+
         $data = [
             'booking' => $booking,
             'resource' => $resource,
@@ -67,6 +76,8 @@ class NotificationService implements NotificationServiceInterface
         $notification = $this->buildNotification($type, $data);
 
         $this->sendNotification($notification);
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
     /**
@@ -75,8 +86,10 @@ class NotificationService implements NotificationServiceInterface
     public function sendUserBookingNotification(
         UserBooking $userBooking,
         ?AAKResource $resource,
-        NotificationTypeEnum $type
+        NotificationTypeEnum $type,
     ): void {
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
+
         $body = $userBooking->body;
 
         $crawler = new Crawler($body);
@@ -157,6 +170,8 @@ class NotificationService implements NotificationServiceInterface
         $notificationData['adminNotification'] = true;
 
         $this->sendNotification($notificationData);
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
     /**
@@ -193,7 +208,7 @@ class NotificationService implements NotificationServiceInterface
 
         $calendar = new Entity\Calendar([$event]);
 
-        $phpDateTimeZone = new PhpDateTimeZone($this->bindNotificationTimezone);
+        $phpDateTimeZone = new \DateTimeZone($this->bindNotificationTimezone);
         $timeZone = TimeZone::createFromPhpDateTimeZone(
             $phpDateTimeZone,
             $dateFrom,
@@ -209,6 +224,8 @@ class NotificationService implements NotificationServiceInterface
      */
     public function notifyAdmin(string $subject, string $message, ?Booking $booking, ?AAKResource $resource): void
     {
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
+
         if ($this->validatedAdminNotificationEmail) {
             $to = $this->validatedAdminNotificationEmail;
             $template = 'email-notify-admin.html.twig';
@@ -243,6 +260,8 @@ class NotificationService implements NotificationServiceInterface
 
             $this->sendNotification($notificationData);
         }
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
     /**

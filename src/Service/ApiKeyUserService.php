@@ -11,7 +11,7 @@ class ApiKeyUserService
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ApiKeyUserRepository $apiKeyUserRepository
+        private readonly ApiKeyUserRepository $apiKeyUserRepository,
     ) {
     }
 

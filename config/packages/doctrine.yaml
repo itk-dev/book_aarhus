@@ -4,6 +4,8 @@ doctrine:
         types:
             # https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/known-vendor-issues.html#microsoft-sql-server
             time: 'Doctrine\DBAL\Types\VarDateTimeType'
+            datetime: App\Doctrine\Extensions\DBAL\Types\UTCDateTimeType
+            datetime_immutable: App\Doctrine\Extensions\DBAL\Types\UTCDateTimeImmutableType
         connections:
             default:
                 url: '%env(resolve:DATABASE_URL)%'

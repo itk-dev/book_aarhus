@@ -1,0 +1,23 @@
+itkdev_metrics:
+    # Prefix exported metrics (should be application name)
+    namespace: bookaarhus
+
+    # Storage adapter to use
+    adapter:
+        type: redis # One of "apcu"; "memory"; "redis"
+
+        # Connection options is only used by redis adapter
+        options:
+            host: redis
+            port: 6379
+            password: ~
+
+    # Export metrics for these extensions
+    extensions:
+        opcache: false
+        apcu: false
+
+when@test:
+    itkdev_metrics:
+        adapter:
+            type: memory

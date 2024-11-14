@@ -1,5 +1,5 @@
 {
-    "openapi": "3.0.0",
+    "openapi": "3.1.0",
     "info": {
         "title": "Book Aarhus API Service",
         "description": "API Service for Book Aarhus",
@@ -23,7 +23,20 @@
                 ],
                 "responses": {
                     "201": {
-                        "description": "Created"
+                        "description": "Booking resource created",
+                        "content": {
+                            "application/ld+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Booking.jsonld"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Booking"
+                                }
+                            }
+                        },
+                        "links": {}
                     },
                     "400": {
                         "description": "Invalid input"
@@ -47,18 +60,17 @@
                             "schema": {
                                 "$ref": "#/components/schemas/Booking.WebformBookingInput"
                             }
-                        },
-                        "text/html": {
-                            "schema": {
-                                "$ref": "#/components/schemas/Booking.WebformBookingInput"
-                            }
                         }
                     },
                     "required": true
                 },
-                "deprecated": false
-            },
-            "parameters": []
+                "deprecated": false,
+                "x-response": {
+                    "200": {
+                        "description": "Created"
+                    }
+                }
+            }
         },
         "/v1/busy-intervals": {
             "get": {
@@ -71,10 +83,21 @@
                         "description": "OK",
                         "content": {
                             "application/ld+json": {
-                                "examples": null
+                                "examples": {
+                                    "example1": {
+                                        "value": {
+                                            "@context": "https://www.w3.org/ns/hydra/context.jsonld",
+                                            "@id": "/bu/1",
+                                            "name": "Example BusyInterval",
+                                            "resource": "test@bookaarhus.local.itkdev.dk",
+                                            "dateStart": "2022-05-30T17:32:28Z",
+                                            "dateEnd": "2022-06-22T17:32:28Z"
+                                        },
+                                        "summary": "An example of a JSON-LD response"
+                                    }
+                                }
                             }
-                        },
-                        "headers": {}
+                        }
                     }
                 },
                 "summary": "Retrieves busy intervals.",
@@ -124,7 +147,7 @@
                         "schema": {
                             "type": "string",
                             "format": "date-time",
-                            "example": "2022-06-22T17:32:28Z"
+                            "example": "2022-05-30T17:32:28Z"
                         },
                         "style": "form",
                         "explode": false,
@@ -146,49 +169,9 @@
                         "allowReserved": false
                     }
                 ],
-                "deprecated": false
-            },
-            "parameters": []
-        },
-        "/v1/locations": {
-            "get": {
-                "operationId": "get-v1-locations",
-                "tags": [
-                    "Location"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/ld+json": {
-                                "examples": null
-                            }
-                        },
-                        "headers": {}
-                    }
-                },
-                "summary": "Retrieves locations.",
-                "description": "Retrieves locations.",
-                "parameters": [
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "The collection page number",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "integer",
-                            "default": 1
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
-                "deprecated": false
-            },
-            "parameters": []
+                "deprecated": false,
+                "x-headers": []
+            }
         },
         "/v1/resource-by-email/{resourceMail}": {
             "get": {
@@ -198,7 +181,22 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "Resource resource",
+                        "content": {
+                            "application/ld+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Resource.jsonld-resource"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Resource-resource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found"
                     }
                 },
                 "summary": "Get a resource by email",
@@ -221,24 +219,27 @@
                         "allowReserved": false
                     },
                     {
-                        "name": "page",
-                        "in": "query",
-                        "description": "The collection page number",
-                        "required": false,
+                        "name": "id",
+                        "in": "path",
+                        "description": "Resource identifier",
+                        "required": true,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
-                            "type": "integer",
-                            "default": 1
+                            "type": "string"
                         },
-                        "style": "form",
+                        "style": "simple",
                         "explode": false,
                         "allowReserved": false
                     }
                 ],
-                "deprecated": false
-            },
-            "parameters": []
+                "deprecated": false,
+                "x-response": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
         },
         "/v1/resources": {
             "get": {
@@ -324,8 +325,10 @@
                                                                 "type": "string"
                                                             },
                                                             "property": {
-                                                                "type": "string",
-                                                                "nullable": true
+                                                                "type": [
+                                                                    "string",
+                                                                    "null"
+                                                                ]
                                                             },
                                                             "required": {
                                                                 "type": "boolean"
@@ -342,14 +345,6 @@
                                 }
                             },
                             "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Resource-resource"
-                                    }
-                                }
-                            },
-                            "text/html": {
                                 "schema": {
                                     "type": "array",
                                     "items": {
@@ -384,7 +379,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -398,7 +393,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "array",
                             "items": {
@@ -415,7 +410,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -429,7 +424,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -443,7 +438,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "array",
                             "items": {
@@ -460,7 +455,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "boolean"
                         },
@@ -474,7 +469,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "boolean"
                         },
@@ -488,7 +483,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "boolean"
                         },
@@ -502,7 +497,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "boolean"
                         },
@@ -516,7 +511,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "boolean"
                         },
@@ -530,7 +525,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "boolean"
                         },
@@ -544,7 +539,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "boolean"
                         },
@@ -558,7 +553,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -572,7 +567,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -586,7 +581,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -600,7 +595,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -614,7 +609,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -624,8 +619,7 @@
                     }
                 ],
                 "deprecated": false
-            },
-            "parameters": []
+            }
         },
         "/v1/resources-all": {
             "get": {
@@ -635,7 +629,110 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "Resource collection",
+                        "content": {
+                            "application/ld+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "hydra:member": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Resource.jsonld-resource"
+                                            }
+                                        },
+                                        "hydra:totalItems": {
+                                            "type": "integer",
+                                            "minimum": 0
+                                        },
+                                        "hydra:view": {
+                                            "type": "object",
+                                            "properties": {
+                                                "@id": {
+                                                    "type": "string",
+                                                    "format": "iri-reference"
+                                                },
+                                                "@type": {
+                                                    "type": "string"
+                                                },
+                                                "hydra:first": {
+                                                    "type": "string",
+                                                    "format": "iri-reference"
+                                                },
+                                                "hydra:last": {
+                                                    "type": "string",
+                                                    "format": "iri-reference"
+                                                },
+                                                "hydra:previous": {
+                                                    "type": "string",
+                                                    "format": "iri-reference"
+                                                },
+                                                "hydra:next": {
+                                                    "type": "string",
+                                                    "format": "iri-reference"
+                                                }
+                                            },
+                                            "example": {
+                                                "@id": "string",
+                                                "type": "string",
+                                                "hydra:first": "string",
+                                                "hydra:last": "string",
+                                                "hydra:previous": "string",
+                                                "hydra:next": "string"
+                                            }
+                                        },
+                                        "hydra:search": {
+                                            "type": "object",
+                                            "properties": {
+                                                "@type": {
+                                                    "type": "string"
+                                                },
+                                                "hydra:template": {
+                                                    "type": "string"
+                                                },
+                                                "hydra:variableRepresentation": {
+                                                    "type": "string"
+                                                },
+                                                "hydra:mapping": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "@type": {
+                                                                "type": "string"
+                                                            },
+                                                            "variable": {
+                                                                "type": "string"
+                                                            },
+                                                            "property": {
+                                                                "type": [
+                                                                    "string",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "required": {
+                                                                "type": "boolean"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "hydra:member"
+                                    ]
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Resource-resource"
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
                 "summary": "Get all resources.",
@@ -657,9 +754,13 @@
                         "allowReserved": false
                     }
                 ],
-                "deprecated": false
-            },
-            "parameters": []
+                "deprecated": false,
+                "x-response": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
         },
         "/v1/resources/{id}": {
             "get": {
@@ -677,11 +778,6 @@
                                 }
                             },
                             "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Resource-resource"
-                                }
-                            },
-                            "text/html": {
                                 "schema": {
                                     "$ref": "#/components/schemas/Resource-resource"
                                 }
@@ -711,8 +807,7 @@
                     }
                 ],
                 "deprecated": false
-            },
-            "parameters": []
+            }
         },
         "/v1/status-by-ids": {
             "post": {
@@ -733,31 +828,15 @@
                                 "schema": {
                                     "$ref": "#/components/schemas/UserBooking-userBooking"
                                 }
-                            },
-                            "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBooking-userBooking"
-                                }
                             }
                         },
-                        "links": {
-                            "GetUserBookingItem": {
-                                "operationId": "getUserBookingItem",
-                                "parameters": {
-                                    "id": "$response.body#/id"
-                                },
-                                "description": "The `id` value returned in the response can be used as the `id` parameter in `GET /v1/user-bookings/{id}`."
-                            }
-                        }
+                        "links": {}
                     },
                     "400": {
                         "description": "Invalid input"
                     },
                     "422": {
                         "description": "Unprocessable entity"
-                    },
-                    "200": {
-                        "description": ""
                     }
                 },
                 "summary": "Get status on bookings",
@@ -775,18 +854,292 @@
                             "schema": {
                                 "$ref": "#/components/schemas/UserBooking.UserBookingStatusInput"
                             }
+                        }
+                    },
+                    "required": true
+                },
+                "deprecated": false,
+                "x-response": {
+                    "200": []
+                }
+            }
+        },
+        "/v1/user-bookings": {
+            "get": {
+                "operationId": "get-v1-bookings",
+                "tags": [
+                    "UserBooking"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "UserBooking collection",
+                        "content": {
+                            "application/ld+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "hydra:member": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/UserBooking.jsonld-userBooking"
+                                            }
+                                        },
+                                        "hydra:totalItems": {
+                                            "type": "integer",
+                                            "minimum": 0
+                                        },
+                                        "hydra:view": {
+                                            "type": "object",
+                                            "properties": {
+                                                "@id": {
+                                                    "type": "string",
+                                                    "format": "iri-reference"
+                                                },
+                                                "@type": {
+                                                    "type": "string"
+                                                },
+                                                "hydra:first": {
+                                                    "type": "string",
+                                                    "format": "iri-reference"
+                                                },
+                                                "hydra:last": {
+                                                    "type": "string",
+                                                    "format": "iri-reference"
+                                                },
+                                                "hydra:previous": {
+                                                    "type": "string",
+                                                    "format": "iri-reference"
+                                                },
+                                                "hydra:next": {
+                                                    "type": "string",
+                                                    "format": "iri-reference"
+                                                }
+                                            },
+                                            "example": {
+                                                "@id": "string",
+                                                "type": "string",
+                                                "hydra:first": "string",
+                                                "hydra:last": "string",
+                                                "hydra:previous": "string",
+                                                "hydra:next": "string"
+                                            }
+                                        },
+                                        "hydra:search": {
+                                            "type": "object",
+                                            "properties": {
+                                                "@type": {
+                                                    "type": "string"
+                                                },
+                                                "hydra:template": {
+                                                    "type": "string"
+                                                },
+                                                "hydra:variableRepresentation": {
+                                                    "type": "string"
+                                                },
+                                                "hydra:mapping": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "@type": {
+                                                                "type": "string"
+                                                            },
+                                                            "variable": {
+                                                                "type": "string"
+                                                            },
+                                                            "property": {
+                                                                "type": [
+                                                                    "string",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "required": {
+                                                                "type": "boolean"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "hydra:member"
+                                    ]
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UserBooking-userBooking"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "Retrieves user bookings from a specific user",
+                "description": "Retrieves user bookings from a specific user",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "query",
+                        "description": "ID of the user to retrieve bookings for",
+                        "required": true,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "string",
+                            "example": "1"
                         },
-                        "text/html": {
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The collection page number",
+                        "required": false,
+                        "deprecated": false,
+                        "allowEmptyValue": true,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "style": "form",
+                        "explode": false,
+                        "allowReserved": false
+                    }
+                ],
+                "deprecated": false,
+                "x-headers": [],
+                "x-response": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/ld+json": {
+                                "examples": {
+                                    "example1": {
+                                        "value": {
+                                            "id": "1",
+                                            "subject": "Horse species",
+                                            "displayName": "Pony",
+                                            "status": "away from keyboard",
+                                            "bookingType": "Rent",
+                                            "expired": false,
+                                            "start": "2024-01-16T08:02:25.084Z",
+                                            "end": "2024-01-16T08:02:25.084Z",
+                                            "resourceMail": "Horse@Pony.dk",
+                                            "resourceName": "Book about Hors species"
+                                        },
+                                        "summary": "An example of a JSON-LD response"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user-bookings/{id}": {
+            "delete": {
+                "operationId": "api_v1user-bookings_id_delete",
+                "tags": [
+                    "UserBooking"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "UserBooking resource deleted"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "summary": "Removes the UserBooking resource.",
+                "description": "Removes the UserBooking resource.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "UserBooking identifier",
+                        "required": true,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "simple",
+                        "explode": false,
+                        "allowReserved": false
+                    }
+                ],
+                "deprecated": false
+            },
+            "patch": {
+                "operationId": "api_v1user-bookings_id_patch",
+                "tags": [
+                    "UserBooking"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "UserBooking resource updated",
+                        "content": {
+                            "application/ld+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserBooking.jsonld-userBooking"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserBooking-userBooking"
+                                }
+                            }
+                        },
+                        "links": {}
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "422": {
+                        "description": "Unprocessable entity"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "summary": "Updates the UserBooking resource.",
+                "description": "Updates the UserBooking resource.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "UserBooking identifier",
+                        "required": true,
+                        "deprecated": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "style": "simple",
+                        "explode": false,
+                        "allowReserved": false
+                    }
+                ],
+                "requestBody": {
+                    "description": "The updated UserBooking resource",
+                    "content": {
+                        "application/merge-patch+json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UserBooking.UserBookingStatusInput"
+                                "$ref": "#/components/schemas/UserBooking"
                             }
                         }
                     },
                     "required": true
                 },
                 "deprecated": false
-            },
-            "parameters": []
+            }
         },
         "/v1/user-booking-cache-entries": {
             "get": {
@@ -801,24 +1154,22 @@
                             "application/ld+json": {
                                 "examples": {
                                     "example1": {
-                                        "value": [
-                                            {
-                                                "exchangeId": "value1",
-                                                "status": "value2"
-                                            }
-                                        ]
+                                        "value": {
+                                            "exchangeId": "value1",
+                                            "status": "value2"
+                                        },
+                                        "summary": "An example of a JSON-LD response"
                                     }
                                 }
                             }
-                        },
-                        "headers": {}
+                        }
                     }
                 },
                 "summary": "Retrieves user bookings entry from the cache table.",
                 "description": "Retrieves user bookings entry from the cache table.",
                 "parameters": [
                     {
-                        "name": "resource",
+                        "name": "resources",
                         "in": "query",
                         "description": "Resource of the booking, (email address)",
                         "required": false,
@@ -884,7 +1235,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -898,9 +1249,10 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string",
+                            "default": "asc",
                             "enum": [
                                 "asc",
                                 "desc"
@@ -916,9 +1268,10 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string",
+                            "default": "asc",
                             "enum": [
                                 "asc",
                                 "desc"
@@ -934,9 +1287,10 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string",
+                            "default": "asc",
                             "enum": [
                                 "asc",
                                 "desc"
@@ -952,9 +1306,10 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string",
+                            "default": "asc",
                             "enum": [
                                 "asc",
                                 "desc"
@@ -970,9 +1325,10 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string",
+                            "default": "asc",
                             "enum": [
                                 "asc",
                                 "desc"
@@ -988,7 +1344,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -1002,7 +1358,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -1016,7 +1372,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -1030,7 +1386,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -1044,7 +1400,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -1058,7 +1414,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -1072,7 +1428,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -1086,7 +1442,7 @@
                         "description": "",
                         "required": false,
                         "deprecated": false,
-                        "allowEmptyValue": true,
+                        "allowEmptyValue": false,
                         "schema": {
                             "type": "string"
                         },
@@ -1095,13 +1451,13 @@
                         "allowReserved": false
                     }
                 ],
-                "deprecated": false
-            },
-            "parameters": []
+                "deprecated": false,
+                "x-headers": []
+            }
         },
         "/v1/user-booking-cache-entries/{id}": {
             "get": {
-                "operationId": "getUserBookingCacheEntryItem",
+                "operationId": "api_v1user-booking-cache-entries_id_get",
                 "tags": [
                     "UserBookingCacheEntry"
                 ],
@@ -1114,9 +1470,6 @@
                             },
                             "application/json": {
                                 "schema": {}
-                            },
-                            "text/html": {
-                                "schema": {}
                             }
                         }
                     },
@@ -1124,13 +1477,13 @@
                         "description": "Resource not found"
                     }
                 },
-                "summary": "Unsupported action.",
-                "description": "Unsupported action.",
+                "summary": "unsupported action",
+                "description": "unsupported action",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "Resource identifier",
+                        "description": "UserBookingCacheEntry identifier",
                         "required": true,
                         "deprecated": false,
                         "allowEmptyValue": false,
@@ -1143,226 +1496,7 @@
                     }
                 ],
                 "deprecated": false
-            },
-            "parameters": []
-        },
-        "/v1/user-bookings": {
-            "get": {
-                "operationId": "get-v1-bookings",
-                "tags": [
-                    "UserBooking"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/ld+json": {
-                                "examples": null
-                            }
-                        },
-                        "headers": {}
-                    }
-                },
-                "summary": "Retrieves user bookings from a specific user.",
-                "description": "Retrieves user bookings from a specific user.",
-                "parameters": [
-                    {
-                        "name": "userId",
-                        "in": "query",
-                        "description": "ID of the user to retrieve bookings for",
-                        "required": true,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string",
-                            "format": "string",
-                            "example": "1"
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "The collection page number",
-                        "required": false,
-                        "deprecated": false,
-                        "allowEmptyValue": true,
-                        "schema": {
-                            "type": "integer",
-                            "default": 1
-                        },
-                        "style": "form",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
-                "deprecated": false
-            },
-            "parameters": []
-        },
-        "/v1/user-bookings/{id}": {
-            "get": {
-                "operationId": "getUserBookingItem",
-                "tags": [
-                    "UserBooking"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "UserBooking resource",
-                        "content": {
-                            "application/ld+json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBooking.jsonld-userBooking"
-                                }
-                            },
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBooking-userBooking"
-                                }
-                            },
-                            "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBooking-userBooking"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Resource not found"
-                    }
-                },
-                "summary": "Retrieves a UserBooking resource.",
-                "description": "Retrieves a UserBooking resource.",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Resource identifier",
-                        "required": true,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "simple",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
-                "deprecated": false
-            },
-            "delete": {
-                "operationId": "deleteUserBookingItem",
-                "tags": [
-                    "UserBooking"
-                ],
-                "responses": {
-                    "204": {
-                        "description": "UserBooking resource deleted"
-                    },
-                    "404": {
-                        "description": "Resource not found"
-                    }
-                },
-                "summary": "Removes the UserBooking resource.",
-                "description": "Removes the UserBooking resource.",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Resource identifier",
-                        "required": true,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "simple",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
-                "deprecated": false
-            },
-            "patch": {
-                "operationId": "patchUserBookingItem",
-                "tags": [
-                    "UserBooking"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "UserBooking resource updated",
-                        "content": {
-                            "application/ld+json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBooking.jsonld-userBooking"
-                                }
-                            },
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBooking-userBooking"
-                                }
-                            },
-                            "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserBooking-userBooking"
-                                }
-                            }
-                        },
-                        "links": {
-                            "GetUserBookingItem": {
-                                "operationId": "getUserBookingItem",
-                                "parameters": {
-                                    "id": "$response.body#/id"
-                                },
-                                "description": "The `id` value returned in the response can be used as the `id` parameter in `GET /v1/user-bookings/{id}`."
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid input"
-                    },
-                    "422": {
-                        "description": "Unprocessable entity"
-                    },
-                    "404": {
-                        "description": "Resource not found"
-                    }
-                },
-                "summary": "Updates the UserBooking resource.",
-                "description": "Updates the UserBooking resource.",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Resource identifier",
-                        "required": true,
-                        "deprecated": false,
-                        "allowEmptyValue": false,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "style": "simple",
-                        "explode": false,
-                        "allowReserved": false
-                    }
-                ],
-                "requestBody": {
-                    "description": "The updated UserBooking resource",
-                    "content": {
-                        "application/merge-patch+json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UserBooking"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "deprecated": false
-            },
-            "parameters": []
+            }
         }
     },
     "components": {
@@ -1370,6 +1504,7 @@
             "Booking": {
                 "type": "object",
                 "description": "",
+                "deprecated": false,
                 "properties": {
                     "id": {
                         "type": "string"
@@ -1413,14 +1548,17 @@
                         "type": "string"
                     },
                     "whitelistKey": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     }
                 }
             },
             "Booking.WebformBookingInput": {
                 "type": "object",
                 "description": "",
+                "deprecated": false,
                 "properties": {
                     "data": {
                         "default": {
@@ -1463,42 +1601,8 @@
             "Booking.WebformBookingInput.jsonld": {
                 "type": "object",
                 "description": "",
+                "deprecated": false,
                 "properties": {
-                    "@context": {
-                        "readOnly": true,
-                        "oneOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "object",
-                                "properties": {
-                                    "@vocab": {
-                                        "type": "string"
-                                    },
-                                    "hydra": {
-                                        "type": "string",
-                                        "enum": [
-                                            "http://www.w3.org/ns/hydra/core#"
-                                        ]
-                                    }
-                                },
-                                "required": [
-                                    "@vocab",
-                                    "hydra"
-                                ],
-                                "additionalProperties": true
-                            }
-                        ]
-                    },
-                    "@id": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
-                    "@type": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
                     "data": {
                         "default": {
                             "webform": {
@@ -1540,6 +1644,7 @@
             "Booking.jsonld": {
                 "type": "object",
                 "description": "",
+                "deprecated": false,
                 "properties": {
                     "@context": {
                         "readOnly": true,
@@ -1618,14 +1723,17 @@
                         "type": "string"
                     },
                     "whitelistKey": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     }
                 }
             },
             "BusyInterval": {
                 "type": "object",
                 "description": "",
+                "deprecated": false,
                 "properties": {
                     "id": {
                         "type": "string"
@@ -1634,20 +1742,25 @@
                         "type": "string"
                     },
                     "startTime": {
-                        "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
                     },
                     "endTime": {
-                        "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
                     }
                 }
             },
             "BusyInterval.jsonld": {
                 "type": "object",
                 "description": "",
+                "deprecated": false,
                 "properties": {
                     "@id": {
                         "readOnly": true,
@@ -1664,20 +1777,25 @@
                         "type": "string"
                     },
                     "startTime": {
-                        "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
                     },
                     "endTime": {
-                        "type": "string",
-                        "format": "date-time",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
                     }
                 }
             },
             "HolidayOpenHours-resource": {
                 "type": "object",
                 "description": "",
+                "deprecated": false,
                 "properties": {
                     "holidayOpen": {
                         "type": "string",
@@ -1696,6 +1814,7 @@
             "HolidayOpenHours.jsonld-resource": {
                 "type": "object",
                 "description": "",
+                "deprecated": false,
                 "properties": {
                     "@context": {
                         "readOnly": true,
@@ -1746,35 +1865,10 @@
                     }
                 }
             },
-            "Location": {
-                "type": "object",
-                "description": "",
-                "properties": {
-                    "name": {
-                        "type": "string"
-                    }
-                }
-            },
-            "Location.jsonld": {
-                "type": "object",
-                "description": "",
-                "properties": {
-                    "@id": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
-                    "@type": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
-                    "name": {
-                        "type": "string"
-                    }
-                }
-            },
             "OpenHours-resource": {
                 "type": "object",
                 "description": "",
+                "deprecated": false,
                 "properties": {
                     "weekday": {
                         "type": "integer"
@@ -1796,6 +1890,7 @@
             "OpenHours.jsonld-resource": {
                 "type": "object",
                 "description": "",
+                "deprecated": false,
                 "properties": {
                     "@context": {
                         "readOnly": true,
@@ -1851,7 +1946,8 @@
             },
             "Resource-resource": {
                 "type": "object",
-                "description": "Extbooking.aakresources.",
+                "description": "Resource",
+                "deprecated": false,
                 "properties": {
                     "id": {
                         "readOnly": true,
@@ -1876,27 +1972,37 @@
                         "type": "string"
                     },
                     "resourceImage": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "resourceEmailText": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "location": {
                         "type": "string"
                     },
                     "geoCoordinates": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "capacity": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "resourceDescription": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "wheelchairAccessible": {
                         "type": "boolean"
@@ -1914,74 +2020,105 @@
                         "type": "boolean"
                     },
                     "formId": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "hasHolidayOpen": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "hasOpen": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "hasWhitelist": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "permissionEmployee": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "permissionCitizen": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "permissionBusinessPartner": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "updateTimestamp": {
                         "type": "string",
                         "format": "date-time"
                     },
                     "displayName": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "city": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "streetName": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "postalCode": {
-                        "type": "integer",
-                        "nullable": true
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
                     },
                     "resourceCategory": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "resourceDisplayName": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "locationDisplayName": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "acceptConflict": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     }
                 }
             },
             "Resource.jsonld-resource": {
                 "type": "object",
-                "description": "Extbooking.aakresources.",
+                "description": "Resource",
+                "deprecated": false,
                 "properties": {
                     "@id": {
                         "readOnly": true,
@@ -2041,27 +2178,37 @@
                         "type": "string"
                     },
                     "resourceImage": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "resourceEmailText": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "location": {
                         "type": "string"
                     },
                     "geoCoordinates": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "capacity": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "resourceDescription": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "wheelchairAccessible": {
                         "type": "boolean"
@@ -2079,80 +2226,110 @@
                         "type": "boolean"
                     },
                     "formId": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "hasHolidayOpen": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "hasOpen": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "hasWhitelist": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "permissionEmployee": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "permissionCitizen": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "permissionBusinessPartner": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     },
                     "updateTimestamp": {
                         "type": "string",
                         "format": "date-time"
                     },
                     "displayName": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "city": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "streetName": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "postalCode": {
-                        "type": "integer",
-                        "nullable": true
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
                     },
                     "resourceCategory": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "resourceDisplayName": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "locationDisplayName": {
-                        "type": "string",
-                        "nullable": true
+                        "type": [
+                            "string",
+                            "null"
+                        ]
                     },
                     "acceptConflict": {
-                        "type": "boolean",
-                        "nullable": true
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
                     }
                 }
             },
             "UserBooking": {
                 "type": "object",
                 "description": "",
+                "deprecated": false,
                 "properties": {
                     "id": {
                         "type": "string"
                     },
                     "iCalUId": {
-                        "writeOnly": true,
                         "type": "string"
                     },
                     "subject": {
@@ -2162,7 +2339,6 @@
                         "type": "string"
                     },
                     "body": {
-                        "writeOnly": true,
                         "type": "string"
                     },
                     "status": {
@@ -2189,15 +2365,12 @@
                         "type": "string"
                     },
                     "ownedByServiceAccount": {
-                        "writeOnly": true,
                         "type": "boolean"
                     },
                     "userEmail": {
-                        "writeOnly": true,
                         "type": "string"
                     },
                     "userName": {
-                        "writeOnly": true,
                         "type": "string"
                     }
                 }
@@ -2205,6 +2378,7 @@
             "UserBooking-userBooking": {
                 "type": "object",
                 "description": "",
+                "deprecated": false,
                 "properties": {
                     "id": {
                         "type": "string"
@@ -2243,6 +2417,7 @@
             "UserBooking.UserBookingStatusInput": {
                 "type": "object",
                 "description": "",
+                "deprecated": false,
                 "properties": {
                     "ids": {
                         "type": "array",
@@ -2255,42 +2430,8 @@
             "UserBooking.UserBookingStatusInput.jsonld": {
                 "type": "object",
                 "description": "",
+                "deprecated": false,
                 "properties": {
-                    "@context": {
-                        "readOnly": true,
-                        "oneOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "object",
-                                "properties": {
-                                    "@vocab": {
-                                        "type": "string"
-                                    },
-                                    "hydra": {
-                                        "type": "string",
-                                        "enum": [
-                                            "http://www.w3.org/ns/hydra/core#"
-                                        ]
-                                    }
-                                },
-                                "required": [
-                                    "@vocab",
-                                    "hydra"
-                                ],
-                                "additionalProperties": true
-                            }
-                        ]
-                    },
-                    "@id": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
-                    "@type": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
                     "ids": {
                         "type": "array",
                         "items": {
@@ -2302,7 +2443,16 @@
             "UserBooking.jsonld-userBooking": {
                 "type": "object",
                 "description": "",
+                "deprecated": false,
                 "properties": {
+                    "@id": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "@type": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
                     "@context": {
                         "readOnly": true,
                         "oneOf": [
@@ -2329,14 +2479,6 @@
                                 "additionalProperties": true
                             }
                         ]
-                    },
-                    "@id": {
-                        "readOnly": true,
-                        "type": "string"
-                    },
-                    "@type": {
-                        "readOnly": true,
-                        "type": "string"
                     },
                     "id": {
                         "type": "string"
@@ -2375,6 +2517,7 @@
             "UserBookingCacheEntry-userBookingCacheEntry": {
                 "type": "object",
                 "description": "",
+                "deprecated": false,
                 "properties": {
                     "id": {
                         "readOnly": true,
@@ -2408,6 +2551,7 @@
             "UserBookingCacheEntry.jsonld-userBookingCacheEntry": {
                 "type": "object",
                 "description": "",
+                "deprecated": false,
                 "properties": {
                     "@id": {
                         "readOnly": true,
@@ -2466,5 +2610,6 @@
             "apiKey": []
         }
     ],
-    "tags": []
+    "tags": [],
+    "webhooks": {}
 }

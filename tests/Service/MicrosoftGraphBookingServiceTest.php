@@ -5,6 +5,7 @@ namespace App\Tests\Service;
 use App\Exception\BookingCreateConflictException;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
+use App\Service\MetricsHelper;
 use App\Service\MicrosoftGraphBookingService;
 use App\Service\MicrosoftGraphHelperService;
 use App\Tests\AbstractBaseApiTestCase;
@@ -38,7 +39,9 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
             )
         );
 
-        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock, $loggerMock);
+        $metric = $this->createMock(MetricsHelper::class);
+
+        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock, $loggerMock, $metric);
 
         $bookingData = $graphService->getBooking('1234');
 
@@ -59,7 +62,9 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock, $loggerMock);
+        $metric = $this->createMock(MetricsHelper::class);
+
+        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock, $loggerMock, $metric);
 
         $userId = $graphService->createBodyUserId('useridtest');
 
@@ -74,7 +79,9 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock, $loggerMock);
+        $metric = $this->createMock(MetricsHelper::class);
+
+        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock, $loggerMock, $metric);
 
         $data = MicrosoftGraphBookingServiceData::getUserBookingData1();
 
@@ -165,7 +172,9 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
 
         $loggerMock = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
-        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock, $loggerMock);
+        $metric = $this->createMock(MetricsHelper::class);
+
+        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock, $loggerMock, $metric);
 
         $userBookings = $graphService->getUserBookings('1234567890', 0, 0, 5);
 
@@ -261,7 +270,9 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
 
         $loggerMock = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
-        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock, $loggerMock);
+        $metric = $this->createMock(MetricsHelper::class);
+
+        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock, $loggerMock, $metric);
 
         // 1. Expired booking.
         $userBooking = $graphService->getUserBookingFromApiData(MicrosoftGraphBookingServiceData::getUserBookingData1());
@@ -377,7 +388,9 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
 
         $loggerMock = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
-        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock, $loggerMock);
+        $metric = $this->createMock(MetricsHelper::class);
+
+        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock, $loggerMock, $metric);
 
         // 1. Expired
         $userBooking = $graphService->getUserBookingFromApiData(MicrosoftGraphBookingServiceData::getUserBookingData1());
@@ -489,7 +502,9 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
 
         $loggerMock = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
-        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock, $loggerMock);
+        $metric = $this->createMock(MetricsHelper::class);
+
+        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock, $loggerMock, $metric);
 
         // 1. No conflict
         $data = [
@@ -546,7 +561,9 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
 
         $loggerMock = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
-        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock, $loggerMock);
+        $metric = $this->createMock(MetricsHelper::class);
+
+        $graphService = new MicrosoftGraphBookingService('test@example.com', 'test', $microsoftGraphHelperServiceMock, $loggerMock, $metric);
 
         $data = [
             'name' => 'DOKK1-Lokale-Test1',
@@ -595,7 +612,9 @@ class MicrosoftGraphBookingServiceTest extends AbstractBaseApiTestCase
 
         $loggerMock = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
-        $microsoftGraphService = new MicrosoftGraphBookingService('test', 'test', $microsoftGraphServiceHelperMock, $loggerMock);
+        $metric = $this->createMock(MetricsHelper::class);
+
+        $microsoftGraphService = new MicrosoftGraphBookingService('test', 'test', $microsoftGraphServiceHelperMock, $loggerMock, $metric);
 
         // Accept conflict.
         $microsoftGraphService->createBookingForResource(

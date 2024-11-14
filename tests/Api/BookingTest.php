@@ -13,6 +13,7 @@ use App\Repository\Resources\AAKResourceRepository;
 use App\Repository\Resources\CvrWhitelistRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
+use App\Service\MetricsHelper;
 use App\Service\MicrosoftGraphBookingService;
 use App\Service\NotificationServiceInterface;
 use App\Service\WebformService;
@@ -176,6 +177,7 @@ class BookingTest extends AbstractBaseApiTestCase
         $validationUtilsMock->method('validateEmail')->willReturn('test@bookaarhus.local.itkdev.dk');
 
         $logger = $this->createMock(LoggerInterface::class);
+        $metric = $this->createMock(MetricsHelper::class);
 
         $container = self::getContainer();
         $twig = $container->get(Environment::class);
@@ -198,7 +200,7 @@ class BookingTest extends AbstractBaseApiTestCase
         /** @var ApiKeyUser $testUser */
         $testUser = $entityManager->getRepository(ApiKeyUser::class)->findOneBy(['name' => 'test']);
 
-        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $bus, $validationUtilsMock, $logger, $aakBookingRepository, $twig, $bookingService);
+        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $bus, $validationUtilsMock, $logger, $aakBookingRepository, $twig, $bookingService, $metric);
 
         $webformSubmitHandler->__invoke(new WebformSubmitMessage(
             'booking',
@@ -279,7 +281,9 @@ class BookingTest extends AbstractBaseApiTestCase
 
         $cvrWhitelistRepositoryMock = $this->createMock(CvrWhitelistRepository::class);
 
-        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock, $security, $bus, $cvrWhitelistRepositoryMock);
+        $metric = $this->createMock(MetricsHelper::class);
+
+        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock, $security, $bus, $cvrWhitelistRepositoryMock, $metric);
         $createBookingHandler->__invoke(new CreateBookingMessage($booking));
     }
 

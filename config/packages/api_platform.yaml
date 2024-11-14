@@ -6,7 +6,8 @@ api_platform:
         route_prefix: 'v1'
     mapping:
         paths:
-            - '%kernel.project_dir%/config/api_platform'
+            - '%kernel.project_dir%/src/Entity/Main'
+            - '%kernel.project_dir%/src/Entity/Resources'
     patch_formats:
         json: ['application/merge-patch+json']
     swagger:
@@ -22,7 +23,6 @@ api_platform:
         contact:
             name: ITKDev
             email: itkdev@mkb.aarhus.dk
-        backward_compatibility_layer: true
         license:
             name: MIT
     path_segment_name_generator: api_platform.path_segment_name_generator.dash

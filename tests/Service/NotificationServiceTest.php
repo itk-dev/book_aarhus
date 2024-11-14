@@ -4,6 +4,7 @@ namespace App\Tests\Service;
 
 use App\Enum\NotificationTypeEnum;
 use App\Service\BookingServiceInterface;
+use App\Service\MetricsHelper;
 use App\Service\NotificationService;
 use App\Tests\AbstractBaseApiTestCase;
 use App\Utils\ValidationUtils;
@@ -24,7 +25,9 @@ class NotificationServiceTest extends AbstractBaseApiTestCase
 
         $validationUtils = self::getContainer()->get(ValidationUtils::class);
 
-        new NotificationService('from@example.com', 'error', $validationUtils, $logger, $mailer, 'Europe/Copenhagen', 'd/m/Y - H:i');
+        $metric = $this->createMock(MetricsHelper::class);
+
+        new NotificationService('from@example.com', 'error', $validationUtils, $logger, $mailer, 'Europe/Copenhagen', 'd/m/Y - H:i', $metric);
     }
 
     public function testSendBookingNotification(): void
@@ -40,7 +43,9 @@ class NotificationServiceTest extends AbstractBaseApiTestCase
 
         $validationUtils = self::getContainer()->get(ValidationUtils::class);
 
-        $notificationService = new NotificationService('from@example.com', 'admin@example.com', $validationUtils, $logger, $mailer, 'Europe/Copenhagen', 'd/m/Y - H:i');
+        $metric = $this->createMock(MetricsHelper::class);
+
+        $notificationService = new NotificationService('from@example.com', 'admin@example.com', $validationUtils, $logger, $mailer, 'Europe/Copenhagen', 'd/m/Y - H:i', $metric);
 
         $booking = NotificationServiceData::getBooking();
 
@@ -67,7 +72,9 @@ class NotificationServiceTest extends AbstractBaseApiTestCase
 
         $validationUtils = self::getContainer()->get(ValidationUtils::class);
 
-        $notificationService = new NotificationService('from@example.com', 'admin@example.com', $validationUtils, $logger, $mailer, 'Europe/Copenhagen', 'd/m/Y - H:i');
+        $metric = $this->createMock(MetricsHelper::class);
+
+        $notificationService = new NotificationService('from@example.com', 'admin@example.com', $validationUtils, $logger, $mailer, 'Europe/Copenhagen', 'd/m/Y - H:i', $metric);
 
         $booking = NotificationServiceData::getBooking();
 
@@ -88,7 +95,9 @@ class NotificationServiceTest extends AbstractBaseApiTestCase
 
         $validationUtils = self::getContainer()->get(ValidationUtils::class);
 
-        $notificationService = new NotificationService('from@example.com', 'admin@example.com', $validationUtils, $logger, $mailer, 'Europe/Copenhagen', 'd/m/Y - H:i');
+        $metric = $this->createMock(MetricsHelper::class);
+
+        $notificationService = new NotificationService('from@example.com', 'admin@example.com', $validationUtils, $logger, $mailer, 'Europe/Copenhagen', 'd/m/Y - H:i', $metric);
 
         $resource = NotificationServiceData::getResource();
 

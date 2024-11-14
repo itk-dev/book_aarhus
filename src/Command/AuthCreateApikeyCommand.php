@@ -16,7 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class AuthCreateApikeyCommand extends Command
 {
     public function __construct(
-        private readonly ApiKeyUserService $apiKeyUserService
+        private readonly ApiKeyUserService $apiKeyUserService,
     ) {
         parent::__construct();
     }

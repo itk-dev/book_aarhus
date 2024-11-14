@@ -2,7 +2,7 @@
 
 namespace App\Utils;
 
-use ApiPlatform\Core\Exception\InvalidArgumentException;
+use ApiPlatform\Exception\InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -10,14 +10,14 @@ class ValidationUtils implements ValidationUtilsInterface
 {
     public function __construct(
         private readonly ValidatorInterface $validator,
-        private readonly string $bindDefaultDateFormat
+        private readonly string $bindDefaultDateFormat,
     ) {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function validateDate(string $dateString, string $format = null): \DateTime
+    public function validateDate(string $dateString, ?string $format = null): \DateTime
     {
         $format = $format ?? $this->bindDefaultDateFormat;
 
