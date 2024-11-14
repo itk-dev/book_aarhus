@@ -55,7 +55,7 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [1.1.1] - 2023-08-24
 
-- Changed user bookings to paginated
+- Changed user bookings to paginated.
 
 ## [1.1.0]
 
