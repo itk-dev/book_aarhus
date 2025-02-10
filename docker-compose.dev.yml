@@ -1,14 +1,12 @@
-# itk-version: 3.1.0
-version: "3"
-
+# itk-version: 3.2.3
 services:
   phpfpm:
     environment:
       - PHP_SENDMAIL_PATH=/usr/sbin/sendmail -S mail:1025
 
-#  nginx:
-#    labels:
-#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=ITKBasicAuth@file"
+  nginx:
+    labels:
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=ITKBasicAuth@file"
 
   mail:
     image: axllent/mailpit
