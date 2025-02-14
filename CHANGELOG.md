@@ -9,6 +9,8 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+- Updated GitHub workflow images.
+
 ## [1.3.0] - 2024-11-14
 
 - Added metric to system.
