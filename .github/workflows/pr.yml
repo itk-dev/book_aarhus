@@ -2,7 +2,7 @@ on: pull_request
 name: Review
 jobs:
   test-composer-install:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -50,7 +50,7 @@ jobs:
         run: composer normalize --dry-run
 
   php-cs-fixer:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -140,13 +140,13 @@ jobs:
       - name: Yarn install
         uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: '22'
       - run: yarn install
       - name: markdownlint
         run: yarn markdownlint README.md CHANGELOG.md
 
   changelog:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     name: Changelog should be updated
     strategy:
       fail-fast: false
@@ -163,7 +163,7 @@ jobs:
         run: git diff --exit-code origin/develop -- CHANGELOG.md && exit 1 || exit 0
 
   apispec:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     name: API Specification validation
     strategy:
       fail-fast: false
@@ -209,7 +209,7 @@ jobs:
         run: git diff --diff-filter=ACMRT --exit-code public/api-spec-v1.json
 
   phpunit:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     services:
       mariadb:
         image: mariadb:10.5.13
@@ -257,7 +257,7 @@ jobs:
         run: DATABASE_URL="mysql://db:db@127.0.0.1:$PORT/db_test" composer run tests
 
   validate-doctrine-shema:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       DATABASE_URL: mysql://db:db@127.0.0.1:3306/db_test?serverVersion=mariadb-10.5.13
     strategy:
