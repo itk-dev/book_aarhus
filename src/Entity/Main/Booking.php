@@ -2,14 +2,18 @@
 
 namespace App\Entity\Main;
 
-use ApiPlatform\Action\NotFoundAction;
+use ApiPlatform\Symfony\Action\NotFoundAction;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
+use App\Controller\CreateBookingController;
 use App\Controller\CreateBookingWebformSubmitController;
+use App\Dto\CreateBookingsInput;
 use App\Dto\WebformBookingInput;
 use Symfony\Component\Uid\Ulid;
+use ApiPlatform\OpenApi\Model;
+
 
 #[ApiResource(operations: [
     new Get(
@@ -33,6 +37,45 @@ use Symfony\Component\Uid\Ulid;
             ],
         ],
         input: WebformBookingInput::class
+    ),
+    new Post(
+        uriTemplate: '/bookings',
+        controller: CreateBookingController::class,
+        openapi: new Model\Operation(
+            description: 'Create bookings',
+            requestBody: new Model\RequestBody(
+                content: new \ArrayObject([
+                    'application/json' => [
+                        'schema' => [
+                            'type' => 'array',
+                            'properties' => [
+                                'bookings' => ['type' => 'object', 'properties' => [
+                                    'resourceEmail' => 'string',
+                                    'resourceName' => 'string',
+                                    'subject' => 'string',
+                                    'body' => 'string',
+                                    'startTime' => 'string',
+                                    'endTime' => 'string',
+                                ]],
+                            ]
+                        ],
+                        'example' => [
+                            'bookings' => [
+                                [
+                                    'resourceEmail' => 'test@example.com',
+                                    'resourceName' => 'Test Resource',
+                                    'subject' => 'Test Booking',
+                                    'body' => 'Body',
+                                    'startTime' => '',
+                                    'endTime' => '',
+                                ]
+                            ]
+                        ]
+                    ]
+                ])
+            )
+        ),
+        input: CreateBookingsInput::class
     ),
 ])]
 class Booking
