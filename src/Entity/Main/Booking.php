@@ -49,25 +49,32 @@ use ApiPlatform\OpenApi\Model;
                         'schema' => [
                             'type' => 'array',
                             'properties' => [
-                                'bookings' => ['type' => 'object', 'properties' => [
-                                    'resourceEmail' => 'string',
-                                    'resourceName' => 'string',
-                                    'subject' => 'string',
-                                    'body' => 'string',
-                                    'startTime' => 'string',
-                                    'endTime' => 'string',
-                                ]],
+                                'abortIfAnyFail' => 'bool',
+                                'bookings' => [
+                                    'type' => 'object',
+                                    'properties' => [
+                                        'resourceEmail' => 'string',
+                                        'clientBookingId' => 'string',
+                                        'subject' => 'string',
+                                        'metaData' => 'array',
+                                        'startTime' => 'string',
+                                        'endTime' => 'string',
+                                    ]
+                                ],
                             ]
                         ],
                         'example' => [
                             'bookings' => [
                                 [
                                     'resourceEmail' => 'test@example.com',
-                                    'resourceName' => 'Test Resource',
                                     'subject' => 'Test Booking',
-                                    'body' => 'Body',
-                                    'startTime' => '',
-                                    'endTime' => '',
+                                    'clientBookingId' => '1234567890',
+                                    'metaData' => [
+                                        'data1' => 'example1',
+                                        'data2' => 'example2'
+                                    ],
+                                    'startTime' => '2004-02-26T15:00:00+00:00',
+                                    'endTime' => '2004-02-26T15:30:00+00:00',
                                 ]
                             ]
                         ]
