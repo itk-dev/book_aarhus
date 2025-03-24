@@ -664,4 +664,18 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
         return null;
     }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws MicrosoftGraphCommunicationException
+     * @throws UserBookingException
+     */
+    public function deleteBookingByICalUid(string $iCalUId): void
+    {
+        $bookingId = $this->getBookingIdFromICalUid($iCalUId);
+        $bookingData = $this->getBooking($bookingId);
+        $userBooking = $this->getUserBookingFromApiData($bookingData);
+        $this->deleteBooking($userBooking);
+    }
 }

@@ -53,12 +53,15 @@ use ApiPlatform\OpenApi\Model;
                                 'bookings' => [
                                     'type' => 'object',
                                     'properties' => [
-                                        'resourceEmail' => 'string',
-                                        'clientBookingId' => 'string',
                                         'subject' => 'string',
+                                        'start' => 'string',
+                                        'end' => 'string',
+                                        'name' => 'string',
+                                        'email' => 'string',
+                                        'resourceId' => 'string',
+                                        'clientBookingId' => 'string',
+                                        'userId' => 'string',
                                         'metaData' => 'array',
-                                        'startTime' => 'string',
-                                        'endTime' => 'string',
                                     ]
                                 ],
                             ]
@@ -66,15 +69,18 @@ use ApiPlatform\OpenApi\Model;
                         'example' => [
                             'bookings' => [
                                 [
-                                    'resourceEmail' => 'test@example.com',
                                     'subject' => 'Test Booking',
+                                    'start' => '2004-02-26T15:00:00+00:00',
+                                    'end' => '2004-02-26T15:30:00+00:00',
+                                    'name' => 'Admin Jensen',
+                                    'email' => 'admin_jensen@example.com',
+                                    'resourceId' => 'test@example.com',
                                     'clientBookingId' => '1234567890',
+                                    'userId' => 'some_unqiue_user_id',
                                     'metaData' => [
                                         'data1' => 'example1',
                                         'data2' => 'example2'
                                     ],
-                                    'startTime' => '2004-02-26T15:00:00+00:00',
-                                    'endTime' => '2004-02-26T15:30:00+00:00',
                                 ]
                             ]
                         ]

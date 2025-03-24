@@ -2,22 +2,24 @@
 
 namespace App\Service;
 
+use ApiPlatform\Symfony\Security\Exception\AccessDeniedException;
 use App\Entity\Main\Booking;
 use App\Entity\Resources\AAKResource;
-use App\Enum\NotificationTypeEnum;
+use App\Enum\UserBookingStatusEnum;
+use App\Exception\BookingContentsException;
 use App\Exception\BookingCreateConflictException;
-use App\Message\AddBookingToCacheMessage;
-use App\Message\SendBookingNotificationMessage;
+use App\Exception\WebformSubmissionRetrievalException;
 use App\Repository\Resources\AAKResourceRepository;
 use App\Repository\Resources\CvrWhitelistRepository;
 use App\Security\Voter\BookingVoter;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Messenger\Stamp\DelayStamp;
+use Symfony\Component\Messenger\Exception\RecoverableMessageHandlingException;
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class CreateBookingService
 {
@@ -26,13 +28,15 @@ class CreateBookingService
         private readonly LoggerInterface $logger,
         private readonly AAKResourceRepository $aakResourceRepository,
         private readonly Security $security,
-        private readonly MessageBusInterface $bus,
         private readonly CvrWhitelistRepository $whitelistRepository,
         private readonly MetricsHelper $metricsHelper,
+        private readonly UserBookingCacheServiceInterface $userBookingCacheService,
+        private readonly AAKResourceRepository $resourceRepository,
+        private readonly Environment $twig,
     ) {
     }
 
-    public function createBooking(Booking $booking): void
+    public function createBooking(Booking $booking): array
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
@@ -80,6 +84,8 @@ class CreateBookingService
                     $booking->getStartTime(),
                     $booking->getEndTime(),
                 );
+
+                $status = UserBookingStatusEnum::AWAITING_APPROVAL->name;
             } else {
                 $response = $this->bookingService->createBookingForResource(
                     $booking->getResourceEmail(),
@@ -90,23 +96,20 @@ class CreateBookingService
                     $booking->getEndTime(),
                     $acceptConflict,
                 );
+
+                $status = UserBookingStatusEnum::ACCEPTED->name;
             }
 
-            if (isset($response['iCalUId'])) {
-                $message = new AddBookingToCacheMessage(
-                    $booking,
-                    $response['iCalUId'],
-                );
+            $iCalUID = $response['iCalUId'];
+            $this->addBookingToCache($booking, $iCalUID, $status);
 
-                $envelope = new Envelope($message, [
-                    new DelayStamp(5000),
-                ]);
+            // TODO: Figure out which ID should be passed around.
+            return [
+                'id' => $response['id'],
+                'iCalUid' => $iCalUID,
+                'status' => $status,
+            ];
 
-                $this->bus->dispatch($envelope);
-            } else {
-                $this->logger->error(sprintf('Booking iCalUID could not be retrieved for booking with subject: %s', $booking->getSubject()));
-                $this->metricsHelper->incMethodTotal(__METHOD__, 'icaluid_not_found');
-            }
         } catch (BookingCreateConflictException $exception) {
             // If it is a BookingCreateConflictException the booking should be rejected.
             $this->logger->notice(sprintf('Booking conflict detected: %d %s', $exception->getCode(), $exception->getMessage()));
@@ -123,5 +126,84 @@ class CreateBookingService
         }
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
+
+        // TODO: Figure out which ID should be passed around.
+        return ['id' => $booking->getId(), 'status' => UserBookingStatusEnum::DECLINED->name];
     }
+
+    public function addBookingToCache(Booking $booking, string $iCalUID, string $status): void
+    {
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
+
+        $id = $this->bookingService->getBookingIdFromICalUid($iCalUID) ?? null;
+
+        if (null != $id) {
+            $resourceEmail = $booking->getResourceEmail();
+            $resourceDisplayName = $booking->getResourceName();
+
+            /** @var AAKResource $resource */
+            $resource = $this->resourceRepository->findOneBy(['resourceMail' => $resourceEmail]);
+
+            if (null != $resource && $resource->getResourceDisplayName()) {
+                $resourceDisplayName = $resource->getResourceDisplayName();
+            }
+
+            $this->userBookingCacheService->addCacheEntryFromArray([
+                'subject' => $booking->getSubject(),
+                'id' => $id,
+                'body' => $booking->getBody(),
+                'start' => $booking->getStartTime(),
+                'end' => $booking->getEndTime(),
+                'status' => $status,
+                'resourceMail' => $booking->getResourceEmail(),
+                'resourceDisplayName' => $resourceDisplayName,
+            ]);
+        } else {
+            $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
+            $this->metricsHelper->incExceptionTotal(RecoverableMessageHandlingException::class);
+
+            throw new RecoverableMessageHandlingException(sprintf('Booking id could not be retrieved for booking with iCalUID: %s', $iCalUID));
+        }
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
+    }
+
+
+    /**
+     * @throws BookingContentsException
+     */
+    public function composeBookingContents($data, AAKResource $resource, $metaData): array
+    {
+        try {
+            $body = [];
+            $body['resource'] = $resource;
+            $body['submission'] = $data;
+            $body['submission']['fromObj'] = new \DateTime($data['start']);
+            $body['submission']['toObj'] = new \DateTime($data['end']);
+            $body['metaData'] = $metaData;
+            $body['userUniqueId'] = $this->bookingService->createBodyUserId($data['userId']);
+
+            return $body;
+        } catch (\Exception $exception) {
+            $this->metricsHelper->incExceptionTotal(\Exception::class);
+
+            throw new BookingContentsException($exception->getMessage());
+        }
+    }
+
+    /**
+     * @throws BookingContentsException
+     */
+    public function renderContentsAsHtml(array $body): string
+    {
+        try {
+            return $this->twig->render('booking.html.twig', $body);
+        } catch (RuntimeError|SyntaxError|LoaderError $error) {
+            $this->metricsHelper->incExceptionTotal(\Error::class);
+
+            throw new BookingContentsException($error->getMessage());
+        }
+    }
+
+
 }

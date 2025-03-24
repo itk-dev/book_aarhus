@@ -135,4 +135,13 @@ interface BookingServiceInterface
      * @return ?string the exchange id
      */
     public function getBookingIdFromICalUid(string $iCalUId): ?string;
+
+    /**
+     * Deletes booking by iCalUid.
+     *
+     * @param string $iCalUId
+     *
+     * @return void
+     */
+    public function deleteBookingByICalUid(string $iCalUId): void;
 }
