@@ -2,12 +2,13 @@
 
 namespace App\Entity\Main;
 
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Symfony\Action\NotFoundAction;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\OpenApi\Model;
+use ApiPlatform\Symfony\Action\NotFoundAction;
 use App\Controller\CancelBookingController;
 use App\Controller\CreateBookingController;
 use App\Controller\CreateBookingWebformSubmitController;
@@ -15,8 +16,6 @@ use App\Dto\BookingCancelInput;
 use App\Dto\CreateBookingsInput;
 use App\Dto\WebformBookingInput;
 use Symfony\Component\Uid\Ulid;
-use ApiPlatform\OpenApi\Model;
-
 
 #[ApiResource(operations: [
     new Get(
@@ -53,14 +52,14 @@ use ApiPlatform\OpenApi\Model;
                             'type' => 'array',
                             'properties' => [
                                 'ids' => 'array',
-                            ]
+                            ],
                         ],
                         'example' => [
                             'ids' => [
-                                    'def',
-                            ]
-                        ]
-                    ]
+                                'def',
+                            ],
+                        ],
+                    ],
                 ])
             )
         ),
@@ -90,9 +89,9 @@ use ApiPlatform\OpenApi\Model;
                                         'clientBookingId' => 'string',
                                         'userId' => 'string',
                                         'metaData' => 'array',
-                                    ]
+                                    ],
                                 ],
-                            ]
+                            ],
                         ],
                         'example' => [
                             'bookings' => [
@@ -107,12 +106,12 @@ use ApiPlatform\OpenApi\Model;
                                     'userId' => 'some_unqiue_user_id',
                                     'metaData' => [
                                         'data1' => 'example1',
-                                        'data2' => 'example2'
+                                        'data2' => 'example2',
                                     ],
-                                ]
-                            ]
-                        ]
-                    ]
+                                ],
+                            ],
+                        ],
+                    ],
                 ])
             )
         ),

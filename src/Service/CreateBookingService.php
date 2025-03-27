@@ -107,7 +107,6 @@ class CreateBookingService
                 'iCalUid' => $iCalUId,
                 'status' => $status,
             ];
-
         } catch (BookingCreateConflictException $exception) {
             // If it is a BookingCreateConflictException the booking should be rejected.
             $this->logger->notice(sprintf('Booking conflict detected: %d %s', $exception->getCode(), $exception->getMessage()));
@@ -158,7 +157,6 @@ class CreateBookingService
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
-
     /**
      * @throws BookingContentsException
      */
@@ -194,6 +192,4 @@ class CreateBookingService
             throw new BookingContentsException($error->getMessage());
         }
     }
-
-
 }

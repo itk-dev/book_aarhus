@@ -8,7 +8,6 @@ use App\Exception\WebformSubmissionRetrievalException;
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
 use App\Repository\Resources\AAKResourceRepository;
-use App\Service\BookingServiceInterface;
 use App\Service\CreateBookingService;
 use App\Service\MetricsHelper;
 use App\Service\WebformServiceInterface;
@@ -19,10 +18,6 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
-use Twig\Environment;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 
 /**
  * @see https://github.com/itk-dev/os2forms_selvbetjening/blob/develop/web/modules/custom/os2forms_rest_api/README.md

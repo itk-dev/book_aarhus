@@ -675,7 +675,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     {
         $bookingId = $this->getBookingIdFromICalUid($iCalUId);
 
-        if (NULL === $bookingId) {
+        if (null === $bookingId) {
             throw new UserBookingException('Could not find booking id from iCalUId', 404);
         }
 
@@ -683,5 +683,4 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         $userBooking = $this->getUserBookingFromApiData($bookingData);
         $this->deleteBooking($userBooking);
     }
-
 }

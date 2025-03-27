@@ -3,17 +3,9 @@
 namespace App\Controller;
 
 use ApiPlatform\Metadata\Exception\InvalidArgumentException;
-use App\Entity\Main\ApiKeyUser;
 use App\Entity\Main\UserBooking;
-use App\Enum\NotificationTypeEnum;
-use App\Exception\MicrosoftGraphCommunicationException;
-use App\Exception\UserBookingException;
-use App\Message\RemoveBookingFromCacheMessage;
-use App\Message\SendUserBookingNotificationMessage;
-use App\Repository\Resources\AAKResourceRepository;
 use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
-use App\Service\CreateBookingService;
 use App\Service\MetricsHelper;
 use App\Service\UserBookingCacheServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -54,22 +46,9 @@ class CancelBookingController extends AbstractController
 
         try {
             foreach ($ids as $id) {
-
-                // TODO: Validate that user is allowed to delete booking.
-
-                $userBooking = $this->entityManager->getRepository(UserBooking::class)->findOneBy(['iiCalUId' => $id]);
-                if (!$userBooking) {
-                    throw new \Exception("No user booking found for iCalUId: $id");
-                }
-
-                if (!$this->security->isGranted(UserBookingVoter::DELETE, $userBooking)) {
-                    $this->metricsHelper->incExceptionTotal(AccessDeniedHttpException::class);
-                    throw new AccessDeniedHttpException('Access denied');
-                }
-
+                // TODO: Should we validate that user is allowed to delete booking?
                 $this->bookingService->deleteBookingByICalUid($id);
                 $this->userBookingCacheService->deleteCacheEntryByICalUId($id);
-
             }
         } catch (\Throwable $e) {
             $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);

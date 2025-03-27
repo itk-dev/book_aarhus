@@ -97,13 +97,12 @@ class CreateBookingController extends AbstractController
         // Check for free intervals
         try {
             foreach ($bookings as $booking) {
-
                 $resourceEmail = $resource->getResourceMail();
                 $result = $this->bookingService->getBusyIntervals([$resourceEmail], $booking->getStartTime(), $booking->getEndTime());
 
                 // TODO: What should we respond here?
                 if (!empty($result[$resourceEmail]) && !$resource->getAcceptConflict()) {
-                    throw new \Exception("Resource is busy in the desired timeslot");
+                    throw new \Exception('Resource is busy in the desired timeslot');
                 }
             }
         } catch (\Throwable $e) {
@@ -113,14 +112,14 @@ class CreateBookingController extends AbstractController
 
         // Create bookings, previous steps went well so just get to it.
         $createdBookings = [];
-        $hasAnyBookingsFailed = FALSE;
+        $hasAnyBookingsFailed = false;
 
         try {
             foreach ($bookings as $booking) {
                 $createdBooking = $this->createBookingService->createBooking($booking);
 
                 if (!in_array($createdBooking['status'], [UserBookingStatusEnum::ACCEPTED->name, UserBookingStatusEnum::AWAITING_APPROVAL->name])) {
-                    $hasAnyBookingsFailed = TRUE;
+                    $hasAnyBookingsFailed = true;
                 }
 
                 $createdBookings[] = $createdBooking;

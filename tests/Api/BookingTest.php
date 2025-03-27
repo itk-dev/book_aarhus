@@ -12,7 +12,7 @@ use App\MessageHandler\WebformSubmitHandler;
 use App\Repository\Resources\AAKResourceRepository;
 use App\Repository\Resources\CvrWhitelistRepository;
 use App\Security\Voter\BookingVoter;
-use App\Service\BookingServiceInterface;
+use App\Service\CreateBookingService;
 use App\Service\MetricsHelper;
 use App\Service\MicrosoftGraphBookingService;
 use App\Service\NotificationServiceInterface;
@@ -23,7 +23,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Twig\Environment;
 use Zenstruck\Messenger\Test\InteractsWithMessenger;
 
 class BookingTest extends AbstractBaseApiTestCase
@@ -180,9 +179,8 @@ class BookingTest extends AbstractBaseApiTestCase
         $metric = $this->createMock(MetricsHelper::class);
 
         $container = self::getContainer();
-        $twig = $container->get(Environment::class);
         $bus = $container->get(MessageBusInterface::class);
-        $bookingService = $container->get(BookingServiceInterface::class);
+        $createBookingService = $container->get(CreateBookingService::class);
 
         $aakBookingRepository = $this->getMockBuilder(AAKResourceRepository::class)
             ->onlyMethods(['findOneBy'])
@@ -200,7 +198,7 @@ class BookingTest extends AbstractBaseApiTestCase
         /** @var ApiKeyUser $testUser */
         $testUser = $entityManager->getRepository(ApiKeyUser::class)->findOneBy(['name' => 'test']);
 
-        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $bus, $validationUtilsMock, $logger, $aakBookingRepository, $twig, $bookingService, $metric);
+        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $bus, $validationUtilsMock, $logger, $aakBookingRepository, $metric, $createBookingService);
 
         $webformSubmitHandler->__invoke(new WebformSubmitMessage(
             'booking',
