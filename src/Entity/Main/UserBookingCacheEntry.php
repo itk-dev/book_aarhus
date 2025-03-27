@@ -2,10 +2,10 @@
 
 namespace App\Entity\Main;
 
-use ApiPlatform\Action\NotFoundAction;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Symfony\Action\NotFoundAction;
 use App\Repository\Main\UserBookingCacheEntryRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -123,6 +123,10 @@ class UserBookingCacheEntry
     #[ORM\Column(length: 255)]
     private ?string $resourceDisplayName = null;
 
+    #[Groups('userBookingCacheEntry')]
+    #[ORM\Column(length: 255)]
+    private ?string $iCalUId = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -220,6 +224,18 @@ class UserBookingCacheEntry
     public function setResourceDisplayName(?string $resourceDisplayName): static
     {
         $this->resourceDisplayName = $resourceDisplayName;
+
+        return $this;
+    }
+
+    public function getICalUId(): ?string
+    {
+        return $this->iCalUId;
+    }
+
+    public function setICalUId(?string $iCalUId): static
+    {
+        $this->iCalUId = $iCalUId;
 
         return $this;
     }

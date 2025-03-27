@@ -2,13 +2,16 @@
 
 namespace App\Entity\Main;
 
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Symfony\Action\NotFoundAction;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
+use App\Controller\CancelBookingController;
 use App\Controller\CreateBookingController;
 use App\Controller\CreateBookingWebformSubmitController;
+use App\Dto\BookingCancelInput;
 use App\Dto\CreateBookingsInput;
 use App\Dto\WebformBookingInput;
 use Symfony\Component\Uid\Ulid;
@@ -37,6 +40,31 @@ use ApiPlatform\OpenApi\Model;
             ],
         ],
         input: WebformBookingInput::class
+    ),
+    new Delete(
+        uriTemplate: '/bookings/cancel',
+        controller: CancelBookingController::class,
+        openapi: new Model\Operation(
+            description: 'Cancel bookings by iCalUIds',
+            requestBody: new Model\RequestBody(
+                content: new \ArrayObject([
+                    'application/json' => [
+                        'schema' => [
+                            'type' => 'array',
+                            'properties' => [
+                                'ids' => 'array',
+                            ]
+                        ],
+                        'example' => [
+                            'ids' => [
+                                    'def',
+                            ]
+                        ]
+                    ]
+                ])
+            )
+        ),
+        input: BookingCancelInput::class
     ),
     new Post(
         uriTemplate: '/bookings',

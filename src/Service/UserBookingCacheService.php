@@ -234,6 +234,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         $entity->setStatus($data['status']);
         $entity->setResourceMail($data['resourceMail']);
         $entity->setResourceDisplayName($data['resourceDisplayName']);
+        $entity->setICalUId($data['iCalUId'] ?? '');
 
         return $entity;
     }
@@ -304,5 +305,23 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
             }
         }
         $this->entityManager->flush();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteCacheEntryByICalUId(string $iCalUId): void
+    {
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
+
+        $entity = $this->entityManager->getRepository(UserBookingCacheEntry::class)
+            ->findOneBy(['iCalUId' => $iCalUId]);
+
+        if ($entity) {
+            $this->entityManager->remove($entity);
+            $this->entityManager->flush();
+        }
+
+        $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 }

@@ -674,8 +674,14 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     public function deleteBookingByICalUid(string $iCalUId): void
     {
         $bookingId = $this->getBookingIdFromICalUid($iCalUId);
+
+        if (NULL === $bookingId) {
+            throw new UserBookingException('Could not find booking id from iCalUId', 404);
+        }
+
         $bookingData = $this->getBooking($bookingId);
         $userBooking = $this->getUserBookingFromApiData($bookingData);
         $this->deleteBooking($userBooking);
     }
+
 }

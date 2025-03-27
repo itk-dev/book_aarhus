@@ -8,14 +8,12 @@ use App\Entity\Resources\AAKResource;
 use App\Enum\UserBookingStatusEnum;
 use App\Exception\BookingContentsException;
 use App\Exception\BookingCreateConflictException;
-use App\Exception\WebformSubmissionRetrievalException;
 use App\Repository\Resources\AAKResourceRepository;
 use App\Repository\Resources\CvrWhitelistRepository;
 use App\Security\Voter\BookingVoter;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Messenger\Exception\RecoverableMessageHandlingException;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -100,13 +98,13 @@ class CreateBookingService
                 $status = UserBookingStatusEnum::ACCEPTED->name;
             }
 
-            $iCalUID = $response['iCalUId'];
-            $this->addBookingToCache($booking, $iCalUID, $status);
+            $iCalUId = $response['iCalUId'];
+            $this->addBookingToCache($booking, $iCalUId, $status);
 
             // TODO: Figure out which ID should be passed around.
             return [
-                'id' => $response['id'],
-                'iCalUid' => $iCalUID,
+                'id' => $booking->getId(),
+                'iCalUid' => $iCalUId,
                 'status' => $status,
             ];
 
@@ -131,39 +129,31 @@ class CreateBookingService
         return ['id' => $booking->getId(), 'status' => UserBookingStatusEnum::DECLINED->name];
     }
 
-    public function addBookingToCache(Booking $booking, string $iCalUID, string $status): void
+    public function addBookingToCache(Booking $booking, string $iCalUId, string $status): void
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
-        $id = $this->bookingService->getBookingIdFromICalUid($iCalUID) ?? null;
+        $resourceEmail = $booking->getResourceEmail();
+        $resourceDisplayName = $booking->getResourceName();
 
-        if (null != $id) {
-            $resourceEmail = $booking->getResourceEmail();
-            $resourceDisplayName = $booking->getResourceName();
+        /** @var AAKResource $resource */
+        $resource = $this->resourceRepository->findOneBy(['resourceMail' => $resourceEmail]);
 
-            /** @var AAKResource $resource */
-            $resource = $this->resourceRepository->findOneBy(['resourceMail' => $resourceEmail]);
-
-            if (null != $resource && $resource->getResourceDisplayName()) {
-                $resourceDisplayName = $resource->getResourceDisplayName();
-            }
-
-            $this->userBookingCacheService->addCacheEntryFromArray([
-                'subject' => $booking->getSubject(),
-                'id' => $id,
-                'body' => $booking->getBody(),
-                'start' => $booking->getStartTime(),
-                'end' => $booking->getEndTime(),
-                'status' => $status,
-                'resourceMail' => $booking->getResourceEmail(),
-                'resourceDisplayName' => $resourceDisplayName,
-            ]);
-        } else {
-            $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
-            $this->metricsHelper->incExceptionTotal(RecoverableMessageHandlingException::class);
-
-            throw new RecoverableMessageHandlingException(sprintf('Booking id could not be retrieved for booking with iCalUID: %s', $iCalUID));
+        if (null != $resource && $resource->getResourceDisplayName()) {
+            $resourceDisplayName = $resource->getResourceDisplayName();
         }
+
+        $this->userBookingCacheService->addCacheEntryFromArray([
+            'subject' => $booking->getSubject(),
+            'id' => '', // exchange_id, which is now replaced by iCalUId.
+            'iCalUId' => $iCalUId,
+            'body' => $booking->getBody(),
+            'start' => $booking->getStartTime(),
+            'end' => $booking->getEndTime(),
+            'status' => $status,
+            'resourceMail' => $booking->getResourceEmail(),
+            'resourceDisplayName' => $resourceDisplayName,
+        ]);
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }

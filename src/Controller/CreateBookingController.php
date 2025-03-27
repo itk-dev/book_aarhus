@@ -85,6 +85,7 @@ class CreateBookingController extends AbstractController
                 $booking->setEndTime($this->validationUtils->validateDate($item['end']));
                 $booking->setUserId($userId ?? '');
                 $booking->setUserPermission($item['userPermission'] ?? BookingVoter::PERMISSION_CITIZEN);
+                $booking->setId($item['id']);
 
                 $bookings[] = $booking;
             }
@@ -140,6 +141,9 @@ class CreateBookingController extends AbstractController
                         $this->bookingService->deleteBookingByICalUid($createdBooking['iCalUid']);
                         // Remove from cache
                         $this->userBookingCacheService->deleteCacheEntry($exchangeId);
+
+                        // TODO: How do we explain that this booking would have gone well but was cancelled?
+                        $createdBooking['status'] = UserBookingStatusEnum::NONE->name;
                     }
                 }
             }
@@ -152,6 +156,6 @@ class CreateBookingController extends AbstractController
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
-        return new Response(null, 201);
+        return new Response(json_encode(['bookings' => $createdBookings]), $hasAnyBookingsFailed ? 400 : 201);
     }
 }
