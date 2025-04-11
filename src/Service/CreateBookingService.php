@@ -104,7 +104,7 @@ class CreateBookingService
             // TODO: Figure out which ID should be passed around.
             return [
                 'id' => $booking->getId(),
-                'iCalUid' => $iCalUId,
+                'iCalUId' => $iCalUId,
                 'status' => $status,
             ];
         } catch (BookingCreateConflictException $exception) {

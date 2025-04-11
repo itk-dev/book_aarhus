@@ -56,7 +56,7 @@ bin/console doctrine:fixtures:load --em=resources --group=ResourceFixtures
 
 ### Development access to the real Azure DB
 
-If you need to access the actaul azure database from the development set up a few
+If you need to access the actual azure database from the development set up a few
 steps are needed because the Azure DB is behind a firewall with an IP filter.
 The `phpfpm` container in `docker-compose.yml` has ab `extra_hosts` entry. This
 allows the container to tunnel to the Azure DB through the STG server. Execute
@@ -68,11 +68,11 @@ the following commands to enable the tunnel from the container (requires vpn):
 docker compose up -d --force-recreate
 
 # Copy ssh keys to container
-docker compose exec phpfpm mkdir -p /root/.ssh
+docker compose exec --user root phpfpm mkdir -p /root/.ssh
 docker compose cp ~/.ssh/id_rsa phpfpm:/root/.ssh/id_rsa
 docker compose cp ~/.ssh/id_rsa-cert.pub phpfpm:/root/.ssh/id_rsa-cert.pub
 # Create ssh tunnel using IPv4 (`-4`)
-docker compose exec phpfpm ssh -4 -f deploy@admwebstgitk01.admnonwin.aarhuskommune.dk -L 1433:externalbooking.database.windows.net:1433 -N
+docker compose exec phpfpm ssh -4 -f deploy@dmzwebstgitk03.dmz.aarhuskommune.dk -L 1433:externalbooking.database.windows.net:1433 -N
 ```
 
 This will allow your local docker container to connect directly with the Azure database.

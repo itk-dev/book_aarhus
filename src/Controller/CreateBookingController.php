@@ -57,7 +57,7 @@ class CreateBookingController extends AbstractController
         }
 
         // Validate inputs.
-        $bookings = [];
+        $validatedInputs = [];
 
         try {
             foreach ($content['bookings'] as $item) {
@@ -87,7 +87,10 @@ class CreateBookingController extends AbstractController
                 $booking->setUserPermission($item['userPermission'] ?? BookingVoter::PERMISSION_CITIZEN);
                 $booking->setId($item['id']);
 
-                $bookings[] = $booking;
+                $validatedInputs[] = [
+                    'booking' => $booking,
+                    'resource' => $resource,
+                ];
             }
         } catch (\Throwable $e) {
             $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
@@ -96,8 +99,13 @@ class CreateBookingController extends AbstractController
 
         // Check for free intervals
         try {
-            foreach ($bookings as $booking) {
-                $resourceEmail = $resource->getResourceMail();
+            foreach ($validatedInputs as $validatedInput) {
+                /** @var Booking $booking */
+                $booking = $validatedInput['booking'];
+                /** @var AAKResource $resource */
+                $resource = $validatedInput['resource'];
+
+                $resourceEmail = $booking->getResourceEmail();
                 $result = $this->bookingService->getBusyIntervals([$resourceEmail], $booking->getStartTime(), $booking->getEndTime());
 
                 // TODO: What should we respond here?
@@ -115,7 +123,10 @@ class CreateBookingController extends AbstractController
         $hasAnyBookingsFailed = false;
 
         try {
-            foreach ($bookings as $booking) {
+            foreach ($validatedInputs as $validatedInput) {
+                /** @var Booking $booking */
+                $booking = $validatedInput['booking'];
+
                 $createdBooking = $this->createBookingService->createBooking($booking);
 
                 if (!in_array($createdBooking['status'], [UserBookingStatusEnum::ACCEPTED->name, UserBookingStatusEnum::AWAITING_APPROVAL->name])) {
@@ -134,12 +145,11 @@ class CreateBookingController extends AbstractController
             if ($abortIfAnyFail && $hasAnyBookingsFailed) {
                 foreach ($createdBookings as $createdBooking) {
                     if (!in_array($createdBooking['status'], [UserBookingStatusEnum::ACCEPTED->name, UserBookingStatusEnum::AWAITING_APPROVAL->name])) {
-                        // Prepare exchange id for cache deletion before deleting booking.
-                        $exchangeId = $this->bookingService->getBookingIdFromICalUid($createdBooking['iCalUid']);
+                        $iCalUId = $createdBooking['iCalUid'];
                         // Delete booking
-                        $this->bookingService->deleteBookingByICalUid($createdBooking['iCalUid']);
+                        $this->bookingService->deleteBookingByICalUid($iCalUId);
                         // Remove from cache
-                        $this->userBookingCacheService->deleteCacheEntry($exchangeId);
+                        $this->userBookingCacheService->deleteCacheEntry($iCalUId);
 
                         // TODO: How do we explain that this booking would have gone well but was cancelled?
                         $createdBooking['status'] = UserBookingStatusEnum::NONE->name;
