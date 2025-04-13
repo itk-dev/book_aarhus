@@ -3,18 +3,13 @@
 namespace App\Controller;
 
 use ApiPlatform\Metadata\Exception\InvalidArgumentException;
-use App\Entity\Main\UserBooking;
-use App\Security\Voter\UserBookingVoter;
 use App\Service\BookingServiceInterface;
 use App\Service\MetricsHelper;
 use App\Service\UserBookingCacheServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 #[AsController]
 class CancelBookingController extends AbstractController
@@ -23,8 +18,6 @@ class CancelBookingController extends AbstractController
         private readonly MetricsHelper $metricsHelper,
         private readonly BookingServiceInterface $bookingService,
         private readonly UserBookingCacheServiceInterface $userBookingCacheService,
-        private readonly Security $security,
-        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -52,7 +45,7 @@ class CancelBookingController extends AbstractController
             }
         } catch (\Throwable $e) {
             $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
-            // TODO: Should we respond which has failed?
+            // TODO: Should we respond which cancellation has failed?
             throw $e;
         }
 

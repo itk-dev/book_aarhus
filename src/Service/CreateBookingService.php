@@ -113,7 +113,7 @@ class CreateBookingService
             $this->metricsHelper->incExceptionTotal(BookingCreateConflictException::class);
             $this->metricsHelper->incMethodTotal(__METHOD__, 'booking_conflict_detected');
         } catch (\Exception $exception) {
-            // Other exceptions should logged, then re-thrown for the message to be re-queued.
+            // Other exceptions should be logged, then re-thrown for the message to be re-queued.
             $this->logger->error(sprintf('CreateBookingHandler exception: %d %s', $exception->getCode(), $exception->getMessage()));
 
             $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);

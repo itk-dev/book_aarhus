@@ -109,6 +109,7 @@ class CreateBookingController extends AbstractController
                 $result = $this->bookingService->getBusyIntervals([$resourceEmail], $booking->getStartTime(), $booking->getEndTime());
 
                 // TODO: What should we respond here?
+                // Should we tell which interval is busy?
                 if (!empty($result[$resourceEmail]) && !$resource->getAcceptConflict()) {
                     throw new \Exception('Resource is busy in the desired timeslot');
                 }
