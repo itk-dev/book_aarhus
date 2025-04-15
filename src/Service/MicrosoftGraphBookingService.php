@@ -681,6 +681,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
         $bookingData = $this->getBooking($bookingId);
         $userBooking = $this->getUserBookingFromApiData($bookingData);
+
         $this->deleteBooking($userBooking);
     }
 }

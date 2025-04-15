@@ -140,8 +140,9 @@ interface BookingServiceInterface
      * Deletes booking by iCalUid.
      *
      * @param string $iCalUId
-     *
      * @return void
+     * @throws UserBookingException
+     * @throws MicrosoftGraphCommunicationException
      */
     public function deleteBookingByICalUid(string $iCalUId): void;
 }
