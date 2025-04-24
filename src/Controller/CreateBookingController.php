@@ -8,6 +8,7 @@ use App\Entity\Main\Booking;
 use App\Entity\Resources\AAKResource;
 use App\Enum\CreateBookingStatusEnum;
 use App\Enum\UserBookingStatusEnum;
+use App\Model\BookingRequest;
 use App\Repository\Resources\AAKResourceRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
@@ -33,8 +34,7 @@ class CreateBookingController extends AbstractController
         private readonly AAKResourceRepository $aakResourceRepository,
         private readonly BookingServiceInterface $bookingService,
         private readonly UserBookingCacheServiceInterface $userBookingCacheService,
-    )
-    {
+    ) {
     }
 
     public function __invoke(Request $request): Response
@@ -64,29 +64,22 @@ class CreateBookingController extends AbstractController
         $bookingRequests = [];
 
         foreach ($content['bookings'] as $input) {
-            $bookingRequest = [
-                'input' => $input,
-                'status' => CreateBookingStatusEnum::REQUEST,
-                'booking' => null,
-                'resource' => null,
-                'createdBooking' => null,
-            ];
+            $bookingRequest = new BookingRequest($input, CreateBookingStatusEnum::REQUEST);
 
             try {
-                // TODO: Validate required input fields.
-
                 $email = $this->validationUtils->validateEmail($input['resourceId']);
             } catch (InvalidArgumentException) {
-                $bookingRequest['status'] = CreateBookingStatusEnum::INVALID;
+                $bookingRequest->status = CreateBookingStatusEnum::INVALID;
+                continue;
             }
 
             /** @var AAKResource $resource */
             $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
 
-            if (is_null($resource)) {
-                $bookingRequest['status'] = CreateBookingStatusEnum::ERROR;
+            if (null === $resource) {
+                $bookingRequest->status = CreateBookingStatusEnum::ERROR;
             } else {
-                $bookingRequest['resource'] = $resource;
+                $bookingRequest->resource = $resource;
 
                 try {
                     $body = $this->createBookingService->composeBookingContents($input, $resource, $input['metaData'] ?? []);
@@ -106,11 +99,11 @@ class CreateBookingController extends AbstractController
                     $booking->setUserPermission($input['userPermission'] ?? BookingVoter::PERMISSION_CITIZEN);
                     $booking->setId($input['id']);
 
-                    $bookingRequest['booking'] = $booking;
+                    $bookingRequest->booking = $booking;
                 } catch (\Exception) {
                     $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
 
-                    $bookingRequest['status'] = CreateBookingStatusEnum::ERROR;
+                    $bookingRequest->status = CreateBookingStatusEnum::ERROR;
 
                     if ($abortIfAnyFail) {
                         throw new BadRequestHttpException('Error validating booking. Aborting.');
@@ -122,19 +115,21 @@ class CreateBookingController extends AbstractController
         }
 
         // Check for free intervals
-        foreach ($bookingRequests as &$bookingRequest) {
-            if ($bookingRequest['status'] === CreateBookingStatusEnum::REQUEST) {
-                /** @var Booking $booking */
-                $booking = $bookingRequest['booking'];
-                /** @var AAKResource $resource */
-                $resource = $bookingRequest['resource'];
+        foreach ($bookingRequests as $bookingRequest) {
+            if (CreateBookingStatusEnum::REQUEST === $bookingRequest->status) {
+                $booking = $bookingRequest->booking;
+                $resource = $bookingRequest->resource;
+
+                if (null === $booking || null === $resource) {
+                    continue;
+                }
 
                 $resourceEmail = $booking->getResourceEmail();
 
                 try {
                     $result = $this->bookingService->getBusyIntervals([$resourceEmail], $booking->getStartTime(), $booking->getEndTime());
                 } catch (\Exception) {
-                    $bookingRequest['status'] = CreateBookingStatusEnum::ERROR;
+                    $bookingRequest->status = CreateBookingStatusEnum::ERROR;
 
                     if ($abortIfAnyFail) {
                         throw new HttpException(500, 'Error checking booking interval. Aborting.');
@@ -142,7 +137,7 @@ class CreateBookingController extends AbstractController
                 }
 
                 if (!empty($result[$resourceEmail]) && !$resource->getAcceptConflict()) {
-                    $bookingRequest['status'] = CreateBookingStatusEnum::CONFLICT;
+                    $bookingRequest->status = CreateBookingStatusEnum::CONFLICT;
 
                     if ($abortIfAnyFail) {
                         throw new BadRequestHttpException('Error validating booking. Aborting.');
@@ -154,31 +149,34 @@ class CreateBookingController extends AbstractController
         $hasAnyBookingsFailed = false;
 
         // Create bookings.
-        foreach ($bookingRequests as &$bookingRequest) {
-            if ($bookingRequest['status'] === CreateBookingStatusEnum::REQUEST) {
-                /** @var Booking $booking */
-                $booking = $bookingRequest['booking'];
+        foreach ($bookingRequests as $bookingRequest) {
+            if (CreateBookingStatusEnum::REQUEST === $bookingRequest->status) {
+                $booking = $bookingRequest->booking;
+
+                if (null === $booking) {
+                    continue;
+                }
 
                 $createdBooking = $this->createBookingService->createBooking($booking);
 
                 if (!in_array($createdBooking['status'], [UserBookingStatusEnum::ACCEPTED->name, UserBookingStatusEnum::AWAITING_APPROVAL->name])) {
                     $hasAnyBookingsFailed = true;
-                    $bookingRequest['status'] = CreateBookingStatusEnum::ERROR;
+                    $bookingRequest->status = CreateBookingStatusEnum::ERROR;
                 } else {
-                    $bookingRequest['status'] = CreateBookingStatusEnum::SUCCESS;
+                    $bookingRequest->status = CreateBookingStatusEnum::SUCCESS;
 
-                    $bookingRequest['createdBooking'] = $createdBooking;
+                    $bookingRequest->createdBooking = $createdBooking;
                 }
             }
         }
 
         // Cancel if necessary.
         if ($abortIfAnyFail && $hasAnyBookingsFailed) {
-            foreach ($bookingRequests as &$bookingRequest) {
-                if ($bookingRequest['status'] == CreateBookingStatusEnum::SUCCESS) {
-                    $createdBooking = $bookingRequest['createdBooking'];
+            foreach ($bookingRequests as $bookingRequest) {
+                if (CreateBookingStatusEnum::SUCCESS === $bookingRequest->status) {
+                    $createdBooking = $bookingRequest->createdBooking;
 
-                    if ($createdBooking !== null) {
+                    if (null !== $createdBooking) {
                         $iCalUId = $createdBooking['iCalUid'];
 
                         try {
@@ -187,7 +185,7 @@ class CreateBookingController extends AbstractController
                             // Remove from cache
                             $this->userBookingCacheService->deleteCacheEntry($iCalUId);
 
-                            $bookingRequest['status'] = CreateBookingStatusEnum::CANCELLED;
+                            $bookingRequest->status = CreateBookingStatusEnum::CANCELLED;
                         } catch (\Throwable) {
                             $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
 
@@ -198,11 +196,11 @@ class CreateBookingController extends AbstractController
             }
         }
 
-        $bookingResults = array_map(function ($bookingRequest) {
+        $bookingResults = array_map(function (BookingRequest $bookingRequest) {
             return [
-                'input' => $bookingRequest['input'],
-                'status' => $bookingRequest['status']->value,
-                'createdBooking' => $bookingRequest['createdBooking'],
+                'input' => $bookingRequest->input,
+                'status' => $bookingRequest->status->value,
+                'createdBooking' => $bookingRequest->createdBooking,
             ];
         }, $bookingRequests);
 

@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum CreateBookingStatusEnum : string
+enum CreateBookingStatusEnum: string
 {
     case REQUEST = 'REQUEST';
     case ERROR = 'ERROR';
