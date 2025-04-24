@@ -6,8 +6,8 @@ use ApiPlatform\Metadata\Exception\InvalidArgumentException;
 use App\Entity\Main\ApiKeyUser;
 use App\Entity\Main\Booking;
 use App\Entity\Resources\AAKResource;
+use App\Enum\CreateBookingStatusEnum;
 use App\Enum\UserBookingStatusEnum;
-use App\Exception\ResourceNotFoundException;
 use App\Repository\Resources\AAKResourceRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\BookingServiceInterface;
@@ -16,9 +16,12 @@ use App\Service\MetricsHelper;
 use App\Service\UserBookingCacheServiceInterface;
 use App\Utils\ValidationUtilsInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 #[AsController]
 class CreateBookingController extends AbstractController
@@ -30,7 +33,8 @@ class CreateBookingController extends AbstractController
         private readonly AAKResourceRepository $aakResourceRepository,
         private readonly BookingServiceInterface $bookingService,
         private readonly UserBookingCacheServiceInterface $userBookingCacheService,
-    ) {
+    )
+    {
     }
 
     public function __invoke(Request $request): Response
@@ -57,115 +61,153 @@ class CreateBookingController extends AbstractController
         }
 
         // Validate inputs.
-        $validatedInputs = [];
+        $bookingRequests = [];
 
-        try {
-            foreach ($content['bookings'] as $item) {
-                $email = $this->validationUtils->validateEmail($item['resourceId']);
+        foreach ($content['bookings'] as $input) {
+            $bookingRequest = [
+                'input' => $input,
+                'status' => CreateBookingStatusEnum::REQUEST,
+                'booking' => null,
+                'resource' => null,
+                'createdBooking' => null,
+            ];
 
-                /** @var AAKResource $resource */
-                $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
+            try {
+                // TODO: Validate required input fields.
 
-                if (is_null($resource)) {
-                    throw new ResourceNotFoundException('Resource does not exist', 404);
-                }
-
-                $body = $this->createBookingService->composeBookingContents($item, $resource, $item['metaData'] ?? []);
-                $htmlContents = $this->createBookingService->renderContentsAsHtml($body);
-
-                $booking = new Booking();
-                $booking->setBody($htmlContents);
-                $booking->setUserName($item['name'] ?? '');
-                $booking->setUserMail($item['email'] ?? '');
-                $booking->setMetaData($item['metaData'] ?? []);
-                $booking->setSubject($item['subject'] ?? '');
-                $booking->setResourceEmail($email);
-                $booking->setResourceName($resource->getResourceName());
-                $booking->setStartTime($this->validationUtils->validateDate($item['start']));
-                $booking->setEndTime($this->validationUtils->validateDate($item['end']));
-                $booking->setUserId($userId ?? '');
-                $booking->setUserPermission($item['userPermission'] ?? BookingVoter::PERMISSION_CITIZEN);
-                $booking->setId($item['id']);
-
-                $validatedInputs[] = [
-                    'booking' => $booking,
-                    'resource' => $resource,
-                ];
+                $email = $this->validationUtils->validateEmail($input['resourceId']);
+            } catch (InvalidArgumentException) {
+                $bookingRequest['status'] = CreateBookingStatusEnum::INVALID;
             }
-        } catch (\Throwable $e) {
-            $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
-            throw $e;
+
+            /** @var AAKResource $resource */
+            $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
+
+            if (is_null($resource)) {
+                $bookingRequest['status'] = CreateBookingStatusEnum::ERROR;
+            } else {
+                $bookingRequest['resource'] = $resource;
+
+                try {
+                    $body = $this->createBookingService->composeBookingContents($input, $resource, $input['metaData'] ?? []);
+                    $htmlContents = $this->createBookingService->renderContentsAsHtml($body);
+
+                    $booking = new Booking();
+                    $booking->setBody($htmlContents);
+                    $booking->setUserName($input['name'] ?? '');
+                    $booking->setUserMail($input['email'] ?? '');
+                    $booking->setMetaData($input['metaData'] ?? []);
+                    $booking->setSubject($input['subject'] ?? '');
+                    $booking->setResourceEmail($email);
+                    $booking->setResourceName($resource->getResourceName());
+                    $booking->setStartTime($this->validationUtils->validateDate($input['start']));
+                    $booking->setEndTime($this->validationUtils->validateDate($input['end']));
+                    $booking->setUserId($userId ?? '');
+                    $booking->setUserPermission($input['userPermission'] ?? BookingVoter::PERMISSION_CITIZEN);
+                    $booking->setId($input['id']);
+
+                    $bookingRequest['booking'] = $booking;
+                } catch (\Exception) {
+                    $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
+
+                    $bookingRequest['status'] = CreateBookingStatusEnum::ERROR;
+
+                    if ($abortIfAnyFail) {
+                        throw new BadRequestHttpException('Error validating booking. Aborting.');
+                    }
+                }
+            }
+
+            $bookingRequests[] = $bookingRequest;
         }
 
         // Check for free intervals
-        try {
-            foreach ($validatedInputs as $validatedInput) {
+        foreach ($bookingRequests as &$bookingRequest) {
+            if ($bookingRequest['status'] === CreateBookingStatusEnum::REQUEST) {
                 /** @var Booking $booking */
-                $booking = $validatedInput['booking'];
+                $booking = $bookingRequest['booking'];
                 /** @var AAKResource $resource */
-                $resource = $validatedInput['resource'];
+                $resource = $bookingRequest['resource'];
 
                 $resourceEmail = $booking->getResourceEmail();
-                $result = $this->bookingService->getBusyIntervals([$resourceEmail], $booking->getStartTime(), $booking->getEndTime());
 
-                // TODO: What should we respond here?
-                // Should we tell which interval is busy?
+                try {
+                    $result = $this->bookingService->getBusyIntervals([$resourceEmail], $booking->getStartTime(), $booking->getEndTime());
+                } catch (\Exception) {
+                    $bookingRequest['status'] = CreateBookingStatusEnum::ERROR;
+
+                    if ($abortIfAnyFail) {
+                        throw new HttpException(500, 'Error checking booking interval. Aborting.');
+                    }
+                }
+
                 if (!empty($result[$resourceEmail]) && !$resource->getAcceptConflict()) {
-                    throw new \Exception('Resource is busy in the desired timeslot');
+                    $bookingRequest['status'] = CreateBookingStatusEnum::CONFLICT;
+
+                    if ($abortIfAnyFail) {
+                        throw new BadRequestHttpException('Error validating booking. Aborting.');
+                    }
                 }
             }
-        } catch (\Throwable $e) {
-            $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
-            throw $e;
         }
 
-        // Create bookings, previous steps went well so just get to it.
-        $createdBookings = [];
         $hasAnyBookingsFailed = false;
 
-        try {
-            foreach ($validatedInputs as $validatedInput) {
+        // Create bookings.
+        foreach ($bookingRequests as &$bookingRequest) {
+            if ($bookingRequest['status'] === CreateBookingStatusEnum::REQUEST) {
                 /** @var Booking $booking */
-                $booking = $validatedInput['booking'];
+                $booking = $bookingRequest['booking'];
 
                 $createdBooking = $this->createBookingService->createBooking($booking);
 
                 if (!in_array($createdBooking['status'], [UserBookingStatusEnum::ACCEPTED->name, UserBookingStatusEnum::AWAITING_APPROVAL->name])) {
                     $hasAnyBookingsFailed = true;
-                }
+                    $bookingRequest['status'] = CreateBookingStatusEnum::ERROR;
+                } else {
+                    $bookingRequest['status'] = CreateBookingStatusEnum::SUCCESS;
 
-                $createdBookings[] = $createdBooking;
+                    $bookingRequest['createdBooking'] = $createdBooking;
+                }
             }
-        } catch (\Throwable $e) {
-            $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
-            throw $e;
         }
 
         // Cancel if necessary.
-        try {
-            if ($abortIfAnyFail && $hasAnyBookingsFailed) {
-                foreach ($createdBookings as $createdBooking) {
-                    if (!in_array($createdBooking['status'], [UserBookingStatusEnum::ACCEPTED->name, UserBookingStatusEnum::AWAITING_APPROVAL->name])) {
-                        $iCalUId = $createdBooking['iCalUid'];
-                        // Delete booking
-                        $this->bookingService->deleteBookingByICalUid($iCalUId);
-                        // Remove from cache
-                        $this->userBookingCacheService->deleteCacheEntry($iCalUId);
+        if ($abortIfAnyFail && $hasAnyBookingsFailed) {
+            foreach ($bookingRequests as &$bookingRequest) {
+                if ($bookingRequest['status'] == CreateBookingStatusEnum::SUCCESS) {
+                    $createdBooking = $bookingRequest['createdBooking'];
 
-                        // TODO: How do we explain that this booking would have gone well but was cancelled?
-                        $createdBooking['status'] = UserBookingStatusEnum::NONE->name;
+                    if ($createdBooking !== null) {
+                        $iCalUId = $createdBooking['iCalUid'];
+
+                        try {
+                            // Delete booking
+                            $this->bookingService->deleteBookingByICalUid($iCalUId);
+                            // Remove from cache
+                            $this->userBookingCacheService->deleteCacheEntry($iCalUId);
+
+                            $bookingRequest['status'] = CreateBookingStatusEnum::CANCELLED;
+                        } catch (\Throwable) {
+                            $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
+
+                            // In this case the booking still exists. Therefore, it remains in SUCCESS status.
+                        }
                     }
                 }
             }
-        } catch (\Throwable $e) {
-            // TODO: Can we do some sort of cleanup here?
-            // A created booking might have been created when it should not have been.
-            $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
-            throw $e;
         }
+
+        $bookingResults = array_map(function ($bookingRequest) {
+            return [
+                'input' => $bookingRequest['input'],
+                'status' => $bookingRequest['status']->value,
+                'createdBooking' => $bookingRequest['createdBooking'],
+            ];
+        }, $bookingRequests);
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
-        return new Response(json_encode(['bookings' => $createdBookings]), $hasAnyBookingsFailed ? 400 : 201);
+        return new JsonResponse(['bookings' => $bookingResults], 200);
     }
 }
