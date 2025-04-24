@@ -2,7 +2,7 @@
 
 namespace App\Utils;
 
-use ApiPlatform\Exception\InvalidArgumentException;
+use ApiPlatform\Metadata\Exception\InvalidArgumentException;
 
 interface ValidationUtilsInterface
 {
