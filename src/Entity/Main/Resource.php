@@ -1,23 +1,20 @@
 <?php
 
-namespace App\Entity\Resources;
+namespace App\Entity\Main;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Controller\GetAllResourcesController;
 use App\Controller\GetResourceByEmailController;
+use App\Repository\ResourceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * Extbooking.aakresources.
- *
- * @ORM\Table(name="ExtBooking.AAKResources")
- * @ORM\Entity
- */
+#[ORM\Entity(repositoryClass: ResourceRepository::class)]
 #[ApiResource(
     shortName: 'Resource',
     description: 'Resource',
@@ -93,201 +90,143 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'groups' => ['resource'],
     ]
 )]
-class AAKResource
+class Resource
 {
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="ID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::INTEGER, nullable: false)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private int $id;
 
     /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\OneToMany(targetEntity="OpenHours", mappedBy="resource")
+     * @var Collection<int, OpenHours>
      */
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\OneToMany(mappedBy: 'resource', targetEntity: OpenHours::class)]
     private Collection $openHours;
 
     /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\OneToMany(targetEntity="HolidayOpenHours", mappedBy="resource")
+     * @var Collection<int, HolidayOpenHours>
      */
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\OneToMany(mappedBy: 'resource', targetEntity: HolidayOpenHours::class)]
     private Collection $holidayOpenHours;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="ResourceMail", type="string", length=128, nullable=false)
-     */
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::STRING, length: 128, nullable: false)]
     private string $resourceMail;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="ResourceName", type="string", length=128, nullable=false)
-     */
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::STRING, length: 128, nullable: false)]
     private string $resourceName;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="ResourceImage", type="text", length=-1, nullable=true)
-     */
-    private ?string $resourceImage;
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::TEXT, length: -1, nullable: true)]
+    private ?string $resourceImage = null;
 
-    /**
-     * @Groups({"resource"})
-     * @ORM\Column(name="ResourceEmailText", type="text", length=-1, nullable=true)
-     */
-    private ?string $resourceEmailText;
+    #[Groups(['resource'])]
+    #[ORM\Column(type: Types::TEXT, length: -1, nullable: true)]
+    private ?string $resourceEmailText = null;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="Location", type="string", length=128, nullable=false)
-     */
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::STRING, length: 128, nullable: false)]
     private string $location;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="GeoCordinates", type="string", length=128, nullable=true)
-     */
-    private ?string $geoCoordinates;
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::STRING, length: 128, nullable: true)]
+    private ?string $geoCoordinates = null;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="Capacity", type="bigint", nullable=true)
-     */
-    private ?int $capacity;
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::BIGINT, nullable: true)]
+    private ?int $capacity = null;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="ResourceDescription", type="text", length=-1, nullable=true)
-     */
-    private ?string $resourceDescription;
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::TEXT, length: -1, nullable: true)]
+    private ?string $resourceDescription = null;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="WheelChairAccessible", type="boolean", nullable=false)
-     */
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: false)]
     private bool $wheelchairAccessible;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="VideoConferenceEquipment", type="boolean", nullable=false)
-     */
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: false)]
     private bool $videoConferenceEquipment;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="MonitorEquipment", type="boolean", nullable=false)
-     */
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: false)]
     private bool $monitorEquipment;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="AcceptanceFlow", type="boolean", nullable=false)
-     */
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: false)]
     private bool $acceptanceFlow;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="Catering", type="boolean", nullable=false)
-     */
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: false)]
     private bool $catering;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="FormID", type="text", length=-1, nullable=true)
-     */
-    private ?string $formId;
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::TEXT, length: -1, nullable: true)]
+    private ?string $formId = null;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="HasHolidayOpen", type="boolean", nullable=true)
-     */
-    private ?bool $hasHolidayOpen;
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $hasHolidayOpen = null;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="HasOpen", type="boolean", nullable=true)
-     */
-    private ?bool $hasOpen;
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $hasOpen = null;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="HasWhiteList", type="boolean", nullable=true)
-     */
-    private ?bool $hasWhitelist;
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $hasWhitelist = null;
 
-    /**
-     * @Groups({"resource"})
-     * @ORM\Column(name="PermissionEmployee", type="boolean", nullable=true)
-     */
-    private ?bool $permissionEmployee;
+    #[Groups(['resource'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $permissionEmployee = null;
 
-    /**
-     * @Groups({"resource"})
-     * @ORM\Column(name="PermissionCitizen", type="boolean", nullable=true)
-     */
-    private ?bool $permissionCitizen;
+    #[Groups(['resource'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $permissionCitizen = null;
 
-    /**
-     * @Groups({"resource"})
-     * @ORM\Column(name="PermissionBusinessPartner", type="boolean", nullable=true)
-     */
-    private ?bool $permissionBusinessPartner;
+    #[Groups(['resource'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $permissionBusinessPartner = null;
 
-    /**
-     * @Groups({"resource"})
-     * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
-     */
+    #[Groups(['resource'])]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: false)]
     private \DateTime $updateTimestamp;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="DisplayName", type="string", length=128, nullable=true)
-     */
-    private ?string $displayName;
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::STRING, length: 128, nullable: true)]
+    private ?string $displayName = null;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="City", type="string", length=128, nullable=true)
-     */
-    private ?string $city;
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::STRING, length: 128, nullable: true)]
+    private ?string $city = null;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="StreetName", type="string", length=128, nullable=true)
-     */
-    private ?string $streetName;
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(name: 'StreetName', type: Types::STRING, length: 128, nullable: true)]
+    private ?string $streetName = null;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="PostalCode", type="integer", nullable=true)
-     */
-    private ?int $postalCode;
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $postalCode = null;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="RessourceCategory", type="string", length=128, nullable=true)
-     */
-    private ?string $resourceCategory;
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::STRING, length: 128, nullable: true)]
+    private ?string $resourceCategory = null;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="ResourceDisplayName", type="string", length=128, nullable=true)
-     */
-    private ?string $resourceDisplayName;
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::STRING, length: 128, nullable: true)]
+    private ?string $resourceDisplayName = null;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="LocationDisplayName", type="string", length=128, nullable=true)
-     */
-    private ?string $locationDisplayName;
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::STRING, length: 128, nullable: true)]
+    private ?string $locationDisplayName = null;
 
-    /**
-     * @Groups({"resource", "minimum"})
-     * @ORM\Column(name="AcceptConflict", type="boolean", nullable=true)
-     */
-    private ?bool $acceptConflict;
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $acceptConflict = null;
 
     public function __construct()
     {

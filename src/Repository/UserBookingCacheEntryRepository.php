@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository\Main;
+namespace App\Repository;
 
 use App\Entity\Main\UserBookingCacheEntry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;

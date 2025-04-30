@@ -5,12 +5,12 @@ namespace App\State;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\Pagination\TraversablePaginator;
 use ApiPlatform\State\ProviderInterface;
+use App\Entity\Main\Resource;
 use App\Entity\Main\UserBooking;
-use App\Entity\Resources\AAKResource;
 use App\Exception\MicrosoftGraphCommunicationException;
-use App\Repository\Resources\AAKResourceRepository;
+use App\Interface\BookingServiceInterface;
+use App\Repository\ResourceRepository;
 use App\Security\Voter\UserBookingVoter;
-use App\Service\BookingServiceInterface;
 use App\Service\MetricsHelper;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -25,7 +25,7 @@ class UserBookingCollectionProvider implements ProviderInterface
         private readonly BookingServiceInterface $bookingService,
         private readonly Security $security,
         private readonly RequestStack $requestStack,
-        private readonly AAKResourceRepository $resourceRepository,
+        private readonly ResourceRepository $resourceRepository,
         private readonly MetricsHelper $metricsHelper,
     ) {
     }
@@ -75,7 +75,7 @@ class UserBookingCollectionProvider implements ProviderInterface
         /** @var UserBooking $userBooking */
         foreach ($responseData['userBookings'] as $userBooking) {
             // Set resource display name if set in the AAKResource.
-            /** @var AAKResource $resource */
+            /** @var Resource $resource */
             $resource = $this->resourceRepository->findOneBy(['resourceMail' => $userBooking->resourceMail]);
             if (null !== $resource) {
                 $userBooking->displayName = $resource->getResourceDisplayName() ?? $userBooking->displayName;

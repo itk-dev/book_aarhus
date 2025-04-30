@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Main\ApiKeyUser;
-use App\Repository\Main\ApiKeyUserRepository;
+use App\Repository\ApiKeyUserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

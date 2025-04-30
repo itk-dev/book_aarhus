@@ -5,9 +5,9 @@
 namespace App\Command;
 
 use App\Entity\Main\Booking;
-use App\Entity\Resources\AAKResource;
+use App\Entity\Main\Resource;
 use App\Enum\NotificationTypeEnum;
-use App\Service\NotificationServiceInterface;
+use App\Interface\NotificationServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -22,7 +22,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class TestBookingNotificationCommand extends Command
 {
-    public function __construct(private NotificationServiceInterface $notificationService)
+    public function __construct(private readonly NotificationServiceInterface $notificationService)
     {
         parent::__construct();
     }
@@ -115,11 +115,11 @@ class TestBookingNotificationCommand extends Command
     }
 
     /**
-     * @return AAKResource
+     * @return Resource
      */
-    private function createResource(): AAKResource
+    private function createResource(): Resource
     {
-        $res = new AAKResource();
+        $res = new Resource();
         $res->setResourceMail('test@bookaarhus.local.itkdev.dk');
         $res->setResourceName('test');
         $res->setResourceDescription('Resource description as shown in the booking app.');

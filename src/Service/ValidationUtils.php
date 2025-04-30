@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Utils;
+namespace App\Service;
 
 use ApiPlatform\Metadata\Exception\InvalidArgumentException;
+use App\Interface\ValidationUtilsInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -19,7 +20,7 @@ class ValidationUtils implements ValidationUtilsInterface
      */
     public function validateDate(string $dateString, ?string $format = null): \DateTime
     {
-        $format = $format ?? $this->bindDefaultDateFormat;
+        $format ??= $this->bindDefaultDateFormat;
 
         $errors = $this->validator->validate($dateString, new Assert\DateTime($format));
         if (0 !== count($errors)) {

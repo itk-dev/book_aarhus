@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Repository\Resources\AAKResourceRepository;
+use App\Repository\ResourceRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DisplayResourceCommand extends Command
 {
     public function __construct(
-        private readonly AAKResourceRepository $aakResourceRepository,
+        private readonly ResourceRepository $aakResourceRepository,
     ) {
         parent::__construct();
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Interface;
 
 use App\Entity\Main\UserBooking;
 

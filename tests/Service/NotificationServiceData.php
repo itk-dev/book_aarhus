@@ -2,8 +2,8 @@
 
 namespace App\Tests\Service;
 
+use App\Entity\Main\Resource;
 use App\Entity\Main\Booking;
-use App\Entity\Resources\AAKResource;
 
 class NotificationServiceData
 {
@@ -25,9 +25,9 @@ class NotificationServiceData
         return $booking;
     }
 
-    public static function getResource(): AAKResource
+    public static function getResource(): Resource
     {
-        $resource = new AAKResource();
+        $resource = new Resource();
         $resource->setId(1);
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
         $resource->setResourceName('DOKK1-Lokale-Test1');

@@ -2,9 +2,9 @@
 
 namespace App\MessageHandler;
 
+use App\Interface\UserBookingCacheServiceInterface;
 use App\Message\RemoveBookingFromCacheMessage;
 use App\Service\MetricsHelper;
-use App\Service\UserBookingCacheServiceInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]

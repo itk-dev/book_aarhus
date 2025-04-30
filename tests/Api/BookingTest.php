@@ -4,21 +4,21 @@ namespace App\Tests\Api;
 
 use App\Entity\Main\ApiKeyUser;
 use App\Entity\Main\Booking;
-use App\Entity\Resources\AAKResource;
+use App\Entity\Main\Resource;
+use App\Interface\NotificationServiceInterface;
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
 use App\MessageHandler\CreateBookingHandler;
 use App\MessageHandler\WebformSubmitHandler;
-use App\Repository\Resources\AAKResourceRepository;
-use App\Repository\Resources\CvrWhitelistRepository;
+use App\Repository\CvrWhitelistRepository;
+use App\Repository\ResourceRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\CreateBookingService;
 use App\Service\MetricsHelper;
 use App\Service\MicrosoftGraphBookingService;
-use App\Service\NotificationServiceInterface;
+use App\Service\ValidationUtils;
 use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
-use App\Utils\ValidationUtils;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Security;
@@ -34,7 +34,7 @@ class BookingTest extends AbstractBaseApiTestCase
      */
     public function testBookingVoter(): void
     {
-        $res = new AAKResource();
+        $res = new Resource();
         $res->setResourceMail('test@bookaarhus.local.itkdev.dk');
         $res->setResourceName('test');
         $res->setPermissionBusinessPartner(true);
@@ -43,13 +43,13 @@ class BookingTest extends AbstractBaseApiTestCase
         $container = self::getContainer();
         $security = $container->get(Security::class);
 
-        $aakResourceRepositoryMock = $this->getMockBuilder(AAKResourceRepository::class)
+        $aakResourceRepositoryMock = $this->getMockBuilder(ResourceRepository::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['findOneByEmail'])
             ->getMock();
         $aakResourceRepositoryMock->expects($this->exactly(2))->method('findOneByEmail')->willReturn($res);
 
-        $container->set(AAKResourceRepository::class, $aakResourceRepositoryMock);
+        $container->set(ResourceRepository::class, $aakResourceRepositoryMock);
 
         $booking = new Booking();
         $booking->setResourceEmail('test@bookaarhus.local.itkdev.dk');
@@ -182,11 +182,11 @@ class BookingTest extends AbstractBaseApiTestCase
         $bus = $container->get(MessageBusInterface::class);
         $createBookingService = $container->get(CreateBookingService::class);
 
-        $aakBookingRepository = $this->getMockBuilder(AAKResourceRepository::class)
+        $aakBookingRepository = $this->getMockBuilder(ResourceRepository::class)
             ->onlyMethods(['findOneBy'])
             ->disableOriginalConstructor()
             ->getMock();
-        $resource = new AAKResource();
+        $resource = new Resource();
         $resource->setResourceName('DOKK1-Lokale-Test1');
         $resource->setResourceDisplayName('DOKK1 Lokale Test1');
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
@@ -245,7 +245,7 @@ class BookingTest extends AbstractBaseApiTestCase
         $booking->setUserPermission(BookingVoter::PERMISSION_CITIZEN);
         $booking->setUserId('1234567890');
 
-        $res = new AAKResource();
+        $res = new Resource();
         $res->setResourceMail('test@bookaarhus.local.itkdev.dk');
         $res->setResourceName('test');
         $res->setResourceDescription('desc');
@@ -264,7 +264,7 @@ class BookingTest extends AbstractBaseApiTestCase
         $res->setHasWhitelist(false);
         $res->setAcceptConflict(false);
 
-        $aakResourceRepositoryMock = $this->getMockBuilder(AAKResourceRepository::class)
+        $aakResourceRepositoryMock = $this->getMockBuilder(ResourceRepository::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['findOneByEmail'])
             ->getMock();
@@ -272,7 +272,7 @@ class BookingTest extends AbstractBaseApiTestCase
 
         $security = $container->get(Security::class);
 
-        $container->set(AAKResourceRepository::class, $aakResourceRepositoryMock);
+        $container->set(ResourceRepository::class, $aakResourceRepositoryMock);
 
         $notificationServiceMock = $this->createMock(NotificationServiceInterface::class);
         $container->set(NotificationServiceInterface::class, $notificationServiceMock);

@@ -2,7 +2,8 @@
 
 namespace App\Service;
 
-use App\Repository\Resources\AAKResourceRepository;
+use App\Interface\ResourceServiceInterface;
+use App\Repository\ResourceRepository;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -11,7 +12,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 class ResourceService implements ResourceServiceInterface
 {
     public function __construct(
-        private readonly AAKResourceRepository $aakResourceRepository,
+        private readonly ResourceRepository $aakResourceRepository,
         private readonly CacheInterface $resourceCache,
         private readonly SerializerInterface $serializer,
         private readonly MetricsHelper $metricsHelper,

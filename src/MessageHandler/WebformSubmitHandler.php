@@ -3,15 +3,15 @@
 namespace App\MessageHandler;
 
 use App\Entity\Main\Booking;
-use App\Entity\Resources\AAKResource;
+use App\Entity\Main\Resource;
 use App\Exception\WebformSubmissionRetrievalException;
+use App\Interface\ValidationUtilsInterface;
+use App\Interface\WebformServiceInterface;
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
-use App\Repository\Resources\AAKResourceRepository;
+use App\Repository\ResourceRepository;
 use App\Service\CreateBookingService;
 use App\Service\MetricsHelper;
-use App\Service\WebformServiceInterface;
-use App\Utils\ValidationUtilsInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Envelope;
@@ -30,7 +30,7 @@ class WebformSubmitHandler
         private readonly MessageBusInterface $bus,
         private readonly ValidationUtilsInterface $validationUtils,
         private readonly LoggerInterface $logger,
-        private readonly AAKResourceRepository $aakResourceRepository,
+        private readonly ResourceRepository $aakResourceRepository,
         private readonly MetricsHelper $metricsHelper,
         private readonly CreateBookingService $createBookingService,
     ) {
@@ -62,7 +62,7 @@ class WebformSubmitHandler
             foreach ($dataSubmission['bookingData'] as $data) {
                 $email = $this->validationUtils->validateEmail($data['resourceId']);
 
-                /** @var AAKResource $resource */
+                /** @var Resource $resource */
                 $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
 
                 if (is_null($resource)) {

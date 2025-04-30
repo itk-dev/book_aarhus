@@ -69,6 +69,6 @@ class CreateBookingWebformSubmitController extends AbstractController
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
-        return new Response(null, 201);
+        return new Response(null, \Symfony\Component\HttpFoundation\Response::HTTP_CREATED);
     }
 }

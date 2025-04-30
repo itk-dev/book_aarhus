@@ -4,10 +4,10 @@ namespace App\Controller;
 
 use App\Enum\CancelBookingStatusEnum;
 use App\Exception\UserBookingException;
+use App\Interface\BookingServiceInterface;
+use App\Interface\UserBookingCacheServiceInterface;
 use App\Security\Voter\UserBookingVoter;
-use App\Service\BookingServiceInterface;
 use App\Service\MetricsHelper;
-use App\Service\UserBookingCacheServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -92,6 +92,6 @@ class CancelBookingController extends AbstractController
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
-        return new JsonResponse($results, 200);
+        return new JsonResponse($results, \Symfony\Component\HttpFoundation\Response::HTTP_OK);
     }
 }

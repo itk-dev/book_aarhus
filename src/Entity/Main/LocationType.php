@@ -1,45 +1,40 @@
 <?php
 
-namespace App\Entity\Resources;
+namespace App\Entity\Main;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Extbooking.locationtype.
- *
- * @ORM\Table(name="ExtBooking.locationType")
- * @ORM\Entity
  */
+#[ORM\Table(name: 'ExtBooking.locationType')]
+#[ORM\Entity]
 class LocationType
 {
     /**
      * @var int
-     *
-     * @ORM\Column(name="ID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: false)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private int $id;
 
     /**
      * @var int
-     *
-     * @ORM\Column(name="resourceID", type="integer", nullable=false)
      */
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: false)]
     private int $resourceId;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="locationType", type="string", length=512, nullable=false)
      */
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 512, nullable: false)]
     private string $locationType;
 
     /**
      * @var \DateTime
-     *
-     * @ORM\Column(name="UpdateTimeStamp", type="datetime", nullable=false)
      */
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE, nullable: false)]
     private \DateTime $updateTimestamp;
 
     /**

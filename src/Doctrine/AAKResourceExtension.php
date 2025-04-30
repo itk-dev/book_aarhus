@@ -6,8 +6,8 @@ use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
-use App\Entity\Resources\AAKResource;
-use App\Repository\Resources\CvrWhitelistRepository;
+use App\Entity\Main\Resource;
+use App\Repository\CvrWhitelistRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -35,7 +35,7 @@ final class AAKResourceExtension implements QueryCollectionExtensionInterface, Q
 
     private function applyResourceRequireLocation(QueryBuilder $queryBuilder, string $resourceClass): void
     {
-        if (AAKResource::class !== $resourceClass || null === $this->security->getUser()) {
+        if (Resource::class !== $resourceClass || null === $this->security->getUser()) {
             return;
         }
 
@@ -48,7 +48,7 @@ final class AAKResourceExtension implements QueryCollectionExtensionInterface, Q
 
     private function applyWhitelistPermission(QueryBuilder $queryBuilder, string $resourceClass): void
     {
-        if (AAKResource::class !== $resourceClass) {
+        if (Resource::class !== $resourceClass) {
             return;
         }
 

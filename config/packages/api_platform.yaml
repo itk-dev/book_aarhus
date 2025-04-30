@@ -7,7 +7,6 @@ api_platform:
     mapping:
         paths:
             - '%kernel.project_dir%/src/Entity/Main'
-            - '%kernel.project_dir%/src/Entity/Resources'
     patch_formats:
         json: ['application/merge-patch+json']
     swagger:

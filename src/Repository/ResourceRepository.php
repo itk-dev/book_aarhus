@@ -1,21 +1,24 @@
 <?php
 
-namespace App\Repository\Resources;
+namespace App\Repository;
 
-use App\Entity\Resources\AAKResource;
+use App\Entity\Main\Resource;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class AAKResourceRepository extends ServiceEntityRepository
+/**
+ * @extends \Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository<\App\Entity\Main\Resource>
+ */
+class ResourceRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
         private readonly CvrWhitelistRepository $cvrWhitelistRepository,
     ) {
-        parent::__construct($registry, AAKResource::class);
+        parent::__construct($registry, Resource::class);
     }
 
-    public function add(AAKResource $entity, bool $flush = false): void
+    public function add(Resource $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -24,11 +27,11 @@ class AAKResourceRepository extends ServiceEntityRepository
         }
     }
 
-    public function findOneByEmail(string $email): ?AAKResource
+    public function findOneByEmail(string $email): ?Resource
     {
         $resource = $this->findOneBy(['resourceMail' => $email]);
 
-        if ($resource instanceof AAKResource) {
+        if ($resource instanceof Resource) {
             return $resource;
         }
 

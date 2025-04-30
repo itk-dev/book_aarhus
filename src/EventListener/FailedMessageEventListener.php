@@ -3,12 +3,12 @@
 namespace App\EventListener;
 
 use App\Enum\NotificationTypeEnum;
+use App\Interface\NotificationServiceInterface;
 use App\Message\CreateBookingMessage;
 use App\Message\SendBookingNotificationMessage;
 use App\Message\WebformSubmitMessage;
-use App\Repository\Resources\AAKResourceRepository;
+use App\Repository\ResourceRepository;
 use App\Service\MetricsHelper;
-use App\Service\NotificationServiceInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
 
@@ -16,7 +16,7 @@ use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
 final class FailedMessageEventListener
 {
     public function __construct(
-        private readonly AAKResourceRepository $AAKResourceRepository,
+        private readonly ResourceRepository $AAKResourceRepository,
         private readonly NotificationServiceInterface $notificationService,
         private readonly MetricsHelper $metricsHelper,
     ) {

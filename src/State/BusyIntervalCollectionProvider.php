@@ -7,7 +7,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Entity\Main\BusyInterval;
 use App\Exception\MicrosoftGraphCommunicationException;
-use App\Service\BookingServiceInterface;
+use App\Interface\BookingServiceInterface;
 use App\Service\MetricsHelper;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Uid\Ulid;

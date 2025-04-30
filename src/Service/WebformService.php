@@ -3,8 +3,9 @@
 namespace App\Service;
 
 use App\Exception\WebformSubmissionRetrievalException;
+use App\Interface\WebformServiceInterface;
 use App\Message\WebformSubmitMessage;
-use App\Repository\Main\ApiKeyUserRepository;
+use App\Repository\ApiKeyUserRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;

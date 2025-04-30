@@ -7,13 +7,8 @@ use App\Enum\NotificationTypeEnum;
 
 class SendBookingNotificationMessage
 {
-    private Booking $booking;
-    private NotificationTypeEnum $type;
-
-    public function __construct(Booking $booking, NotificationTypeEnum $type)
+    public function __construct(private readonly Booking $booking, private readonly NotificationTypeEnum $type)
     {
-        $this->booking = $booking;
-        $this->type = $type;
     }
 
     public function getBooking(): Booking

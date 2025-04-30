@@ -145,7 +145,7 @@ class Booking
 
     private string $userPermission;
 
-    private ?string $whitelistKey;
+    private ?string $whitelistKey = null;
 
     public function __construct()
     {

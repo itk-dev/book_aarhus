@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Repository\Resources;
+namespace App\Repository;
 
-use App\Entity\Resources\CvrWhitelist;
+use App\Entity\Main\CvrWhitelist;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends \Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository<\App\Entity\Main\CvrWhitelist>
+ */
 class CvrWhitelistRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

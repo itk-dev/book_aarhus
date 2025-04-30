@@ -3,9 +3,9 @@
 namespace App\Controller;
 
 use App\Enum\UserBookingStatusEnum;
-use App\Service\BookingServiceInterface;
+use App\Interface\BookingServiceInterface;
+use App\Interface\UserBookingCacheServiceInterface;
 use App\Service\MetricsHelper;
-use App\Service\UserBookingCacheServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

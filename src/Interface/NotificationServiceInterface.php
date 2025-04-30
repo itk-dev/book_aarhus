@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Service;
+namespace App\Interface;
 
 use App\Entity\Main\Booking;
+use App\Entity\Main\Resource;
 use App\Entity\Main\UserBooking;
-use App\Entity\Resources\AAKResource;
 use App\Enum\NotificationTypeEnum;
 use App\Exception\NoNotificationReceiverException;
 use App\Exception\UnsupportedNotificationTypeException;
@@ -17,7 +17,7 @@ interface NotificationServiceInterface
      * Send notification about a booking.
      *
      * @param Booking $booking the booking
-     * @param AAKResource|null $resource the resource
+     * @param Resource|null $resource the resource
      * @param NotificationTypeEnum $type the type of notification
      *
      * @return void
@@ -26,13 +26,13 @@ interface NotificationServiceInterface
      * @throws UnsupportedNotificationTypeException
      * @throws TransportExceptionInterface
      */
-    public function sendBookingNotification(Booking $booking, ?AAKResource $resource, NotificationTypeEnum $type): void;
+    public function sendBookingNotification(Booking $booking, ?Resource $resource, NotificationTypeEnum $type): void;
 
     /**
      * Send notification about a user booking.
      *
      * @param UserBooking $userBooking the user booking
-     * @param AAKResource|null $resource the resource
+     * @param Resource|null $resource the resource
      * @param NotificationTypeEnum $type the type of notification
      *
      * @return void
@@ -41,7 +41,7 @@ interface NotificationServiceInterface
      * @throws UnsupportedNotificationTypeException
      * @throws TransportExceptionInterface
      */
-    public function sendUserBookingNotification(UserBooking $userBooking, ?AAKResource $resource, NotificationTypeEnum $type): void;
+    public function sendUserBookingNotification(UserBooking $userBooking, ?Resource $resource, NotificationTypeEnum $type): void;
 
     /**
      * Create an iCol component.
@@ -60,9 +60,9 @@ interface NotificationServiceInterface
      * @param string $subject subject of the notification
      * @param string $message message of the notification
      * @param Booking|null $booking booking to include in the notification, if available
-     * @param AAKResource|null $resource resource to include in the notification, if available
+     * @param Resource|null $resource resource to include in the notification, if available
      *
      * @return void
      */
-    public function notifyAdmin(string $subject, string $message, ?Booking $booking, ?AAKResource $resource): void;
+    public function notifyAdmin(string $subject, string $message, ?Booking $booking, ?Resource $resource): void;
 }

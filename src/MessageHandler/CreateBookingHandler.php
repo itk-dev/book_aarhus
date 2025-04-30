@@ -2,16 +2,16 @@
 
 namespace App\MessageHandler;
 
-use App\Entity\Resources\AAKResource;
+use App\Entity\Main\Resource;
 use App\Enum\NotificationTypeEnum;
 use App\Exception\BookingCreateConflictException;
+use App\Interface\BookingServiceInterface;
 use App\Message\AddBookingToCacheMessage;
 use App\Message\CreateBookingMessage;
 use App\Message\SendBookingNotificationMessage;
-use App\Repository\Resources\AAKResourceRepository;
-use App\Repository\Resources\CvrWhitelistRepository;
+use App\Repository\CvrWhitelistRepository;
+use App\Repository\ResourceRepository;
 use App\Security\Voter\BookingVoter;
-use App\Service\BookingServiceInterface;
 use App\Service\MetricsHelper;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -30,7 +30,7 @@ class CreateBookingHandler
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
         private readonly LoggerInterface $logger,
-        private readonly AAKResourceRepository $aakResourceRepository,
+        private readonly ResourceRepository $aakResourceRepository,
         private readonly Security $security,
         private readonly MessageBusInterface $bus,
         private readonly CvrWhitelistRepository $whitelistRepository,
@@ -54,7 +54,7 @@ class CreateBookingHandler
             throw new UnrecoverableMessageHandlingException('User does not have permission to create bookings for the given resource.', 403);
         }
 
-        /** @var AAKResource $resource */
+        /** @var Resource $resource */
         $email = $booking->getResourceEmail();
         $resource = $this->aakResourceRepository->findOneByEmail($email);
 

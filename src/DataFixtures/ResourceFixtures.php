@@ -2,8 +2,8 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Resources\AAKResource;
-use App\Entity\Resources\CvrWhitelist;
+use App\Entity\Main\Resource;
+use App\Entity\Main\CvrWhitelist;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -148,7 +148,7 @@ class ResourceFixtures extends Fixture
         ];
 
         foreach ($resources as $resource) {
-            $res = new AAKResource();
+            $res = new Resource();
             $res->setResourceMail($resource['resourceEmail']);
             $res->setResourceName($resource['resourceName']);
             $res->setResourceDescription($resource['resourceDescription']);
@@ -193,29 +193,29 @@ class ResourceFixtures extends Fixture
         ];
 
         for ($i = 0; $i < 1000; ++$i) {
-            $res = new AAKResource();
+            $res = new Resource();
             $res->setResourceMail("test$i@bookaarhus.local.itkdev");
             $res->setResourceName("test$i");
             $res->setResourceDescription('description');
             $res->setResourceEmailText('email text');
             $res->setLocation('NEW LOCATION');
-            $res->setWheelchairAccessible(1 == rand(0, 1));
-            $res->setVideoConferenceEquipment(1 == rand(0, 1));
-            $res->setGeoCoordinates($geoLocations[rand(0, 2)]);
+            $res->setWheelchairAccessible(1 == random_int(0, 1));
+            $res->setVideoConferenceEquipment(1 == random_int(0, 1));
+            $res->setGeoCoordinates($geoLocations[random_int(0, 2)]);
             $res->setUpdateTimestamp(new \DateTime());
-            $res->setMonitorEquipment(1 == rand(0, 1));
-            $res->setCatering(1 == rand(0, 1));
-            $res->setAcceptanceFlow(1 == rand(0, 1));
-            $res->setCapacity(rand(1, 1000));
-            $res->setPermissionBusinessPartner(1 == rand(0, 1));
-            $res->setPermissionCitizen(1 == rand(0, 1));
-            $res->setPermissionEmployee(1 == rand(0, 1));
+            $res->setMonitorEquipment(1 == random_int(0, 1));
+            $res->setCatering(1 == random_int(0, 1));
+            $res->setAcceptanceFlow(1 == random_int(0, 1));
+            $res->setCapacity(random_int(1, 1000));
+            $res->setPermissionBusinessPartner(1 == random_int(0, 1));
+            $res->setPermissionCitizen(1 == random_int(0, 1));
+            $res->setPermissionEmployee(1 == random_int(0, 1));
             $res->setHasWhitelist(false);
             $res->setDisplayName("Test $i");
             $res->setCity('Aarhus');
             $res->setStreetName('A random road');
-            $res->setPostalCode(rand(8000, 8400));
-            $res->setResourceCategory(0 == rand(0, 1) ? 'Lokale' : 'Transport');
+            $res->setPostalCode(random_int(8000, 8400));
+            $res->setResourceCategory(0 == random_int(0, 1) ? 'Lokale' : 'Transport');
             $res->setFormId(null);
             $res->setResourceImage(null);
             $res->setResourceDisplayName("Test $i");

@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Repository\Main;
+namespace App\Repository;
 
 use App\Entity\Main\ApiKeyUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends \Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository<\App\Entity\Main\ApiKeyUser>
+ */
 class ApiKeyUserRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

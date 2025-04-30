@@ -2,7 +2,7 @@
 
 namespace App\Tests\Service;
 
-use App\Repository\Resources\AAKResourceRepository;
+use App\Repository\ResourceRepository;
 use App\Service\MetricsHelper;
 use App\Service\ResourceService;
 use App\Tests\AbstractBaseApiTestCase;
@@ -16,7 +16,7 @@ class ResourceServiceTest extends AbstractBaseApiTestCase
         $serializer = self::getContainer()->get(SerializerInterface::class);
         $cache = new ArrayAdapter(0, true, 0, 0);
 
-        $aakResourceRepository = $this->getMockBuilder(AAKResourceRepository::class)
+        $aakResourceRepository = $this->getMockBuilder(ResourceRepository::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAllByPermission'])
             ->getMock();
@@ -33,13 +33,13 @@ class ResourceServiceTest extends AbstractBaseApiTestCase
         $this->assertCount(1, $data);
         $this->assertEquals('DOKK1-Lokale-Test1', $data[0]->resourceName);
 
-        $cacheEntry = $cache->get('resources-citizen', function () { return null; });
+        $cacheEntry = $cache->get('resources-citizen', fn() => null);
 
         $this->assertNotNull($cacheEntry);
 
         $service->removeResourcesCacheEntry('citizen');
 
-        $cacheEntry = $cache->get('resources-citizen', function () { return null; });
+        $cacheEntry = $cache->get('resources-citizen', fn() => null);
 
         $this->assertNull($cacheEntry);
     }
@@ -49,7 +49,7 @@ class ResourceServiceTest extends AbstractBaseApiTestCase
         $serializer = self::getContainer()->get(SerializerInterface::class);
         $cache = new ArrayAdapter(0, true, 0, 0);
 
-        $aakResourceRepository = $this->getMockBuilder(AAKResourceRepository::class)
+        $aakResourceRepository = $this->getMockBuilder(ResourceRepository::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getOnlyWhitelisted'])
             ->getMock();

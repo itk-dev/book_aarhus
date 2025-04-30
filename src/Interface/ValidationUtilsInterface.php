@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Utils;
+namespace App\Interface;
 
 use ApiPlatform\Metadata\Exception\InvalidArgumentException;
 

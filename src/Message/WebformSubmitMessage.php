@@ -4,19 +4,8 @@ namespace App\Message;
 
 class WebformSubmitMessage
 {
-    private string $webformId;
-    private string $submissionUuid;
-    private string $sender;
-    private string $getSubmissionUrl;
-    private string $apiKeyUserId;
-
-    public function __construct(string $webformId, string $submissionUuid, string $sender, string $getSubmissionUrl, string $apiKeyUserId)
+    public function __construct(private readonly string $webformId, private readonly string $submissionUuid, private readonly string $sender, private readonly string $getSubmissionUrl, private readonly string $apiKeyUserId)
     {
-        $this->webformId = $webformId;
-        $this->submissionUuid = $submissionUuid;
-        $this->sender = $sender;
-        $this->getSubmissionUrl = $getSubmissionUrl;
-        $this->apiKeyUserId = $apiKeyUserId;
     }
 
     public function getWebformId(): string

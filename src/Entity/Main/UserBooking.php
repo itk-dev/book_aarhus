@@ -105,59 +105,39 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class UserBooking
 {
-    /**
-     * @Groups({"userBooking"})
-     */
     #[ApiProperty(identifier: true)]
+    #[Groups(['userBooking'])]
     public string $id;
 
     public string $iCalUId;
 
-    /**
-     * @Groups({"userBooking"})
-     */
+    #[Groups(['userBooking'])]
     public string $subject;
 
-    /**
-     * @Groups({"userBooking"})
-     */
+    #[Groups(['userBooking'])]
     public string $displayName;
 
     public string $body;
 
-    /**
-     * @Groups({"userBooking"})
-     */
+    #[Groups(['userBooking'])]
     public string $status;
 
-    /**
-     * @Groups({"userBooking"})
-     */
+    #[Groups(['userBooking'])]
     public string $bookingType;
 
-    /**
-     * @Groups({"userBooking"})
-     */
+    #[Groups(['userBooking'])]
     public bool $expired;
 
-    /**
-     * @Groups({"userBooking"})
-     */
+    #[Groups(['userBooking'])]
     public \DateTime $start;
 
-    /**
-     * @Groups({"userBooking"})
-     */
+    #[Groups(['userBooking'])]
     public \DateTime $end;
 
-    /**
-     * @Groups({"userBooking"})
-     */
+    #[Groups(['userBooking'])]
     public string $resourceMail;
 
-    /**
-     * @Groups({"userBooking"})
-     */
+    #[Groups(['userBooking'])]
     public string $resourceName;
 
     public bool $ownedByServiceAccount;

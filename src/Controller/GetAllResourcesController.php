@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
+use App\Interface\ResourceServiceInterface;
 use App\Service\MetricsHelper;
-use App\Service\ResourceServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,6 +41,6 @@ class GetAllResourcesController extends AbstractController
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
-        return new JsonResponse($resources, 200);
+        return new JsonResponse($resources, \Symfony\Component\HttpFoundation\Response::HTTP_OK);
     }
 }

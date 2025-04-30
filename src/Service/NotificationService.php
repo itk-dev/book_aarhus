@@ -3,13 +3,13 @@
 namespace App\Service;
 
 use App\Entity\Main\Booking;
+use App\Entity\Main\Resource;
 use App\Entity\Main\UserBooking;
-use App\Entity\Resources\AAKResource;
 use App\Enum\NotificationTypeEnum;
 use App\Exception\BuildNotificationException;
 use App\Exception\NoNotificationReceiverException;
 use App\Exception\UnsupportedNotificationTypeException;
-use App\Utils\ValidationUtils;
+use App\Interface\NotificationServiceInterface;
 use Eluceo\iCal\Domain\Entity;
 use Eluceo\iCal\Domain\Entity\TimeZone;
 use Eluceo\iCal\Domain\ValueObject\DateTime as ICalDateTime;
@@ -59,7 +59,7 @@ class NotificationService implements NotificationServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function sendBookingNotification(Booking $booking, ?AAKResource $resource, NotificationTypeEnum $type): void
+    public function sendBookingNotification(Booking $booking, ?Resource $resource, NotificationTypeEnum $type): void
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
@@ -85,7 +85,7 @@ class NotificationService implements NotificationServiceInterface
      */
     public function sendUserBookingNotification(
         UserBooking $userBooking,
-        ?AAKResource $resource,
+        ?Resource $resource,
         NotificationTypeEnum $type,
     ): void {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
@@ -182,7 +182,7 @@ class NotificationService implements NotificationServiceInterface
         $location = new Location($eventData['location_name']);
 
         if ($eventData['coordinates']) {
-            $coordinatesArr = explode(',', $eventData['coordinates']);
+            $coordinatesArr = explode(',', (string) $eventData['coordinates']);
             $location = $location->withGeographicPosition(
                 new GeographicPosition(
                     (float) $coordinatesArr['0'],
@@ -222,7 +222,7 @@ class NotificationService implements NotificationServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function notifyAdmin(string $subject, string $message, ?Booking $booking, ?AAKResource $resource): void
+    public function notifyAdmin(string $subject, string $message, ?Booking $booking, ?Resource $resource): void
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
@@ -276,7 +276,7 @@ class NotificationService implements NotificationServiceInterface
     {
         $fileAttachments = [];
         $to = $data['user']['mail'];
-        /** @var AAKResource $resource */
+        /** @var Resource $resource */
         $resource = $data['resource'];
         $resourceName = $resource->getResourceDisplayName() ?? $resource->getResourceName();
         $location = $resource->getLocation();
