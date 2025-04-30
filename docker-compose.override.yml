@@ -1,29 +1,4 @@
 services:
-  phpfpm:
-    extra_hosts:
-      # Used by ssh tunnel to Azure SQL Server
-      #
-      # Run these commands to make it actually work:
-      #
-      ## Copy ssh keys to container
-      # $ docker-compose exec phpfpm mkdir -p /root/.ssh
-      # $ docker-compose cp ~/.ssh/id_rsa phpfpm:/root/.ssh/id_rsa
-      # $ docker-compose cp ~/.ssh/id_rsa-cert.pub phpfpm:/root/.ssh/id_rsa-cert.pub
-      ## Create ssh tunnel using IPv4 (`-4`)
-      # $ docker-compose exec phpfpm ssh -4 -f deploy@admwebstgitk01.admnonwin.aarhuskommune.dk -L 1433:externalbooking.database.windows.net:1433 -N
-      - "externalbooking.database.windows.net:127.0.0.1"
-
-  azure-sql:
-    image: mcr.microsoft.com/azure-sql-edge:latest
-    networks:
-      - app
-    ports:
-      - '1433'
-    environment:
-      # Database user: sa
-      MSSQL_SA_PASSWORD: P@ssword123 # (Minimum length 8 characters, strength required)
-      ACCEPT_EULA: Y
-
   redis:
     image: 'redis:6'
     networks:

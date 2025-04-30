@@ -2,19 +2,16 @@
 
 namespace App\Entity\Main;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * Extbooking.locationtype.
- */
-#[ORM\Table(name: 'ExtBooking.locationType')]
 #[ORM\Entity]
 class LocationType
 {
     /**
      * @var int
      */
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: false)]
+    #[ORM\Column(type: Types::INTEGER, nullable: false)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private int $id;
@@ -22,19 +19,19 @@ class LocationType
     /**
      * @var int
      */
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: false)]
+    #[ORM\Column(type: Types::INTEGER, nullable: false)]
     private int $resourceId;
 
     /**
      * @var string
      */
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 512, nullable: false)]
+    #[ORM\Column(type: Types::STRING, length: 512, nullable: false)]
     private string $locationType;
 
     /**
      * @var \DateTime
      */
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE, nullable: false)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: false)]
     private \DateTime $updateTimestamp;
 
     /**
