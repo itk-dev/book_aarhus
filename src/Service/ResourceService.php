@@ -2,21 +2,98 @@
 
 namespace App\Service;
 
+use App\Entity\Main\Resource;
 use App\Interface\ResourceServiceInterface;
 use App\Repository\ResourceRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ResourceService implements ResourceServiceInterface
 {
     public function __construct(
-        private readonly ResourceRepository $aakResourceRepository,
+        private readonly ResourceRepository $resourceRepository,
         private readonly CacheInterface $resourceCache,
         private readonly SerializerInterface $serializer,
         private readonly MetricsHelper $metricsHelper,
+        private readonly HttpClientInterface $client,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly string $resourceListEndpoint,
+        private readonly string $resourceLocationsEndpoint,
+        private readonly string $resourceCvrWhitelistEndpoint,
+        private readonly string $resourceOpenHoursEndpoint,
+        private readonly string $resourceHolidayOpenHoursEndpoint,
     ) {
+    }
+
+    private function parseBoolString(string $boolString): bool
+    {
+        return $boolString === 'True';
+    }
+
+    public function updateResources(): array
+    {
+        $responseLocations = $this->client->request('GET', $this->resourceLocationsEndpoint);
+        $locationsFromEndpoint = $responseLocations->toArray();
+
+        $responseCvrWhitelist = $this->client->request('GET', $this->resourceCvrWhitelistEndpoint);
+        $cvrWhitelistFromEndpoint = $responseCvrWhitelist->toArray();
+
+        $responseOpenHours = $this->client->request('GET', $this->resourceOpenHoursEndpoint);
+        $openHoursFromEndpoint = $responseOpenHours->toArray();
+
+        $responseHolidayOpenHours = $this->client->request('GET', $this->resourceHolidayOpenHoursEndpoint);
+        $holidayOpenHoursFromEndpoint = $responseHolidayOpenHours->toArray();
+
+        $responseResources = $this->client->request('GET', $this->resourceListEndpoint);
+
+        $resourcesFromEndpoint = $responseResources->toArray();
+
+        foreach ($resourcesFromEndpoint as $resourceData) {
+            $resource = $this->resourceRepository->findOneBy(['sourceId' => $resourceData['ID']]);
+
+            if (null === $resource) {
+                $resource = new Resource();
+                $this->entityManager->persist($resource);
+            }
+
+            $resource->setSourceId($resourceData['ID']);
+            $resource->setResourceMail($resourceData['ResourceMail']);
+            $resource->setResourceName($resourceData['ResourceName']);
+            $resource->setResourceImage($resourceData['ResourceImage']);
+            $resource->setResourceEmailText($resourceData['ResourceEmailText']);
+            $resource->setGeoCoordinates($resourceData['GeoCoordinates']);
+            $resource->setCapacity((int) $resourceData['Capacity']);
+            $resource->setResourceDescription($resourceData['ResourceDescription']);
+            $resource->setWheelchairAccessible($this->parseBoolString($resourceData['WheelchairAccessible']));
+            $resource->setVideoConferenceEquipment($this->parseBoolString($resourceData['VideoConferenceEquipment']));
+            $resource->setMonitorEquipment($this->parseBoolString($resourceData['MonitorEquipment']));
+            $resource->setAcceptanceFlow($this->parseBoolString($resourceData['AcceptanceFlow']));
+            $resource->setCatering($this->parseBoolString($resourceData['Catering']));
+            $resource->setFormId($resourceData['FormId']);
+            $resource->setHasHolidayOpen($this->parseBoolString($resourceData['HasHolidayOpen']));
+            $resource->setHasOpen($this->parseBoolString($resourceData['HasOpen']));
+            $resource->setHasWhitelist($this->parseBoolString($resourceData['HasWhitelist']));
+            $resource->setPermissionEmployee($this->parseBoolString($resourceData['PermissionEmployee']));
+            $resource->setPermissionBusinessPartner($this->parseBoolString($resourceData['PermissionBusinessPartner']));
+            $resource->setDisplayName($resourceData['DisplayName']);
+            $resource->setCity($resourceData['City']);
+            $resource->setPostalCode($resourceData['PostalCode']);
+            $resource->setResourceDisplayName($resourceData['ResourceDisplayName']);
+            $resource->setLocationDisplayName($resourceData['LocationDisplayName']);
+            $resource->setAcceptConflict($this->parseBoolString($resourceData['AcceptConflict']));
+            $resource->setIncludeInUI($this->parseBoolString($resourceData['IncludeinUI']));
+
+            // TODO: Set entity references.
+            //$resource->setUpdateTimestamp(new \DateTime());
+        }
+
+        $this->entityManager->flush();
+
+        return [];
     }
 
     /**
@@ -36,7 +113,7 @@ class ResourceService implements ResourceServiceInterface
 
         $cachedResources = $this->resourceCache->get("resources-$permission", function (CacheItemInterface $cacheItem) use ($cacheLifetime, $permission) {
             $cacheItem->expiresAfter($cacheLifetime);
-            $info = $this->aakResourceRepository->getAllByPermission($permission);
+            $info = $this->resourceRepository->getAllByPermission($permission);
 
             return $this->serializer->serialize($info, 'json', ['groups' => 'minimum']);
         });
@@ -50,7 +127,7 @@ class ResourceService implements ResourceServiceInterface
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
-        $info = $this->aakResourceRepository->getOnlyWhitelisted($permission, $whitelistKey);
+        $info = $this->resourceRepository->getOnlyWhitelisted($permission, $whitelistKey);
         $serializedWhitelistedResources = $this->serializer->serialize($info, 'json', ['groups' => 'minimum']);
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);

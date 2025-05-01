@@ -98,6 +98,10 @@ class Resource
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private int $id;
 
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::INTEGER, unique: true, nullable: false)]
+    private string $sourceId;
+
     /**
      * @var Collection<int, OpenHours>
      */
@@ -228,521 +232,348 @@ class Resource
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     private ?bool $acceptConflict = null;
 
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $includeInUI = null;
+
     public function __construct()
     {
         $this->openHours = new ArrayCollection();
         $this->holidayOpenHours = new ArrayCollection();
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return Collection
-     */
     public function getOpenHours(): Collection
     {
         return $this->openHours;
     }
 
-    /**
-     * @param Collection $openHours
-     */
     public function setOpenHours(Collection $openHours): void
     {
         $this->openHours = $openHours;
     }
 
-    /**
-     * @return Collection
-     */
     public function getHolidayOpenHours(): Collection
     {
         return $this->holidayOpenHours;
     }
 
-    /**
-     * @param Collection $holidayOpenHours
-     */
     public function setHolidayOpenHours(Collection $holidayOpenHours): void
     {
         $this->holidayOpenHours = $holidayOpenHours;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId(int $id): void
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return string
-     */
     public function getResourceMail(): string
     {
         return $this->resourceMail;
     }
 
-    /**
-     * @param string $resourceMail
-     */
     public function setResourceMail(string $resourceMail): void
     {
         $this->resourceMail = $resourceMail;
     }
 
-    /**
-     * @return string
-     */
     public function getResourceName(): string
     {
         return $this->resourceName;
     }
 
-    /**
-     * @param string $resourceName
-     */
     public function setResourceName(string $resourceName): void
     {
         $this->resourceName = $resourceName;
     }
 
-    /**
-     * @return string|null
-     */
     public function getResourceImage(): ?string
     {
         return $this->resourceImage;
     }
 
-    /**
-     * @param string|null $resourceImage
-     */
     public function setResourceImage(?string $resourceImage): void
     {
         $this->resourceImage = $resourceImage;
     }
 
-    /**
-     * @return string|null
-     */
     public function getResourceEmailText(): ?string
     {
         return $this->resourceEmailText;
     }
 
-    /**
-     * @param string|null $resourceEmailText
-     */
     public function setResourceEmailText(?string $resourceEmailText): void
     {
         $this->resourceEmailText = $resourceEmailText;
     }
 
-    /**
-     * @return string
-     */
     public function getLocation(): string
     {
         return $this->location;
     }
 
-    /**
-     * @param string $location
-     */
     public function setLocation(string $location): void
     {
         $this->location = $location;
     }
 
-    /**
-     * @return string|null
-     */
     public function getGeoCoordinates(): ?string
     {
         return $this->geoCoordinates;
     }
 
-    /**
-     * @param string|null $geoCoordinates
-     */
     public function setGeoCoordinates(?string $geoCoordinates): void
     {
         $this->geoCoordinates = $geoCoordinates;
     }
 
-    /**
-     * @return int|null
-     */
     public function getCapacity(): ?int
     {
         return $this->capacity;
     }
 
-    /**
-     * @param int|null $capacity
-     */
     public function setCapacity(?int $capacity): void
     {
         $this->capacity = $capacity;
     }
 
-    /**
-     * @return string|null
-     */
     public function getResourceDescription(): ?string
     {
         return $this->resourceDescription;
     }
 
-    /**
-     * @param string|null $resourceDescription
-     */
     public function setResourceDescription(?string $resourceDescription): void
     {
         $this->resourceDescription = $resourceDescription;
     }
 
-    /**
-     * @return bool
-     */
     public function isWheelchairAccessible(): bool
     {
         return $this->wheelchairAccessible;
     }
 
-    /**
-     * @param bool $wheelchairAccessible
-     */
     public function setWheelchairAccessible(bool $wheelchairAccessible): void
     {
         $this->wheelchairAccessible = $wheelchairAccessible;
     }
 
-    /**
-     * @return bool
-     */
     public function isVideoConferenceEquipment(): bool
     {
         return $this->videoConferenceEquipment;
     }
 
-    /**
-     * @param bool $videoConferenceEquipment
-     */
     public function setVideoConferenceEquipment(bool $videoConferenceEquipment): void
     {
         $this->videoConferenceEquipment = $videoConferenceEquipment;
     }
 
-    /**
-     * @return bool
-     */
     public function isMonitorEquipment(): bool
     {
         return $this->monitorEquipment;
     }
 
-    /**
-     * @param bool $monitorEquipment
-     */
     public function setMonitorEquipment(bool $monitorEquipment): void
     {
         $this->monitorEquipment = $monitorEquipment;
     }
 
-    /**
-     * @return bool
-     */
     public function isAcceptanceFlow(): bool
     {
         return $this->acceptanceFlow;
     }
 
-    /**
-     * @param bool $acceptanceFlow
-     */
     public function setAcceptanceFlow(bool $acceptanceFlow): void
     {
         $this->acceptanceFlow = $acceptanceFlow;
     }
 
-    /**
-     * @return bool
-     */
     public function isCatering(): bool
     {
         return $this->catering;
     }
 
-    /**
-     * @param bool $catering
-     */
     public function setCatering(bool $catering): void
     {
         $this->catering = $catering;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFormId(): ?string
     {
         return $this->formId;
     }
 
-    /**
-     * @param string|null $formId
-     */
     public function setFormId(?string $formId): void
     {
         $this->formId = $formId;
     }
 
-    /**
-     * @return bool|null
-     */
     public function getHasHolidayOpen(): ?bool
     {
         return $this->hasHolidayOpen;
     }
 
-    /**
-     * @param bool|null $hasHolidayOpen
-     */
     public function setHasHolidayOpen(?bool $hasHolidayOpen): void
     {
         $this->hasHolidayOpen = $hasHolidayOpen;
     }
 
-    /**
-     * @return bool|null
-     */
     public function getHasOpen(): ?bool
     {
         return $this->hasOpen;
     }
 
-    /**
-     * @param bool|null $hasOpen
-     */
     public function setHasOpen(?bool $hasOpen): void
     {
         $this->hasOpen = $hasOpen;
     }
 
-    /**
-     * @return bool|null
-     */
     public function getHasWhitelist(): ?bool
     {
         return $this->hasWhitelist;
     }
 
-    /**
-     * @param bool|null $hasWhitelist
-     */
     public function setHasWhitelist(?bool $hasWhitelist): void
     {
         $this->hasWhitelist = $hasWhitelist;
     }
 
-    /**
-     * @return bool|null
-     */
     public function getPermissionEmployee(): ?bool
     {
         return $this->permissionEmployee;
     }
 
-    /**
-     * @param bool|null $permissionEmployee
-     */
     public function setPermissionEmployee(?bool $permissionEmployee): void
     {
         $this->permissionEmployee = $permissionEmployee;
     }
 
-    /**
-     * @return bool|null
-     */
     public function getPermissionCitizen(): ?bool
     {
         return $this->permissionCitizen;
     }
 
-    /**
-     * @param bool|null $permissionCitizen
-     */
     public function setPermissionCitizen(?bool $permissionCitizen): void
     {
         $this->permissionCitizen = $permissionCitizen;
     }
 
-    /**
-     * @return bool|null
-     */
     public function getPermissionBusinessPartner(): ?bool
     {
         return $this->permissionBusinessPartner;
     }
 
-    /**
-     * @param bool|null $permissionBusinessPartner
-     */
     public function setPermissionBusinessPartner(?bool $permissionBusinessPartner): void
     {
         $this->permissionBusinessPartner = $permissionBusinessPartner;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getUpdateTimestamp(): \DateTime
     {
         return $this->updateTimestamp;
     }
 
-    /**
-     * @param \DateTime $updateTimestamp
-     */
     public function setUpdateTimestamp(\DateTime $updateTimestamp): void
     {
         $this->updateTimestamp = $updateTimestamp;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDisplayName(): ?string
     {
         return $this->displayName;
     }
 
-    /**
-     * @param string|null $displayName
-     */
     public function setDisplayName(?string $displayName): void
     {
         $this->displayName = $displayName;
     }
 
-    /**
-     * @return string|null
-     */
     public function getCity(): ?string
     {
         return $this->city;
     }
 
-    /**
-     * @param string|null $city
-     */
     public function setCity(?string $city): void
     {
         $this->city = $city;
     }
 
-    /**
-     * @return string|null
-     */
     public function getStreetName(): ?string
     {
         return $this->streetName;
     }
 
-    /**
-     * @param string|null $streetName
-     */
     public function setStreetName(?string $streetName): void
     {
         $this->streetName = $streetName;
     }
 
-    /**
-     * @return int|null
-     */
     public function getPostalCode(): ?int
     {
         return $this->postalCode;
     }
 
-    /**
-     * @param int|null $postalCode
-     */
     public function setPostalCode(?int $postalCode): void
     {
         $this->postalCode = $postalCode;
     }
 
-    /**
-     * @return string|null
-     */
     public function getResourceCategory(): ?string
     {
         return $this->resourceCategory;
     }
 
-    /**
-     * @param string|null $resourceCategory
-     */
     public function setResourceCategory(?string $resourceCategory): void
     {
         $this->resourceCategory = $resourceCategory;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLocationDisplayName(): ?string
     {
         return $this->locationDisplayName;
     }
 
-    /**
-     * @param string|null $locationDisplayName
-     */
     public function setLocationDisplayName(?string $locationDisplayName): void
     {
         $this->locationDisplayName = $locationDisplayName;
     }
 
-    /**
-     * @return string|null
-     */
     public function getResourceDisplayName(): ?string
     {
         return $this->resourceDisplayName;
     }
 
-    /**
-     * @param string|null $resourceDisplayName
-     */
     public function setResourceDisplayName(?string $resourceDisplayName): void
     {
         $this->resourceDisplayName = $resourceDisplayName;
     }
 
-    /**
-     * @return bool|null
-     */
     public function getAcceptConflict(): ?bool
     {
         return $this->acceptConflict;
     }
 
-    /**
-     * @param bool|null $acceptConflict
-     */
     public function setAcceptConflict(?bool $acceptConflict): void
     {
         $this->acceptConflict = $acceptConflict;
+    }
+
+    public function getIncludeInUI(): ?bool
+    {
+        return $this->includeInUI;
+    }
+
+    public function setIncludeInUI(?bool $includeInUI): void
+    {
+        $this->includeInUI = $includeInUI;
+    }
+
+    public function getSourceId(): string
+    {
+        return $this->sourceId;
+    }
+
+    public function setSourceId(string $sourceId): void
+    {
+        $this->sourceId = $sourceId;
     }
 }

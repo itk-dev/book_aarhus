@@ -12,7 +12,7 @@ use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-final class AAKResourceExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
+final class ResourceExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     public function __construct(
         private readonly Security $security,

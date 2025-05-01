@@ -11,6 +11,11 @@ parameters:
     microsoft_graph_service_account_password: '%env(string:MICROSOFT_GRAPH_SERVICE_ACCOUNT_PASSWORD)%'
     email_from_address: '%env(string:EMAIL_FROM_ADDRESS)%'
     email_admin_notification: '%env(string:ADMIN_NOTIFICATION_EMAIL)%'
+    resources_list_endpoint: '%env(string:RESOURCES_LIST)%'
+    resources_locations_endpoint: '%env(string:RESOURCES_LOCATIONS)%'
+    resources_holidays_open_hours_endpoint: '%env(string:RESOURCES_HOLIDAY_OPEN_HOURS)%'
+    resources_cvr_whitelist_endpoint: '%env(string:RESOURCES_CVR_WHITELIST)%'
+    resources_open_hours_endpoint: '%env(string:RESOURCES_OPEN_HOURS)%'
 
 services:
     # default configuration for services in *this* file
@@ -36,7 +41,7 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\Doctrine\AAKResourceExtension:
+    App\Doctrine\ResourceExtension:
         tags:
             - { name: api_platform.doctrine.orm.query_extension.collection }
             - { name: api_platform.doctrine.orm.query_extension.item }
@@ -57,17 +62,25 @@ services:
             - '%email_from_address%'
             - '%email_admin_notification%'
 
-    App\Service\BookingServiceInterface:
+    App\Interface\BookingServiceInterface:
         alias: 'App\Service\MicrosoftGraphBookingService'
 
-    App\Service\WebformServiceInterface:
+    App\Interface\WebformServiceInterface:
         alias: 'App\Service\WebformService'
 
-    App\Service\NotificationServiceInterface:
+    App\Interface\NotificationServiceInterface:
         alias: 'App\Service\NotificationService'
 
-    App\Service\ResourceServiceInterface:
+    App\Interface\ResourceServiceInterface:
         alias: 'App\Service\ResourceService'
+
+    App\Service\ResourceService:
+        arguments:
+            $resourceListEndpoint: '%resources_list_endpoint%'
+            $resourceLocationsEndpoint: '%resources_locations_endpoint%'
+            $resourceCvrWhitelistEndpoint: '%resources_cvr_whitelist_endpoint%'
+            $resourceOpenHoursEndpoint: '%resources_open_hours_endpoint%'
+            $resourceHolidayOpenHoursEndpoint: '%resources_holidays_open_hours_endpoint%'
 
     resource.search_filter:
         # https://api-platform.com/docs/core/filters/#search-filter
