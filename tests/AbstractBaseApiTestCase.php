@@ -62,6 +62,7 @@ abstract class AbstractBaseApiTestCase extends ApiTestCase
         return self::callback(function (mixed $message) use ($params) {
             static $invocationCount = 0;
             ++$invocationCount;
+
             return $message === $params[$invocationCount - 1];
         });
     }

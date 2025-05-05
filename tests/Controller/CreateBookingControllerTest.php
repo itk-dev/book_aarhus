@@ -41,7 +41,7 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $data = [
             'abortIfAnyFail' => false,
             'bookings' => [
-            ]
+            ],
         ];
 
         $this->expectException(ClientException::class);
@@ -95,12 +95,11 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
                     'userId' => 'some_unqiue_user_id',
                     'metaData' => [
                         'data1' => 'example1',
-                        'data2' => 'example2'
-                    ]
+                        'data2' => 'example2',
+                    ],
                 ],
-            ]
+            ],
         ];
-
 
         $this->expectException(ClientException::class);
         $this->expectExceptionMessage("An error occurred\n\nError validating booking. Aborting.");
@@ -111,7 +110,6 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
 
         $response->getContent();
     }
-
 
     public function testCreateBookingWithInvalidEmail(): void
     {
@@ -153,12 +151,11 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
                     'userId' => 'some_unqiue_user_id',
                     'metaData' => [
                         'data1' => 'example1',
-                        'data2' => 'example2'
-                    ]
+                        'data2' => 'example2',
+                    ],
                 ],
-            ]
+            ],
         ];
-
 
         $response = $client->request('POST', '/v1/bookings', [
             'json' => $data,
@@ -169,8 +166,6 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals($expectedResponseContent, $response->getContent());
     }
-
-
 
     public function testSuccessfulBooking(): void
     {
@@ -206,8 +201,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             'userId' => 'some_unqiue_user_id',
             'metaData' => [
                 'data1' => 'example1',
-                'data2' => 'example2'
-            ]
+                'data2' => 'example2',
+            ],
         ];
 
         $bookingServiceMock = $this->createMock(BookingServiceInterface::class);
@@ -217,11 +212,11 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $bodyMock = [
             'resource' => $resource,
             'submission' => $mainBooking + [
-                    'fromObj' =>  new \DateTime($mainBooking['start']),
-                    'toObj' => new \DateTime($mainBooking['end']),
-                ],
+                'fromObj' => new \DateTime($mainBooking['start']),
+                'toObj' => new \DateTime($mainBooking['end']),
+            ],
             'metaData' => $mainBooking['metaData'],
-            'userUniqueId' => 'UID-' . $mainBooking['userId']. '-UID'
+            'userUniqueId' => 'UID-'.$mainBooking['userId'].'-UID',
         ];
 
         $createBookingServiceMock
@@ -230,7 +225,6 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             ->with($mainBooking, $resource, $mainBooking['metaData'])
             ->willReturn($bodyMock)
         ;
-
 
         $createBookingServiceMock
             ->expects($this->once())
@@ -264,9 +258,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             'abortIfAnyFail' => false,
             'bookings' => [
                 $mainBooking,
-            ]
+            ],
         ];
-
 
         $response = $client->request('POST', '/v1/bookings', [
             'json' => $data,
@@ -274,19 +267,17 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
 
         $content = $response->toArray();
 
-
         $expected = [
             'bookings' => [
                 [
                     'input' => $mainBooking,
                     'status' => 'SUCCESS',
-                    'createdBooking' => $createdBookingMock
-                ]
+                    'createdBooking' => $createdBookingMock,
+                ],
             ],
         ];
 
         $this->assertEquals($expected, $content);
-
     }
 
     public function testOneSuccessfulAndOneFailedBookingWithoutAbortIfAnyFail(): void
@@ -323,8 +314,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             'userId' => 'some_unqiue_user_id',
             'metaData' => [
                 'data1' => 'example1',
-                'data2' => 'example2'
-            ]
+                'data2' => 'example2',
+            ],
         ];
 
         $bufferBooking = [
@@ -339,8 +330,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             'userId' => 'some_unqiue_user_id',
             'metaData' => [
                 'data1' => 'example1',
-                'data2' => 'example2'
-            ]
+                'data2' => 'example2',
+            ],
         ];
 
         $bookingServiceMock = $this->createMock(BookingServiceInterface::class);
@@ -350,21 +341,21 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $mainBodyMock = [
             'resource' => $resource,
             'submission' => $mainBooking + [
-                    'fromObj' =>  new \DateTime($mainBooking['start']),
-                    'toObj' => new \DateTime($mainBooking['end']),
-                ],
+                'fromObj' => new \DateTime($mainBooking['start']),
+                'toObj' => new \DateTime($mainBooking['end']),
+            ],
             'metaData' => $mainBooking['metaData'],
-            'userUniqueId' => 'UID-' . $mainBooking['userId']. '-UID'
+            'userUniqueId' => 'UID-'.$mainBooking['userId'].'-UID',
         ];
 
         $bufferBodyMock = [
             'resource' => $resource,
             'submission' => $bufferBooking + [
-                    'fromObj' =>  new \DateTime($bufferBooking['start']),
-                    'toObj' => new \DateTime($bufferBooking['end']),
-                ],
+                'fromObj' => new \DateTime($bufferBooking['start']),
+                'toObj' => new \DateTime($bufferBooking['end']),
+            ],
             'metaData' => $bufferBooking['metaData'],
-            'userUniqueId' => 'UID-' . $bufferBooking['userId']. '-UID'
+            'userUniqueId' => 'UID-'.$bufferBooking['userId'].'-UID',
         ];
 
         $createBookingServiceMock
@@ -386,7 +377,6 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             )
             ->willReturn($mainBodyMock, $bufferBodyMock)
         ;
-
 
         $createBookingServiceMock
             ->expects($this->exactly(2))
@@ -430,9 +420,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             'bookings' => [
                 $mainBooking,
                 $bufferBooking,
-            ]
+            ],
         ];
-
 
         $response = $client->request('POST', '/v1/bookings', [
             'json' => $data,
@@ -440,19 +429,18 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
 
         $content = $response->toArray();
 
-
         $expected = [
             'bookings' => [
                 [
                     'input' => $mainBooking,
                     'status' => 'SUCCESS',
-                    'createdBooking' => $createdMainBookingMock
+                    'createdBooking' => $createdMainBookingMock,
                 ],
                 [
                     'input' => $bufferBooking,
                     'status' => 'ERROR',
                     'createdBooking' => null,
-                ]
+                ],
             ],
         ];
 
@@ -493,8 +481,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             'userId' => 'some_unqiue_user_id',
             'metaData' => [
                 'data1' => 'example1',
-                'data2' => 'example2'
-            ]
+                'data2' => 'example2',
+            ],
         ];
 
         $bufferBooking = [
@@ -509,8 +497,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             'userId' => 'some_unqiue_user_id',
             'metaData' => [
                 'data1' => 'example1',
-                'data2' => 'example2'
-            ]
+                'data2' => 'example2',
+            ],
         ];
 
         $bookingServiceMock = $this->createMock(BookingServiceInterface::class);
@@ -520,21 +508,21 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $mainBodyMock = [
             'resource' => $resource,
             'submission' => $mainBooking + [
-                    'fromObj' =>  new \DateTime($mainBooking['start']),
-                    'toObj' => new \DateTime($mainBooking['end']),
-                ],
+                'fromObj' => new \DateTime($mainBooking['start']),
+                'toObj' => new \DateTime($mainBooking['end']),
+            ],
             'metaData' => $mainBooking['metaData'],
-            'userUniqueId' => 'UID-' . $mainBooking['userId']. '-UID'
+            'userUniqueId' => 'UID-'.$mainBooking['userId'].'-UID',
         ];
 
         $bufferBodyMock = [
             'resource' => $resource,
             'submission' => $bufferBooking + [
-                    'fromObj' =>  new \DateTime($bufferBooking['start']),
-                    'toObj' => new \DateTime($bufferBooking['end']),
-                ],
+                'fromObj' => new \DateTime($bufferBooking['start']),
+                'toObj' => new \DateTime($bufferBooking['end']),
+            ],
             'metaData' => $bufferBooking['metaData'],
-            'userUniqueId' => 'UID-' . $bufferBooking['userId']. '-UID'
+            'userUniqueId' => 'UID-'.$bufferBooking['userId'].'-UID',
         ];
 
         $createBookingServiceMock
@@ -556,7 +544,6 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             )
             ->willReturn($mainBodyMock, $bufferBodyMock)
         ;
-
 
         $createBookingServiceMock
             ->expects($this->exactly(2))
@@ -600,9 +587,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             'bookings' => [
                 $mainBooking,
                 $bufferBooking,
-            ]
+            ],
         ];
-
 
         $response = $client->request('POST', '/v1/bookings', [
             'json' => $data,
@@ -610,19 +596,18 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
 
         $content = $response->toArray();
 
-
         $expected = [
             'bookings' => [
                 [
                     'input' => $mainBooking,
                     'status' => 'CANCELLED',
-                    'createdBooking' => $createdMainBookingMock
+                    'createdBooking' => $createdMainBookingMock,
                 ],
                 [
                     'input' => $bufferBooking,
                     'status' => 'ERROR',
                     'createdBooking' => null,
-                ]
+                ],
             ],
         ];
 
@@ -664,8 +649,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             'userId' => 'some_unqiue_user_id',
             'metaData' => [
                 'data1' => 'example1',
-                'data2' => 'example2'
-            ]
+                'data2' => 'example2',
+            ],
         ];
 
         $bufferBooking = [
@@ -680,8 +665,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             'userId' => 'some_unqiue_user_id',
             'metaData' => [
                 'data1' => 'example1',
-                'data2' => 'example2'
-            ]
+                'data2' => 'example2',
+            ],
         ];
 
         $bookingServiceMock = $this->createMock(BookingServiceInterface::class);
@@ -691,21 +676,21 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $mainBodyMock = [
             'resource' => $resource,
             'submission' => $mainBooking + [
-                    'fromObj' =>  new \DateTime($mainBooking['start']),
-                    'toObj' => new \DateTime($mainBooking['end']),
-                ],
+                'fromObj' => new \DateTime($mainBooking['start']),
+                'toObj' => new \DateTime($mainBooking['end']),
+            ],
             'metaData' => $mainBooking['metaData'],
-            'userUniqueId' => 'UID-' . $mainBooking['userId']. '-UID'
+            'userUniqueId' => 'UID-'.$mainBooking['userId'].'-UID',
         ];
 
         $bufferBodyMock = [
             'resource' => $resource,
             'submission' => $bufferBooking + [
-                    'fromObj' =>  new \DateTime($bufferBooking['start']),
-                    'toObj' => new \DateTime($bufferBooking['end']),
-                ],
+                'fromObj' => new \DateTime($bufferBooking['start']),
+                'toObj' => new \DateTime($bufferBooking['end']),
+            ],
             'metaData' => $bufferBooking['metaData'],
-            'userUniqueId' => 'UID-' . $bufferBooking['userId']. '-UID'
+            'userUniqueId' => 'UID-'.$bufferBooking['userId'].'-UID',
         ];
 
         $createBookingServiceMock
@@ -728,7 +713,6 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             ->willReturn($mainBodyMock, $bufferBodyMock)
         ;
 
-
         $createBookingServiceMock
             ->expects($this->exactly(2))
             ->method('renderContentsAsHtml')
@@ -739,17 +723,14 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             ->willReturn('test_html')
         ;
 
-
-
         $conflicts = [
             'DOKK1-Lokale-Test1@aarhus.dk' => [
                 [
-                'startTime' => '2004-02-26T15:45:00.010Z',
-                'endTime' => '2004-02-26T16:30:00.010Z',
+                    'startTime' => '2004-02-26T15:45:00.010Z',
+                    'endTime' => '2004-02-26T16:30:00.010Z',
                 ],
-            ]
+            ],
         ];
-
 
         $bookingServiceMock
             ->expects($this->exactly(2))
@@ -771,9 +752,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             'bookings' => [
                 $mainBooking,
                 $bufferBooking,
-            ]
+            ],
         ];
-
 
         $response = $client->request('POST', '/v1/bookings', [
             'json' => $data,
@@ -792,7 +772,7 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
                     'input' => $bufferBooking,
                     'status' => 'CONFLICT',
                     'createdBooking' => null,
-                ]
+                ],
             ],
         ];
 

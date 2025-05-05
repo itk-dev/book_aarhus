@@ -78,7 +78,7 @@ class CancelBookingControllerTest extends AbstractBaseApiTestCase
             'ids' => [
                 $mockICalUid1,
                 $mockICalUid2,
-            ]
+            ],
         ];
 
         $response = $client->request('DELETE', '/v1/bookings/cancel', [
@@ -134,7 +134,7 @@ class CancelBookingControllerTest extends AbstractBaseApiTestCase
         $data = [
             'ids' => [
                 $mockICalUid1,
-            ]
+            ],
         ];
 
         $response = $client->request('DELETE', '/v1/bookings/cancel', [
@@ -151,7 +151,6 @@ class CancelBookingControllerTest extends AbstractBaseApiTestCase
         $this->assertEquals($expected, $response->toArray());
     }
 
-
     public function testCancelBooking404Exception(): void
     {
         $client = $this->getAuthenticatedClient();
@@ -166,7 +165,7 @@ class CancelBookingControllerTest extends AbstractBaseApiTestCase
             ->expects($this->exactly(1))
             ->method('getBookingIdFromICalUid')
             ->with($mockICalUid1)
-            ->willReturn(NULL)
+            ->willReturn(null)
         ;
 
         $container = self::getContainer();
@@ -177,7 +176,7 @@ class CancelBookingControllerTest extends AbstractBaseApiTestCase
         $data = [
             'ids' => [
                 $mockICalUid1,
-            ]
+            ],
         ];
 
         $response = $client->request('DELETE', '/v1/bookings/cancel', [
@@ -229,7 +228,7 @@ class CancelBookingControllerTest extends AbstractBaseApiTestCase
         $data = [
             'ids' => [
                 $mockICalUid1,
-            ]
+            ],
         ];
 
         $response = $client->request('DELETE', '/v1/bookings/cancel', [
