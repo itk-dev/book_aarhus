@@ -3,7 +3,7 @@
 namespace App\Tests\Controller;
 
 use App\Controller\GetStatusByIdsController;
-use App\Entity\Main\UserBooking;
+use App\Entity\Api\UserBooking;
 use App\Enum\UserBookingStatusEnum;
 use App\Interface\BookingServiceInterface;
 use App\Interface\UserBookingCacheServiceInterface;

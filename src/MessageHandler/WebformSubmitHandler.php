@@ -2,7 +2,7 @@
 
 namespace App\MessageHandler;
 
-use App\Entity\Main\Booking;
+use App\Entity\Api\Booking;
 use App\Entity\Main\Resource;
 use App\Exception\WebformSubmissionRetrievalException;
 use App\Interface\ValidationUtilsInterface;

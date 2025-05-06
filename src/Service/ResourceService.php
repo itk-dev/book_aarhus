@@ -2,8 +2,12 @@
 
 namespace App\Service;
 
+use App\Entity\Main\CvrWhitelist;
+use App\Entity\Main\Location;
 use App\Entity\Main\Resource;
 use App\Interface\ResourceServiceInterface;
+use App\Repository\CvrWhitelistRepository;
+use App\Repository\LocationRepository;
 use App\Repository\ResourceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\CacheItemInterface;
@@ -16,6 +20,7 @@ class ResourceService implements ResourceServiceInterface
 {
     public function __construct(
         private readonly ResourceRepository $resourceRepository,
+        private readonly LocationRepository $locationRepository,
         private readonly CacheInterface $resourceCache,
         private readonly SerializerInterface $serializer,
         private readonly MetricsHelper $metricsHelper,
@@ -25,7 +30,7 @@ class ResourceService implements ResourceServiceInterface
         private readonly string $resourceLocationsEndpoint,
         private readonly string $resourceCvrWhitelistEndpoint,
         private readonly string $resourceOpenHoursEndpoint,
-        private readonly string $resourceHolidayOpenHoursEndpoint,
+        private readonly string $resourceHolidayOpenHoursEndpoint, private readonly CvrWhitelistRepository $cvrWhitelistRepository,
     ) {
     }
 
@@ -36,20 +41,7 @@ class ResourceService implements ResourceServiceInterface
 
     public function updateResources(): array
     {
-        $responseLocations = $this->client->request('GET', $this->resourceLocationsEndpoint);
-        $locationsFromEndpoint = $responseLocations->toArray();
-
-        $responseCvrWhitelist = $this->client->request('GET', $this->resourceCvrWhitelistEndpoint);
-        $cvrWhitelistFromEndpoint = $responseCvrWhitelist->toArray();
-
-        $responseOpenHours = $this->client->request('GET', $this->resourceOpenHoursEndpoint);
-        $openHoursFromEndpoint = $responseOpenHours->toArray();
-
-        $responseHolidayOpenHours = $this->client->request('GET', $this->resourceHolidayOpenHoursEndpoint);
-        $holidayOpenHoursFromEndpoint = $responseHolidayOpenHours->toArray();
-
         $responseResources = $this->client->request('GET', $this->resourceListEndpoint);
-
         $resourcesFromEndpoint = $responseResources->toArray();
 
         foreach ($resourcesFromEndpoint as $resourceData) {
@@ -86,9 +78,53 @@ class ResourceService implements ResourceServiceInterface
             $resource->setLocationDisplayName($resourceData['LocationDisplayName']);
             $resource->setAcceptConflict($this->parseBoolString($resourceData['AcceptConflict']));
             $resource->setIncludeInUI($this->parseBoolString($resourceData['IncludeinUI']));
+        }
 
-            // TODO: Set entity references.
-            //$resource->setUpdateTimestamp(new \DateTime());
+        $this->entityManager->flush();
+
+        $responseCvrWhitelist = $this->client->request('GET', $this->resourceCvrWhitelistEndpoint);
+        $cvrWhitelistFromEndpoint = $responseCvrWhitelist->toArray();
+
+        foreach ($cvrWhitelistFromEndpoint as $data) {
+            /** @var CvrWhitelist $entry */
+            $entry = $this->cvrWhitelistRepository->findOneBy(['sourceId' => $data['ID']]);
+
+            if (null === $entry) {
+                $entry = new CvrWhitelist();
+                $this->entityManager->persist($entry);
+            }
+
+            $entry->setSourceId($data['ID']);
+            $entry->setCvr($data['cvr']);
+            $entry->setResourceId($data['resourceID']);
+        }
+
+        $this->entityManager->flush();
+
+        $responseOpenHours = $this->client->request('GET', $this->resourceOpenHoursEndpoint);
+        $openHoursFromEndpoint = $responseOpenHours->toArray();
+
+        $responseHolidayOpenHours = $this->client->request('GET', $this->resourceHolidayOpenHoursEndpoint);
+        $holidayOpenHoursFromEndpoint = $responseHolidayOpenHours->toArray();
+
+        $responseLocations = $this->client->request('GET', $this->resourceLocationsEndpoint);
+        $locationsFromEndpoint = $responseLocations->toArray();
+
+        foreach ($locationsFromEndpoint as $locationData) {
+            $sourceId = $locationData['Location'];
+            $location = $this->locationRepository->findOneBy(['sourceId' => $sourceId]);
+
+            if (null === $location) {
+                $location = new Location();
+                $location->setSourceId($sourceId);
+                $this->entityManager->persist($location);
+            }
+
+            $location->setDisplayName($locationData['LocationDisplayName']);
+            $location->setAddress($locationData['Address']);
+            $location->setCity($locationData['City']);
+            $location->setPostalCode($locationData['PostalCode']);
+            $location->setGeoCoordinates($locationData['GeoCoordinates']);
         }
 
         $this->entityManager->flush();

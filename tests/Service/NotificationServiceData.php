@@ -2,8 +2,8 @@
 
 namespace App\Tests\Service;
 
+use App\Entity\Api\Booking;
 use App\Entity\Main\Resource;
-use App\Entity\Main\Booking;
 
 class NotificationServiceData
 {

@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use ApiPlatform\Metadata\Exception\InvalidArgumentException;
+use App\Entity\Api\Booking;
 use App\Entity\Main\ApiKeyUser;
-use App\Entity\Main\Booking;
 use App\Entity\Main\Resource;
 use App\Enum\CreateBookingStatusEnum;
 use App\Enum\UserBookingStatusEnum;

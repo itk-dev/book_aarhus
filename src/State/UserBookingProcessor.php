@@ -5,7 +5,7 @@ namespace App\State;
 use ApiPlatform\Metadata\DeleteOperationInterface;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
-use App\Entity\Main\UserBooking;
+use App\Entity\Api\UserBooking;
 use App\Enum\NotificationTypeEnum;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;

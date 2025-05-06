@@ -2,8 +2,8 @@
 
 namespace App\Tests\Api;
 
+use App\Entity\Api\Booking;
 use App\Entity\Main\ApiKeyUser;
-use App\Entity\Main\Booking;
 use App\Entity\Main\Resource;
 use App\Interface\NotificationServiceInterface;
 use App\Message\CreateBookingMessage;

@@ -5,7 +5,7 @@ namespace App\State;
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use App\Entity\Main\BusyInterval;
+use App\Entity\Api\BusyInterval;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Interface\BookingServiceInterface;
 use App\Service\MetricsHelper;

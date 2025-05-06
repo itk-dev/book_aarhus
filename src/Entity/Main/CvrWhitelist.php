@@ -4,33 +4,25 @@ namespace App\Entity\Main;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 class CvrWhitelist
 {
-    /**
-     * @var int
-     */
     #[ORM\Column(type: Types::INTEGER, nullable: false)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private int $id;
 
-    /**
-     * @var int
-     */
+    #[ORM\Column(type: Types::INTEGER, unique: true, nullable: false)]
+    private string $sourceId;
+
     #[ORM\Column(type: Types::INTEGER, nullable: false)]
     private int $resourceId;
 
-    /**
-     * @var int
-     */
     #[ORM\Column(type: Types::INTEGER, nullable: false)]
     private int $cvr;
 
-    /**
-     * @var \DateTime
-     */
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: false)]
     private \DateTime $updateTimestamp;
 
@@ -72,5 +64,15 @@ class CvrWhitelist
     public function setUpdateTimestamp(\DateTime $updateTimestamp): void
     {
         $this->updateTimestamp = $updateTimestamp;
+    }
+
+    public function getSourceId(): string
+    {
+        return $this->sourceId;
+    }
+
+    public function setSourceId(string $sourceId): void
+    {
+        $this->sourceId = $sourceId;
     }
 }

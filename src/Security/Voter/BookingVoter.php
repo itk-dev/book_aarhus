@@ -2,7 +2,7 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Main\Booking;
+use App\Entity\Api\Booking;
 use App\Repository\ResourceRepository;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;

@@ -2,7 +2,7 @@
 
 namespace App\Message;
 
-use App\Entity\Main\UserBooking;
+use App\Entity\Api\UserBooking;
 use App\Enum\NotificationTypeEnum;
 
 class SendUserBookingNotificationMessage

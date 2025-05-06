@@ -2,30 +2,34 @@
 
 namespace App\Entity\Main;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 class HolidayOpenHours
 {
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: false)]
+    #[ORM\Column(type: Types::INTEGER, nullable: false)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private int $id;
+
+    #[ORM\Column(type: Types::INTEGER, unique: true, nullable: false)]
+    private string $sourceId;
 
     #[ORM\ManyToOne(targetEntity: Resource::class, inversedBy: 'holidayOpenHours')]
     private Resource $resource;
 
     #[Groups(['resource', 'minimum'])]
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::TIME_MUTABLE, nullable: false)]
+    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: false)]
     private \DateTime $holidayOpen;
 
     #[Groups(['resource', 'minimum'])]
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::TIME_MUTABLE, nullable: false)]
+    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: false)]
     private \DateTime $holidayClose;
 
     #[Groups(['resource'])]
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE, nullable: false)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: false)]
     private \DateTime $updateTimestamp;
 
     public function getId(): int
@@ -76,5 +80,15 @@ class HolidayOpenHours
     public function setUpdateTimestamp(\DateTime $updateTimestamp): void
     {
         $this->updateTimestamp = $updateTimestamp;
+    }
+
+    public function getSourceId(): string
+    {
+        return $this->sourceId;
+    }
+
+    public function setSourceId(string $sourceId): void
+    {
+        $this->sourceId = $sourceId;
     }
 }

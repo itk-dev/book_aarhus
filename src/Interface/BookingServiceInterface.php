@@ -2,7 +2,7 @@
 
 namespace App\Interface;
 
-use App\Entity\Main\UserBooking;
+use App\Entity\Api\UserBooking;
 use App\Exception\BookingCreateConflictException;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;

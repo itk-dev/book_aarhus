@@ -2,7 +2,7 @@
 
 namespace App\Tests\Handler;
 
-use App\Entity\Main\Booking;
+use App\Entity\Api\Booking;
 use App\Entity\Main\Resource;
 use App\Interface\BookingServiceInterface;
 use App\Interface\UserBookingCacheServiceInterface;

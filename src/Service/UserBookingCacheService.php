@@ -2,8 +2,8 @@
 
 namespace App\Service;
 
+use App\Entity\Api\UserBooking;
 use App\Entity\Main\Resource;
-use App\Entity\Main\UserBooking;
 use App\Entity\Main\UserBookingCacheEntry;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Interface\UserBookingCacheServiceInterface;

@@ -2,8 +2,8 @@
 
 namespace App\Model;
 
+use App\Entity\Api\Booking;
 use App\Entity\Main\Resource;
-use App\Entity\Main\Booking;
 use App\Enum\CreateBookingStatusEnum;
 
 class BookingRequest

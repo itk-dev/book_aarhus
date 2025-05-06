@@ -2,9 +2,9 @@
 
 namespace App\Service;
 
-use App\Entity\Main\Booking;
+use App\Entity\Api\Booking;
+use App\Entity\Api\UserBooking;
 use App\Entity\Main\Resource;
-use App\Entity\Main\UserBooking;
 use App\Enum\NotificationTypeEnum;
 use App\Exception\BuildNotificationException;
 use App\Exception\NoNotificationReceiverException;

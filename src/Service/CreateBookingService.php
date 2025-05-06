@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use ApiPlatform\Symfony\Security\Exception\AccessDeniedException;
-use App\Entity\Main\Booking;
+use App\Entity\Api\Booking;
 use App\Entity\Main\Resource;
 use App\Enum\UserBookingStatusEnum;
 use App\Exception\BookingContentsException;

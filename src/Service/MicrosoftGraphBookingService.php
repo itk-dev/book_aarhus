@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use App\Entity\Main\UserBooking;
+use App\Entity\Api\UserBooking;
 use App\Enum\UserBookingStatusEnum;
 use App\Enum\UserBookingTypeEnum;
 use App\Exception\BookingCreateConflictException;

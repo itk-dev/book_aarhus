@@ -2,7 +2,7 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Main\UserBooking;
+use App\Entity\Api\UserBooking;
 use App\Interface\BookingServiceInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\RequestStack;

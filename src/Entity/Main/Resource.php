@@ -98,7 +98,6 @@ class Resource
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     private int $id;
 
-    #[Groups(['resource', 'minimum'])]
     #[ORM\Column(type: Types::INTEGER, unique: true, nullable: false)]
     private string $sourceId;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity\Main;
+namespace App\Entity\Api;
 
 use ApiPlatform\Action\NotFoundAction;
 use ApiPlatform\Metadata\ApiProperty;
