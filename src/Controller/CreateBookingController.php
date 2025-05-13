@@ -177,7 +177,7 @@ class CreateBookingController extends AbstractController
                     $createdBooking = $bookingRequest->createdBooking;
 
                     if (null !== $createdBooking) {
-                        $iCalUId = $createdBooking['iCalUid'];
+                        $iCalUId = $createdBooking['iCalUId'];
 
                         try {
                             // Delete booking
