@@ -7,6 +7,8 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Controller\GetAllResourcesController;
 use App\Controller\GetResourceByEmailController;
+use App\Entity\Trait\IdTrait;
+use App\Entity\Trait\SourceIdTrait;
 use App\Repository\ResourceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -92,28 +94,32 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class Resource
 {
-    #[Groups(['resource', 'minimum'])]
-    #[ORM\Column(type: Types::INTEGER, nullable: false)]
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    private int $id;
-
-    #[ORM\Column(type: Types::INTEGER, unique: true, nullable: false)]
-    private string $sourceId;
+    use IdTrait;
+    use SourceIdTrait;
 
     /**
-     * @var Collection<int, OpenHours>
+     * @var Collection<int, OpeningHours>
      */
     #[Groups(['resource', 'minimum'])]
-    #[ORM\OneToMany(mappedBy: 'resource', targetEntity: OpenHours::class)]
+    #[ORM\OneToMany(mappedBy: 'resource', targetEntity: OpeningHours::class)]
     private Collection $openHours;
 
     /**
-     * @var Collection<int, HolidayOpenHours>
+     * @var Collection<int, HolidayOpeningHours>
      */
     #[Groups(['resource', 'minimum'])]
-    #[ORM\OneToMany(mappedBy: 'resource', targetEntity: HolidayOpenHours::class)]
+    #[ORM\OneToMany(mappedBy: 'resource', targetEntity: HolidayOpeningHours::class)]
     private Collection $holidayOpenHours;
+
+    /**
+     * @var Collection<int, CvrWhitelist>
+     */
+    #[ORM\OneToMany(mappedBy: 'resource', targetEntity: CvrWhitelist::class)]
+    private Collection $cvrWhitelists;
+
+    #[ORM\ManyToOne(targetEntity: Location::class, inversedBy: 'resources')]
+    #[ORM\JoinColumn(name: "location", referencedColumnName: "location")]
+    private Location $location;
 
     #[Groups(['resource', 'minimum'])]
     #[ORM\Column(type: Types::STRING, length: 128, nullable: false)]
@@ -124,16 +130,12 @@ class Resource
     private string $resourceName;
 
     #[Groups(['resource', 'minimum'])]
-    #[ORM\Column(type: Types::TEXT, length: -1, nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $resourceImage = null;
 
     #[Groups(['resource'])]
-    #[ORM\Column(type: Types::TEXT, length: -1, nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $resourceEmailText = null;
-
-    #[Groups(['resource', 'minimum'])]
-    #[ORM\Column(type: Types::STRING, length: 128, nullable: false)]
-    private string $location;
 
     #[Groups(['resource', 'minimum'])]
     #[ORM\Column(type: Types::STRING, length: 128, nullable: true)]
@@ -144,7 +146,7 @@ class Resource
     private ?int $capacity = null;
 
     #[Groups(['resource', 'minimum'])]
-    #[ORM\Column(type: Types::TEXT, length: -1, nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $resourceDescription = null;
 
     #[Groups(['resource', 'minimum'])]
@@ -195,10 +197,6 @@ class Resource
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     private ?bool $permissionBusinessPartner = null;
 
-    #[Groups(['resource'])]
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: false)]
-    private \DateTime $updateTimestamp;
-
     #[Groups(['resource', 'minimum'])]
     #[ORM\Column(type: Types::STRING, length: 128, nullable: true)]
     private ?string $displayName = null;
@@ -208,7 +206,7 @@ class Resource
     private ?string $city = null;
 
     #[Groups(['resource', 'minimum'])]
-    #[ORM\Column(name: 'StreetName', type: Types::STRING, length: 128, nullable: true)]
+    #[ORM\Column(type: Types::STRING, length: 128, nullable: true)]
     private ?string $streetName = null;
 
     #[Groups(['resource', 'minimum'])]
@@ -231,7 +229,6 @@ class Resource
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     private ?bool $acceptConflict = null;
 
-    #[Groups(['resource', 'minimum'])]
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     private ?bool $includeInUI = null;
 
@@ -466,16 +463,6 @@ class Resource
         $this->permissionBusinessPartner = $permissionBusinessPartner;
     }
 
-    public function getUpdateTimestamp(): \DateTime
-    {
-        return $this->updateTimestamp;
-    }
-
-    public function setUpdateTimestamp(\DateTime $updateTimestamp): void
-    {
-        $this->updateTimestamp = $updateTimestamp;
-    }
-
     public function getDisplayName(): ?string
     {
         return $this->displayName;
@@ -564,15 +551,5 @@ class Resource
     public function setIncludeInUI(?bool $includeInUI): void
     {
         $this->includeInUI = $includeInUI;
-    }
-
-    public function getSourceId(): string
-    {
-        return $this->sourceId;
-    }
-
-    public function setSourceId(string $sourceId): void
-    {
-        $this->sourceId = $sourceId;
     }
 }

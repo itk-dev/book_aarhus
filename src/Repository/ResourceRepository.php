@@ -38,9 +38,14 @@ class ResourceRepository extends ServiceEntityRepository
         return null;
     }
 
-    public function getAllByPermission(?string $permission = null): array
+    public function getAllByPermission(?string $permission = null, ?bool $includeInUI = null): array
     {
         $qb = $this->createQueryBuilder('res');
+
+        if ($includeInUI !== null) {
+            $qb->andWhere($qb->expr()->eq('res.includeInUI', ':includeInUI'));
+            $qb->setParameter('includeInUI', $includeInUI);
+        }
 
         if ('citizen' == $permission) {
             $qb->andWhere($qb->expr()->eq('res.permissionCitizen', true));

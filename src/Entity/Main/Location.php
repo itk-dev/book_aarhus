@@ -2,6 +2,8 @@
 
 namespace App\Entity\Main;
 
+use App\Entity\Trait\IdTrait;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -9,13 +11,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity]
 class Location
 {
-    #[ORM\Column(type: Types::INTEGER, nullable: false)]
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    private int $id;
+    use IdTrait;
 
-    #[ORM\Column(type: Types::STRING, unique: true, nullable: false)]
-    private string $sourceId;
+    #[ORM\Column(type: Types::STRING, unique: true)]
+    private string $location;
+
+    /**
+     * @var Collection<int, Resource>
+     */
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\OneToMany(mappedBy: 'location', targetEntity: Resource::class)]
+    private Collection $resources;
 
     #[ORM\Column(type: Types::STRING)]
     private string $displayName;
@@ -32,19 +38,14 @@ class Location
     #[ORM\Column(type: Types::STRING)]
     private string $geoCoordinates;
 
-    public function getId(): int
+    public function getLocation(): string
     {
-        return $this->id;
+        return $this->location;
     }
 
-    public function getSourceId(): string
+    public function setLocation(string $location): void
     {
-        return $this->sourceId;
-    }
-
-    public function setSourceId(string $sourceId): void
-    {
-        $this->sourceId = $sourceId;
+        $this->location = $location;
     }
 
     public function getDisplayName(): string

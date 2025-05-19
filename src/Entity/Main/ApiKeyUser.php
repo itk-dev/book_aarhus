@@ -2,6 +2,7 @@
 
 namespace App\Entity\Main;
 
+use App\Entity\Trait\IdTrait;
 use App\Repository\ApiKeyUserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,12 +12,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ApiKeyUserRepository::class)]
 class ApiKeyUser implements UserInterface
 {
-    private const ROLES = ['ROLE_USER'];
+    use IdTrait;
 
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: Types::INTEGER)]
-    private ?int $id = null;
+    private const ROLES = ['ROLE_USER'];
 
     #[ORM\Column(type: Types::STRING, length: 255, unique: true)]
     #[Assert\Length(
@@ -33,20 +31,12 @@ class ApiKeyUser implements UserInterface
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $webformApiKey = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getRoles(): array
     {
         return self::ROLES;
     }
 
-    /**
-     * @return void
-     */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
     }
 

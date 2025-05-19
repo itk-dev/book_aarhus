@@ -2,49 +2,23 @@
 
 namespace App\Entity\Main;
 
+use App\Entity\Trait\IdTrait;
+use App\Entity\Trait\ResourceIdTrait;
+use App\Entity\Trait\SourceIdTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 class CvrWhitelist
 {
-    #[ORM\Column(type: Types::INTEGER, nullable: false)]
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
-    private int $id;
+    use IdTrait;
+    use SourceIdTrait;
 
-    #[ORM\Column(type: Types::INTEGER, unique: true, nullable: false)]
-    private string $sourceId;
-
-    #[ORM\Column(type: Types::INTEGER, nullable: false)]
-    private int $resourceId;
+    #[ORM\ManyToOne(targetEntity: Resource::class, inversedBy: 'cvrWhitelists')]
+    private Resource $resource;
 
     #[ORM\Column(type: Types::INTEGER, nullable: false)]
     private int $cvr;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: false)]
-    private \DateTime $updateTimestamp;
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    public function setId(int $id): void
-    {
-        $this->id = $id;
-    }
-
-    public function getResourceId(): int
-    {
-        return $this->resourceId;
-    }
-
-    public function setResourceId(int $resourceId): void
-    {
-        $this->resourceId = $resourceId;
-    }
 
     public function getCvr(): int
     {
@@ -56,23 +30,13 @@ class CvrWhitelist
         $this->cvr = $cvr;
     }
 
-    public function getUpdateTimestamp(): \DateTime
+    public function getResource(): Resource
     {
-        return $this->updateTimestamp;
+        return $this->resource;
     }
 
-    public function setUpdateTimestamp(\DateTime $updateTimestamp): void
+    public function setResource(Resource $resource): void
     {
-        $this->updateTimestamp = $updateTimestamp;
-    }
-
-    public function getSourceId(): string
-    {
-        return $this->sourceId;
-    }
-
-    public function setSourceId(string $sourceId): void
-    {
-        $this->sourceId = $sourceId;
+        $this->resource = $resource;
     }
 }
