@@ -212,6 +212,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         $entity->setStatus($userBooking->status);
         $entity->setResourceMail($userBooking->resourceMail);
         $entity->setResourceDisplayName($userBooking->displayName);
+        $entity->setICalUId($userBooking->iCalUId);
 
         return $entity;
     }
