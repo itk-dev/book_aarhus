@@ -118,8 +118,7 @@ class Resource
     private Collection $cvrWhitelists;
 
     #[ORM\ManyToOne(targetEntity: Location::class, inversedBy: 'resources')]
-    #[ORM\JoinColumn(name: "location", referencedColumnName: "location")]
-    private Location $location;
+    private ?Location $location;
 
     #[Groups(['resource', 'minimum'])]
     #[ORM\Column(type: Types::STRING, length: 128, nullable: false)]
@@ -199,10 +198,6 @@ class Resource
 
     #[Groups(['resource', 'minimum'])]
     #[ORM\Column(type: Types::STRING, length: 128, nullable: true)]
-    private ?string $displayName = null;
-
-    #[Groups(['resource', 'minimum'])]
-    #[ORM\Column(type: Types::STRING, length: 128, nullable: true)]
     private ?string $city = null;
 
     #[Groups(['resource', 'minimum'])]
@@ -225,7 +220,6 @@ class Resource
     #[ORM\Column(type: Types::STRING, length: 128, nullable: true)]
     private ?string $locationDisplayName = null;
 
-    #[Groups(['resource', 'minimum'])]
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     private ?bool $acceptConflict = null;
 
@@ -303,12 +297,12 @@ class Resource
         $this->resourceEmailText = $resourceEmailText;
     }
 
-    public function getLocation(): string
+    public function getLocation(): ?Location
     {
         return $this->location;
     }
 
-    public function setLocation(string $location): void
+    public function setLocation(?Location $location): void
     {
         $this->location = $location;
     }
@@ -461,16 +455,6 @@ class Resource
     public function setPermissionBusinessPartner(?bool $permissionBusinessPartner): void
     {
         $this->permissionBusinessPartner = $permissionBusinessPartner;
-    }
-
-    public function getDisplayName(): ?string
-    {
-        return $this->displayName;
-    }
-
-    public function setDisplayName(?string $displayName): void
-    {
-        $this->displayName = $displayName;
     }
 
     public function getCity(): ?string

@@ -19,7 +19,6 @@ class Location
     /**
      * @var Collection<int, Resource>
      */
-    #[Groups(['resource', 'minimum'])]
     #[ORM\OneToMany(mappedBy: 'location', targetEntity: Resource::class)]
     private Collection $resources;
 

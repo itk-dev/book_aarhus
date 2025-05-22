@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Main\CvrWhitelist;
+use App\Entity\Main\HolidayOpeningHours;
 use App\Entity\Main\Location;
 use App\Entity\Main\OpeningHours;
 use App\Entity\Main\Resource;
@@ -34,9 +35,11 @@ class ResourceService implements ResourceServiceInterface
         private readonly string $resourceListEndpoint,
         private readonly string $resourceLocationsEndpoint,
         private readonly string $resourceCvrWhitelistEndpoint,
-        private readonly string $resourceOpenHoursEndpoint,
-        private readonly string $resourceHolidayOpenHoursEndpoint, private readonly CvrWhitelistRepository $cvrWhitelistRepository,
-    ) {
+        private readonly string $resourceOpeningHoursEndpoint,
+        private readonly string $resourceHolidayOpeningHoursEndpoint,
+        private readonly CvrWhitelistRepository $cvrWhitelistRepository,
+    )
+    {
     }
 
     private function parseBoolString(string $boolString): bool
@@ -44,12 +47,15 @@ class ResourceService implements ResourceServiceInterface
         return $boolString === 'True';
     }
 
-    public function updateResources(): array
+    private function updateLocations(): void
     {
         $responseLocations = $this->client->request('GET', $this->resourceLocationsEndpoint);
         $locationsFromEndpoint = $responseLocations->toArray();
 
-        echo '1';
+        $existingIdSourceIds = $this->locationRepository->getExistingSourceIds();
+        $existingSourceIds = array_values($existingIdSourceIds);
+
+        $handledSourceIds = [];
 
         foreach ($locationsFromEndpoint as $locationData) {
             $locationId = $locationData['Location'];
@@ -66,31 +72,53 @@ class ResourceService implements ResourceServiceInterface
             $location->setCity($locationData['City']);
             $location->setPostalCode($locationData['PostalCode']);
             $location->setGeoCoordinates($locationData['GeoCoordinates']);
+
+            $handledSourceIds[] = $locationId;
+        }
+
+        $sourceIdsToDelete = array_diff($existingSourceIds, $handledSourceIds);
+
+        foreach ($sourceIdsToDelete as $sourceId) {
+            $location = $this->locationRepository->findOneBy(['location' => $sourceId]);
+            if ($location !== null) {
+                $this->entityManager->remove($location);
+            }
         }
 
         $this->entityManager->flush();
+    }
+
+    private function updateResources(): void
+    {
+        $existingIdSourceIds = $this->resourceRepository->getExistingSourceIds();
+        $existingSourceIds = array_values($existingIdSourceIds);
+        $handledSourceIds = [];
 
         $responseResources = $this->client->request('GET', $this->resourceListEndpoint);
         $resourcesFromEndpoint = $responseResources->toArray();
-
-        echo '3';
 
         foreach ($resourcesFromEndpoint as $resourceData) {
             $resource = $this->resourceRepository->findOneBy(['sourceId' => $resourceData['ID']]);
 
             if (null === $resource) {
                 $resource = new Resource();
+                $resource->setSourceId($resourceData['ID']);
                 $this->entityManager->persist($resource);
             }
 
-            $resource->setSourceId($resourceData['ID']);
+            $locationId = $resourceData['Location'];
+            $location = $this->locationRepository->findOneBy(['location' => $locationId]);
+
+            if (null !== $location) {
+                $resource->setLocation($location);
+            }
+
             $resource->setResourceMail($resourceData['ResourceMail']);
             $resource->setResourceName($resourceData['ResourceName']);
             $resource->setResourceImage($resourceData['ResourceImage']);
             $resource->setResourceEmailText($resourceData['ResourceEmailText']);
-            $resource->setGeoCoordinates($resourceData['GeoCordinates']);
-            $resource->setCapacity((int) $resourceData['Capacity']);
             $resource->setResourceDescription($resourceData['ResourceDescription']);
+            $resource->setCapacity((int)$resourceData['Capacity']);
             $resource->setWheelchairAccessible($this->parseBoolString($resourceData['WheelChairAccessible']));
             $resource->setVideoConferenceEquipment($this->parseBoolString($resourceData['VideoConferenceEquipment']));
             $resource->setMonitorEquipment($this->parseBoolString($resourceData['MonitorEquipment']));
@@ -103,39 +131,54 @@ class ResourceService implements ResourceServiceInterface
             $resource->setPermissionEmployee($this->parseBoolString($resourceData['PermissionEmployee']));
             $resource->setPermissionCitizen($this->parseBoolString($resourceData['PermissionCitizen']));
             $resource->setPermissionBusinessPartner($this->parseBoolString($resourceData['PermissionBusinessPartner']));
-            $resource->setDisplayName($resourceData['DisplayName']);
-            $resource->setCity($resourceData['City']);
-            $resource->setPostalCode((int) $resourceData['PostalCode']);
-            $resource->setResourceDisplayName($resourceData['ResourceDisplayName']);
-            $resource->setLocationDisplayName($resourceData['LocationDisplayName']);
-            $resource->setAcceptConflict($this->parseBoolString($resourceData['AcceptConflict']));
             $resource->setIncludeInUI($this->parseBoolString($resourceData['IncludeinUI']));
+            $resource->setAcceptConflict($this->parseBoolString($resourceData['AcceptConflict']));
+            $resource->setResourceDisplayName($resourceData['ResourceDisplayName']);
+
+            // Location fields.
+            $resource->setCity($location?->getCity());
+            $resource->setPostalCode((int)$location?->getPostalCode());
+            $resource->setGeoCoordinates($location?->getGeoCoordinates());
+            $resource->setLocationDisplayName($location?->getDisplayName());
+            $resource->setStreetName($location?->getAddress());
+
+            $handledSourceIds[] = $resource->getSourceId();
+        }
+
+        $sourceIdsToDelete = array_diff($existingSourceIds, $handledSourceIds);
+
+        foreach ($sourceIdsToDelete as $sourceId) {
+            $resource = $this->resourceRepository->findOneBy(['sourceId' => $sourceId]);
+            if ($resource !== null) {
+                $this->entityManager->remove($resource);
+            }
         }
 
         $this->entityManager->flush();
+    }
+
+    private function updateCVRWhitelists(): void
+    {
+        $existingIdSourceIds = $this->cvrWhitelistRepository->getExistingSourceIds();
+        $existingSourceIds = array_values($existingIdSourceIds);
+        $handledSourceIds = [];
 
         $responseCvrWhitelist = $this->client->request('GET', $this->resourceCvrWhitelistEndpoint);
         $cvrWhitelistFromEndpoint = $responseCvrWhitelist->toArray();
 
-        echo '2';
-
-        // TODO: Get list of existing resources.
-        // Remove those that do not exist in external list.
-
         foreach ($cvrWhitelistFromEndpoint as $data) {
-            $resourceId = (int) $data['resourceID'];
+            $resourceId = (int)$data['resourceID'];
             $resource = $this->resourceRepository->findOneBy(['sourceId' => $resourceId]);
 
             if ($resource === null) {
                 continue;
             }
 
-            /** @var CvrWhitelist $entry */
             $entry = $this->cvrWhitelistRepository->findOneBy(['sourceId' => $data['ID']]);
 
             if (null === $entry) {
                 $entry = new CvrWhitelist();
-                $entry->setSourceId((int) $data['ID']);
+                $entry->setSourceId((int)$data['ID']);
                 $this->entityManager->persist($entry);
             }
 
@@ -143,32 +186,28 @@ class ResourceService implements ResourceServiceInterface
             $entry->setResource($resource);
         }
 
-        $this->entityManager->flush();
+        $sourceIdsToDelete = array_diff($existingSourceIds, $handledSourceIds);
 
-        echo '4';
-/*
-        $responseOpenHours = $this->client->request('GET', $this->resourceOpenHoursEndpoint);
-        $openHoursFromEndpoint = $responseOpenHours->toArray();
-
-        foreach ($openHoursFromEndpoint as $openHoursData) {
-            $openingHours = $this->openingHoursRepository->findOneBy(['sourceId' => $openHoursData['ID']]);
-
-            if (null === $openingHours) {
-                $openingHours = new OpeningHours();
-                $openingHours->setSourceId($openHoursData['ID']);
-                $this->entityManager->persist($openingHours);
+        foreach ($sourceIdsToDelete as $sourceId) {
+            $entry = $this->cvrWhitelistRepository->findOneBy(['sourceId' => $sourceId]);
+            if ($entry !== null) {
+                $this->entityManager->remove($entry);
             }
-
-            $openingHours->setResourceId($openHoursData['resourceID']);
-            $openingHours->setWeekday((int) $openHoursData['weekday']);
-            $openingHours->setOpenTime(\DateTime::createFromFormat('H:i:s', $openHoursData['open']));
-            $openingHours->setOpenTime(\DateTime::createFromFormat('H:i:s', $openHoursData['close']));
         }
 
-        $responseHolidayOpenHours = $this->client->request('GET', $this->resourceHolidayOpenHoursEndpoint);
-        $holidayOpenHoursFromEndpoint = $responseHolidayOpenHours->toArray();
-*/
-        return [];
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Updates resources from external API endpoints.
+     */
+    public function update(): void
+    {
+        $this->updateLocations();
+        $this->updateResources();
+        $this->updateCVRWhitelists();
+        $this->updateOpeningHours();
+        //$this->updateHolidayOpeningHours();
     }
 
     /**
@@ -208,5 +247,98 @@ class ResourceService implements ResourceServiceInterface
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
         return json_decode($serializedWhitelistedResources);
+    }
+
+    private function updateOpeningHours()
+    {
+        $existingIdSourceIds = $this->openingHoursRepository->getExistingSourceIds();
+        $existingSourceIds = array_values($existingIdSourceIds);
+        $handledSourceIds = [];
+
+        $response = $this->client->request('GET', $this->resourceOpeningHoursEndpoint);
+        $dataFromEndpoint = $response->toArray();
+
+        foreach ($dataFromEndpoint as $data) {
+            $resourceId = (int) $data['resourceID'];
+            $resource = $this->resourceRepository->findOneBy(['sourceId' => $resourceId]);
+
+            if ($resource === null) {
+                continue;
+            }
+
+            $sourceId = (int) $data['ID'];
+
+            $entry = $this->openingHoursRepository->findOneBy(['sourceId' => $sourceId]);
+
+            if (null === $entry) {
+                $entry = new OpeningHours();
+                $entry->setSourceId((int) $data['ID']);
+                $entry->setResource($resource);
+                $this->entityManager->persist($entry);
+            }
+
+            $entry->setWeekday((int) $data['weekday']);
+            $entry->setOpen(\DateTime::createFromFormat('H:i:s', $data['open']));
+            $entry->setClose(\DateTime::createFromFormat('H:i:s', $data['close']));
+
+            $handledSourceIds[] = $entry->getSourceId();
+        }
+
+        $sourceIdsToDelete = array_diff($existingSourceIds, $handledSourceIds);
+
+        foreach ($sourceIdsToDelete as $sourceId) {
+            $entry = $this->openingHoursRepository->findOneBy(['sourceId' => $sourceId]);
+            if ($entry !== null) {
+                $this->entityManager->remove($entry);
+            }
+        }
+
+        $this->entityManager->flush();
+    }
+
+    private function updateHolidayOpeningHours()
+    {
+        $existingIdSourceIds = $this->holidayOpeningHoursRepository->getExistingSourceIds();
+        $existingSourceIds = array_values($existingIdSourceIds);
+        $handledSourceIds = [];
+
+        $response = $this->client->request('GET', $this->resourceHolidayOpeningHoursEndpoint);
+        $dataFromEndpoint = $response->toArray();
+
+        foreach ($dataFromEndpoint as $data) {
+            $resourceId = (int)$data['resourceID'];
+            $resource = $this->resourceRepository->findOneBy(['sourceId' => $resourceId]);
+
+            if ($resource === null) {
+                continue;
+            }
+
+            $sourceId = (int) $data['ID'];
+
+            $entry = $this->holidayOpeningHoursRepository->findOneBy(['sourceId' => $sourceId]);
+
+            if (null === $entry) {
+                $entry = new HolidayOpeningHours();
+                $entry->setSourceId($sourceId);
+                $entry->setResource($resource);
+                $this->entityManager->persist($entry);
+            }
+
+            $entry->setHolidayOpen(\DateTime::createFromFormat('H:i:s', $data['open']));
+            $entry->setHolidayClose(\DateTime::createFromFormat('H:i:s', $data['close']));
+
+            $handledSourceIds[] = $entry->getSourceId();
+        }
+
+        $sourceIdsToDelete = array_diff($existingSourceIds, $handledSourceIds);
+
+        foreach ($sourceIdsToDelete as $sourceId) {
+            $entry = $this->holidayOpeningHoursRepository->findOneBy(['sourceId' => $sourceId]);
+            if ($entry !== null) {
+                $this->entityManager->remove($entry);
+            }
+        }
+
+        $this->entityManager->flush();
     }
 }

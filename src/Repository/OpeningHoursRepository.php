@@ -15,4 +15,11 @@ class OpeningHoursRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, OpeningHours::class);
     }
+
+    public function getExistingSourceIds()
+    {
+        $query = 'SELECT id,source_id FROM opening_hours';
+        $stmt = $this->getEntityManager()->getConnection()->prepare($query);
+        return $stmt->executeQuery()->fetchAllKeyValue();
+    }
 }

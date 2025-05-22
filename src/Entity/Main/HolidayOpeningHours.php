@@ -17,7 +17,6 @@ class HolidayOpeningHours
     use ResourceIdTrait;
 
     #[ORM\ManyToOne(targetEntity: Resource::class, inversedBy: 'holidayOpenHours')]
-    #[ORM\JoinColumn(name: "resource_id", referencedColumnName: "source_id")]
     private Resource $resource;
 
     #[Groups(['resource', 'minimum'])]

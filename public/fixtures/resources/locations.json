@@ -1,0 +1,20 @@
+[
+  {
+    "Location": "DOKK1",
+    "LocationDisplayName": "DOKK1",
+    "Address": "Hack Kampmanns Plads 2",
+    "City": "Aarhus C",
+    "PostalCode": "8000",
+    "GeoCoordinates": "56.154083203964056, 10.214307184076445",
+    "UpdateTimeStamp": "2024-04-05 09:27:47.117 +00:00"
+  },
+  {
+    "Location": "MSO-TEST",
+    "LocationDisplayName": "MSO Test",
+    "Address": "Ukendt adresse",
+    "City": "Aarhus C",
+    "PostalCode": "8000",
+    "GeoCoordinates": "56.254083203964056, 10.314307184076445",
+    "UpdateTimeStamp": "2024-04-05 09:27:47.117 +00:00"
+  }
+]

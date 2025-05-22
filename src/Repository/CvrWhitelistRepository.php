@@ -15,4 +15,11 @@ class CvrWhitelistRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, CvrWhitelist::class);
     }
+
+    public function getExistingSourceIds()
+    {
+        $query = 'SELECT id,source_id FROM cvr_whitelist';
+        $stmt = $this->getEntityManager()->getConnection()->prepare($query);
+        return $stmt->executeQuery()->fetchAllKeyValue();
+    }
 }

@@ -17,7 +17,6 @@ class OpeningHours
     use ResourceIdTrait;
 
     #[ORM\ManyToOne(targetEntity: Resource::class, inversedBy: 'openTimeHours')]
-    #[ORM\JoinColumn(name: "resource_id", referencedColumnName: "source_id")]
     private Resource $resource;
 
     #[Groups(['resource', 'minimum'])]
@@ -25,12 +24,12 @@ class OpeningHours
     private int $weekday;
 
     #[Groups(['resource', 'minimum'])]
-    #[ORM\Column(type: Types::TIME_MUTABLE, length: 0)]
-    private readonly \DateTime $openTime;
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    private \DateTime $open;
 
     #[Groups(['resource', 'minimum'])]
-    #[ORM\Column(type: Types::TIME_MUTABLE, length: 0)]
-    private readonly \DateTime $closeTime;
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    private \DateTime $close;
 
     public function getWeekday(): int
     {
@@ -42,24 +41,24 @@ class OpeningHours
         $this->weekday = $weekday;
     }
 
-    public function getOpenTime(): \DateTime
+    public function getOpen(): \DateTime
     {
-        return $this->openTime;
+        return $this->open;
     }
 
-    public function setOpenTime(\DateTime $openTime): void
+    public function setOpen(\DateTime $open): void
     {
-        $this->openTime = $openTime;
+        $this->open = $open;
     }
 
-    public function getCloseTime(): \DateTime
+    public function getClose(): \DateTime
     {
-        return $this->closeTime;
+        return $this->close;
     }
 
-    public function setCloseTime(\DateTime $closeTime): void
+    public function setClose(\DateTime $close): void
     {
-        $this->closeTime = $closeTime;
+        $this->close = $close;
     }
 
     public function getResource(): Resource

@@ -4,7 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Main\Resource;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
+use PDO;
 
 /**
  * @extends \Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository<\App\Entity\Main\Resource>
@@ -84,5 +86,12 @@ class ResourceRepository extends ServiceEntityRepository
         )->setParameter('whitelist', $whitelistKey);
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function getExistingSourceIds()
+    {
+        $query = 'SELECT id,source_id FROM resource';
+        $stmt = $this->getEntityManager()->getConnection()->prepare($query);
+        return $stmt->executeQuery()->fetchAllKeyValue();
     }
 }

@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "1",
+    "resourceID": "3",
+    "cvr": "1234567890",
+    "UpdateTimeStamp": "6\/8\/2023 8:29:12 AM"
+  },
+  {
+    "ID": "2",
+    "resourceID": "3",
+    "cvr": "23456789",
+    "UpdateTimeStamp": "6\/8\/2023 8:29:12 AM"
+  },
+  {
+    "ID": "3",
+    "resourceID": "4",
+    "cvr": "23456789",
+    "UpdateTimeStamp": "6\/8\/2023 8:29:12 AM"
+  }
+]

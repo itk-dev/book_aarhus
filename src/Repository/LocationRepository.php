@@ -15,4 +15,10 @@ class LocationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Location::class);
     }
-}
+
+    public function getExistingSourceIds()
+    {
+        $query = 'SELECT id,location FROM location';
+        $stmt = $this->getEntityManager()->getConnection()->prepare($query);
+        return $stmt->executeQuery()->fetchAllKeyValue();
+    }}

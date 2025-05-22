@@ -24,11 +24,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
-
-        $resources = $this->resourceService->updateResources();
-
-        $io->success("Done. " . count($resources));
+        $this->resourceService->update();
 
         return Command::SUCCESS;
     }

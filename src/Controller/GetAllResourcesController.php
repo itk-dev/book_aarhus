@@ -41,6 +41,6 @@ class GetAllResourcesController extends AbstractController
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
-        return new JsonResponse($resources, \Symfony\Component\HttpFoundation\Response::HTTP_OK);
+        return new JsonResponse($resources, Response::HTTP_OK);
     }
 }

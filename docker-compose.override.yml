@@ -1,4 +1,9 @@
 services:
+  phpfpm:
+    networks:
+      - app
+      - frontend
+
   redis:
     image: 'redis:6'
     networks:
