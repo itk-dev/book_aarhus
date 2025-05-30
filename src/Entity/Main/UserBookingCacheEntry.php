@@ -89,7 +89,7 @@ class UserBookingCacheEntry
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private int $id;
+    private ?int $id = null;
 
     #[Groups('userBookingCacheEntry')]
     #[ORM\Column(length: 255)]
@@ -127,7 +127,7 @@ class UserBookingCacheEntry
     #[ORM\Column(length: 255)]
     private string $iCalUId;
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

@@ -15,7 +15,7 @@ class ApiKeyUser implements UserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private int $id;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     #[Assert\Length(
@@ -32,7 +32,7 @@ class ApiKeyUser implements UserInterface
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $webformApiKey;
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
