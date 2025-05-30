@@ -89,50 +89,50 @@ class UserBookingCacheEntry
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id;
 
     #[Groups('userBookingCacheEntry')]
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    private string $title;
 
     // TODO: Remove Groups. ExchangeId should not be used in the frontend.
     #[Groups('userBookingCacheEntry')]
     #[ORM\Column(length: 255)]
-    private ?string $exchangeId = null;
+    private string $exchangeId;
 
     #[ORM\Column(length: 255)]
-    private ?string $uid = null;
+    private string $uid;
 
     #[Groups('userBookingCacheEntry')]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $start = null;
+    private \DateTimeInterface $start;
 
     #[Groups('userBookingCacheEntry')]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $end = null;
+    private \DateTimeInterface $end;
 
     #[Groups('userBookingCacheEntry')]
     #[ORM\Column(length: 255)]
-    private ?string $status = null;
+    private string $status;
 
     #[Groups('userBookingCacheEntry')]
     #[ORM\Column(length: 255)]
-    private ?string $resourceMail = null;
+    private string $resourceMail;
 
     #[Groups('userBookingCacheEntry')]
     #[ORM\Column(length: 255)]
-    private ?string $resourceDisplayName = null;
+    private string $resourceDisplayName;
 
     #[Groups('userBookingCacheEntry')]
     #[ORM\Column(length: 255)]
-    private ?string $iCalUId = null;
+    private string $iCalUId;
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -144,7 +144,7 @@ class UserBookingCacheEntry
         return $this;
     }
 
-    public function getExchangeId(): ?string
+    public function getExchangeId(): string
     {
         return $this->exchangeId;
     }
@@ -156,7 +156,7 @@ class UserBookingCacheEntry
         return $this;
     }
 
-    public function getUid(): ?string
+    public function getUid(): string
     {
         return $this->uid;
     }
@@ -168,7 +168,7 @@ class UserBookingCacheEntry
         return $this;
     }
 
-    public function getStart(): ?\DateTimeInterface
+    public function getStart(): \DateTimeInterface
     {
         return $this->start;
     }
@@ -180,7 +180,7 @@ class UserBookingCacheEntry
         return $this;
     }
 
-    public function getEnd(): ?\DateTimeInterface
+    public function getEnd(): \DateTimeInterface
     {
         return $this->end;
     }
@@ -192,7 +192,7 @@ class UserBookingCacheEntry
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): string
     {
         return $this->status;
     }
@@ -204,7 +204,7 @@ class UserBookingCacheEntry
         return $this;
     }
 
-    public function getResourceMail(): ?string
+    public function getResourceMail(): string
     {
         return $this->resourceMail;
     }
@@ -216,24 +216,24 @@ class UserBookingCacheEntry
         return $this;
     }
 
-    public function getResourceDisplayName(): ?string
+    public function getResourceDisplayName(): string
     {
         return $this->resourceDisplayName;
     }
 
-    public function setResourceDisplayName(?string $resourceDisplayName): static
+    public function setResourceDisplayName(string $resourceDisplayName): static
     {
         $this->resourceDisplayName = $resourceDisplayName;
 
         return $this;
     }
 
-    public function getICalUId(): ?string
+    public function getICalUId(): string
     {
         return $this->iCalUId;
     }
 
-    public function setICalUId(?string $iCalUId): static
+    public function setICalUId(string $iCalUId): static
     {
         $this->iCalUId = $iCalUId;
 
