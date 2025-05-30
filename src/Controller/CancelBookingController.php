@@ -71,7 +71,7 @@ class CancelBookingController extends AbstractController
                     $result['status'] = CancelBookingStatusEnum::FORBIDDEN->value;
                 } else {
                     $this->bookingService->deleteBooking($userBooking);
-                    $this->userBookingCacheService->deleteCacheEntryByICalUId($id);
+                    $this->userBookingCacheService->deleteCacheEntryByICalUId($iCalUID);
 
                     $result['status'] = CancelBookingStatusEnum::DELETED->value;
                 }

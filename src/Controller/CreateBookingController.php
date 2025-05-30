@@ -183,7 +183,7 @@ class CreateBookingController extends AbstractController
                             // Delete booking
                             $this->bookingService->deleteBookingByICalUid($iCalUId);
                             // Remove from cache
-                            $this->userBookingCacheService->deleteCacheEntry($iCalUId);
+                            $this->userBookingCacheService->deleteCacheEntryByICalUId($iCalUId);
 
                             $bookingRequest->status = CreateBookingStatusEnum::CANCELLED;
                         } catch (\Throwable) {

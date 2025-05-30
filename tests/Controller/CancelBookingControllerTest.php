@@ -64,7 +64,7 @@ class CancelBookingControllerTest extends AbstractBaseApiTestCase
         $userBookingCacheServiceMock
             ->expects($this->exactly(1))
             ->method('deleteCacheEntryByICalUId')
-            ->with($mockBookingId1)
+            ->with($mockICalUid1)
         ;
 
         $container = self::getContainer();
