@@ -26,7 +26,7 @@ class ResourceServiceTest extends AbstractBaseApiTestCase
 
         $metric = $this->createMock(MetricsHelper::class);
 
-        $service = new ResourceService($aakResourceRepository, $cache, $serializer, $metric);
+        $service = new ResourceService($aakResourceRepository, $cache, $serializer, $metric, []);
 
         $data = $service->getAllResources('citizen');
 
@@ -59,7 +59,7 @@ class ResourceServiceTest extends AbstractBaseApiTestCase
 
         $metric = $this->createMock(MetricsHelper::class);
 
-        $service = new ResourceService($aakResourceRepository, $cache, $serializer, $metric);
+        $service = new ResourceService($aakResourceRepository, $cache, $serializer, $metric, []);
 
         $data = $service->getWhitelistedResources('citizen', 'key');
 

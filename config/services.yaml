@@ -11,6 +11,7 @@ parameters:
     microsoft_graph_service_account_password: '%env(string:MICROSOFT_GRAPH_SERVICE_ACCOUNT_PASSWORD)%'
     email_from_address: '%env(string:EMAIL_FROM_ADDRESS)%'
     email_admin_notification: '%env(string:ADMIN_NOTIFICATION_EMAIL)%'
+    excluded_resources: '%env(json:APP_EXCLUDED_RESOURCES)%'
 
 services:
     # default configuration for services in *this* file
@@ -35,6 +36,10 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Service\ResourceService:
+        arguments:
+            $excludesResources: '%excluded_resources%'
 
     App\Doctrine\AAKResourceExtension:
         tags:
