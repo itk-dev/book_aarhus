@@ -35,7 +35,7 @@ class AAKResourceRepository extends ServiceEntityRepository
         return null;
     }
 
-    public function getAllByPermission(?string $permission = null, ?array $excludedResources = []): array
+    public function getAllByPermission(?string $permission = null, array $excludedResources = []): array
     {
         $qb = $this->createQueryBuilder('res');
 
@@ -59,7 +59,7 @@ class AAKResourceRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function getOnlyWhitelisted(?string $permission = null, ?string $whitelistKey = null, ?array $excludedResources = [])
+    public function getOnlyWhitelisted(?string $permission = null, ?string $whitelistKey = null, array $excludedResources = [])
     {
         $qb = $this->createQueryBuilder('res');
 
