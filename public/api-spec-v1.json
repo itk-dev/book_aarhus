@@ -15,6 +15,88 @@
         }
     ],
     "paths": {
+        "/v1/bookings": {
+            "post": {
+                "operationId": "api_v1bookings_post",
+                "tags": [
+                    "Booking"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Booking resource created",
+                        "content": {
+                            "application/ld+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Booking.jsonld"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Booking"
+                                }
+                            }
+                        },
+                        "links": {}
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "422": {
+                        "description": "Unprocessable entity"
+                    }
+                },
+                "summary": "Creates a Booking resource.",
+                "description": "Create bookings",
+                "parameters": [],
+                "requestBody": {
+                    "description": "The new Booking resource",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "properties": {
+                                    "abortIfAnyFail": "bool",
+                                    "bookings": {
+                                        "type": "object",
+                                        "properties": {
+                                            "subject": "string",
+                                            "start": "string",
+                                            "end": "string",
+                                            "name": "string",
+                                            "email": "string",
+                                            "resourceId": "string",
+                                            "clientBookingId": "string",
+                                            "userId": "string",
+                                            "metaData": "array"
+                                        }
+                                    }
+                                }
+                            },
+                            "example": {
+                                "bookings": [
+                                    {
+                                        "subject": "Test Booking",
+                                        "start": "2004-02-26T15:00:00+00:00",
+                                        "end": "2004-02-26T15:30:00+00:00",
+                                        "name": "Admin Jensen",
+                                        "email": "admin_jensen@example.com",
+                                        "resourceId": "test@example.com",
+                                        "clientBookingId": "1234567890",
+                                        "userId": "some_unqiue_user_id",
+                                        "metaData": {
+                                            "data1": "example1",
+                                            "data2": "example2"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "required": false
+                },
+                "deprecated": false
+            }
+        },
         "/v1/bookings-webform": {
             "post": {
                 "operationId": "post-v1-create-booking-webform-submit",
@@ -70,6 +152,44 @@
                         "description": "Created"
                     }
                 }
+            }
+        },
+        "/v1/bookings/cancel": {
+            "delete": {
+                "operationId": "api_v1bookingscancel_delete",
+                "tags": [
+                    "Booking"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Booking resource deleted"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    }
+                },
+                "summary": "Removes the Booking resource.",
+                "description": "Cancel bookings by iCalUIds",
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "properties": {
+                                    "ids": "array"
+                                }
+                            },
+                            "example": {
+                                "ids": [
+                                    "def"
+                                ]
+                            }
+                        }
+                    },
+                    "required": false
+                },
+                "deprecated": false
             }
         },
         "/v1/busy-intervals": {
@@ -2545,6 +2665,9 @@
                     },
                     "resourceDisplayName": {
                         "type": "string"
+                    },
+                    "iCalUId": {
+                        "type": "string"
                     }
                 }
             },
@@ -2586,6 +2709,9 @@
                         "type": "string"
                     },
                     "resourceDisplayName": {
+                        "type": "string"
+                    },
+                    "iCalUId": {
                         "type": "string"
                     }
                 }

@@ -8,7 +8,7 @@ use App\Exception\WebformSubmissionRetrievalException;
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
 use App\Repository\Resources\AAKResourceRepository;
-use App\Service\BookingServiceInterface;
+use App\Service\CreateBookingService;
 use App\Service\MetricsHelper;
 use App\Service\WebformServiceInterface;
 use App\Utils\ValidationUtilsInterface;
@@ -18,10 +18,6 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
-use Twig\Environment;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 
 /**
  * @see https://github.com/itk-dev/os2forms_selvbetjening/blob/develop/web/modules/custom/os2forms_rest_api/README.md
@@ -35,9 +31,8 @@ class WebformSubmitHandler
         private readonly ValidationUtilsInterface $validationUtils,
         private readonly LoggerInterface $logger,
         private readonly AAKResourceRepository $aakResourceRepository,
-        private readonly Environment $twig,
-        private readonly BookingServiceInterface $bookingService,
         private readonly MetricsHelper $metricsHelper,
+        private readonly CreateBookingService $createBookingService,
     ) {
     }
 
@@ -74,8 +69,8 @@ class WebformSubmitHandler
                     throw new WebformSubmissionRetrievalException('Resource does not exist', 404);
                 }
 
-                $body = $this->composeBookingContents($data, $resource, $dataSubmission['metaData'] ?? []);
-                $htmlContents = $this->renderContentsAsHtml($body);
+                $body = $this->createBookingService->composeBookingContents($data, $resource, $dataSubmission['metaData'] ?? []);
+                $htmlContents = $this->createBookingService->renderContentsAsHtml($body);
 
                 $booking = new Booking();
                 $booking->setBody($htmlContents);
@@ -109,41 +104,5 @@ class WebformSubmitHandler
         }
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
-    }
-
-    /**
-     * @throws WebformSubmissionRetrievalException
-     */
-    private function composeBookingContents($data, AAKResource $resource, $metaData): array
-    {
-        try {
-            $body = [];
-            $body['resource'] = $resource;
-            $body['submission'] = $data;
-            $body['submission']['fromObj'] = new \DateTime($data['start']);
-            $body['submission']['toObj'] = new \DateTime($data['end']);
-            $body['metaData'] = $metaData;
-            $body['userUniqueId'] = $this->bookingService->createBodyUserId($data['userId']);
-
-            return $body;
-        } catch (\Exception $exception) {
-            $this->metricsHelper->incExceptionTotal(\Exception::class);
-
-            throw new WebformSubmissionRetrievalException($exception->getMessage());
-        }
-    }
-
-    /**
-     * @throws WebformSubmissionRetrievalException
-     */
-    private function renderContentsAsHtml(array $body): string
-    {
-        try {
-            return $this->twig->render('booking.html.twig', $body);
-        } catch (RuntimeError|SyntaxError|LoaderError $error) {
-            $this->metricsHelper->incExceptionTotal(\Error::class);
-
-            throw new WebformSubmissionRetrievalException($error->getMessage());
-        }
     }
 }

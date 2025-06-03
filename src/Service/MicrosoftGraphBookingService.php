@@ -604,6 +604,10 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
+        if (empty($iCalUId)) {
+            throw new UserBookingException('Empty iCalUId is provided', 400);
+        }
+
         $token = $this->graphHelperService->authenticateAsServiceAccount();
 
         $path = "/me/events?\$filter=iCalUId eq '$iCalUId'";
@@ -663,5 +667,25 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
         return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws MicrosoftGraphCommunicationException
+     * @throws UserBookingException
+     */
+    public function deleteBookingByICalUid(string $iCalUId): void
+    {
+        $bookingId = $this->getBookingIdFromICalUid($iCalUId);
+
+        if (null === $bookingId) {
+            throw new UserBookingException('Could not find booking id from iCalUId', 404);
+        }
+
+        $bookingData = $this->getBooking($bookingId);
+        $userBooking = $this->getUserBookingFromApiData($bookingData);
+
+        $this->deleteBooking($userBooking);
     }
 }

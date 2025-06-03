@@ -35,7 +35,7 @@ class AAKResourceRepository extends ServiceEntityRepository
         return null;
     }
 
-    public function getAllByPermission(?string $permission = null): array
+    public function getAllByPermission(?string $permission = null, array $excludedResources = []): array
     {
         $qb = $this->createQueryBuilder('res');
 
@@ -50,12 +50,16 @@ class AAKResourceRepository extends ServiceEntityRepository
             ));
         }
 
+        if (!empty($excludedResources)) {
+            $qb->andWhere($qb->expr()->notIn('res.resourceMail', $excludedResources));
+        }
+
         $qb->andWhere($qb->expr()->neq('res.hasWhitelist', true));
 
         return $qb->getQuery()->getResult();
     }
 
-    public function getOnlyWhitelisted(?string $permission = null, ?string $whitelistKey = null)
+    public function getOnlyWhitelisted(?string $permission = null, ?string $whitelistKey = null, array $excludedResources = [])
     {
         $qb = $this->createQueryBuilder('res');
 
@@ -63,6 +67,10 @@ class AAKResourceRepository extends ServiceEntityRepository
             $qb->andWhere($qb->expr()->eq('res.permissionCitizen', true));
         } elseif ('businessPartner' == $permission) {
             $qb->andWhere($qb->expr()->eq('res.permissionBusinessPartner', true));
+        }
+
+        if (!empty($excludedResources)) {
+            $qb->andWhere($qb->expr()->notIn('res.resourceMail', $excludedResources));
         }
 
         $subQueryBuilder = $this->cvrWhitelistRepository->createQueryBuilder('w');
