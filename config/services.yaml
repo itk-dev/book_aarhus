@@ -39,7 +39,7 @@ services:
 
     App\Service\ResourceService:
         arguments:
-            $excludesResources: '%excluded_resources%'
+            $excludedResources: '%excluded_resources%'
 
     App\Doctrine\AAKResourceExtension:
         tags:
