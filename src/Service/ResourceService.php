@@ -15,7 +15,7 @@ class ResourceService implements ResourceServiceInterface
         private readonly CacheInterface $resourceCache,
         private readonly SerializerInterface $serializer,
         private readonly MetricsHelper $metricsHelper,
-        private readonly array $excludesResources,
+        private readonly array $excludedResources,
     ) {
     }
 
@@ -36,7 +36,7 @@ class ResourceService implements ResourceServiceInterface
 
         $cachedResources = $this->resourceCache->get("resources-$permission", function (CacheItemInterface $cacheItem) use ($cacheLifetime, $permission) {
             $cacheItem->expiresAfter($cacheLifetime);
-            $info = $this->aakResourceRepository->getAllByPermission($permission, $this->excludesResources);
+            $info = $this->aakResourceRepository->getAllByPermission($permission, $this->excludedResources);
 
             return $this->serializer->serialize($info, 'json', ['groups' => 'minimum']);
         });
@@ -50,7 +50,7 @@ class ResourceService implements ResourceServiceInterface
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
-        $info = $this->aakResourceRepository->getOnlyWhitelisted($permission, $whitelistKey, $this->excludesResources);
+        $info = $this->aakResourceRepository->getOnlyWhitelisted($permission, $whitelistKey, $this->excludedResources);
         $serializedWhitelistedResources = $this->serializer->serialize($info, 'json', ['groups' => 'minimum']);
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
