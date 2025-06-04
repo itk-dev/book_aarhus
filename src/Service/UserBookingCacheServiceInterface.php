@@ -63,4 +63,13 @@ interface UserBookingCacheServiceInterface
      * @return void
      */
     public function deleteCacheEntry(string $exchangeId): void;
+
+    /**
+     * Delete an entry from the cache table.
+     *
+     * @param string $iCalUId
+     *
+     * @return void
+     */
+    public function deleteCacheEntryByICalUId(string $iCalUId): void;
 }

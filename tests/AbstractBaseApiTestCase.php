@@ -6,6 +6,7 @@ use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use ApiPlatform\Symfony\Bundle\Test\Client;
 use App\Entity\Main\ApiKeyUser;
 use App\Security\ApiKeyAuthenticator;
+use PHPUnit\Framework\Constraint\Callback;
 
 abstract class AbstractBaseApiTestCase extends ApiTestCase
 {
@@ -45,5 +46,24 @@ abstract class AbstractBaseApiTestCase extends ApiTestCase
             ApiKeyAuthenticator::AUTH_HEADER => ApiKeyAuthenticator::AUTH_HEADER_PREFIX.self::API_KEY,
             'Content-Type' => 'application/ld+json',
         ]]);
+    }
+
+    /**
+     * Creates a callback used in replacement of withConsecutive().
+     *
+     * @see https://github.com/sebastianbergmann/phpunit/issues/4026.
+     *
+     * @param array $params
+     *
+     * @return Callback
+     */
+    protected function createCallback(array $params): Callback
+    {
+        return self::callback(function (mixed $message) use ($params) {
+            static $invocationCount = 0;
+            ++$invocationCount;
+
+            return $message === $params[$invocationCount - 1];
+        });
     }
 }

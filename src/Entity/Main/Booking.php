@@ -2,12 +2,18 @@
 
 namespace App\Entity\Main;
 
-use ApiPlatform\Action\NotFoundAction;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\OpenApi\Model;
+use ApiPlatform\Symfony\Action\NotFoundAction;
+use App\Controller\CancelBookingController;
+use App\Controller\CreateBookingController;
 use App\Controller\CreateBookingWebformSubmitController;
+use App\Dto\BookingCancelInput;
+use App\Dto\CreateBookingsInput;
 use App\Dto\WebformBookingInput;
 use Symfony\Component\Uid\Ulid;
 
@@ -33,6 +39,83 @@ use Symfony\Component\Uid\Ulid;
             ],
         ],
         input: WebformBookingInput::class
+    ),
+    new Delete(
+        uriTemplate: '/bookings/cancel',
+        controller: CancelBookingController::class,
+        openapi: new Model\Operation(
+            description: 'Cancel bookings by iCalUIds',
+            requestBody: new Model\RequestBody(
+                content: new \ArrayObject([
+                    'application/json' => [
+                        'schema' => [
+                            'type' => 'array',
+                            'properties' => [
+                                'ids' => 'array',
+                            ],
+                        ],
+                        'example' => [
+                            'ids' => [
+                                'def',
+                            ],
+                        ],
+                    ],
+                ])
+            )
+        ),
+        input: BookingCancelInput::class
+    ),
+    new Post(
+        uriTemplate: '/bookings',
+        controller: CreateBookingController::class,
+        openapi: new Model\Operation(
+            description: 'Create bookings',
+            requestBody: new Model\RequestBody(
+                content: new \ArrayObject([
+                    'application/json' => [
+                        'schema' => [
+                            'type' => 'array',
+                            'properties' => [
+                                'abortIfAnyFail' => 'bool',
+                                'bookings' => [
+                                    'type' => 'object',
+                                    'properties' => [
+                                        'subject' => 'string',
+                                        'start' => 'string',
+                                        'end' => 'string',
+                                        'name' => 'string',
+                                        'email' => 'string',
+                                        'resourceId' => 'string',
+                                        'clientBookingId' => 'string',
+                                        'userId' => 'string',
+                                        'metaData' => 'array',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'example' => [
+                            'bookings' => [
+                                [
+                                    'subject' => 'Test Booking',
+                                    'start' => '2004-02-26T15:00:00+00:00',
+                                    'end' => '2004-02-26T15:30:00+00:00',
+                                    'name' => 'Admin Jensen',
+                                    'email' => 'admin_jensen@example.com',
+                                    'resourceId' => 'test@example.com',
+                                    'clientBookingId' => '1234567890',
+                                    'userId' => 'some_unqiue_user_id',
+                                    'metaData' => [
+                                        'data1' => 'example1',
+                                        'data2' => 'example2',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ])
+            )
+        ),
+        input: CreateBookingsInput::class
     ),
 ])]
 class Booking
