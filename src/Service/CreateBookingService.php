@@ -207,8 +207,9 @@ class CreateBookingService
             \IntlDateFormatter::FULL  // Time type - we don't need time
         );
 
-        // Set the pattern to only show the day name
-        $formatter->setPattern('EEEE'); // Full-day name
+        // Set the pattern to only show the full day name
+        // @see https://unicode-org.github.io/icu/userguide/format_parse/datetime/#date-field-symbol-table.
+        $formatter->setPattern('EEEE');
 
         return $dateTimeFormatted.' '.$formatter->format($dateTime);
     }
