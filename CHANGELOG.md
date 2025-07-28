@@ -9,6 +9,8 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+- Added day of week to formatted dates according to locale in bookings.
+
 ## [1.4.0] - 2025-06-03
 
 - Add excluded resources environment variable.
@@ -101,3 +103,19 @@ Added auto restart to queue container.
 ## [1.0.0] - 2022-12-12
 
 - First release.
+
+[Unreleased]: https://github.com/itk-dev/book_aarhus/compare/1.4.0...HEAD
+[1.4.0]: https://github.com/itk-dev/book_aarhus/releases/tag/1.4.0
+[1.3.0]: https://github.com/itk-dev/book_aarhus/releases/tag/1.3.0
+[1.2.3]: https://github.com/itk-dev/book_aarhus/releases/tag/1.2.3
+[1.2.2]: https://github.com/itk-dev/book_aarhus/releases/tag/1.2.2
+[1.2.1]: https://github.com/itk-dev/book_aarhus/releases/tag/1.2.1
+[1.2.0]: https://github.com/itk-dev/book_aarhus/releases/tag/1.2.0
+[1.1.2]: https://github.com/itk-dev/book_aarhus/releases/tag/1.1.2
+[1.1.1]: https://github.com/itk-dev/book_aarhus/releases/tag/1.1.1
+[1.1.0]: https://github.com/itk-dev/book_aarhus/releases/tag/1.1.0
+[1.0.4]: https://github.com/itk-dev/book_aarhus/releases/tag/1.0.4
+[1.0.3]: https://github.com/itk-dev/book_aarhus/releases/tag/1.0.3
+[1.0.2]: https://github.com/itk-dev/book_aarhus/releases/tag/1.0.2
+[1.0.1]: https://github.com/itk-dev/book_aarhus/releases/tag/1.0.1
+[1.0.0]: https://github.com/itk-dev/book_aarhus/releases/tag/1.0.0
