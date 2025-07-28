@@ -8,6 +8,7 @@
         "ext-ctype": "*",
         "ext-dom": "*",
         "ext-iconv": "*",
+        "ext-intl": "*",
         "api-platform/core": "^3.2",
         "doctrine/annotations": "^1.0",
         "doctrine/doctrine-bundle": "^2.6",

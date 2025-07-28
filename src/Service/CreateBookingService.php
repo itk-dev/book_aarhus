@@ -21,6 +21,9 @@ use Twig\Error\SyntaxError;
 
 class CreateBookingService
 {
+    /**
+     * @param non-empty-string $bindNotificationTimezone
+     */
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
         private readonly LoggerInterface $logger,
@@ -31,7 +34,13 @@ class CreateBookingService
         private readonly UserBookingCacheServiceInterface $userBookingCacheService,
         private readonly AAKResourceRepository $resourceRepository,
         private readonly Environment $twig,
+        private readonly string $bindNotificationTimezone,
+        private readonly string $bindNotificationDateFormat,
+        private readonly string $bindNotificationLocale,
     ) {
+        if (!$this->bindNotificationTimezone) {
+            throw new \InvalidArgumentException('bindNotificationTimezone cannot be empty');
+        }
     }
 
     public function createBooking(Booking $booking): array
@@ -164,8 +173,8 @@ class CreateBookingService
             $body = [];
             $body['resource'] = $resource;
             $body['submission'] = $data;
-            $body['submission']['fromObj'] = new \DateTime($data['start']);
-            $body['submission']['toObj'] = new \DateTime($data['end']);
+            $body['submission']['from'] = $this->formatDateTime(new \DateTime($data['start']));
+            $body['submission']['to'] = $this->formatDateTime(new \DateTime($data['end']));
             $body['metaData'] = $metaData;
             $body['userUniqueId'] = $this->bookingService->createBodyUserId($data['userId']);
 
@@ -175,6 +184,33 @@ class CreateBookingService
 
             throw new BookingContentsException($exception->getMessage());
         }
+    }
+
+    /**
+     * Formats a DateTime object to a string with the day of the week, according to
+     * configured format, timezone and locale.
+     *
+     * @param \DateTime $dateTime
+     *
+     * @return string
+     */
+    private function formatDateTime(\DateTime $dateTime): string
+    {
+        $dateTime->setTimezone(new \DateTimeZone($this->bindNotificationTimezone));
+
+        $dateTimeFormatted = $dateTime->format($this->bindNotificationDateFormat);
+
+        // Append the day of the week to start and end date.
+        $formatter = new \IntlDateFormatter(
+            $this->bindNotificationLocale,
+            \IntlDateFormatter::FULL, // FULL includes the day of the week
+            \IntlDateFormatter::FULL  // Time type - we don't need time
+        );
+
+        // Set the pattern to only show the day name
+        $formatter->setPattern('EEEE'); // Full-day name
+
+        return $dateTimeFormatted.' '.$formatter->format($dateTime);
     }
 
     /**
