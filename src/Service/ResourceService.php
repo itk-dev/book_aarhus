@@ -48,17 +48,14 @@ class ResourceService implements ResourceServiceInterface
         return $boolString === 'True';
     }
 
-    private function updateLocations(): void
+    public function updateLocations(array $updatedLocations): void
     {
-        $responseLocations = $this->client->request('GET', $this->resourceLocationsEndpoint);
-        $locationsFromEndpoint = $responseLocations->toArray();
-
         $existingIdSourceIds = $this->locationRepository->getExistingSourceIds();
         $existingSourceIds = array_values($existingIdSourceIds);
 
         $handledSourceIds = [];
 
-        foreach ($locationsFromEndpoint as $locationData) {
+        foreach ($updatedLocations as $locationData) {
             $locationId = $locationData['Location'];
             $location = $this->locationRepository->findOneBy(['location' => $locationId]);
 
@@ -89,16 +86,13 @@ class ResourceService implements ResourceServiceInterface
         $this->entityManager->flush();
     }
 
-    private function updateResources(): void
+    public function updateResources(array $updatedResources): void
     {
         $existingIdSourceIds = $this->resourceRepository->getExistingSourceIds();
         $existingSourceIds = array_values($existingIdSourceIds);
         $handledSourceIds = [];
 
-        $responseResources = $this->client->request('GET', $this->resourceListEndpoint);
-        $resourcesFromEndpoint = $responseResources->toArray();
-
-        foreach ($resourcesFromEndpoint as $resourceData) {
+        foreach ($updatedResources as $resourceData) {
             $resource = $this->resourceRepository->findOneBy(['sourceId' => $resourceData['ID']]);
 
             if (null === $resource) {
@@ -158,16 +152,13 @@ class ResourceService implements ResourceServiceInterface
         $this->entityManager->flush();
     }
 
-    private function updateCVRWhitelists(): void
+    public function updateCVRWhitelists(array $updatedWhitelist): void
     {
         $existingIdSourceIds = $this->cvrWhitelistRepository->getExistingSourceIds();
         $existingSourceIds = array_values($existingIdSourceIds);
         $handledSourceIds = [];
 
-        $responseCvrWhitelist = $this->client->request('GET', $this->resourceCvrWhitelistEndpoint);
-        $cvrWhitelistFromEndpoint = $responseCvrWhitelist->toArray();
-
-        foreach ($cvrWhitelistFromEndpoint as $data) {
+        foreach ($updatedWhitelist as $data) {
             $resourceId = (int)$data['resourceID'];
             $resource = $this->resourceRepository->findOneBy(['sourceId' => $resourceId]);
 
@@ -206,11 +197,25 @@ class ResourceService implements ResourceServiceInterface
      */
     public function update(): void
     {
-        $this->updateLocations();
-        $this->updateResources();
-        $this->updateCVRWhitelists();
-        $this->updateOpeningHours();
-        $this->updateHolidayOpeningHours();
+        $responseLocations = $this->client->request('GET', $this->resourceLocationsEndpoint);
+        $locationsFromEndpoint = $responseLocations->toArray();
+        $this->updateLocations($locationsFromEndpoint);
+
+        $responseResources = $this->client->request('GET', $this->resourceListEndpoint);
+        $resourcesFromEndpoint = $responseResources->toArray();
+        $this->updateResources($resourcesFromEndpoint);
+
+        $responseCvrWhitelist = $this->client->request('GET', $this->resourceCvrWhitelistEndpoint);
+        $cvrWhitelistFromEndpoint = $responseCvrWhitelist->toArray();
+        $this->updateCVRWhitelists($cvrWhitelistFromEndpoint);
+
+        $response = $this->client->request('GET', $this->resourceOpeningHoursEndpoint);
+        $openingHoursFromEndpoint = $response->toArray();
+        $this->updateOpeningHours($openingHoursFromEndpoint);
+
+        $response = $this->client->request('GET', $this->resourceHolidayOpeningHoursEndpoint);
+        $holidayOpeningHoursFromEndpoint = $response->toArray();
+        $this->updateHolidayOpeningHours($holidayOpeningHoursFromEndpoint);
     }
 
     /**
@@ -253,16 +258,13 @@ class ResourceService implements ResourceServiceInterface
         return json_decode($serializedWhitelistedResources);
     }
 
-    private function updateOpeningHours()
+    public function updateOpeningHours(array $updatedOpeningHours)
     {
         $existingIdSourceIds = $this->openingHoursRepository->getExistingSourceIds();
         $existingSourceIds = array_values($existingIdSourceIds);
         $handledSourceIds = [];
 
-        $response = $this->client->request('GET', $this->resourceOpeningHoursEndpoint);
-        $dataFromEndpoint = $response->toArray();
-
-        foreach ($dataFromEndpoint as $data) {
+        foreach ($updatedOpeningHours as $data) {
             $resourceId = (int) $data['resourceID'];
             $resource = $this->resourceRepository->findOneBy(['sourceId' => $resourceId]);
 
@@ -300,16 +302,13 @@ class ResourceService implements ResourceServiceInterface
         $this->entityManager->flush();
     }
 
-    private function updateHolidayOpeningHours()
+    public function updateHolidayOpeningHours(array $updatedHolidayOpeningHours)
     {
         $existingIdSourceIds = $this->holidayOpeningHoursRepository->getExistingSourceIds();
         $existingSourceIds = array_values($existingIdSourceIds);
         $handledSourceIds = [];
 
-        $response = $this->client->request('GET', $this->resourceHolidayOpeningHoursEndpoint);
-        $dataFromEndpoint = $response->toArray();
-
-        foreach ($dataFromEndpoint as $data) {
+        foreach ($updatedHolidayOpeningHours as $data) {
             $resourceId = (int)$data['resourceID'];
             $resource = $this->resourceRepository->findOneBy(['sourceId' => $resourceId]);
 

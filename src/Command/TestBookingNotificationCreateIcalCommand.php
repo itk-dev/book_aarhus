@@ -45,7 +45,7 @@ class TestBookingNotificationCreateIcalCommand extends Command
      */
     public function getEvents()
     {
-        $json = file_get_contents('resources/exampleIcalEventData.json');
+        $json = file_get_contents('public/fixtures/example-ical-event-data.json');
         $events = json_decode($json, true);
 
         return $events['data'];
