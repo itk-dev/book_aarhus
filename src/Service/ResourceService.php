@@ -324,8 +324,8 @@ class ResourceService implements ResourceServiceInterface
                 $this->entityManager->persist($entry);
             }
 
-            $entry->setHolidayOpen(\DateTime::createFromFormat('H:i:s', $data['open']));
-            $entry->setHolidayClose(\DateTime::createFromFormat('H:i:s', $data['close']));
+            $entry->setHolidayOpen(\DateTime::createFromFormat('H:i:s', $data['holidayopen']));
+            $entry->setHolidayClose(\DateTime::createFromFormat('H:i:s', $data['holidayclose']));
 
             $handledSourceIds[] = $entry->getSourceId();
         }
