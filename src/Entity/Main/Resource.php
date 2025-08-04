@@ -169,7 +169,7 @@ class Resource
     private bool $catering;
 
     #[Groups(['resource', 'minimum'])]
-    #[ORM\Column(type: Types::TEXT, length: -1, nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $formId = null;
 
     #[Groups(['resource', 'minimum'])]
