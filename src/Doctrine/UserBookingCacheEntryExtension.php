@@ -19,9 +19,6 @@ final class UserBookingCacheEntryExtension implements QueryCollectionExtensionIn
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
     {
         $this->addWhere($queryBuilder, $resourceClass);
@@ -29,11 +26,6 @@ final class UserBookingCacheEntryExtension implements QueryCollectionExtensionIn
 
     /**
      * WHere condition to ensure display of users personal bookings.
-     *
-     * @param QueryBuilder $queryBuilder
-     * @param string $resourceClass
-     *
-     * @return void
      */
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass): void
     {

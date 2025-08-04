@@ -16,12 +16,6 @@ interface NotificationServiceInterface
     /**
      * Send notification about a booking.
      *
-     * @param Booking $booking the booking
-     * @param Resource|null $resource the resource
-     * @param NotificationTypeEnum $type the type of notification
-     *
-     * @return void
-     *
      * @throws NoNotificationReceiverException
      * @throws UnsupportedNotificationTypeException
      * @throws TransportExceptionInterface
@@ -30,12 +24,6 @@ interface NotificationServiceInterface
 
     /**
      * Send notification about a user booking.
-     *
-     * @param UserBooking $userBooking the user booking
-     * @param Resource|null $resource the resource
-     * @param NotificationTypeEnum $type the type of notification
-     *
-     * @return void
      *
      * @throws NoNotificationReceiverException
      * @throws UnsupportedNotificationTypeException
@@ -48,21 +36,12 @@ interface NotificationServiceInterface
      *
      * @param array $eventData the event data
      *
-     * @return Component
-     *
      * @throws \Exception
      */
     public function createCalendarComponent(array $eventData): Component;
 
     /**
      * Notify the admin.
-     *
-     * @param string $subject subject of the notification
-     * @param string $message message of the notification
-     * @param Booking|null $booking booking to include in the notification, if available
-     * @param Resource|null $resource resource to include in the notification, if available
-     *
-     * @return void
      */
     public function notifyAdmin(string $subject, string $message, ?Booking $booking, ?Resource $resource): void;
 }

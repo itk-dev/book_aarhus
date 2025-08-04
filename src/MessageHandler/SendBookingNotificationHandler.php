@@ -2,7 +2,6 @@
 
 namespace App\MessageHandler;
 
-use App\Entity\Main\Resource;
 use App\Exception\NoNotificationReceiverException;
 use App\Exception\UnsupportedNotificationTypeException;
 use App\Interface\NotificationServiceInterface;
@@ -38,7 +37,6 @@ class SendBookingNotificationHandler
             $booking = $message->getBooking();
             $type = $message->getType();
 
-            /** @var Resource $resource */
             $email = $booking->getResourceEmail();
             $resource = $this->aakResourceRepository->findOneByEmail($email);
 

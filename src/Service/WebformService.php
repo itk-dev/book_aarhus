@@ -20,9 +20,6 @@ class WebformService implements WebformServiceInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(WebformSubmitMessage $message): array
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
@@ -54,9 +51,6 @@ class WebformService implements WebformServiceInterface
         return $this->getValidatedData($webformSubmission);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getWebformSubmission(string $submissionUrl, string $webformApiKey): array
     {
         try {
@@ -75,9 +69,6 @@ class WebformService implements WebformServiceInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function sortWebformSubmissionDataByType(array $webformSubmission): array
     {
         $sortedData = [
@@ -106,9 +97,6 @@ class WebformService implements WebformServiceInterface
         return $sortedData;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getValidatedData(array $webformSubmission): array
     {
         if (empty($webformSubmission['data'])) {

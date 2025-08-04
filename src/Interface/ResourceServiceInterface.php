@@ -12,16 +12,14 @@ interface ResourceServiceInterface
      * businessPartner for -businessPartner
      *
      * @param string|null $permission The name of the permission for the cache entry to remove
-     *
-     * @return void
      */
     public function removeResourcesCacheEntry(?string $permission = null): void;
 
     /**
      * Get all resources.
      *
-     * @param string|null $permission the name of the permission to retrieve resources for
-     * @param int $cacheLifetime Cache lifetime in seconds
+     * @param string|null $permission    the name of the permission to retrieve resources for
+     * @param int         $cacheLifetime Cache lifetime in seconds
      *
      * @return array Array of AAKResource
      */
@@ -30,7 +28,7 @@ interface ResourceServiceInterface
     /**
      * Get whitelisted resources.
      *
-     * @param string $permission the name of the permission to retrieve resources for
+     * @param string $permission   the name of the permission to retrieve resources for
      * @param string $whitelistKey the whitelist key
      *
      * @return array Array of AAKResource

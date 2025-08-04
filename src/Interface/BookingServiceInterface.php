@@ -12,10 +12,6 @@ interface BookingServiceInterface
     /**
      * Get a booking.
      *
-     * @param string $bookingId
-     *
-     * @return array
-     *
      * @throws MicrosoftGraphCommunicationException
      */
     public function getBooking(string $bookingId): array;
@@ -25,8 +21,6 @@ interface BookingServiceInterface
      *
      * @param UserBooking $booking the booking with updated fields
      *
-     * @return string|null
-     *
      * @throws MicrosoftGraphCommunicationException
      * @throws UserBookingException
      */
@@ -35,8 +29,6 @@ interface BookingServiceInterface
     /**
      * Delete a booking.
      *
-     * @param UserBooking $booking
-     *
      * @throws MicrosoftGraphCommunicationException
      * @throws UserBookingException
      */
@@ -44,11 +36,6 @@ interface BookingServiceInterface
 
     /**
      * Get bookings containing userId.
-     *
-     * @param string $userId
-     * @param ?string $search
-     * @param int $page
-     * @param int $pageSize
      *
      * @return array array of search hits
      *
@@ -59,52 +46,23 @@ interface BookingServiceInterface
     /**
      * Get busy intervals for a given number of schedules.
      *
-     * @param array $schedules
-     * @param \DateTime $startTime
-     * @param \DateTime $endTime
-     * @param string|null $accessToken
-     *
-     * @return array
-     *
      * @throws MicrosoftGraphCommunicationException
      */
     public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, ?string $accessToken = null): array;
 
     /**
-     * @param string $resourceEmail
-     * @param string $resourceName
-     * @param string $subject
-     * @param string $body
-     * @param \DateTime $startTime
-     * @param \DateTime $endTime
-     *
-     * @return array
-     *
      * @throws BookingCreateConflictException
      * @throws MicrosoftGraphCommunicationException
      */
     public function createBookingForResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime, bool $acceptConflict = false): array;
 
     /**
-     * @param string $resourceEmail
-     * @param string $resourceName
-     * @param string $subject
-     * @param string $body
-     * @param \DateTime $startTime
-     * @param \DateTime $endTime
-     *
-     * @return array
-     *
      * @throws MicrosoftGraphCommunicationException
      */
     public function createBookingInviteResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array;
 
     /**
      * Create a UserBooking from graph data.
-     *
-     * @param array $data
-     *
-     * @return UserBooking
      *
      * @throws UserBookingException
      */
@@ -114,17 +72,9 @@ interface BookingServiceInterface
      * Create user id string for booking body.
      *
      * @param string $id user id
-     *
-     * @return string
      */
     public function createBodyUserId(string $id): string;
 
-    /**
-     * @param string $token
-     * @param string|null $request
-     *
-     * @return array
-     */
     public function getAllFutureBookings(string $token, ?string $request): array;
 
     /**
@@ -139,8 +89,6 @@ interface BookingServiceInterface
     /**
      * Deletes booking by iCalUid.
      *
-     * @param string $iCalUId
-     * @return void
      * @throws UserBookingException
      * @throws MicrosoftGraphCommunicationException
      */
