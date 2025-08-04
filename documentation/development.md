@@ -33,7 +33,7 @@ docker compose exec phpfpm composer install
 docker compose exec phpfpm bin/console doctrine:migrations:migrate
 
 # Load resource fixtures
-docker compose exec phpfpm bin/console doctrine:fixtures:load --em=resources --group=ResourceFixtures
+docker compose exec phpfpm bin/console doctrine:fixtures:load --group=ResourceFixtures
 ```
 
 ## Testing
