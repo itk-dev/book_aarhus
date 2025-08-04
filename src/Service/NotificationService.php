@@ -276,11 +276,12 @@ class NotificationService implements NotificationServiceInterface
     {
         $fileAttachments = [];
         $to = $data['user']['mail'];
-        /** @var resource $resource */
+        /** @var Resource $resource */
         $resource = $data['resource'];
         $resourceName = $resource->getResourceDisplayName() ?? $resource->getResourceName();
         $location = $resource->getLocation();
-        $resourceLocationString = $resourceName.' - '.$location;
+        $locationName = $location?->getLocation() ?? '';
+        $resourceLocationString = $resourceName.' - '.$locationName;
 
         switch ($type) {
             case NotificationTypeEnum::SUCCESS:

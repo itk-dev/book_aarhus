@@ -42,7 +42,12 @@ class WebformService implements WebformServiceInterface
 
         $this->logger->info("Fetching $submissionUrl");
 
-        $webformSubmission = $this->getWebformSubmission($submissionUrl, $user->getWebformApiKey());
+        $webformApikKey = $user->getWebformApiKey();
+        if (null == $webformApikKey) {
+            throw new WebformSubmissionRetrievalException('user.webformApiKey not set.');
+        }
+
+        $webformSubmission = $this->getWebformSubmission($submissionUrl, $webformApikKey);
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 

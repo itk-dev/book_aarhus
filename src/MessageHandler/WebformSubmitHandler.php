@@ -62,7 +62,7 @@ class WebformSubmitHandler
             foreach ($dataSubmission['bookingData'] as $data) {
                 $email = $this->validationUtils->validateEmail($data['resourceId']);
 
-                /** @var resource $resource */
+                /** @var Resource $resource */
                 $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
 
                 if (is_null($resource)) {

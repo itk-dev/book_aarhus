@@ -73,7 +73,7 @@ class CreateBookingController extends AbstractController
                 continue;
             }
 
-            /** @var resource $resource */
+            /** @var Resource $resource */
             $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
 
             if (null === $resource) {

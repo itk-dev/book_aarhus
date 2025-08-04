@@ -232,11 +232,6 @@ class Resource
         $this->holidayOpenHours = new ArrayCollection();
     }
 
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
     public function getOpenHours(): Collection
     {
         return $this->openHours;

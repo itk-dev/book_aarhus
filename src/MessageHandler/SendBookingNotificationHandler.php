@@ -38,7 +38,7 @@ class SendBookingNotificationHandler
             $booking = $message->getBooking();
             $type = $message->getType();
 
-            /** @var resource $resource */
+            /** @var Resource $resource */
             $email = $booking->getResourceEmail();
             $resource = $this->aakResourceRepository->findOneByEmail($email);
 

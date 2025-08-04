@@ -67,7 +67,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
                 // Loop over all elements on page.
                 foreach ($result['data'] as $userBooking) {
                     // Set resource display name.
-                    /** @var resource $resource */
+                    /** @var Resource $resource */
                     $resource = $this->resourceRepository->findOneBy(['resourceMail' => $userBooking->resourceMail]);
                     if (null !== $resource) {
                         $userBooking->displayName = $resource->getResourceDisplayName() ?? $userBooking->displayName;

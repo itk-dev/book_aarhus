@@ -5,6 +5,7 @@
 namespace App\Command;
 
 use App\Entity\Api\Booking;
+use App\Entity\Main\Location;
 use App\Entity\Main\Resource;
 use App\Enum\NotificationTypeEnum;
 use App\Interface\NotificationServiceInterface;
@@ -31,12 +32,6 @@ class TestBookingNotificationCommand extends Command
     {
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -114,21 +109,20 @@ class TestBookingNotificationCommand extends Command
         return $booking;
     }
 
-    /**
-     * @return resource
-     */
     private function createResource(): Resource
     {
+        $location = new Location();
+        $location->setLocation('LOCATION1');
+
         $res = new Resource();
         $res->setResourceMail('test@bookaarhus.local.itkdev.dk');
         $res->setResourceName('test');
         $res->setResourceDescription('Resource description as shown in the booking app.');
         $res->setResourceEmailText('Resource specific text from resource db.');
-        $res->setLocation('LOCATION1');
+        $res->setLocation($location);
         $res->setGeoCoordinates('56.175895100,10.191482000');
         $res->setWheelchairAccessible(true);
         $res->setVideoConferenceEquipment(false);
-        $res->setUpdateTimestamp(new \DateTime());
         $res->setMonitorEquipment(false);
         $res->setCatering(false);
         $res->setAcceptanceFlow(false);

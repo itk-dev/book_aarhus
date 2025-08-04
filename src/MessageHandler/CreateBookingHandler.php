@@ -54,7 +54,7 @@ class CreateBookingHandler
             throw new UnrecoverableMessageHandlingException('User does not have permission to create bookings for the given resource.', 403);
         }
 
-        /** @var resource $resource */
+        /** @var Resource $resource */
         $email = $booking->getResourceEmail();
         $resource = $this->aakResourceRepository->findOneByEmail($email);
 
