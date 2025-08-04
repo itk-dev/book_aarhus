@@ -18,7 +18,11 @@ class LocationRepository extends ServiceEntityRepository
 
     public function getExistingSourceIds()
     {
-        $query = 'SELECT id,location FROM location';
-        $stmt = $this->getEntityManager()->getConnection()->prepare($query);
-        return $stmt->executeQuery()->fetchAllKeyValue();
+        $qb = $this->createQueryBuilder('e');
+        $qb->select('e.id', 'e.location');
+
+        return array_reduce($qb->getQuery()->getArrayResult(), function ($result, $item) {
+            $result[$item['id']] = $item['locatio '];
+            return $result;
+        }, []);
     }}

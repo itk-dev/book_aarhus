@@ -18,8 +18,12 @@ class HolidayOpeningHoursRepository extends ServiceEntityRepository
 
     public function getExistingSourceIds()
     {
-        $query = 'SELECT id,source_id FROM holiday_opening_hours';
-        $stmt = $this->getEntityManager()->getConnection()->prepare($query);
-        return $stmt->executeQuery()->fetchAllKeyValue();
+        $qb = $this->createQueryBuilder('e');
+        $qb->select('e.id', 'e.sourceId');
+
+        return array_reduce($qb->getQuery()->getArrayResult(), function ($result, $item) {
+            $result[$item['id']] = $item['sourceId'];
+            return $result;
+        }, []);
     }
 }

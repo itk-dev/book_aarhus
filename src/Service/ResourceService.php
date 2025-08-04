@@ -185,6 +185,8 @@ class ResourceService implements ResourceServiceInterface
 
             $entry->setCvr($data['cvr']);
             $entry->setResource($resource);
+
+            $handledSourceIds[] = $entry->getSourceId();
         }
 
         $sourceIdsToDelete = array_diff($existingSourceIds, $handledSourceIds);
@@ -208,7 +210,7 @@ class ResourceService implements ResourceServiceInterface
         $this->updateResources();
         $this->updateCVRWhitelists();
         $this->updateOpeningHours();
-        //$this->updateHolidayOpeningHours();
+        $this->updateHolidayOpeningHours();
     }
 
     /**

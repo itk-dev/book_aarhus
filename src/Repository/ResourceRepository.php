@@ -97,14 +97,11 @@ class ResourceRepository extends ServiceEntityRepository
     public function getExistingSourceIds()
     {
         $qb = $this->createQueryBuilder('resource');
-        $qb->select('resource.id');
-        $qb->select('resource.sourceId');
-        $keyValues1 = $qb->getQuery()->getScalarResult();
+        $qb->select('resource.id', 'resource.sourceId');
 
-        $query = 'SELECT id,source_id FROM resource';
-        $stmt = $this->getEntityManager()->getConnection()->prepare($query);
-        $keyValues = $stmt->executeQuery()->fetchAllKeyValue();
-
-        return $keyValues;
+        return array_reduce($qb->getQuery()->getArrayResult(), function ($result, $item) {
+            $result[$item['id']] = $item['sourceId'];
+            return $result;
+        }, []);
     }
 }
