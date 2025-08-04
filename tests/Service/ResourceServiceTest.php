@@ -33,13 +33,13 @@ class ResourceServiceTest extends AbstractBaseApiTestCase
         $this->assertCount(1, $data);
         $this->assertEquals('DOKK1-Lokale-Test1', $data[0]->resourceName);
 
-        $cacheEntry = $cache->get('resources-citizen', fn() => null);
+        $cacheEntry = $cache->get('resources-citizen', fn () => null);
 
         $this->assertNotNull($cacheEntry);
 
         $service->removeResourcesCacheEntry('citizen');
 
-        $cacheEntry = $cache->get('resources-citizen', fn() => null);
+        $cacheEntry = $cache->get('resources-citizen', fn () => null);
 
         $this->assertNull($cacheEntry);
     }

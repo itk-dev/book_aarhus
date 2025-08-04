@@ -68,7 +68,7 @@ class BusyIntervalTest extends AbstractBaseApiTestCase
             )
         );
 
-        self::getContainer()->set(\App\Service\MicrosoftGraphHelperService::class, $microsoftGraphHelperServiceMock);
+        self::getContainer()->set(MicrosoftGraphHelperService::class, $microsoftGraphHelperServiceMock);
 
         $url = '/v1/busy-intervals?resources=resource%40example.com&dateStart=2022-05-30T17%3A32%3A28Z&dateEnd=2022-06-22T17%3A32%3A28Z&page=1';
         $client->request('GET', $url, ['headers' => ['Content-Type' => 'application/ld+json']]);

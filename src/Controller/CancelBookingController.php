@@ -92,6 +92,6 @@ class CancelBookingController extends AbstractController
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
-        return new JsonResponse($results, \Symfony\Component\HttpFoundation\Response::HTTP_OK);
+        return new JsonResponse($results, Response::HTTP_OK);
     }
 }

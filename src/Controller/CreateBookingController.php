@@ -73,7 +73,7 @@ class CreateBookingController extends AbstractController
                 continue;
             }
 
-            /** @var Resource $resource */
+            /** @var resource $resource */
             $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
 
             if (null === $resource) {
@@ -196,7 +196,7 @@ class CreateBookingController extends AbstractController
             }
         }
 
-        $bookingResults = array_map(fn(BookingRequest $bookingRequest) => [
+        $bookingResults = array_map(fn (BookingRequest $bookingRequest) => [
             'input' => $bookingRequest->input,
             'status' => $bookingRequest->status->value,
             'createdBooking' => $bookingRequest->createdBooking,
@@ -204,6 +204,6 @@ class CreateBookingController extends AbstractController
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
-        return new JsonResponse(['bookings' => $bookingResults], \Symfony\Component\HttpFoundation\Response::HTTP_OK);
+        return new JsonResponse(['bookings' => $bookingResults], Response::HTTP_OK);
     }
 }

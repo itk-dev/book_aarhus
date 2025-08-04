@@ -35,6 +35,6 @@ class GetResourceByEmailController extends AbstractController
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
-        return new Response($data, \Symfony\Component\HttpFoundation\Response::HTTP_OK);
+        return new Response($data, Response::HTTP_OK);
     }
 }

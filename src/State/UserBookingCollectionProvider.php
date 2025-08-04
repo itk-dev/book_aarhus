@@ -75,7 +75,7 @@ class UserBookingCollectionProvider implements ProviderInterface
         /** @var UserBooking $userBooking */
         foreach ($responseData['userBookings'] as $userBooking) {
             // Set resource display name if set in the AAKResource.
-            /** @var Resource $resource */
+            /** @var resource $resource */
             $resource = $this->resourceRepository->findOneBy(['resourceMail' => $userBooking->resourceMail]);
             if (null !== $resource) {
                 $userBooking->displayName = $resource->getResourceDisplayName() ?? $userBooking->displayName;

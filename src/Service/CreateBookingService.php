@@ -45,7 +45,7 @@ class CreateBookingService
             throw new AccessDeniedException('User does not have permission to create bookings for the given resource.');
         }
 
-        /** @var Resource $resource */
+        /** @var resource $resource */
         $email = $booking->getResourceEmail();
         $resource = $this->aakResourceRepository->findOneByEmail($email);
 
@@ -135,7 +135,7 @@ class CreateBookingService
         $resourceEmail = $booking->getResourceEmail();
         $resourceDisplayName = $booking->getResourceName();
 
-        /** @var Resource $resource */
+        /** @var resource $resource */
         $resource = $this->resourceRepository->findOneBy(['resourceMail' => $resourceEmail]);
 
         if (null != $resource && $resource->getResourceDisplayName()) {

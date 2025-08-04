@@ -17,7 +17,7 @@ interface NotificationServiceInterface
      * Send notification about a booking.
      *
      * @param Booking $booking the booking
-     * @param Resource|null $resource the resource
+     * @param resource|null $resource the resource
      * @param NotificationTypeEnum $type the type of notification
      *
      * @return void
@@ -32,7 +32,7 @@ interface NotificationServiceInterface
      * Send notification about a user booking.
      *
      * @param UserBooking $userBooking the user booking
-     * @param Resource|null $resource the resource
+     * @param resource|null $resource the resource
      * @param NotificationTypeEnum $type the type of notification
      *
      * @return void
@@ -60,7 +60,7 @@ interface NotificationServiceInterface
      * @param string $subject subject of the notification
      * @param string $message message of the notification
      * @param Booking|null $booking booking to include in the notification, if available
-     * @param Resource|null $resource resource to include in the notification, if available
+     * @param resource|null $resource resource to include in the notification, if available
      *
      * @return void
      */

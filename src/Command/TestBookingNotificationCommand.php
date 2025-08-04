@@ -115,7 +115,7 @@ class TestBookingNotificationCommand extends Command
     }
 
     /**
-     * @return Resource
+     * @return resource
      */
     private function createResource(): Resource
     {

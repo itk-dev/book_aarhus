@@ -39,13 +39,12 @@ class ResourceService implements ResourceServiceInterface
         private readonly string $resourceHolidayOpeningHoursEndpoint,
         private readonly CvrWhitelistRepository $cvrWhitelistRepository,
         private readonly array $excludedResources,
-    )
-    {
+    ) {
     }
 
     private function parseBoolString(string $boolString): bool
     {
-        return $boolString === 'True';
+        return 'True' === $boolString;
     }
 
     public function updateLocations(array $updatedLocations): void
@@ -78,7 +77,7 @@ class ResourceService implements ResourceServiceInterface
 
         foreach ($sourceIdsToDelete as $sourceId) {
             $location = $this->locationRepository->findOneBy(['location' => $sourceId]);
-            if ($location !== null) {
+            if (null !== $location) {
                 $this->entityManager->remove($location);
             }
         }
@@ -113,7 +112,7 @@ class ResourceService implements ResourceServiceInterface
             $resource->setResourceImage($resourceData['ResourceImage']);
             $resource->setResourceEmailText($resourceData['ResourceEmailText']);
             $resource->setResourceDescription($resourceData['ResourceDescription']);
-            $resource->setCapacity((int)$resourceData['Capacity']);
+            $resource->setCapacity((int) $resourceData['Capacity']);
             $resource->setWheelchairAccessible($this->parseBoolString($resourceData['WheelChairAccessible']));
             $resource->setVideoConferenceEquipment($this->parseBoolString($resourceData['VideoConferenceEquipment']));
             $resource->setMonitorEquipment($this->parseBoolString($resourceData['MonitorEquipment']));
@@ -132,7 +131,7 @@ class ResourceService implements ResourceServiceInterface
 
             // Location fields.
             $resource->setCity($location?->getCity());
-            $resource->setPostalCode((int)$location?->getPostalCode());
+            $resource->setPostalCode((int) $location?->getPostalCode());
             $resource->setGeoCoordinates($location?->getGeoCoordinates());
             $resource->setLocationDisplayName($location?->getDisplayName());
             $resource->setStreetName($location?->getAddress());
@@ -144,7 +143,7 @@ class ResourceService implements ResourceServiceInterface
 
         foreach ($sourceIdsToDelete as $sourceId) {
             $resource = $this->resourceRepository->findOneBy(['sourceId' => $sourceId]);
-            if ($resource !== null) {
+            if (null !== $resource) {
                 $this->entityManager->remove($resource);
             }
         }
@@ -159,10 +158,10 @@ class ResourceService implements ResourceServiceInterface
         $handledSourceIds = [];
 
         foreach ($updatedWhitelist as $data) {
-            $resourceId = (int)$data['resourceID'];
+            $resourceId = (int) $data['resourceID'];
             $resource = $this->resourceRepository->findOneBy(['sourceId' => $resourceId]);
 
-            if ($resource === null) {
+            if (null === $resource) {
                 continue;
             }
 
@@ -170,7 +169,7 @@ class ResourceService implements ResourceServiceInterface
 
             if (null === $entry) {
                 $entry = new CvrWhitelist();
-                $entry->setSourceId((int)$data['ID']);
+                $entry->setSourceId((int) $data['ID']);
                 $this->entityManager->persist($entry);
             }
 
@@ -184,7 +183,7 @@ class ResourceService implements ResourceServiceInterface
 
         foreach ($sourceIdsToDelete as $sourceId) {
             $entry = $this->cvrWhitelistRepository->findOneBy(['sourceId' => $sourceId]);
-            if ($entry !== null) {
+            if (null !== $entry) {
                 $this->entityManager->remove($entry);
             }
         }
@@ -268,7 +267,7 @@ class ResourceService implements ResourceServiceInterface
             $resourceId = (int) $data['resourceID'];
             $resource = $this->resourceRepository->findOneBy(['sourceId' => $resourceId]);
 
-            if ($resource === null) {
+            if (null === $resource) {
                 continue;
             }
 
@@ -294,7 +293,7 @@ class ResourceService implements ResourceServiceInterface
 
         foreach ($sourceIdsToDelete as $sourceId) {
             $entry = $this->openingHoursRepository->findOneBy(['sourceId' => $sourceId]);
-            if ($entry !== null) {
+            if (null !== $entry) {
                 $this->entityManager->remove($entry);
             }
         }
@@ -309,10 +308,10 @@ class ResourceService implements ResourceServiceInterface
         $handledSourceIds = [];
 
         foreach ($updatedHolidayOpeningHours as $data) {
-            $resourceId = (int)$data['resourceID'];
+            $resourceId = (int) $data['resourceID'];
             $resource = $this->resourceRepository->findOneBy(['sourceId' => $resourceId]);
 
-            if ($resource === null) {
+            if (null === $resource) {
                 continue;
             }
 
@@ -337,7 +336,7 @@ class ResourceService implements ResourceServiceInterface
 
         foreach ($sourceIdsToDelete as $sourceId) {
             $entry = $this->holidayOpeningHoursRepository->findOneBy(['sourceId' => $sourceId]);
-            if ($entry !== null) {
+            if (null !== $entry) {
                 $this->entityManager->remove($entry);
             }
         }

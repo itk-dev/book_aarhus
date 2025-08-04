@@ -16,7 +16,7 @@ class OpeningHours
     use SourceIdTrait;
     use ResourceIdTrait;
 
-    #[ORM\ManyToOne(targetEntity: Resource::class, inversedBy: 'openTimeHours')]
+    #[ORM\ManyToOne(targetEntity: Resource::class, inversedBy: 'openHours')]
     private Resource $resource;
 
     #[Groups(['resource', 'minimum'])]

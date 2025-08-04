@@ -42,7 +42,7 @@ class ResourceRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('res');
 
-        if ($includeInUI !== null) {
+        if (null !== $includeInUI) {
             $qb->andWhere($qb->expr()->eq('res.includeInUI', ':includeInUI'));
             $qb->setParameter('includeInUI', $includeInUI);
         }
@@ -101,6 +101,7 @@ class ResourceRepository extends ServiceEntityRepository
 
         return array_reduce($qb->getQuery()->getArrayResult(), function ($result, $item) {
             $result[$item['id']] = $item['sourceId'];
+
             return $result;
         }, []);
     }

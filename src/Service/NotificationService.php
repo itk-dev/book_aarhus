@@ -276,7 +276,7 @@ class NotificationService implements NotificationServiceInterface
     {
         $fileAttachments = [];
         $to = $data['user']['mail'];
-        /** @var Resource $resource */
+        /** @var resource $resource */
         $resource = $data['resource'];
         $resourceName = $resource->getResourceDisplayName() ?? $resource->getResourceName();
         $location = $resource->getLocation();

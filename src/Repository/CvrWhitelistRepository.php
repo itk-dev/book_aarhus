@@ -23,6 +23,7 @@ class CvrWhitelistRepository extends ServiceEntityRepository
 
         return array_reduce($qb->getQuery()->getArrayResult(), function ($result, $item) {
             $result[$item['id']] = $item['sourceId'];
+
             return $result;
         }, []);
     }

@@ -6,7 +6,6 @@ use App\Entity\Trait\IdTrait;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 class Location
@@ -17,7 +16,7 @@ class Location
     private string $location;
 
     /**
-     * @var Collection<int, Resource>
+     * @var Collection<int, resource>
      */
     #[ORM\OneToMany(mappedBy: 'location', targetEntity: Resource::class)]
     private Collection $resources;
