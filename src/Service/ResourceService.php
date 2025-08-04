@@ -38,6 +38,7 @@ class ResourceService implements ResourceServiceInterface
         private readonly string $resourceOpeningHoursEndpoint,
         private readonly string $resourceHolidayOpeningHoursEndpoint,
         private readonly CvrWhitelistRepository $cvrWhitelistRepository,
+        private readonly array $excludedResources,
     )
     {
     }
@@ -227,7 +228,7 @@ class ResourceService implements ResourceServiceInterface
 
         $cachedResources = $this->resourceCache->get("resources-$permission", function (CacheItemInterface $cacheItem) use ($cacheLifetime, $permission) {
             $cacheItem->expiresAfter($cacheLifetime);
-            $info = $this->resourceRepository->getAllByPermission($permission, true);
+            $info = $this->resourceRepository->getAllByPermission($permission, true, $this->excludedResources);
 
             return $this->serializer->serialize($info, 'json', ['groups' => 'minimum']);
         });
@@ -241,7 +242,8 @@ class ResourceService implements ResourceServiceInterface
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
-        $info = $this->resourceRepository->getOnlyWhitelisted($permission, $whitelistKey);
+        $info = $this->resourceRepository->getOnlyWhitelisted($permission, $whitelistKey, $this->excludedResources);
+
         $serializedWhitelistedResources = $this->serializer->serialize($info, 'json', ['groups' => 'minimum']);
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);

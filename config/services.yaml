@@ -16,6 +16,7 @@ parameters:
     resources_opening_hours_endpoint: '%env(string:RESOURCES_OPEN_HOURS)%'
     resources_holiday_opening_hours_endpoint: '%env(string:RESOURCES_HOLIDAY_OPEN_HOURS)%'
     resources_cvr_whitelist_endpoint: '%env(string:RESOURCES_CVR_WHITELIST)%'
+    excluded_resources: '%env(json:APP_EXCLUDED_RESOURCES)%'
 
 services:
     # default configuration for services in *this* file
@@ -62,6 +63,22 @@ services:
             - '%email_from_address%'
             - '%email_admin_notification%'
 
+    App\Service\ResourceService:
+        arguments:
+            $excludedResources: '%excluded_resources%'
+            $resourceListEndpoint: '%resources_list_endpoint%'
+            $resourceLocationsEndpoint: '%resources_locations_endpoint%'
+            $resourceCvrWhitelistEndpoint: '%resources_cvr_whitelist_endpoint%'
+            $resourceOpeningHoursEndpoint: '%resources_opening_hours_endpoint%'
+            $resourceHolidayOpeningHoursEndpoint: '%resources_holiday_opening_hours_endpoint%'
+
+    App\OpenApi\OpenApiFactory:
+        decorates: 'api_platform.openapi.factory'
+        arguments: [ '@App\OpenApi\OpenApiFactory.inner' ]
+        autoconfigure: false
+
+    # Interface aliases
+
     App\Interface\BookingServiceInterface:
         alias: 'App\Service\MicrosoftGraphBookingService'
 
@@ -74,13 +91,7 @@ services:
     App\Interface\ResourceServiceInterface:
         alias: 'App\Service\ResourceService'
 
-    App\Service\ResourceService:
-        arguments:
-            $resourceListEndpoint: '%resources_list_endpoint%'
-            $resourceLocationsEndpoint: '%resources_locations_endpoint%'
-            $resourceCvrWhitelistEndpoint: '%resources_cvr_whitelist_endpoint%'
-            $resourceOpeningHoursEndpoint: '%resources_opening_hours_endpoint%'
-            $resourceHolidayOpeningHoursEndpoint: '%resources_holiday_opening_hours_endpoint%'
+    # Api Filters
 
     resource.search_filter:
         # https://api-platform.com/docs/core/filters/#search-filter
@@ -135,8 +146,3 @@ services:
       autowire: false
       autoconfigure: false
       public: false
-
-    App\OpenApi\OpenApiFactory:
-        decorates: 'api_platform.openapi.factory'
-        arguments: [ '@App\OpenApi\OpenApiFactory.inner' ]
-        autoconfigure: false

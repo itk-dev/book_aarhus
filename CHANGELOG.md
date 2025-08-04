@@ -9,6 +9,9 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+## [1.4.0] - 2025-06-03
+
+- Add excluded resources environment variable.
 - Added create/cancel bookings endpoints and tests.
 - Updated GitHub workflow images.
 
@@ -58,7 +61,7 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [1.1.1] - 2023-08-24
 
-- Changed user bookings to paginated
+- Changed user bookings to paginated.
 
 ## [1.1.0]
 

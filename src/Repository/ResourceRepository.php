@@ -4,9 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Main\Resource;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
-use PDO;
 
 /**
  * @extends \Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository<\App\Entity\Main\Resource>
@@ -40,7 +38,7 @@ class ResourceRepository extends ServiceEntityRepository
         return null;
     }
 
-    public function getAllByPermission(?string $permission = null, ?bool $includeInUI = null): array
+    public function getAllByPermission(?string $permission = null, ?bool $includeInUI = null, array $excludedResources = []): array
     {
         $qb = $this->createQueryBuilder('res');
 
@@ -60,12 +58,16 @@ class ResourceRepository extends ServiceEntityRepository
             ));
         }
 
+        if (!empty($excludedResources)) {
+            $qb->andWhere($qb->expr()->notIn('res.resourceMail', $excludedResources));
+        }
+
         $qb->andWhere($qb->expr()->neq('res.hasWhitelist', true));
 
         return $qb->getQuery()->getResult();
     }
 
-    public function getOnlyWhitelisted(?string $permission = null, ?string $whitelistKey = null)
+    public function getOnlyWhitelisted(?string $permission = null, ?string $whitelistKey = null, array $excludedResources = [])
     {
         $qb = $this->createQueryBuilder('res');
 
@@ -73,6 +75,10 @@ class ResourceRepository extends ServiceEntityRepository
             $qb->andWhere($qb->expr()->eq('res.permissionCitizen', true));
         } elseif ('businessPartner' == $permission) {
             $qb->andWhere($qb->expr()->eq('res.permissionBusinessPartner', true));
+        }
+
+        if (!empty($excludedResources)) {
+            $qb->andWhere($qb->expr()->notIn('res.resourceMail', $excludedResources));
         }
 
         $subQueryBuilder = $this->cvrWhitelistRepository->createQueryBuilder('w');
@@ -90,8 +96,15 @@ class ResourceRepository extends ServiceEntityRepository
 
     public function getExistingSourceIds()
     {
+        $qb = $this->createQueryBuilder('resource');
+        $qb->select('resource.id');
+        $qb->select('resource.sourceId');
+        $keyValues1 = $qb->getQuery()->getScalarResult();
+
         $query = 'SELECT id,source_id FROM resource';
         $stmt = $this->getEntityManager()->getConnection()->prepare($query);
-        return $stmt->executeQuery()->fetchAllKeyValue();
+        $keyValues = $stmt->executeQuery()->fetchAllKeyValue();
+
+        return $keyValues;
     }
 }

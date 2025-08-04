@@ -605,6 +605,10 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
+        if (empty($iCalUId)) {
+            throw new UserBookingException('Empty iCalUId is provided', 400);
+        }
+
         $token = $this->graphHelperService->authenticateAsServiceAccount();
 
         $path = "/me/events?\$filter=iCalUId eq '$iCalUId'";
