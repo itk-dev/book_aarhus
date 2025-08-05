@@ -68,11 +68,6 @@ class TestBookingNotificationCommand extends Command
         return Command::SUCCESS;
     }
 
-    /**
-     * @param $email
-     *
-     * @return Booking
-     */
     private function createBooking($email): Booking
     {
         $booking = new Booking();

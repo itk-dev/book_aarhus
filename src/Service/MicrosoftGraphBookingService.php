@@ -31,8 +31,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://docs.microsoft.com/en-us/graph/api/calendar-getschedule?view=graph-rest-1.0&tabs=http
      */
     public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, ?string $accessToken = null): array
@@ -81,8 +79,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
      *
      * @throws BookingCreateConflictException
@@ -165,8 +161,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
      */
     public function createBookingInviteResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array
@@ -221,8 +215,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://docs.microsoft.com/en-us/graph/api/event-update?view=graph-rest-1.0&tabs=http
      */
     public function updateBooking(UserBooking $booking): ?string
@@ -286,8 +278,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://docs.microsoft.com/en-us/graph/api/event-delete?view=graph-rest-1.0&tabs=http
      */
     public function deleteBooking(UserBooking $booking): void
@@ -353,8 +343,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://docs.microsoft.com/en-us/graph/search-concept-events
      */
     public function getBooking(string $bookingId): array
@@ -445,8 +433,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://learn.microsoft.com/en-us/graph/api/resources/event?view=graph-rest-1.0
      * @see https://learn.microsoft.com/en-us/graph/api/resources/responsestatus?view=graph-rest-1.0
      */
@@ -548,9 +534,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAllFutureBookings($token, $request = null): array
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
@@ -587,17 +570,12 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createBodyUserId(string $id): string
     {
         return "UID-$id-UID";
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws UserBookingException
      * @throws MicrosoftGraphCommunicationException
      */
@@ -671,8 +649,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws MicrosoftGraphCommunicationException
      * @throws UserBookingException
      */

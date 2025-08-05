@@ -56,9 +56,6 @@ class NotificationService implements NotificationServiceInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function sendBookingNotification(Booking $booking, ?Resource $resource, NotificationTypeEnum $type): void
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
@@ -80,9 +77,6 @@ class NotificationService implements NotificationServiceInterface
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function sendUserBookingNotification(
         UserBooking $userBooking,
         ?Resource $resource,
@@ -174,9 +168,6 @@ class NotificationService implements NotificationServiceInterface
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createCalendarComponent(array $eventData): Component
     {
         $location = new Location($eventData['location_name']);
@@ -219,9 +210,6 @@ class NotificationService implements NotificationServiceInterface
         return (new Factory\CalendarFactory())->createCalendar($calendar);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function notifyAdmin(string $subject, string $message, ?Booking $booking, ?Resource $resource): void
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
@@ -265,18 +253,12 @@ class NotificationService implements NotificationServiceInterface
     }
 
     /**
-     * @param NotificationTypeEnum $type
-     * @param array $data
-     *
-     * @return array
-     *
      * @throws BuildNotificationException
      */
     private function buildNotification(NotificationTypeEnum $type, array $data): array
     {
         $fileAttachments = [];
         $to = $data['user']['mail'];
-        /** @var Resource $resource */
         $resource = $data['resource'];
         $resourceName = $resource->getResourceDisplayName() ?? $resource->getResourceName();
         $location = $resource->getLocation();
@@ -336,10 +318,6 @@ class NotificationService implements NotificationServiceInterface
     }
 
     /**
-     * @param array $notification
-     *
-     * @return void
-     *
      * @throws TransportExceptionInterface
      */
     private function sendNotification(array $notification): void
@@ -377,11 +355,6 @@ class NotificationService implements NotificationServiceInterface
         $this->mailer->send($email);
     }
 
-    /**
-     * @param array $data
-     *
-     * @return array
-     */
     private function prepareICalEvent(array $data): array
     {
         return [

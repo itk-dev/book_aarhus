@@ -82,7 +82,7 @@ class ResourceRepository extends ServiceEntityRepository
         }
 
         $subQueryBuilder = $this->cvrWhitelistRepository->createQueryBuilder('w');
-        $subQuery = $subQueryBuilder->where('w.cvr = :whitelist')->andWhere('w.resourceId = res.id');
+        $subQuery = $subQueryBuilder->where('w.cvr = :whitelist')->andWhere('w.resource = res.id');
 
         $qb->andWhere(
             $qb->expr()->andX(

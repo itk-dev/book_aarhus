@@ -2,7 +2,6 @@
 
 namespace App\MessageHandler;
 
-use App\Entity\Main\Resource;
 use App\Enum\UserBookingStatusEnum;
 use App\Interface\BookingServiceInterface;
 use App\Interface\UserBookingCacheServiceInterface;
@@ -41,11 +40,11 @@ class AddBookingToCacheHandler
             $resourceEmail = $booking->getResourceEmail();
             $resourceDisplayName = $booking->getResourceName();
 
-            /** @var Resource $resource */
             $resource = $this->resourceRepository->findOneBy(['resourceMail' => $resourceEmail]);
 
-            if (!empty($resource?->getResourceDisplayName())) {
-                $resourceDisplayName = $resource->getResourceDisplayName();
+            $displayName = $resource?->getResourceDisplayName();
+            if (!empty($displayName)) {
+                $resourceDisplayName = $displayName;
             }
 
             $this->userBookingCacheService->addCacheEntryFromArray([

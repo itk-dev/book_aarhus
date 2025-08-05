@@ -1912,7 +1912,7 @@
                     }
                 }
             },
-            "HolidayOpenHours-resource": {
+            "HolidayOpeningHours-resource": {
                 "type": "object",
                 "description": "",
                 "deprecated": false,
@@ -1924,14 +1924,10 @@
                     "holidayClose": {
                         "type": "string",
                         "format": "date-time"
-                    },
-                    "updateTimestamp": {
-                        "type": "string",
-                        "format": "date-time"
                     }
                 }
             },
-            "HolidayOpenHours.jsonld-resource": {
+            "HolidayOpeningHours.jsonld-resource": {
                 "type": "object",
                 "description": "",
                 "deprecated": false,
@@ -1978,14 +1974,10 @@
                     "holidayClose": {
                         "type": "string",
                         "format": "date-time"
-                    },
-                    "updateTimestamp": {
-                        "type": "string",
-                        "format": "date-time"
                     }
                 }
             },
-            "OpenHours-resource": {
+            "OpeningHours-resource": {
                 "type": "object",
                 "description": "",
                 "deprecated": false,
@@ -2000,14 +1992,10 @@
                     "close": {
                         "type": "string",
                         "format": "date-time"
-                    },
-                    "updateTimestamp": {
-                        "type": "string",
-                        "format": "date-time"
                     }
                 }
             },
-            "OpenHours.jsonld-resource": {
+            "OpeningHours.jsonld-resource": {
                 "type": "object",
                 "description": "",
                 "deprecated": false,
@@ -2055,10 +2043,6 @@
                         "format": "date-time"
                     },
                     "close": {
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updateTimestamp": {
                         "type": "string",
                         "format": "date-time"
                     }
@@ -2069,20 +2053,16 @@
                 "description": "Resource",
                 "deprecated": false,
                 "properties": {
-                    "id": {
-                        "readOnly": true,
-                        "type": "integer"
-                    },
                     "openHours": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/OpenHours-resource"
+                            "$ref": "#/components/schemas/OpeningHours-resource"
                         }
                     },
                     "holidayOpenHours": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/HolidayOpenHours-resource"
+                            "$ref": "#/components/schemas/HolidayOpeningHours-resource"
                         }
                     },
                     "resourceMail": {
@@ -2102,9 +2082,6 @@
                             "string",
                             "null"
                         ]
-                    },
-                    "location": {
-                        "type": "string"
                     },
                     "geoCoordinates": {
                         "type": [
@@ -2181,16 +2158,6 @@
                             "null"
                         ]
                     },
-                    "updateTimestamp": {
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "displayName": {
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
                     "city": {
                         "type": [
                             "string",
@@ -2224,12 +2191,6 @@
                     "locationDisplayName": {
                         "type": [
                             "string",
-                            "null"
-                        ]
-                    },
-                    "acceptConflict": {
-                        "type": [
-                            "boolean",
                             "null"
                         ]
                     }
@@ -2275,20 +2236,16 @@
                             }
                         ]
                     },
-                    "id": {
-                        "readOnly": true,
-                        "type": "integer"
-                    },
                     "openHours": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/OpenHours.jsonld-resource"
+                            "$ref": "#/components/schemas/OpeningHours.jsonld-resource"
                         }
                     },
                     "holidayOpenHours": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/HolidayOpenHours.jsonld-resource"
+                            "$ref": "#/components/schemas/HolidayOpeningHours.jsonld-resource"
                         }
                     },
                     "resourceMail": {
@@ -2308,9 +2265,6 @@
                             "string",
                             "null"
                         ]
-                    },
-                    "location": {
-                        "type": "string"
                     },
                     "geoCoordinates": {
                         "type": [
@@ -2387,16 +2341,6 @@
                             "null"
                         ]
                     },
-                    "updateTimestamp": {
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "displayName": {
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
                     "city": {
                         "type": [
                             "string",
@@ -2430,12 +2374,6 @@
                     "locationDisplayName": {
                         "type": [
                             "string",
-                            "null"
-                        ]
-                    },
-                    "acceptConflict": {
-                        "type": [
-                            "boolean",
                             "null"
                         ]
                     }

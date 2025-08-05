@@ -2,13 +2,14 @@
 
 namespace App\Tests\Controller;
 
-use App\Entity\Resources\AAKResource;
+use App\Entity\Main\Location;
+use App\Entity\Main\Resource;
 use App\Enum\UserBookingStatusEnum;
-use App\Repository\Resources\AAKResourceRepository;
-use App\Service\BookingServiceInterface;
+use App\Interface\BookingServiceInterface;
+use App\Repository\ResourceRepository;
 use App\Service\CreateBookingService;
 use App\Service\MetricsHelper;
-use App\Service\UserBookingCacheServiceInterface;
+use App\Interface\UserBookingCacheServiceInterface;
 use App\Tests\AbstractBaseApiTestCase;
 use Symfony\Component\HttpClient\Exception\ClientException;
 
@@ -60,15 +61,19 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
 
         $metricMock = $this->createMock(MetricsHelper::class);
 
-        $aakResourceRepositoryMock = $this->createMock(AAKResourceRepository::class);
+        $aakResourceRepositoryMock = $this->createMock(ResourceRepository::class);
 
         $resourceIdMock = 'DOKK1-Lokale-Test1@aarhus.dk';
 
-        $resource = new AAKResource();
+        $resource = new Resource();
         $resource->setResourceName('DOKK1-Lokale-Test1');
         $resource->setResourceDisplayName('DOKK1 Lokale Test1');
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
-        $resource->setLocation('Dokk1');
+
+        $location = new Location();
+        $location->setLocation("Dokk1");
+
+        $resource->setLocation($location);
 
         $aakResourceRepositoryMock
             ->expects($this->once())
@@ -79,7 +84,7 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
 
         $container = self::getContainer();
         $container->set(MetricsHelper::class, $metricMock);
-        $container->set(AAKResourceRepository::class, $aakResourceRepositoryMock);
+        $container->set(ResourceRepository::class, $aakResourceRepositoryMock);
 
         $data = [
             'abortIfAnyFail' => true,
@@ -172,15 +177,19 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $client = $this->getAuthenticatedClient();
 
         $metricMock = $this->createMock(MetricsHelper::class);
-        $aakResourceRepositoryMock = $this->createMock(AAKResourceRepository::class);
+        $aakResourceRepositoryMock = $this->createMock(ResourceRepository::class);
 
         $resourceIdMock = 'DOKK1-Lokale-Test1@aarhus.dk';
 
-        $resource = new AAKResource();
+        $resource = new Resource();
         $resource->setResourceName('DOKK1-Lokale-Test1');
         $resource->setResourceDisplayName('DOKK1 Lokale Test1');
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
-        $resource->setLocation('Dokk1');
+
+        $location = new Location();
+        $location->setLocation("Dokk1");
+
+        $resource->setLocation($location);
 
         $aakResourceRepositoryMock
             ->expects($this->once())
@@ -249,7 +258,7 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
 
         $container = self::getContainer();
         $container->set(MetricsHelper::class, $metricMock);
-        $container->set(AAKResourceRepository::class, $aakResourceRepositoryMock);
+        $container->set(ResourceRepository::class, $aakResourceRepositoryMock);
         $container->set(CreateBookingService::class, $createBookingServiceMock);
         $container->set(BookingServiceInterface::class, $bookingServiceMock);
         $container->set(UserBookingCacheServiceInterface::class, $userBookingCacheServiceMock);
@@ -285,15 +294,19 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $client = $this->getAuthenticatedClient();
 
         $metricMock = $this->createMock(MetricsHelper::class);
-        $aakResourceRepositoryMock = $this->createMock(AAKResourceRepository::class);
+        $aakResourceRepositoryMock = $this->createMock(ResourceRepository::class);
 
         $resourceIdMock = 'DOKK1-Lokale-Test1@aarhus.dk';
 
-        $resource = new AAKResource();
+        $resource = new Resource();
         $resource->setResourceName('DOKK1-Lokale-Test1');
         $resource->setResourceDisplayName('DOKK1 Lokale Test1');
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
-        $resource->setLocation('Dokk1');
+
+        $location = new Location();
+        $location->setLocation("Dokk1");
+
+        $resource->setLocation($location);
 
         $aakResourceRepositoryMock
             ->expects($this->exactly(2))
@@ -410,7 +423,7 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
 
         $container = self::getContainer();
         $container->set(MetricsHelper::class, $metricMock);
-        $container->set(AAKResourceRepository::class, $aakResourceRepositoryMock);
+        $container->set(ResourceRepository::class, $aakResourceRepositoryMock);
         $container->set(CreateBookingService::class, $createBookingServiceMock);
         $container->set(BookingServiceInterface::class, $bookingServiceMock);
         $container->set(UserBookingCacheServiceInterface::class, $userBookingCacheServiceMock);
@@ -452,15 +465,19 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $client = $this->getAuthenticatedClient();
 
         $metricMock = $this->createMock(MetricsHelper::class);
-        $aakResourceRepositoryMock = $this->createMock(AAKResourceRepository::class);
+        $aakResourceRepositoryMock = $this->createMock(ResourceRepository::class);
 
         $resourceIdMock = 'DOKK1-Lokale-Test1@aarhus.dk';
 
-        $resource = new AAKResource();
+        $resource = new Resource();
         $resource->setResourceName('DOKK1-Lokale-Test1');
         $resource->setResourceDisplayName('DOKK1 Lokale Test1');
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
-        $resource->setLocation('Dokk1');
+
+        $location = new Location();
+        $location->setLocation("Dokk1");
+
+        $resource->setLocation($location);
 
         $aakResourceRepositoryMock
             ->expects($this->exactly(2))
@@ -577,7 +594,7 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
 
         $container = self::getContainer();
         $container->set(MetricsHelper::class, $metricMock);
-        $container->set(AAKResourceRepository::class, $aakResourceRepositoryMock);
+        $container->set(ResourceRepository::class, $aakResourceRepositoryMock);
         $container->set(CreateBookingService::class, $createBookingServiceMock);
         $container->set(BookingServiceInterface::class, $bookingServiceMock);
         $container->set(UserBookingCacheServiceInterface::class, $userBookingCacheServiceMock);
@@ -619,15 +636,19 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $client = $this->getAuthenticatedClient();
 
         $metricMock = $this->createMock(MetricsHelper::class);
-        $aakResourceRepositoryMock = $this->createMock(AAKResourceRepository::class);
+        $aakResourceRepositoryMock = $this->createMock(ResourceRepository::class);
 
         $resourceIdMock = 'DOKK1-Lokale-Test1@aarhus.dk';
 
-        $resource = new AAKResource();
+        $resource = new Resource();
         $resource->setResourceName('DOKK1-Lokale-Test1');
         $resource->setResourceDisplayName('DOKK1 Lokale Test1');
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
-        $resource->setLocation('Dokk1');
+
+        $location = new Location();
+        $location->setLocation("Dokk1");
+
+        $resource->setLocation($location);
         $resource->setAcceptConflict(false);
 
         $aakResourceRepositoryMock
@@ -742,7 +763,7 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
 
         $container = self::getContainer();
         $container->set(MetricsHelper::class, $metricMock);
-        $container->set(AAKResourceRepository::class, $aakResourceRepositoryMock);
+        $container->set(ResourceRepository::class, $aakResourceRepositoryMock);
         $container->set(CreateBookingService::class, $createBookingServiceMock);
         $container->set(BookingServiceInterface::class, $bookingServiceMock);
         $container->set(UserBookingCacheServiceInterface::class, $userBookingCacheServiceMock);

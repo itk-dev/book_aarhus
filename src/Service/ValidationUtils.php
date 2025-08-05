@@ -15,9 +15,6 @@ class ValidationUtils implements ValidationUtilsInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function validateDate(string $dateString, ?string $format = null): \DateTime
     {
         $format ??= $this->bindDefaultDateFormat;
@@ -32,9 +29,6 @@ class ValidationUtils implements ValidationUtilsInterface
         return new \DateTime($dateString);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function validateEmail(string $email): string
     {
         $errors = $this->validator->validate($email, new Assert\Email());

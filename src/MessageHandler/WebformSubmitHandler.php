@@ -3,7 +3,6 @@
 namespace App\MessageHandler;
 
 use App\Entity\Api\Booking;
-use App\Entity\Main\Resource;
 use App\Exception\WebformSubmissionRetrievalException;
 use App\Interface\ValidationUtilsInterface;
 use App\Interface\WebformServiceInterface;
@@ -62,7 +61,6 @@ class WebformSubmitHandler
             foreach ($dataSubmission['bookingData'] as $data) {
                 $email = $this->validationUtils->validateEmail($data['resourceId']);
 
-                /** @var Resource $resource */
                 $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
 
                 if (is_null($resource)) {

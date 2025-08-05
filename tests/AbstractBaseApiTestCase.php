@@ -37,8 +37,6 @@ abstract class AbstractBaseApiTestCase extends ApiTestCase
 
     /**
      * Get an authenticated client.
-     *
-     * @return Client
      */
     protected function getAuthenticatedClient(): Client
     {
@@ -52,10 +50,6 @@ abstract class AbstractBaseApiTestCase extends ApiTestCase
      * Creates a callback used in replacement of withConsecutive().
      *
      * @see https://github.com/sebastianbergmann/phpunit/issues/4026.
-     *
-     * @param array $params
-     *
-     * @return Callback
      */
     protected function createCallback(array $params): Callback
     {
