@@ -13,7 +13,6 @@ use App\Tests\AbstractBaseApiTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ResourceServiceTest extends AbstractBaseApiTestCase
@@ -42,11 +41,11 @@ class ResourceServiceTest extends AbstractBaseApiTestCase
             $metricsHelper,
             $client,
             $entityManager,
-            "",
-            "",
-            "",
-            "",
-            "",
+            '',
+            '',
+            '',
+            '',
+            '',
             $cvrWhitelistRepository,
             [],
         );
@@ -56,13 +55,13 @@ class ResourceServiceTest extends AbstractBaseApiTestCase
         $this->assertCount(2, $data);
         $this->assertEquals('DOKK1-Lokale-Test1', $data[0]->resourceName);
 
-        $cacheEntry = $cache->get('resources-citizen', fn() => null);
+        $cacheEntry = $cache->get('resources-citizen', fn () => null);
 
         $this->assertNotNull($cacheEntry);
 
         $service->removeResourcesCacheEntry('citizen');
 
-        $cacheEntry = $cache->get('resources-citizen', fn() => null);
+        $cacheEntry = $cache->get('resources-citizen', fn () => null);
 
         $this->assertNull($cacheEntry);
     }
@@ -91,11 +90,11 @@ class ResourceServiceTest extends AbstractBaseApiTestCase
             $metricsHelper,
             $client,
             $entityManager,
-            "",
-            "",
-            "",
-            "",
-            "",
+            '',
+            '',
+            '',
+            '',
+            '',
             $cvrWhitelistRepository,
             [],
         );

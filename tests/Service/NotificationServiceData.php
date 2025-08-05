@@ -29,7 +29,7 @@ class NotificationServiceData
     public static function getResource(): Resource
     {
         $location = new Location();
-        $location->setLocation("Dokk1");
+        $location->setLocation('Dokk1');
 
         $resource = new Resource();
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');

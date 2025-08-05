@@ -6,10 +6,10 @@ use App\Entity\Main\Location;
 use App\Entity\Main\Resource;
 use App\Enum\UserBookingStatusEnum;
 use App\Interface\BookingServiceInterface;
+use App\Interface\UserBookingCacheServiceInterface;
 use App\Repository\ResourceRepository;
 use App\Service\CreateBookingService;
 use App\Service\MetricsHelper;
-use App\Interface\UserBookingCacheServiceInterface;
 use App\Tests\AbstractBaseApiTestCase;
 use Symfony\Component\HttpClient\Exception\ClientException;
 
@@ -71,7 +71,7 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
 
         $location = new Location();
-        $location->setLocation("Dokk1");
+        $location->setLocation('Dokk1');
 
         $resource->setLocation($location);
 
@@ -187,7 +187,7 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
 
         $location = new Location();
-        $location->setLocation("Dokk1");
+        $location->setLocation('Dokk1');
 
         $resource->setLocation($location);
 
@@ -304,7 +304,7 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
 
         $location = new Location();
-        $location->setLocation("Dokk1");
+        $location->setLocation('Dokk1');
 
         $resource->setLocation($location);
 
@@ -475,7 +475,7 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
 
         $location = new Location();
-        $location->setLocation("Dokk1");
+        $location->setLocation('Dokk1');
 
         $resource->setLocation($location);
 
@@ -646,7 +646,7 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
 
         $location = new Location();
-        $location->setLocation("Dokk1");
+        $location->setLocation('Dokk1');
 
         $resource->setLocation($location);
         $resource->setAcceptConflict(false);

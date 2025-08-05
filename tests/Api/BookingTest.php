@@ -107,7 +107,7 @@ class BookingTest extends AbstractBaseApiTestCase
         $this->assertEquals('795f5a1c-a0ac-4f8a-8834-bb71fca8585d', $message->getSubmissionUuid());
         $this->assertEquals('https://bookaarhus.local.itkdev.dk', $message->getSender());
         $this->assertEquals('https://bookaarhus.local.itkdev.dk/webform_rest/booking/submission/123123123', $message->getSubmissionUrl());
-        //$this->assertEquals(1, $message->getApiKeyUserId());
+        // $this->assertEquals(1, $message->getApiKeyUserId());
 
         $this->transport('async')->queue()->assertCount(1);
         $this->transport('async')->queue()->assertContains(WebformSubmitMessage::class);
@@ -189,7 +189,7 @@ class BookingTest extends AbstractBaseApiTestCase
             ->getMock();
 
         $location = new Location();
-        $location->setLocation("Dokk1");
+        $location->setLocation('Dokk1');
 
         $resource = new Resource();
         $resource->setResourceName('DOKK1-Lokale-Test1');
@@ -232,7 +232,7 @@ class BookingTest extends AbstractBaseApiTestCase
         $bus = $container->get(MessageBusInterface::class);
 
         $location = new Location();
-        $location->setLocation("Dokk1");
+        $location->setLocation('Dokk1');
 
         $booking = new Booking();
         $booking->setBody('test');
