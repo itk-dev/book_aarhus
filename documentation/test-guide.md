@@ -10,9 +10,11 @@ An Apikey should be created in book_aarhus, that contains an apikey from selvbet
 with access to the webform created below.
 
 In book_aarhus run the command:
+
 ```bash
 bin/console app:auth:create-apikey
 ```
+
 ![Create apikey](assets/test-guide0.png "Create apikey")
 
 This Apikey should be used in "Setting up a booking form in Selvbetjening". Will be referenced
@@ -50,10 +52,10 @@ The following scenarios are covered:
 
 ## T1 Setting up a booking form in Selvbetjening
 
-This flow willl set up a form for creating bookings in selvbetjening.
+This flow will set up a form for creating bookings in selvbetjening.
 
 * Navigate to selvbetjening: `/da/admin/structure/webform`.
-* Press `Tilføj webform`. 
+* Press `Tilføj webform`.
   ![Tilføj Webform formular](assets/test-guide1.png "Tilføj Webform")
 * Choose a title, e.g.  `TestBooking`. Press "Gem".
 * Press `Tilføj element`. Search for `Booking`. Press `Tilføj element`.
@@ -106,7 +108,6 @@ itkdev-docker-compose mail:open
 The mail received should look like:
 ![Mail 1](assets/test-guide11.png "Mail 1")
 
-
 ## T3 Setting up a "My Bookings" form in selvbetjening
 
 * Navigate to selvbetjening: `/da/admin/structure/webform`.
@@ -156,7 +157,8 @@ This will be an extra form that is configured to send selected results to anothe
 
 * Create a booking form (see T1).
 * Select "View only (No booking)"
-* In "Redirect url" set the url of the form that has login. E.g.: https://selvbetjening.local.itkdev.dk/da/form/booking .
+* In "Redirect url" set the url of the form that has login. E.g.:
+  <https://selvbetjening.local.itkdev.dk/da/form/booking>.
 * Save the form.
 
 When the form is submitted, it will redirect to the form set in "Redirect url" with the selections

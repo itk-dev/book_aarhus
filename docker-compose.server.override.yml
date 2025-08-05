@@ -1,6 +1,6 @@
 services:
   supervisor:
-    image: itkdev/supervisor-php8.1:alpine
+    image: itkdev/supervisor-php8.3:alpine
     restart: unless-stopped
     stop_grace_period: 20s
     environment:
