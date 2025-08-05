@@ -26,3 +26,6 @@ coverage/
 ###> phpstan/phpstan ###
 phpstan.neon
 ###< phpstan/phpstan ###
+
+.twig-cs-fixer.cache
+
