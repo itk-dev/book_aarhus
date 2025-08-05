@@ -3,10 +3,10 @@
 namespace App\Tests\Controller;
 
 use App\Exception\UserBookingException;
-use App\Service\BookingServiceInterface;
+use App\Interface\BookingServiceInterface;
+use App\Interface\UserBookingCacheServiceInterface;
 use App\Service\MetricsHelper;
 use App\Service\MicrosoftGraphHelperService;
-use App\Service\UserBookingCacheServiceInterface;
 use App\Tests\AbstractBaseApiTestCase;
 use App\Tests\Service\MicrosoftGraphBookingServiceData;
 use Symfony\Bundle\SecurityBundle\Security;

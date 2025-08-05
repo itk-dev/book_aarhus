@@ -95,4 +95,9 @@ class Location
     {
         $this->geoCoordinates = $geoCoordinates;
     }
+
+    public function __toString(): string
+    {
+        return $this->location;
+    }
 }

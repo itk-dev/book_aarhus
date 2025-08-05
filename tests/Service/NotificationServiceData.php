@@ -3,6 +3,7 @@
 namespace App\Tests\Service;
 
 use App\Entity\Api\Booking;
+use App\Entity\Main\Location;
 use App\Entity\Main\Resource;
 
 class NotificationServiceData
@@ -27,18 +28,19 @@ class NotificationServiceData
 
     public static function getResource(): Resource
     {
+        $location = new Location();
+        $location->setLocation("Dokk1");
+
         $resource = new Resource();
-        $resource->setId(1);
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
         $resource->setResourceName('DOKK1-Lokale-Test1');
         $resource->setResourceDisplayName('DOKK1 Lokale Test1');
         $resource->setResourceDescription('description');
         $resource->setResourceEmailText('email text');
-        $resource->setLocation('Dokk1');
+        $resource->setLocation($location);
         $resource->setWheelchairAccessible(false);
         $resource->setVideoConferenceEquipment(true);
         $resource->setGeoCoordinates('56.15357461749666, 10.214345916610233');
-        $resource->setUpdateTimestamp(new \DateTime());
         $resource->setMonitorEquipment(true);
         $resource->setCatering(false);
         $resource->setAcceptanceFlow(true);
@@ -47,7 +49,7 @@ class NotificationServiceData
         $resource->setPermissionCitizen(true);
         $resource->setPermissionEmployee(true);
         $resource->setHasWhitelist(false);
-        $resource->setDisplayName('Dokk1 test lokale');
+        $resource->setResourceDisplayName('Dokk1 test lokale');
         $resource->setCity('Aarhus');
         $resource->setStreetName('A random road');
         $resource->setPostalCode(8000);
