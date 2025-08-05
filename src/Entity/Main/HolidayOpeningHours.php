@@ -3,7 +3,6 @@
 namespace App\Entity\Main;
 
 use App\Entity\Trait\IdTrait;
-use App\Entity\Trait\ResourceIdTrait;
 use App\Entity\Trait\SourceIdTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
