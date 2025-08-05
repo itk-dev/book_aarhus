@@ -14,7 +14,6 @@ class HolidayOpeningHours
 {
     use IdTrait;
     use SourceIdTrait;
-    use ResourceIdTrait;
 
     #[ORM\ManyToOne(targetEntity: Resource::class, inversedBy: 'holidayOpenHours')]
     private Resource $resource;
