@@ -278,10 +278,10 @@ class ResourceService implements ResourceServiceInterface
             if (null === $entry) {
                 $entry = new OpeningHours();
                 $entry->setSourceId((int) $data['ID']);
-                $entry->setResource($resource);
                 $this->entityManager->persist($entry);
             }
 
+            $entry->setResource($resource);
             $entry->setWeekday((int) $data['weekday']);
             $entry->setOpen(\DateTime::createFromFormat('H:i:s', $data['open']));
             $entry->setClose(\DateTime::createFromFormat('H:i:s', $data['close']));
@@ -322,10 +322,10 @@ class ResourceService implements ResourceServiceInterface
             if (null === $entry) {
                 $entry = new HolidayOpeningHours();
                 $entry->setSourceId($sourceId);
-                $entry->setResource($resource);
                 $this->entityManager->persist($entry);
             }
 
+            $entry->setResource($resource);
             $entry->setHolidayOpen(\DateTime::createFromFormat('H:i:s', $data['holidayopen']));
             $entry->setHolidayClose(\DateTime::createFromFormat('H:i:s', $data['holidayclose']));
 

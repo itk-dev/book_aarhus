@@ -7,7 +7,7 @@ use App\Service\ResourceService;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class ResourceFixtures extends Fixture
+class AppFixtures extends Fixture
 {
     public function __construct(private readonly ResourceService $resourceService)
     {

@@ -11,9 +11,6 @@ MICROSOFT_GRAPH_SERVICE_ACCOUNT_NAME=""
 MICROSOFT_GRAPH_SERVICE_ACCOUNT_USERNAME=""
 MICROSOFT_GRAPH_SERVICE_ACCOUNT_PASSWORD=""
 
-BOOKING_RESOURCES_DATABASE_OPTION_AUTHENTICATION="SqlPassword"
-BOOKING_RESOURCES_DATABASE_OPTION_TRUST_SERVER_CERTIFICATE=true
-
 ADMIN_NOTIFICATION_EMAIL="admin-notifications@bookaarhus.local.itkdev.dk"
 EMAIL_FROM_ADDRESS="no-reply@bookaarhus.local.itkdev.dk"
 ```
@@ -32,8 +29,8 @@ docker compose exec phpfpm composer install
 # Run migrations
 docker compose exec phpfpm bin/console doctrine:migrations:migrate
 
-# Load resource fixtures
-docker compose exec phpfpm bin/console doctrine:fixtures:load --group=ResourceFixtures
+# Load fixtures
+docker compose exec phpfpm bin/console doctrine:fixtures:load --group=AppFixtures
 ```
 
 ## Testing
@@ -55,8 +52,6 @@ docker compose exec phpfpm composer tests-coverage
 The docker setup consists of:
 
 * A MariaDB container for local data.
-* An Azure SQL container for resource data. In the live setup this is an external database.
-* A RabbitMQ container for handling the message queue.
 * A Mailhog container for intercepting emails.
 * A Redis container for caching.
 * A phpfpm and nginx container.
