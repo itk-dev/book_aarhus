@@ -13,6 +13,13 @@ MICROSOFT_GRAPH_SERVICE_ACCOUNT_PASSWORD=""
 
 ADMIN_NOTIFICATION_EMAIL="admin-notifications@bookaarhus.local.itkdev.dk"
 EMAIL_FROM_ADDRESS="no-reply@bookaarhus.local.itkdev.dk"
+
+# For the app:resources:update command, use the following values to used the fixtures in public/fixtures.
+RESOURCES_LIST=http://bookaarhus-nginx-1.frontend:8080/fixtures/resources/resources.json
+RESOURCES_LOCATIONS=http://bookaarhus-nginx-1.frontend:8080/fixtures/resources/locations.json
+RESOURCES_CVR_WHITELIST=http://bookaarhus-nginx-1.frontend:8080/fixtures/resources/cvr_whitelist.json
+RESOURCES_OPEN_HOURS=http://bookaarhus-nginx-1.frontend:8080/fixtures/resources/opening_hours.json
+RESOURCES_HOLIDAY_OPEN_HOURS=http://bookaarhus-nginx-1.frontend:8080/fixtures/resources/holiday_opening_hours.json
 ```
 
 ## Setup
