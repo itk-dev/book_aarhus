@@ -5,8 +5,8 @@ services:
       - frontend
 
   redis:
-    image: 'redis:6'
+    image: "redis:6"
     networks:
       - app
     ports:
-      - '6379'
+      - "6379"

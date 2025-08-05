@@ -20,4 +20,3 @@ services:
             - 'test'
             - 'test@example.com'
             - 'test'
-
