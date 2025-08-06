@@ -22,7 +22,7 @@ class LocationRepository extends ServiceEntityRepository
         $qb->select('e.id', 'e.location');
 
         return array_reduce($qb->getQuery()->getArrayResult(), function ($result, $item) {
-            $result[$item['id']] = $item['locatio '];
+            $result[$item['id']] = $item['location'];
 
             return $result;
         }, []);
