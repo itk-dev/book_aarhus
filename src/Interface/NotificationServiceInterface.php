@@ -32,7 +32,7 @@ interface NotificationServiceInterface
     public function sendUserBookingNotification(UserBooking $userBooking, ?Resource $resource, NotificationTypeEnum $type): void;
 
     /**
-     * Create an iCol component.
+     * Create an iCal component.
      *
      * @param array $eventData the event data
      *
