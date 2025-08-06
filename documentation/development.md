@@ -18,8 +18,8 @@ EMAIL_FROM_ADDRESS="no-reply@bookaarhus.local.itkdev.dk"
 RESOURCES_LIST=http://bookaarhus-nginx-1.frontend:8080/fixtures/resources/resources.json
 RESOURCES_LOCATIONS=http://bookaarhus-nginx-1.frontend:8080/fixtures/resources/locations.json
 RESOURCES_CVR_WHITELIST=http://bookaarhus-nginx-1.frontend:8080/fixtures/resources/cvr_whitelist.json
-RESOURCES_OPEN_HOURS=http://bookaarhus-nginx-1.frontend:8080/fixtures/resources/opening_hours.json
-RESOURCES_HOLIDAY_OPEN_HOURS=http://bookaarhus-nginx-1.frontend:8080/fixtures/resources/holiday_opening_hours.json
+RESOURCES_OPENING_HOURS=http://bookaarhus-nginx-1.frontend:8080/fixtures/resources/opening_hours.json
+RESOURCES_HOLIDAY_OPENING_HOURS=http://bookaarhus-nginx-1.frontend:8080/fixtures/resources/holiday_opening_hours.json
 ```
 
 ## Setup
