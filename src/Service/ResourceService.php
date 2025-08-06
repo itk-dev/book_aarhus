@@ -49,8 +49,7 @@ class ResourceService implements ResourceServiceInterface
 
     public function updateLocations(array $updatedLocations): void
     {
-        $existingIdSourceIds = $this->locationRepository->getExistingSourceIds();
-        $existingSourceIds = array_values($existingIdSourceIds);
+        $existingSourceIds = $this->locationRepository->getExistingSourceIds();
 
         $handledSourceIds = [];
 
@@ -78,6 +77,12 @@ class ResourceService implements ResourceServiceInterface
         foreach ($sourceIdsToDelete as $sourceId) {
             $location = $this->locationRepository->findOneBy(['location' => $sourceId]);
             if (null !== $location) {
+                // Unlink location from existing resources.
+                $resourcesWithLocation = $this->resourceRepository->findBy(['location' => $location]);
+                foreach ($resourcesWithLocation as $resource) {
+                    $resource->setLocation(null);
+                }
+
                 $this->entityManager->remove($location);
             }
         }
@@ -87,16 +92,17 @@ class ResourceService implements ResourceServiceInterface
 
     public function updateResources(array $updatedResources): void
     {
-        $existingIdSourceIds = $this->resourceRepository->getExistingSourceIds();
-        $existingSourceIds = array_values($existingIdSourceIds);
+        $existingSourceIds = $this->resourceRepository->getExistingSourceIds();
+
         $handledSourceIds = [];
 
         foreach ($updatedResources as $resourceData) {
+            $sourceId = $resourceData['ID'];
             $resource = $this->resourceRepository->findOneBy(['sourceId' => $resourceData['ID']]);
 
             if (null === $resource) {
                 $resource = new Resource();
-                $resource->setSourceId($resourceData['ID']);
+                $resource->setSourceId($sourceId);
                 $this->entityManager->persist($resource);
             }
 
@@ -153,11 +159,12 @@ class ResourceService implements ResourceServiceInterface
 
     public function updateCVRWhitelists(array $updatedWhitelist): void
     {
-        $existingIdSourceIds = $this->cvrWhitelistRepository->getExistingSourceIds();
-        $existingSourceIds = array_values($existingIdSourceIds);
+        $existingSourceIds = $this->cvrWhitelistRepository->getExistingSourceIds();
+
         $handledSourceIds = [];
 
         foreach ($updatedWhitelist as $data) {
+            $sourceId = (int) $data['ID'];
             $resourceId = (int) $data['resourceID'];
             $resource = $this->resourceRepository->findOneBy(['sourceId' => $resourceId]);
 
@@ -165,11 +172,11 @@ class ResourceService implements ResourceServiceInterface
                 continue;
             }
 
-            $entry = $this->cvrWhitelistRepository->findOneBy(['sourceId' => $data['ID']]);
+            $entry = $this->cvrWhitelistRepository->findOneBy(['sourceId' => $sourceId]);
 
             if (null === $entry) {
                 $entry = new CvrWhitelist();
-                $entry->setSourceId((int) $data['ID']);
+                $entry->setSourceId($sourceId);
                 $this->entityManager->persist($entry);
             }
 
@@ -259,25 +266,25 @@ class ResourceService implements ResourceServiceInterface
 
     public function updateOpeningHours(array $updatedOpeningHours)
     {
-        $existingIdSourceIds = $this->openingHoursRepository->getExistingSourceIds();
-        $existingSourceIds = array_values($existingIdSourceIds);
+        $existingSourceIds = $this->openingHoursRepository->getExistingSourceIds();
+
         $handledSourceIds = [];
 
         foreach ($updatedOpeningHours as $data) {
             $resourceId = (int) $data['resourceID'];
+            $sourceId = (int) $data['ID'];
+
             $resource = $this->resourceRepository->findOneBy(['sourceId' => $resourceId]);
 
             if (null === $resource) {
                 continue;
             }
 
-            $sourceId = (int) $data['ID'];
-
             $entry = $this->openingHoursRepository->findOneBy(['sourceId' => $sourceId]);
 
             if (null === $entry) {
                 $entry = new OpeningHours();
-                $entry->setSourceId((int) $data['ID']);
+                $entry->setSourceId($sourceId);
                 $this->entityManager->persist($entry);
             }
 
@@ -303,19 +310,19 @@ class ResourceService implements ResourceServiceInterface
 
     public function updateHolidayOpeningHours(array $updatedHolidayOpeningHours)
     {
-        $existingIdSourceIds = $this->holidayOpeningHoursRepository->getExistingSourceIds();
-        $existingSourceIds = array_values($existingIdSourceIds);
+        $existingSourceIds = $this->holidayOpeningHoursRepository->getExistingSourceIds();
+
         $handledSourceIds = [];
 
         foreach ($updatedHolidayOpeningHours as $data) {
             $resourceId = (int) $data['resourceID'];
+            $sourceId = (int) $data['ID'];
+
             $resource = $this->resourceRepository->findOneBy(['sourceId' => $resourceId]);
 
             if (null === $resource) {
                 continue;
             }
-
-            $sourceId = (int) $data['ID'];
 
             $entry = $this->holidayOpeningHoursRepository->findOneBy(['sourceId' => $sourceId]);
 

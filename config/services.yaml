@@ -14,7 +14,7 @@ parameters:
     resources_list_endpoint: '%env(string:RESOURCES_LIST)%'
     resources_locations_endpoint: '%env(string:RESOURCES_LOCATIONS)%'
     resources_opening_hours_endpoint: '%env(string:RESOURCES_OPENING_HOURS)%'
-    resources_holiday_opening_hours_endpoint: '%env(string: RESOURCES_HOLIDAY_OPENING_HOURS)%'
+    resources_holiday_opening_hours_endpoint: '%env(string:RESOURCES_HOLIDAY_OPENING_HOURS)%'
     resources_cvr_whitelist_endpoint: '%env(string:RESOURCES_CVR_WHITELIST)%'
     excluded_resources: '%env(json:APP_EXCLUDED_RESOURCES)%'
 

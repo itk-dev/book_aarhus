@@ -16,15 +16,10 @@ class LocationRepository extends ServiceEntityRepository
         parent::__construct($registry, Location::class);
     }
 
-    public function getExistingSourceIds()
+    public function getExistingSourceIds(): array
     {
         $qb = $this->createQueryBuilder('e');
-        $qb->select('e.id', 'e.location');
-
-        return array_reduce($qb->getQuery()->getArrayResult(), function ($result, $item) {
-            $result[$item['id']] = $item['location'];
-
-            return $result;
-        }, []);
+        $qb->select('e.location');
+        return $qb->getQuery()->getSingleColumnResult();
     }
 }

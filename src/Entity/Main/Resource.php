@@ -101,20 +101,20 @@ class Resource
      * @var Collection<int, OpeningHours>
      */
     #[Groups(['resource', 'minimum'])]
-    #[ORM\OneToMany(mappedBy: 'resource', targetEntity: OpeningHours::class)]
+    #[ORM\OneToMany(mappedBy: 'resource', targetEntity: OpeningHours::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $openHours;
 
     /**
      * @var Collection<int, HolidayOpeningHours>
      */
     #[Groups(['resource', 'minimum'])]
-    #[ORM\OneToMany(mappedBy: 'resource', targetEntity: HolidayOpeningHours::class)]
+    #[ORM\OneToMany(mappedBy: 'resource', targetEntity: HolidayOpeningHours::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $holidayOpenHours;
 
     /**
      * @var Collection<int, CvrWhitelist>
      */
-    #[ORM\OneToMany(mappedBy: 'resource', targetEntity: CvrWhitelist::class)]
+    #[ORM\OneToMany(mappedBy: 'resource', targetEntity: CvrWhitelist::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $cvrWhitelists;
 
     #[ORM\ManyToOne(targetEntity: Location::class, inversedBy: 'resources')]
