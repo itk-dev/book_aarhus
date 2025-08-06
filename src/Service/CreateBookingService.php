@@ -31,7 +31,7 @@ class CreateBookingService
         private readonly CvrWhitelistRepository $whitelistRepository,
         private readonly MetricsHelper $metricsHelper,
         private readonly UserBookingCacheServiceInterface $userBookingCacheService,
-        private readonly ResourceRepository $resourceRepository,
+ 
         private readonly Environment $twig,
     ) {
     }
