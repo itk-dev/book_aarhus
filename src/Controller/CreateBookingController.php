@@ -30,7 +30,7 @@ class CreateBookingController extends AbstractController
         private readonly MetricsHelper $metricsHelper,
         private readonly CreateBookingService $createBookingService,
         private readonly ValidationUtilsInterface $validationUtils,
-        private readonly ResourceRepository $aakResourceRepository,
+        private readonly ResourceRepository $resourceRepository,
         private readonly BookingServiceInterface $bookingService,
         private readonly UserBookingCacheServiceInterface $userBookingCacheService,
     ) {
@@ -72,7 +72,7 @@ class CreateBookingController extends AbstractController
                 continue;
             }
 
-            $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
+            $resource = $this->resourceRepository->findOneBy(['resourceMail' => $email]);
 
             if (null === $resource) {
                 $bookingRequest->status = CreateBookingStatusEnum::ERROR;

@@ -30,18 +30,18 @@ class AddBookingToCacheHandlerTest extends AbstractBaseApiTestCase
         $res = new Resource();
         $res->setResourceDisplayName('Cool resource name');
 
-        $aakResourceRepositoryMock = $this->getMockBuilder(ResourceRepository::class)
+        $resourceRepositoryMock = $this->getMockBuilder(ResourceRepository::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['findOneBy'])
             ->getMock();
-        $aakResourceRepositoryMock->expects($this->exactly(1))->method('findOneBy')->willReturn($res);
+        $resourceRepositoryMock->expects($this->exactly(1))->method('findOneBy')->willReturn($res);
 
         $metric = $this->createMock(MetricsHelper::class);
 
         $handler = new AddBookingToCacheHandler(
             $bookingServiceMock,
             $userBookingCacheServiceMock,
-            $aakResourceRepositoryMock,
+            $resourceRepositoryMock,
             $metric,
         );
 

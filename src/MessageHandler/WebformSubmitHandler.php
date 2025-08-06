@@ -29,7 +29,7 @@ class WebformSubmitHandler
         private readonly MessageBusInterface $bus,
         private readonly ValidationUtilsInterface $validationUtils,
         private readonly LoggerInterface $logger,
-        private readonly ResourceRepository $aakResourceRepository,
+        private readonly ResourceRepository $resourceRepository,
         private readonly MetricsHelper $metricsHelper,
         private readonly CreateBookingService $createBookingService,
     ) {
@@ -61,7 +61,7 @@ class WebformSubmitHandler
             foreach ($dataSubmission['bookingData'] as $data) {
                 $email = $this->validationUtils->validateEmail($data['resourceId']);
 
-                $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
+                $resource = $this->resourceRepository->findOneBy(['resourceMail' => $email]);
 
                 if (is_null($resource)) {
                     throw new WebformSubmissionRetrievalException('Resource does not exist', 404);

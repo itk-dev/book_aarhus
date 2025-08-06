@@ -14,7 +14,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class GetResourceByEmailController extends AbstractController
 {
     public function __construct(
-        private readonly ResourceRepository $aakResourceRepository,
+        private readonly ResourceRepository $resourceRepository,
         private readonly SerializerInterface $serializer,
         private readonly MetricsHelper $metricsHelper,
     ) {
@@ -24,7 +24,7 @@ class GetResourceByEmailController extends AbstractController
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
-        $resource = $this->aakResourceRepository->findOneByEmail($resourceMail);
+        $resource = $this->resourceRepository->findOneByEmail($resourceMail);
 
         if (is_null($resource)) {
             $this->metricsHelper->incExceptionTotal(NotFoundHttpException::class);

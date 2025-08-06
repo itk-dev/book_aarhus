@@ -44,13 +44,13 @@ class BookingTest extends AbstractBaseApiTestCase
         $container = self::getContainer();
         $security = $container->get(Security::class);
 
-        $aakResourceRepositoryMock = $this->getMockBuilder(ResourceRepository::class)
+        $resourceRepositoryMock = $this->getMockBuilder(ResourceRepository::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['findOneByEmail'])
             ->getMock();
-        $aakResourceRepositoryMock->expects($this->exactly(2))->method('findOneByEmail')->willReturn($res);
+        $resourceRepositoryMock->expects($this->exactly(2))->method('findOneByEmail')->willReturn($res);
 
-        $container->set(ResourceRepository::class, $aakResourceRepositoryMock);
+        $container->set(ResourceRepository::class, $resourceRepositoryMock);
 
         $booking = new Booking();
         $booking->setResourceEmail('test@bookaarhus.local.itkdev.dk');
@@ -183,7 +183,7 @@ class BookingTest extends AbstractBaseApiTestCase
         $bus = $container->get(MessageBusInterface::class);
         $createBookingService = $container->get(CreateBookingService::class);
 
-        $aakBookingRepository = $this->getMockBuilder(ResourceRepository::class)
+        $resourceRepository = $this->getMockBuilder(ResourceRepository::class)
             ->onlyMethods(['findOneBy'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -196,14 +196,14 @@ class BookingTest extends AbstractBaseApiTestCase
         $resource->setResourceDisplayName('DOKK1 Lokale Test1');
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
         $resource->setLocation($location);
-        $aakBookingRepository->method('findOneBy')->willReturn($resource);
+        $resourceRepository->method('findOneBy')->willReturn($resource);
 
         $entityManager = self::getContainer()->get('doctrine')->getManager();
 
         /** @var ApiKeyUser $testUser */
         $testUser = $entityManager->getRepository(ApiKeyUser::class)->findOneBy(['name' => 'test']);
 
-        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $bus, $validationUtilsMock, $logger, $aakBookingRepository, $metric, $createBookingService);
+        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $bus, $validationUtilsMock, $logger, $resourceRepository, $metric, $createBookingService);
 
         $webformSubmitHandler->__invoke(new WebformSubmitMessage(
             'booking',
@@ -271,15 +271,15 @@ class BookingTest extends AbstractBaseApiTestCase
         $res->setHasWhitelist(false);
         $res->setAcceptConflict(false);
 
-        $aakResourceRepositoryMock = $this->getMockBuilder(ResourceRepository::class)
+        $resourceRepositoryMock = $this->getMockBuilder(ResourceRepository::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['findOneByEmail'])
             ->getMock();
-        $aakResourceRepositoryMock->expects($this->exactly(2))->method('findOneByEmail')->willReturn($res);
+        $resourceRepositoryMock->expects($this->exactly(2))->method('findOneByEmail')->willReturn($res);
 
         $security = $container->get(Security::class);
 
-        $container->set(ResourceRepository::class, $aakResourceRepositoryMock);
+        $container->set(ResourceRepository::class, $resourceRepositoryMock);
 
         $notificationServiceMock = $this->createMock(NotificationServiceInterface::class);
         $container->set(NotificationServiceInterface::class, $notificationServiceMock);
@@ -288,7 +288,7 @@ class BookingTest extends AbstractBaseApiTestCase
 
         $metric = $this->createMock(MetricsHelper::class);
 
-        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock, $security, $bus, $cvrWhitelistRepositoryMock, $metric);
+        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $resourceRepositoryMock, $security, $bus, $cvrWhitelistRepositoryMock, $metric);
         $createBookingHandler->__invoke(new CreateBookingMessage($booking));
     }
 

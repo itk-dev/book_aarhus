@@ -26,7 +26,7 @@ class CreateBookingService
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
         private readonly LoggerInterface $logger,
-        private readonly ResourceRepository $aakResourceRepository,
+        private readonly ResourceRepository $resourceRepository,
         private readonly Security $security,
         private readonly CvrWhitelistRepository $whitelistRepository,
         private readonly MetricsHelper $metricsHelper,
@@ -46,7 +46,7 @@ class CreateBookingService
         }
 
         $email = $booking->getResourceEmail();
-        $resource = $this->aakResourceRepository->findOneByEmail($email);
+        $resource = $this->resourceRepository->findOneByEmail($email);
 
         if (null == $resource) {
             $this->logger->error("Resource $email not found.");

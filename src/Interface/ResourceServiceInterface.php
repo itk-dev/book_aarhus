@@ -21,7 +21,7 @@ interface ResourceServiceInterface
      * @param string|null $permission    the name of the permission to retrieve resources for
      * @param int         $cacheLifetime Cache lifetime in seconds
      *
-     * @return array Array of AAKResource
+     * @return array Array of Resource
      */
     public function getAllResources(?string $permission = null, int $cacheLifetime = 1800): array;
 
@@ -31,7 +31,7 @@ interface ResourceServiceInterface
      * @param string $permission   the name of the permission to retrieve resources for
      * @param string $whitelistKey the whitelist key
      *
-     * @return array Array of AAKResource
+     * @return array Array of Resource
      */
     public function getWhitelistedResources(string $permission, string $whitelistKey): array;
 }

@@ -18,7 +18,7 @@ class SendBookingNotificationHandler
 {
     public function __construct(
         private readonly LoggerInterface $logger,
-        private readonly ResourceRepository $aakResourceRepository,
+        private readonly ResourceRepository $resourceRepository,
         private readonly NotificationServiceInterface $notificationService,
         private readonly MetricsHelper $metricsHelper,
     ) {
@@ -38,7 +38,7 @@ class SendBookingNotificationHandler
             $type = $message->getType();
 
             $email = $booking->getResourceEmail();
-            $resource = $this->aakResourceRepository->findOneByEmail($email);
+            $resource = $this->resourceRepository->findOneByEmail($email);
 
             $this->notificationService->sendBookingNotification($booking, $resource, $type);
         } catch (NoNotificationReceiverException|UnsupportedNotificationTypeException $e) {

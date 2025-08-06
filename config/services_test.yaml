@@ -4,15 +4,13 @@ services:
         autoconfigure: true
         public: true
 
-    App\Repository\Resources\AAKResourceRepository: ~
-
-    App\Service\BookingServiceInterface:
+    App\Interface\BookingServiceInterface:
         alias: 'App\Service\MicrosoftGraphBookingService'
 
-    App\Service\WebformServiceInterface:
+    App\Interface\WebformServiceInterface:
         alias: 'App\Service\WebformService'
 
-    App\Service\NotificationServiceInterface: ~
+    App\Interface\NotificationServiceInterface: ~
 
     App\Service\MicrosoftGraphHelperService:
         arguments:

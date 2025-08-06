@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DisplayResourceCommand extends Command
 {
     public function __construct(
-        private readonly ResourceRepository $aakResourceRepository,
+        private readonly ResourceRepository $resourceRepository,
     ) {
         parent::__construct();
     }
@@ -29,7 +29,7 @@ class DisplayResourceCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $resourceEmail = $input->getArgument('resourceEmail');
-        $info = $this->aakResourceRepository->findOneByEmail($resourceEmail);
+        $info = $this->resourceRepository->findOneByEmail($resourceEmail);
         isset($info) ? dump($info) : $output->writeln('<error>Resource not found.</error>');
 
         return Command::SUCCESS;

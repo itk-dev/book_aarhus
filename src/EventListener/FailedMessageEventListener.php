@@ -16,7 +16,7 @@ use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
 final class FailedMessageEventListener
 {
     public function __construct(
-        private readonly ResourceRepository $AAKResourceRepository,
+        private readonly ResourceRepository $resourceRepository,
         private readonly NotificationServiceInterface $notificationService,
         private readonly MetricsHelper $metricsHelper,
     ) {
@@ -43,7 +43,7 @@ final class FailedMessageEventListener
             );
         } elseif ($message instanceof CreateBookingMessage) {
             $booking = $message->getBooking();
-            $resource = $this->AAKResourceRepository->findOneByEmail($booking->getResourceEmail());
+            $resource = $this->resourceRepository->findOneByEmail($booking->getResourceEmail());
 
             $this->notificationService->sendBookingNotification($booking, $resource, NotificationTypeEnum::FAILED);
 
@@ -55,7 +55,7 @@ final class FailedMessageEventListener
             );
         } elseif ($message instanceof SendBookingNotificationMessage) {
             $booking = $message->getBooking();
-            $resource = $this->AAKResourceRepository->findOneByEmail($booking->getResourceEmail());
+            $resource = $this->resourceRepository->findOneByEmail($booking->getResourceEmail());
 
             $this->notificationService->notifyAdmin(
                 'Booking notification to user failed.',
