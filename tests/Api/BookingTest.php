@@ -107,7 +107,7 @@ class BookingTest extends AbstractBaseApiTestCase
         $this->assertEquals('795f5a1c-a0ac-4f8a-8834-bb71fca8585d', $message->getSubmissionUuid());
         $this->assertEquals('https://bookaarhus.local.itkdev.dk', $message->getSender());
         $this->assertEquals('https://bookaarhus.local.itkdev.dk/webform_rest/booking/submission/123123123', $message->getSubmissionUrl());
-        // $this->assertEquals(1, $message->getApiKeyUserId());
+        $this->assertEquals(2, $message->getApiKeyUserId());
 
         $this->transport('async')->queue()->assertCount(1);
         $this->transport('async')->queue()->assertContains(WebformSubmitMessage::class);
