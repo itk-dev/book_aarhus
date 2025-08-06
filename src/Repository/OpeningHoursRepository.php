@@ -20,6 +20,7 @@ class OpeningHoursRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('e');
         $qb->select('e.sourceId');
+
         return $qb->getQuery()->getSingleColumnResult();
     }
 }

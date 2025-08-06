@@ -13,12 +13,12 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
 
 #[AsEventListener]
-final class FailedMessageEventListener
+final readonly class FailedMessageEventListener
 {
     public function __construct(
-        private readonly ResourceRepository $resourceRepository,
-        private readonly NotificationServiceInterface $notificationService,
-        private readonly MetricsHelper $metricsHelper,
+        private ResourceRepository $resourceRepository,
+        private NotificationServiceInterface $notificationService,
+        private MetricsHelper $metricsHelper,
     ) {
     }
 

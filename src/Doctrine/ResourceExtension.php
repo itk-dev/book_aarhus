@@ -12,12 +12,12 @@ use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-final class ResourceExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
+final readonly class ResourceExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     public function __construct(
-        private readonly Security $security,
-        private readonly RequestStack $requestStack,
-        private readonly CvrWhitelistRepository $cvrWhitelistRepository,
+        private Security $security,
+        private RequestStack $requestStack,
+        private CvrWhitelistRepository $cvrWhitelistRepository,
     ) {
     }
 

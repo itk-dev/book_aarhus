@@ -20,6 +20,7 @@ class LocationRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('e');
         $qb->select('e.location');
+
         return $qb->getQuery()->getSingleColumnResult();
     }
 }

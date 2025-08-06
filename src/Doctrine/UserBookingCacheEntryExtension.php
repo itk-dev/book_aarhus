@@ -11,11 +11,11 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
-final class UserBookingCacheEntryExtension implements QueryCollectionExtensionInterface
+final readonly class UserBookingCacheEntryExtension implements QueryCollectionExtensionInterface
 {
     public function __construct(
-        private readonly Security $security,
-        private readonly RequestStack $requestStack,
+        private Security $security,
+        private RequestStack $requestStack,
     ) {
     }
 

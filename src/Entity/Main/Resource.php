@@ -118,7 +118,7 @@ class Resource
     private Collection $cvrWhitelists;
 
     #[ORM\ManyToOne(targetEntity: Location::class, inversedBy: 'resources')]
-    private ?Location $location;
+    private ?Location $location = null;
 
     #[Groups(['resource', 'minimum'])]
     #[ORM\Column(type: Types::STRING, length: 128, nullable: false)]
