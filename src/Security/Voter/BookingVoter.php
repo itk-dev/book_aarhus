@@ -2,8 +2,8 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Main\Booking;
-use App\Repository\Resources\AAKResourceRepository;
+use App\Entity\Api\Booking;
+use App\Repository\ResourceRepository;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -18,7 +18,7 @@ class BookingVoter extends Voter
     public const PERMISSION_CITIZEN = 'citizen';
     public const PERMISSION_BUSINESS_PARTNER = 'businessPartner';
 
-    public function __construct(private readonly AAKResourceRepository $aakResourceRepository)
+    public function __construct(private readonly ResourceRepository $resourceRepository)
     {
     }
 
@@ -47,7 +47,7 @@ class BookingVoter extends Voter
 
         $resourceEmail = $subject->getResourceEmail();
 
-        $resource = $this->aakResourceRepository->findOneByEmail($resourceEmail);
+        $resource = $this->resourceRepository->findOneByEmail($resourceEmail);
 
         if (is_null($resource)) {
             return false;

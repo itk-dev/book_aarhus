@@ -3,11 +3,11 @@
 namespace App\Tests\Service;
 
 use App\Enum\NotificationTypeEnum;
-use App\Service\BookingServiceInterface;
+use App\Interface\BookingServiceInterface;
 use App\Service\MetricsHelper;
 use App\Service\NotificationService;
+use App\Service\ValidationUtils;
 use App\Tests\AbstractBaseApiTestCase;
-use App\Utils\ValidationUtils;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\MailerInterface;
 

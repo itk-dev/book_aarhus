@@ -2,7 +2,9 @@
 
 namespace App\Entity\Main;
 
-use App\Repository\Main\ApiKeyUserRepository;
+use App\Entity\Trait\IdTrait;
+use App\Repository\ApiKeyUserRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -10,14 +12,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ApiKeyUserRepository::class)]
 class ApiKeyUser implements UserInterface
 {
+    use IdTrait;
+
     private const ROLES = ['ROLE_USER'];
 
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $id;
-
-    #[ORM\Column(type: 'string', length: 255, unique: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true)]
     #[Assert\Length(
         min: 80,
         max: 255,
@@ -26,26 +25,18 @@ class ApiKeyUser implements UserInterface
     )]
     private string $apiKey;
 
-    #[ORM\Column(type: 'string', length: 255, unique: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true)]
     private string $name;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $webformApiKey;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $webformApiKey = null;
 
     public function getRoles(): array
     {
         return self::ROLES;
     }
 
-    /**
-     * @return void
-     */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
     }
 

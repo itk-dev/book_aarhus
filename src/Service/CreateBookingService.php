@@ -3,13 +3,15 @@
 namespace App\Service;
 
 use ApiPlatform\Symfony\Security\Exception\AccessDeniedException;
-use App\Entity\Main\Booking;
-use App\Entity\Resources\AAKResource;
+use App\Entity\Api\Booking;
+use App\Entity\Main\Resource;
 use App\Enum\UserBookingStatusEnum;
 use App\Exception\BookingContentsException;
 use App\Exception\BookingCreateConflictException;
-use App\Repository\Resources\AAKResourceRepository;
-use App\Repository\Resources\CvrWhitelistRepository;
+use App\Interface\BookingServiceInterface;
+use App\Interface\UserBookingCacheServiceInterface;
+use App\Repository\CvrWhitelistRepository;
+use App\Repository\ResourceRepository;
 use App\Security\Voter\BookingVoter;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -24,12 +26,12 @@ class CreateBookingService
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
         private readonly LoggerInterface $logger,
-        private readonly AAKResourceRepository $aakResourceRepository,
+        private readonly ResourceRepository $resourceRepository,
         private readonly Security $security,
         private readonly CvrWhitelistRepository $whitelistRepository,
         private readonly MetricsHelper $metricsHelper,
         private readonly UserBookingCacheServiceInterface $userBookingCacheService,
-        private readonly AAKResourceRepository $resourceRepository,
+
         private readonly Environment $twig,
     ) {
     }
@@ -43,9 +45,8 @@ class CreateBookingService
             throw new AccessDeniedException('User does not have permission to create bookings for the given resource.');
         }
 
-        /** @var AAKResource $resource */
         $email = $booking->getResourceEmail();
-        $resource = $this->aakResourceRepository->findOneByEmail($email);
+        $resource = $this->resourceRepository->findOneByEmail($email);
 
         if (null == $resource) {
             $this->logger->error("Resource $email not found.");
@@ -133,7 +134,6 @@ class CreateBookingService
         $resourceEmail = $booking->getResourceEmail();
         $resourceDisplayName = $booking->getResourceName();
 
-        /** @var AAKResource $resource */
         $resource = $this->resourceRepository->findOneBy(['resourceMail' => $resourceEmail]);
 
         if (null != $resource && $resource->getResourceDisplayName()) {
@@ -158,7 +158,7 @@ class CreateBookingService
     /**
      * @throws BookingContentsException
      */
-    public function composeBookingContents($data, AAKResource $resource, $metaData): array
+    public function composeBookingContents($data, Resource $resource, $metaData): array
     {
         try {
             $body = [];

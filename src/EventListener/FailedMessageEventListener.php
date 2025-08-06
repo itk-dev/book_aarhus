@@ -3,22 +3,22 @@
 namespace App\EventListener;
 
 use App\Enum\NotificationTypeEnum;
+use App\Interface\NotificationServiceInterface;
 use App\Message\CreateBookingMessage;
 use App\Message\SendBookingNotificationMessage;
 use App\Message\WebformSubmitMessage;
-use App\Repository\Resources\AAKResourceRepository;
+use App\Repository\ResourceRepository;
 use App\Service\MetricsHelper;
-use App\Service\NotificationServiceInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
 
 #[AsEventListener]
-final class FailedMessageEventListener
+final readonly class FailedMessageEventListener
 {
     public function __construct(
-        private readonly AAKResourceRepository $AAKResourceRepository,
-        private readonly NotificationServiceInterface $notificationService,
-        private readonly MetricsHelper $metricsHelper,
+        private ResourceRepository $resourceRepository,
+        private NotificationServiceInterface $notificationService,
+        private MetricsHelper $metricsHelper,
     ) {
     }
 
@@ -43,7 +43,7 @@ final class FailedMessageEventListener
             );
         } elseif ($message instanceof CreateBookingMessage) {
             $booking = $message->getBooking();
-            $resource = $this->AAKResourceRepository->findOneByEmail($booking->getResourceEmail());
+            $resource = $this->resourceRepository->findOneByEmail($booking->getResourceEmail());
 
             $this->notificationService->sendBookingNotification($booking, $resource, NotificationTypeEnum::FAILED);
 
@@ -55,7 +55,7 @@ final class FailedMessageEventListener
             );
         } elseif ($message instanceof SendBookingNotificationMessage) {
             $booking = $message->getBooking();
-            $resource = $this->AAKResourceRepository->findOneByEmail($booking->getResourceEmail());
+            $resource = $this->resourceRepository->findOneByEmail($booking->getResourceEmail());
 
             $this->notificationService->notifyAdmin(
                 'Booking notification to user failed.',

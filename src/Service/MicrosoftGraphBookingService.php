@@ -2,12 +2,13 @@
 
 namespace App\Service;
 
-use App\Entity\Main\UserBooking;
+use App\Entity\Api\UserBooking;
 use App\Enum\UserBookingStatusEnum;
 use App\Enum\UserBookingTypeEnum;
 use App\Exception\BookingCreateConflictException;
 use App\Exception\MicrosoftGraphCommunicationException;
 use App\Exception\UserBookingException;
+use App\Interface\BookingServiceInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -30,8 +31,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://docs.microsoft.com/en-us/graph/api/calendar-getschedule?view=graph-rest-1.0&tabs=http
      */
     public function getBusyIntervals(array $schedules, \DateTime $startTime, \DateTime $endTime, ?string $accessToken = null): array
@@ -80,8 +79,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
      *
      * @throws BookingCreateConflictException
@@ -164,8 +161,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#examples
      */
     public function createBookingInviteResource(string $resourceEmail, string $resourceName, string $subject, string $body, \DateTime $startTime, \DateTime $endTime): array
@@ -220,8 +215,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://docs.microsoft.com/en-us/graph/api/event-update?view=graph-rest-1.0&tabs=http
      */
     public function updateBooking(UserBooking $booking): ?string
@@ -267,7 +260,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
                     throw new UserBookingException('Could not find booking in resource.');
                 }
 
-                $bookingId = urlencode($eventInResource['id']);
+                $bookingId = urlencode((string) $eventInResource['id']);
 
                 $response = $this->graphHelperService->request("/users/$resourceMail/events/$bookingId", $token, 'PATCH', $newData);
             }
@@ -285,8 +278,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://docs.microsoft.com/en-us/graph/api/event-delete?view=graph-rest-1.0&tabs=http
      */
     public function deleteBooking(UserBooking $booking): void
@@ -340,7 +331,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             throw new UserBookingException('Booking not found in resource', 404);
         }
 
-        $bookingId = urlencode($eventInResource['id']);
+        $bookingId = urlencode((string) $eventInResource['id']);
         $userId = $booking->resourceMail;
 
         // Remove from resource.
@@ -352,8 +343,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://docs.microsoft.com/en-us/graph/search-concept-events
      */
     public function getBooking(string $bookingId): array
@@ -422,7 +411,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
             if (!empty($result) && !empty($hits)) {
                 foreach ($hits as $hit) {
-                    $id = urlencode($hit['hitId']);
+                    $id = urlencode((string) $hit['hitId']);
 
                     $userBookingGraphData = $this->getBooking($id);
 
@@ -444,8 +433,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://learn.microsoft.com/en-us/graph/api/resources/event?view=graph-rest-1.0
      * @see https://learn.microsoft.com/en-us/graph/api/resources/responsestatus?view=graph-rest-1.0
      */
@@ -470,7 +457,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
             $organizerEmail = $data['organizer']['emailAddress']['address'] ?? null;
 
-            $userBooking->ownedByServiceAccount = $organizerEmail && mb_strtolower($organizerEmail) == mb_strtolower($this->serviceAccountUsername);
+            $userBooking->ownedByServiceAccount = $organizerEmail && mb_strtolower((string) $organizerEmail) == mb_strtolower($this->serviceAccountUsername);
 
             $bookingType = $userBooking->ownedByServiceAccount ? UserBookingTypeEnum::ACCEPTANCE : UserBookingTypeEnum::INSTANT;
             $userBooking->bookingType = $bookingType->name;
@@ -492,12 +479,12 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
 
             $resourceMailDOMNodes = $xpath->query("//td[@id='resourceMail']");
             if (isset($resourceMailDOMNodes[0])) {
-                $resourceMail = trim($resourceMailDOMNodes[0]->textContent);
+                $resourceMail = trim((string) $resourceMailDOMNodes[0]->textContent);
             }
 
             $resourceNameDOMNodes = $xpath->query("//td[@id='resourceName']");
             if (isset($resourceNameDOMNodes[0])) {
-                $resourceName = trim($resourceNameDOMNodes[0]->textContent);
+                $resourceName = trim((string) $resourceNameDOMNodes[0]->textContent);
             }
 
             if (empty($resourceMail)) {
@@ -511,7 +498,7 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
             $attendeeResource = [];
 
             foreach ($data['attendees'] as $attendee) {
-                if (mb_strtolower($attendee['emailAddress']['address']) == mb_strtolower($userBooking->resourceMail)) {
+                if (mb_strtolower((string) $attendee['emailAddress']['address']) == mb_strtolower($userBooking->resourceMail)) {
                     $attendeeResource = $attendee;
                     break;
                 }
@@ -547,9 +534,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAllFutureBookings($token, $request = null): array
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
@@ -586,17 +570,12 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createBodyUserId(string $id): string
     {
         return "UID-$id-UID";
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws UserBookingException
      * @throws MicrosoftGraphCommunicationException
      */
@@ -670,8 +649,6 @@ class MicrosoftGraphBookingService implements BookingServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws MicrosoftGraphCommunicationException
      * @throws UserBookingException
      */

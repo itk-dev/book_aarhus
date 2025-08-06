@@ -11,17 +11,14 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
-final class UserBookingCacheEntryExtension implements QueryCollectionExtensionInterface
+final readonly class UserBookingCacheEntryExtension implements QueryCollectionExtensionInterface
 {
     public function __construct(
-        private readonly Security $security,
-        private readonly RequestStack $requestStack,
+        private Security $security,
+        private RequestStack $requestStack,
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
     {
         $this->addWhere($queryBuilder, $resourceClass);
@@ -29,11 +26,6 @@ final class UserBookingCacheEntryExtension implements QueryCollectionExtensionIn
 
     /**
      * WHere condition to ensure display of users personal bookings.
-     *
-     * @param QueryBuilder $queryBuilder
-     * @param string $resourceClass
-     *
-     * @return void
      */
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass): void
     {

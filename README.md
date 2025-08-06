@@ -5,7 +5,6 @@
 - PHP 8.1
 - RabbitMQ
 - Redis
-- Azure SQL database (for resources)
 - MariaDB (for other data)
 
 ## Development Setup
@@ -88,12 +87,6 @@ and open it in a browser.
 Exchange is the data owner of booking data. The communication is handled through Microsoft Graph.
 
 See [documentation/microsoft-graph.md](documentation/microsoft-graph.md) for information about the use of Microsoft Graph.
-
-## Booking resources in Azure SQL Edge
-
-Resources are retrieved from an Azure SQL service.
-
-See [documentation/azure-sql.md](documentation/azure-sql.md) for a description of how this is set up.
 
 ## OpenAPI specification
 

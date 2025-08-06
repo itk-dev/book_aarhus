@@ -15,19 +15,6 @@ doctrine:
                 # either here or in the DATABASE_URL env var (see .env file)
                 #server_version: '13'
 
-            azure_sql:
-                dbname: '%env(resolve:BOOKING_RESOURCES_DATABASE_DBNAME)%'
-                host: '%env(resolve:BOOKING_RESOURCES_DATABASE_HOST)%'
-                port: '%env(resolve:BOOKING_RESOURCES_DATABASE_PORT)%'
-                user: '%env(resolve:BOOKING_RESOURCES_DATABASE_USER)%'
-                password: '%env(resolve:BOOKING_RESOURCES_DATABASE_PASSWORD)%'
-                options:
-                    authentication: '%env(resolve:BOOKING_RESOURCES_DATABASE_OPTION_AUTHENTICATION)%'
-                    TrustServerCertificate: '%env(resolve:BOOKING_RESOURCES_DATABASE_OPTION_TRUST_SERVER_CERTIFICATE)%'
-                driver: 'pdo_sqlsrv'
-                charset: 'UTF-8'
-                server_version: '%env(resolve:BOOKING_RESOURCES_DATABASE_SERVER_VERSION)%'
-
     orm:
         default_entity_manager: default
         auto_generate_proxy_classes: true
@@ -43,17 +30,6 @@ doctrine:
                         dir: '%kernel.project_dir%/src/Entity/Main'
                         prefix: 'App\Entity\Main'
                         alias: App
-
-            resources:
-                connection: azure_sql
-                naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
-                mappings:
-                    Customer:
-                        is_bundle: false
-                        type: annotation
-                        dir: '%kernel.project_dir%/src/Entity/Resources'
-                        prefix: 'App\Entity\Resources'
-                        alias: Resources
 
 when@prod:
     doctrine:

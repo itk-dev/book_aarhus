@@ -25,7 +25,7 @@
 
 <!DOCTYPE html>
 <html>
-{% include 'inline-email-head.html.twig' %}
+{{ include('inline-email-head.html.twig') }}
 <body>
 <table role="presentation" cellspacing="0" cellpadding="24" border="0" align="center" class="document">
     <tr>
@@ -75,11 +75,11 @@
                                         </tr>
                                         <tr class="start-time">
                                             <td>Starttidspunkt:</td>
-                                            <td>{{ submission.fromObj|date("d/m/Y - H:i") }}<span id="start" class="hidden hasData" data-format="ISO-8601">{{ submission.start }}</span></td>
+                                            <td>{{ submission.fromObj|date('d/m/Y - H:i') }}<span id="start" class="hidden hasData" data-format="ISO-8601">{{ submission.start }}</span></td>
                                         </tr>
                                         <tr class="end-time">
                                             <td>Sluttidspunkt:</td>
-                                            <td>{{ submission.toObj|date("d/m/Y - H:i") }}<span id="end" class="hidden hasData" data-format="ISO-8601">{{ submission.end }}</span></td>
+                                            <td>{{ submission.toObj|date('d/m/Y - H:i') }}<span id="end" class="hidden hasData" data-format="ISO-8601">{{ submission.end }}</span></td>
                                         </tr>
                                         {# Metadata fields #}
                                         {% for key, value in metaData %}

@@ -2,11 +2,12 @@
 
 namespace App\Service;
 
-use App\Entity\Main\UserBooking;
+use App\Entity\Api\UserBooking;
+use App\Entity\Main\Resource;
 use App\Entity\Main\UserBookingCacheEntry;
-use App\Entity\Resources\AAKResource;
 use App\Exception\MicrosoftGraphCommunicationException;
-use App\Repository\Resources\AAKResourceRepository;
+use App\Interface\UserBookingCacheServiceInterface;
+use App\Repository\ResourceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -21,14 +22,12 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly MicrosoftGraphBookingService $microsoftGraphBookingService,
         private readonly LoggerInterface $logger,
-        private readonly AAKResourceRepository $resourceRepository,
+        private readonly ResourceRepository $resourceRepository,
         private readonly MetricsHelper $metricsHelper,
     ) {
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws MicrosoftGraphCommunicationException
      */
     public function rebuildCache(): void
@@ -46,10 +45,6 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return void
-     *
      * @throws MicrosoftGraphCommunicationException
      */
     public function updateCache(bool $removeOutdated = true): void
@@ -66,7 +61,6 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
                 // Loop over all elements on page.
                 foreach ($result['data'] as $userBooking) {
                     // Set resource display name.
-                    /** @var AAKResource $resource */
                     $resource = $this->resourceRepository->findOneBy(['resourceMail' => $userBooking->resourceMail]);
                     if (null !== $resource) {
                         $userBooking->displayName = $resource->getResourceDisplayName() ?? $userBooking->displayName;
@@ -102,9 +96,6 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addCacheEntry(UserBooking $userBooking): void
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
@@ -116,9 +107,6 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addCacheEntryFromArray(array $data): void
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
@@ -131,8 +119,6 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws \Exception
      */
     public function changeCacheEntry(string $exchangeId, array $changes): void
@@ -176,9 +162,6 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function deleteCacheEntry(string $exchangeId): void
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
@@ -196,11 +179,6 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
 
     /**
      * Set values for cache entity.
-     *
-     * @param $entity
-     * @param UserBooking $userBooking
-     *
-     * @return UserBookingCacheEntry
      */
     private function setCacheEntityValues(UserBookingCacheEntry $entity, UserBooking $userBooking): UserBookingCacheEntry
     {
@@ -219,11 +197,6 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
 
     /**
      * Set values for cache entity.
-     *
-     * @param $entity
-     * @param array $data
-     *
-     * @return UserBookingCacheEntry
      */
     private function setCacheEntityValuesFromArray(UserBookingCacheEntry $entity, array $data): UserBookingCacheEntry
     {
@@ -242,10 +215,6 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
 
     /**
      * Get uid from mail body.
-     *
-     * @param string $body
-     *
-     * @return string|null
      */
     private function retrieveUidFromBody(string $body): ?string
     {
@@ -261,8 +230,6 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
 
     /**
      * Clear UserBookingCacheEntry table.
-     *
-     * @return void
      */
     private function clearUserBookingCache(): void
     {
@@ -280,9 +247,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      * Remove UID from front and back of id.
      *
      * @param string|null $documentBodyUid
-     *   The uid found in mail body
-     *
-     * @return string|null
+     *                                     The uid found in mail body
      */
     private function extractRealUid(?string $documentBodyUid): ?string
     {
@@ -293,7 +258,7 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
      * Remove outdated entries in cache.
      *
      * @param array $exchangeBookings
-     *   A list of exchange IDs
+     *                                A list of exchange IDs
      */
     private function removeOutdatedEntries(array $exchangeBookings): void
     {
@@ -308,9 +273,6 @@ class UserBookingCacheService implements UserBookingCacheServiceInterface
         $this->entityManager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function deleteCacheEntryByICalUId(string $iCalUId): void
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);

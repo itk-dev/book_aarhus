@@ -3,11 +3,11 @@
 namespace App\Tests\Controller;
 
 use App\Controller\GetStatusByIdsController;
-use App\Entity\Main\UserBooking;
+use App\Entity\Api\UserBooking;
 use App\Enum\UserBookingStatusEnum;
-use App\Service\BookingServiceInterface;
+use App\Interface\BookingServiceInterface;
+use App\Interface\UserBookingCacheServiceInterface;
 use App\Service\MetricsHelper;
-use App\Service\UserBookingCacheServiceInterface;
 use App\Tests\AbstractBaseApiTestCase;
 use App\Tests\Service\MicrosoftGraphBookingServiceData;
 use Symfony\Component\HttpFoundation\Request;

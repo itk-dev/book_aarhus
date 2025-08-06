@@ -1,0 +1,58 @@
+[
+  {
+    "ID": "1",
+    "resourceID": "1",
+    "weekday": "1",
+    "open": "08:00:00",
+    "close": "23:00:00",
+    "UpdateTimeStamp": "11\/16\/2022 10:04:27 PM"
+  },
+  {
+    "ID": "2",
+    "resourceID": "1",
+    "weekday": "2",
+    "open": "08:00:00",
+    "close": "23:00:00",
+    "UpdateTimeStamp": "11\/16\/2022 10:04:27 PM"
+  },
+  {
+    "ID": "3",
+    "resourceID": "1",
+    "weekday": "3",
+    "open": "08:00:00",
+    "close": "23:00:00",
+    "UpdateTimeStamp": "11\/16\/2022 10:04:27 PM"
+  },
+  {
+    "ID": "4",
+    "resourceID": "1",
+    "weekday": "4",
+    "open": "08:00:00",
+    "close": "23:00:00",
+    "UpdateTimeStamp": "11\/16\/2022 10:04:27 PM"
+  },
+  {
+    "ID": "5",
+    "resourceID": "1",
+    "weekday": "5",
+    "open": "08:00:00",
+    "close": "20:00:00",
+    "UpdateTimeStamp": "11\/16\/2022 10:04:27 PM"
+  },
+  {
+    "ID": "6",
+    "resourceID": "2",
+    "weekday": "1",
+    "open": "08:00:00",
+    "close": "23:00:00",
+    "UpdateTimeStamp": "11\/16\/2022 10:04:27 PM"
+  },
+  {
+    "ID": "7",
+    "resourceID": "2",
+    "weekday": "2",
+    "open": "10:00:00",
+    "close": "18:00:00",
+    "UpdateTimeStamp": "11\/16\/2022 10:04:27 PM"
+  }
+]

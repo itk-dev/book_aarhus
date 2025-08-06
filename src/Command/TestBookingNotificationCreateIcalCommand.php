@@ -4,7 +4,7 @@
 
 namespace App\Command;
 
-use App\Service\NotificationServiceInterface;
+use App\Interface\NotificationServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,7 +17,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class TestBookingNotificationCreateIcalCommand extends Command
 {
-    public function __construct(private NotificationServiceInterface $notificationService)
+    public function __construct(private readonly NotificationServiceInterface $notificationService)
     {
         parent::__construct();
     }
@@ -45,7 +45,7 @@ class TestBookingNotificationCreateIcalCommand extends Command
      */
     public function getEvents()
     {
-        $json = file_get_contents('resources/exampleIcalEventData.json');
+        $json = file_get_contents('public/fixtures/example-ical-event-data.json');
         $events = json_decode($json, true);
 
         return $events['data'];

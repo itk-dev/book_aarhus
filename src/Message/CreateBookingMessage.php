@@ -2,15 +2,12 @@
 
 namespace App\Message;
 
-use App\Entity\Main\Booking;
+use App\Entity\Api\Booking;
 
 class CreateBookingMessage
 {
-    private Booking $booking;
-
-    public function __construct(Booking $booking)
+    public function __construct(private readonly Booking $booking)
     {
-        $this->booking = $booking;
     }
 
     public function getBooking(): Booking

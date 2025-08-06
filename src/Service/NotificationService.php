@@ -2,14 +2,14 @@
 
 namespace App\Service;
 
-use App\Entity\Main\Booking;
-use App\Entity\Main\UserBooking;
-use App\Entity\Resources\AAKResource;
+use App\Entity\Api\Booking;
+use App\Entity\Api\UserBooking;
+use App\Entity\Main\Resource;
 use App\Enum\NotificationTypeEnum;
 use App\Exception\BuildNotificationException;
 use App\Exception\NoNotificationReceiverException;
 use App\Exception\UnsupportedNotificationTypeException;
-use App\Utils\ValidationUtils;
+use App\Interface\NotificationServiceInterface;
 use Eluceo\iCal\Domain\Entity;
 use Eluceo\iCal\Domain\Entity\TimeZone;
 use Eluceo\iCal\Domain\ValueObject\DateTime as ICalDateTime;
@@ -56,10 +56,7 @@ class NotificationService implements NotificationServiceInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendBookingNotification(Booking $booking, ?AAKResource $resource, NotificationTypeEnum $type): void
+    public function sendBookingNotification(Booking $booking, ?Resource $resource, NotificationTypeEnum $type): void
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
@@ -80,12 +77,9 @@ class NotificationService implements NotificationServiceInterface
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function sendUserBookingNotification(
         UserBooking $userBooking,
-        ?AAKResource $resource,
+        ?Resource $resource,
         NotificationTypeEnum $type,
     ): void {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
@@ -174,15 +168,12 @@ class NotificationService implements NotificationServiceInterface
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createCalendarComponent(array $eventData): Component
     {
         $location = new Location($eventData['location_name']);
 
         if ($eventData['coordinates']) {
-            $coordinatesArr = explode(',', $eventData['coordinates']);
+            $coordinatesArr = explode(',', (string) $eventData['coordinates']);
             $location = $location->withGeographicPosition(
                 new GeographicPosition(
                     (float) $coordinatesArr['0'],
@@ -219,10 +210,7 @@ class NotificationService implements NotificationServiceInterface
         return (new Factory\CalendarFactory())->createCalendar($calendar);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function notifyAdmin(string $subject, string $message, ?Booking $booking, ?AAKResource $resource): void
+    public function notifyAdmin(string $subject, string $message, ?Booking $booking, ?Resource $resource): void
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
 
@@ -265,22 +253,17 @@ class NotificationService implements NotificationServiceInterface
     }
 
     /**
-     * @param NotificationTypeEnum $type
-     * @param array $data
-     *
-     * @return array
-     *
      * @throws BuildNotificationException
      */
     private function buildNotification(NotificationTypeEnum $type, array $data): array
     {
         $fileAttachments = [];
         $to = $data['user']['mail'];
-        /** @var AAKResource $resource */
         $resource = $data['resource'];
         $resourceName = $resource->getResourceDisplayName() ?? $resource->getResourceName();
         $location = $resource->getLocation();
-        $resourceLocationString = $resourceName.' - '.$location;
+        $locationName = $location?->getLocation() ?? '';
+        $resourceLocationString = $resourceName.' - '.$locationName;
 
         switch ($type) {
             case NotificationTypeEnum::SUCCESS:
@@ -335,10 +318,6 @@ class NotificationService implements NotificationServiceInterface
     }
 
     /**
-     * @param array $notification
-     *
-     * @return void
-     *
      * @throws TransportExceptionInterface
      */
     private function sendNotification(array $notification): void
@@ -376,11 +355,6 @@ class NotificationService implements NotificationServiceInterface
         $this->mailer->send($email);
     }
 
-    /**
-     * @param array $data
-     *
-     * @return array
-     */
     private function prepareICalEvent(array $data): array
     {
         return [

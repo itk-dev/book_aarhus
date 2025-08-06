@@ -4,7 +4,7 @@
 
 namespace App\Command;
 
-use App\Entity\Main\Booking;
+use App\Entity\Api\Booking;
 use App\Message\CreateBookingMessage;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

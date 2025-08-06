@@ -3,8 +3,9 @@
 namespace App\Service;
 
 use App\Exception\WebformSubmissionRetrievalException;
+use App\Interface\WebformServiceInterface;
 use App\Message\WebformSubmitMessage;
-use App\Repository\Main\ApiKeyUserRepository;
+use App\Repository\ApiKeyUserRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -19,9 +20,6 @@ class WebformService implements WebformServiceInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(WebformSubmitMessage $message): array
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::INVOKE);
@@ -41,16 +39,18 @@ class WebformService implements WebformServiceInterface
 
         $this->logger->info("Fetching $submissionUrl");
 
-        $webformSubmission = $this->getWebformSubmission($submissionUrl, $user->getWebformApiKey());
+        $webformApikKey = $user->getWebformApiKey();
+        if (null == $webformApikKey) {
+            throw new WebformSubmissionRetrievalException('user.webformApiKey not set.');
+        }
+
+        $webformSubmission = $this->getWebformSubmission($submissionUrl, $webformApikKey);
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
         return $this->getValidatedData($webformSubmission);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getWebformSubmission(string $submissionUrl, string $webformApiKey): array
     {
         try {
@@ -69,9 +69,6 @@ class WebformService implements WebformServiceInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function sortWebformSubmissionDataByType(array $webformSubmission): array
     {
         $sortedData = [
@@ -100,9 +97,6 @@ class WebformService implements WebformServiceInterface
         return $sortedData;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getValidatedData(array $webformSubmission): array
     {
         if (empty($webformSubmission['data'])) {

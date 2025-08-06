@@ -43,9 +43,6 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function authenticate(Request $request): Passport
     {
         $authHeader = $request->headers->get(self::AUTH_HEADER);
@@ -65,9 +62,6 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
         return new SelfValidatingPassport(new UserBadge($apiKey));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, 'success');
@@ -76,9 +70,6 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $this->metricsHelper->incMethodTotal(__METHOD__, 'failure');

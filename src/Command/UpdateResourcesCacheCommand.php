@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Service\ResourceServiceInterface;
+use App\Interface\ResourceServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;

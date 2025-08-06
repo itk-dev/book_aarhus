@@ -87,11 +87,11 @@ class MicrosoftGraphHelperService
     /**
      * Check that there is no interval conflict.
      *
-     * @param string $resourceEmail resource to check for conflict in
-     * @param \DateTime $startTime start of interval
-     * @param \DateTime $endTime end of interval
-     * @param string|null $accessToken access token
-     * @param array|null $ignoreICalUIds Ignore bookings with these ICalUIds in the evaluation. Use to allow editing an existing booking.
+     * @param string      $resourceEmail  resource to check for conflict in
+     * @param \DateTime   $startTime      start of interval
+     * @param \DateTime   $endTime        end of interval
+     * @param string|null $accessToken    access token
+     * @param array|null  $ignoreICalUIds Ignore bookings with these ICalUIds in the evaluation. Use to allow editing an existing booking.
      *
      * @return bool whether there is a booking conflict for the given interval
      *

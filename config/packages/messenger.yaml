@@ -5,7 +5,7 @@ framework:
 
         transports:
             async:
-                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 retry_strategy:
                     # 1, 3, 9, 27
                     max_retries: 4
@@ -14,7 +14,7 @@ framework:
                     max_delay: 3600000 # 1 hour
 
             cache:
-                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 retry_strategy:
                     # 1, 2, 4, 8
                     max_retries: 4
@@ -37,9 +37,9 @@ framework:
             'App\Message\UpdateBookingInCacheMessage': cache
 
 when@test:
-   framework:
-       messenger:
-           transports:
-               # replace with your transport name here (e.g., my_transport: 'in-memory://')
-               # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
-               async: 'test://'
+    framework:
+        messenger:
+            transports:
+                # replace with your transport name here (e.g., my_transport: 'in-memory://')
+                # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
+                async: 'test://'

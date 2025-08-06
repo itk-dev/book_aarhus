@@ -2,13 +2,12 @@
 
 namespace App\MessageHandler;
 
-use App\Entity\Resources\AAKResource;
 use App\Exception\NoNotificationReceiverException;
 use App\Exception\UnsupportedNotificationTypeException;
+use App\Interface\NotificationServiceInterface;
 use App\Message\SendUserBookingNotificationMessage;
-use App\Repository\Resources\AAKResourceRepository;
+use App\Repository\ResourceRepository;
 use App\Service\MetricsHelper;
-use App\Service\NotificationServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -19,7 +18,7 @@ class SendUserBookingNotificationHandler
 {
     public function __construct(
         private readonly LoggerInterface $logger,
-        private readonly AAKResourceRepository $aakResourceRepository,
+        private readonly ResourceRepository $resourceRepository,
         private readonly NotificationServiceInterface $notificationService,
         private readonly MetricsHelper $metricsHelper,
     ) {
@@ -38,9 +37,8 @@ class SendUserBookingNotificationHandler
             $userBooking = $message->getUserBooking();
             $type = $message->getType();
 
-            /** @var AAKResource $resource */
             $email = $userBooking->resourceMail;
-            $resource = $this->aakResourceRepository->findOneByEmail($email);
+            $resource = $this->resourceRepository->findOneByEmail($email);
 
             $this->notificationService->sendUserBookingNotification($userBooking, $resource, $type);
         } catch (NoNotificationReceiverException|UnsupportedNotificationTypeException $e) {

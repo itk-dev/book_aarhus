@@ -2,23 +2,24 @@
 
 namespace App\Tests\Api;
 
+use App\Entity\Api\Booking;
 use App\Entity\Main\ApiKeyUser;
-use App\Entity\Main\Booking;
-use App\Entity\Resources\AAKResource;
+use App\Entity\Main\Location;
+use App\Entity\Main\Resource;
+use App\Interface\NotificationServiceInterface;
 use App\Message\CreateBookingMessage;
 use App\Message\WebformSubmitMessage;
 use App\MessageHandler\CreateBookingHandler;
 use App\MessageHandler\WebformSubmitHandler;
-use App\Repository\Resources\AAKResourceRepository;
-use App\Repository\Resources\CvrWhitelistRepository;
+use App\Repository\CvrWhitelistRepository;
+use App\Repository\ResourceRepository;
 use App\Security\Voter\BookingVoter;
 use App\Service\CreateBookingService;
 use App\Service\MetricsHelper;
 use App\Service\MicrosoftGraphBookingService;
-use App\Service\NotificationServiceInterface;
+use App\Service\ValidationUtils;
 use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
-use App\Utils\ValidationUtils;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Security;
@@ -34,7 +35,7 @@ class BookingTest extends AbstractBaseApiTestCase
      */
     public function testBookingVoter(): void
     {
-        $res = new AAKResource();
+        $res = new Resource();
         $res->setResourceMail('test@bookaarhus.local.itkdev.dk');
         $res->setResourceName('test');
         $res->setPermissionBusinessPartner(true);
@@ -43,13 +44,13 @@ class BookingTest extends AbstractBaseApiTestCase
         $container = self::getContainer();
         $security = $container->get(Security::class);
 
-        $aakResourceRepositoryMock = $this->getMockBuilder(AAKResourceRepository::class)
+        $resourceRepositoryMock = $this->getMockBuilder(ResourceRepository::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['findOneByEmail'])
             ->getMock();
-        $aakResourceRepositoryMock->expects($this->exactly(2))->method('findOneByEmail')->willReturn($res);
+        $resourceRepositoryMock->expects($this->exactly(2))->method('findOneByEmail')->willReturn($res);
 
-        $container->set(AAKResourceRepository::class, $aakResourceRepositoryMock);
+        $container->set(ResourceRepository::class, $resourceRepositoryMock);
 
         $booking = new Booking();
         $booking->setResourceEmail('test@bookaarhus.local.itkdev.dk');
@@ -106,7 +107,7 @@ class BookingTest extends AbstractBaseApiTestCase
         $this->assertEquals('795f5a1c-a0ac-4f8a-8834-bb71fca8585d', $message->getSubmissionUuid());
         $this->assertEquals('https://bookaarhus.local.itkdev.dk', $message->getSender());
         $this->assertEquals('https://bookaarhus.local.itkdev.dk/webform_rest/booking/submission/123123123', $message->getSubmissionUrl());
-        $this->assertEquals(1, $message->getApiKeyUserId());
+        $this->assertEquals(2, $message->getApiKeyUserId());
 
         $this->transport('async')->queue()->assertCount(1);
         $this->transport('async')->queue()->assertContains(WebformSubmitMessage::class);
@@ -182,23 +183,27 @@ class BookingTest extends AbstractBaseApiTestCase
         $bus = $container->get(MessageBusInterface::class);
         $createBookingService = $container->get(CreateBookingService::class);
 
-        $aakBookingRepository = $this->getMockBuilder(AAKResourceRepository::class)
+        $resourceRepository = $this->getMockBuilder(ResourceRepository::class)
             ->onlyMethods(['findOneBy'])
             ->disableOriginalConstructor()
             ->getMock();
-        $resource = new AAKResource();
+
+        $location = new Location();
+        $location->setLocation('Dokk1');
+
+        $resource = new Resource();
         $resource->setResourceName('DOKK1-Lokale-Test1');
         $resource->setResourceDisplayName('DOKK1 Lokale Test1');
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
-        $resource->setLocation('Dokk1');
-        $aakBookingRepository->method('findOneBy')->willReturn($resource);
+        $resource->setLocation($location);
+        $resourceRepository->method('findOneBy')->willReturn($resource);
 
         $entityManager = self::getContainer()->get('doctrine')->getManager();
 
         /** @var ApiKeyUser $testUser */
         $testUser = $entityManager->getRepository(ApiKeyUser::class)->findOneBy(['name' => 'test']);
 
-        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $bus, $validationUtilsMock, $logger, $aakBookingRepository, $metric, $createBookingService);
+        $webformSubmitHandler = new WebformSubmitHandler($webformServiceMock, $bus, $validationUtilsMock, $logger, $resourceRepository, $metric, $createBookingService);
 
         $webformSubmitHandler->__invoke(new WebformSubmitMessage(
             'booking',
@@ -226,6 +231,9 @@ class BookingTest extends AbstractBaseApiTestCase
         $logger = $container->get(LoggerInterface::class);
         $bus = $container->get(MessageBusInterface::class);
 
+        $location = new Location();
+        $location->setLocation('Dokk1');
+
         $booking = new Booking();
         $booking->setBody('test');
         $booking->setSubject('test');
@@ -245,15 +253,14 @@ class BookingTest extends AbstractBaseApiTestCase
         $booking->setUserPermission(BookingVoter::PERMISSION_CITIZEN);
         $booking->setUserId('1234567890');
 
-        $res = new AAKResource();
+        $res = new Resource();
         $res->setResourceMail('test@bookaarhus.local.itkdev.dk');
         $res->setResourceName('test');
         $res->setResourceDescription('desc');
         $res->setResourceEmailText('emailtext');
-        $res->setLocation('LOCATION1');
+        $res->setLocation($location);
         $res->setWheelchairAccessible(true);
         $res->setVideoConferenceEquipment(false);
-        $res->setUpdateTimestamp(new \DateTime());
         $res->setMonitorEquipment(false);
         $res->setCatering(false);
         $res->setAcceptanceFlow(false);
@@ -264,15 +271,15 @@ class BookingTest extends AbstractBaseApiTestCase
         $res->setHasWhitelist(false);
         $res->setAcceptConflict(false);
 
-        $aakResourceRepositoryMock = $this->getMockBuilder(AAKResourceRepository::class)
+        $resourceRepositoryMock = $this->getMockBuilder(ResourceRepository::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['findOneByEmail'])
             ->getMock();
-        $aakResourceRepositoryMock->expects($this->exactly(2))->method('findOneByEmail')->willReturn($res);
+        $resourceRepositoryMock->expects($this->exactly(2))->method('findOneByEmail')->willReturn($res);
 
         $security = $container->get(Security::class);
 
-        $container->set(AAKResourceRepository::class, $aakResourceRepositoryMock);
+        $container->set(ResourceRepository::class, $resourceRepositoryMock);
 
         $notificationServiceMock = $this->createMock(NotificationServiceInterface::class);
         $container->set(NotificationServiceInterface::class, $notificationServiceMock);
@@ -281,7 +288,7 @@ class BookingTest extends AbstractBaseApiTestCase
 
         $metric = $this->createMock(MetricsHelper::class);
 
-        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $aakResourceRepositoryMock, $security, $bus, $cvrWhitelistRepositoryMock, $metric);
+        $createBookingHandler = new CreateBookingHandler($microsoftGraphServiceMock, $logger, $resourceRepositoryMock, $security, $bus, $cvrWhitelistRepositoryMock, $metric);
         $createBookingHandler->__invoke(new CreateBookingMessage($booking));
     }
 

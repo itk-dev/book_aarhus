@@ -3,19 +3,18 @@
 namespace App\Controller;
 
 use ApiPlatform\Metadata\Exception\InvalidArgumentException;
+use App\Entity\Api\Booking;
 use App\Entity\Main\ApiKeyUser;
-use App\Entity\Main\Booking;
-use App\Entity\Resources\AAKResource;
 use App\Enum\CreateBookingStatusEnum;
 use App\Enum\UserBookingStatusEnum;
+use App\Interface\BookingServiceInterface;
+use App\Interface\UserBookingCacheServiceInterface;
+use App\Interface\ValidationUtilsInterface;
 use App\Model\BookingRequest;
-use App\Repository\Resources\AAKResourceRepository;
+use App\Repository\ResourceRepository;
 use App\Security\Voter\BookingVoter;
-use App\Service\BookingServiceInterface;
 use App\Service\CreateBookingService;
 use App\Service\MetricsHelper;
-use App\Service\UserBookingCacheServiceInterface;
-use App\Utils\ValidationUtilsInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +30,7 @@ class CreateBookingController extends AbstractController
         private readonly MetricsHelper $metricsHelper,
         private readonly CreateBookingService $createBookingService,
         private readonly ValidationUtilsInterface $validationUtils,
-        private readonly AAKResourceRepository $aakResourceRepository,
+        private readonly ResourceRepository $resourceRepository,
         private readonly BookingServiceInterface $bookingService,
         private readonly UserBookingCacheServiceInterface $userBookingCacheService,
     ) {
@@ -73,8 +72,7 @@ class CreateBookingController extends AbstractController
                 continue;
             }
 
-            /** @var AAKResource $resource */
-            $resource = $this->aakResourceRepository->findOneBy(['resourceMail' => $email]);
+            $resource = $this->resourceRepository->findOneBy(['resourceMail' => $email]);
 
             if (null === $resource) {
                 $bookingRequest->status = CreateBookingStatusEnum::ERROR;
@@ -196,16 +194,14 @@ class CreateBookingController extends AbstractController
             }
         }
 
-        $bookingResults = array_map(function (BookingRequest $bookingRequest) {
-            return [
-                'input' => $bookingRequest->input,
-                'status' => $bookingRequest->status->value,
-                'createdBooking' => $bookingRequest->createdBooking,
-            ];
-        }, $bookingRequests);
+        $bookingResults = array_map(fn (BookingRequest $bookingRequest) => [
+            'input' => $bookingRequest->input,
+            'status' => $bookingRequest->status->value,
+            'createdBooking' => $bookingRequest->createdBooking,
+        ], $bookingRequests);
 
         $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::COMPLETE);
 
-        return new JsonResponse(['bookings' => $bookingResults], 200);
+        return new JsonResponse(['bookings' => $bookingResults], Response::HTTP_OK);
     }
 }

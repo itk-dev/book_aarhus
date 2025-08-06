@@ -11,11 +11,15 @@ MICROSOFT_GRAPH_SERVICE_ACCOUNT_NAME=""
 MICROSOFT_GRAPH_SERVICE_ACCOUNT_USERNAME=""
 MICROSOFT_GRAPH_SERVICE_ACCOUNT_PASSWORD=""
 
-BOOKING_RESOURCES_DATABASE_OPTION_AUTHENTICATION="SqlPassword"
-BOOKING_RESOURCES_DATABASE_OPTION_TRUST_SERVER_CERTIFICATE=true
-
 ADMIN_NOTIFICATION_EMAIL="admin-notifications@bookaarhus.local.itkdev.dk"
 EMAIL_FROM_ADDRESS="no-reply@bookaarhus.local.itkdev.dk"
+
+# For the app:resources:update command, use the following values to used the fixtures in public/fixtures.
+RESOURCES_LIST=http://bookaarhus-nginx-1.frontend:8080/fixtures/resources/resources.json
+RESOURCES_LOCATIONS=http://bookaarhus-nginx-1.frontend:8080/fixtures/resources/locations.json
+RESOURCES_CVR_WHITELIST=http://bookaarhus-nginx-1.frontend:8080/fixtures/resources/cvr_whitelist.json
+RESOURCES_OPENING_HOURS=http://bookaarhus-nginx-1.frontend:8080/fixtures/resources/opening_hours.json
+RESOURCES_HOLIDAY_OPENING_HOURS=http://bookaarhus-nginx-1.frontend:8080/fixtures/resources/holiday_opening_hours.json
 ```
 
 ## Setup
@@ -32,14 +36,8 @@ docker compose exec phpfpm composer install
 # Run migrations
 docker compose exec phpfpm bin/console doctrine:migrations:migrate
 
-# Setup resource database (Azure SQL edge)
-docker compose exec phpfpm bin/console doctrine:database:create --connection=azure_sql
-
-# Run migrations for resource database
-docker compose exec phpfpm bin/console doctrine:migrations:migrate --em=resources --configuration=config/config-migrations/doctrine-migrations-resources.yaml
-
-# Load resource fixtures
-docker compose exec phpfpm bin/console doctrine:fixtures:load --em=resources --group=ResourceFixtures
+# Load fixtures
+docker compose exec phpfpm bin/console doctrine:fixtures:load
 ```
 
 ## Testing
@@ -61,8 +59,6 @@ docker compose exec phpfpm composer tests-coverage
 The docker setup consists of:
 
 * A MariaDB container for local data.
-* An Azure SQL container for resource data. In the live setup this is an external database.
-* A RabbitMQ container for handling the message queue.
 * A Mailhog container for intercepting emails.
 * A Redis container for caching.
 * A phpfpm and nginx container.

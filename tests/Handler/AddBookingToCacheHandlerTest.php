@@ -2,15 +2,15 @@
 
 namespace App\Tests\Handler;
 
-use App\Entity\Main\Booking;
-use App\Entity\Resources\AAKResource;
+use App\Entity\Api\Booking;
+use App\Entity\Main\Resource;
+use App\Interface\BookingServiceInterface;
+use App\Interface\UserBookingCacheServiceInterface;
 use App\Message\AddBookingToCacheMessage;
 use App\MessageHandler\AddBookingToCacheHandler;
-use App\Repository\Resources\AAKResourceRepository;
+use App\Repository\ResourceRepository;
 use App\Security\Voter\BookingVoter;
-use App\Service\BookingServiceInterface;
 use App\Service\MetricsHelper;
-use App\Service\UserBookingCacheServiceInterface;
 use App\Tests\AbstractBaseApiTestCase;
 
 class AddBookingToCacheHandlerTest extends AbstractBaseApiTestCase
@@ -27,21 +27,21 @@ class AddBookingToCacheHandlerTest extends AbstractBaseApiTestCase
             ->getMock();
         $userBookingCacheServiceMock->expects($this->exactly(1))->method('addCacheEntryFromArray');
 
-        $res = new AAKResource();
+        $res = new Resource();
         $res->setResourceDisplayName('Cool resource name');
 
-        $aakResourceRepositoryMock = $this->getMockBuilder(AAKResourceRepository::class)
+        $resourceRepositoryMock = $this->getMockBuilder(ResourceRepository::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['findOneBy'])
             ->getMock();
-        $aakResourceRepositoryMock->expects($this->exactly(1))->method('findOneBy')->willReturn($res);
+        $resourceRepositoryMock->expects($this->exactly(1))->method('findOneBy')->willReturn($res);
 
         $metric = $this->createMock(MetricsHelper::class);
 
         $handler = new AddBookingToCacheHandler(
             $bookingServiceMock,
             $userBookingCacheServiceMock,
-            $aakResourceRepositoryMock,
+            $resourceRepositoryMock,
             $metric,
         );
 

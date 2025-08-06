@@ -11,12 +11,17 @@ parameters:
     microsoft_graph_service_account_password: '%env(string:MICROSOFT_GRAPH_SERVICE_ACCOUNT_PASSWORD)%'
     email_from_address: '%env(string:EMAIL_FROM_ADDRESS)%'
     email_admin_notification: '%env(string:ADMIN_NOTIFICATION_EMAIL)%'
+    resources_list_endpoint: '%env(string:RESOURCES_LIST)%'
+    resources_locations_endpoint: '%env(string:RESOURCES_LOCATIONS)%'
+    resources_opening_hours_endpoint: '%env(string:RESOURCES_OPENING_HOURS)%'
+    resources_holiday_opening_hours_endpoint: '%env(string:RESOURCES_HOLIDAY_OPENING_HOURS)%'
+    resources_cvr_whitelist_endpoint: '%env(string:RESOURCES_CVR_WHITELIST)%'
     excluded_resources: '%env(json:APP_EXCLUDED_RESOURCES)%'
 
 services:
     # default configuration for services in *this* file
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
+        autowire: true # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
         bind:
@@ -37,11 +42,7 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\Service\ResourceService:
-        arguments:
-            $excludedResources: '%excluded_resources%'
-
-    App\Doctrine\AAKResourceExtension:
+    App\Doctrine\ResourceExtension:
         tags:
             - { name: api_platform.doctrine.orm.query_extension.collection }
             - { name: api_platform.doctrine.orm.query_extension.item }
@@ -62,23 +63,48 @@ services:
             - '%email_from_address%'
             - '%email_admin_notification%'
 
-    App\Service\BookingServiceInterface:
+    App\Service\ResourceService:
+        arguments:
+            $excludedResources: '%excluded_resources%'
+            $resourceListEndpoint: '%resources_list_endpoint%'
+            $resourceLocationsEndpoint: '%resources_locations_endpoint%'
+            $resourceCvrWhitelistEndpoint: '%resources_cvr_whitelist_endpoint%'
+            $resourceOpeningHoursEndpoint: '%resources_opening_hours_endpoint%'
+            $resourceHolidayOpeningHoursEndpoint: '%resources_holiday_opening_hours_endpoint%'
+
+    App\OpenApi\OpenApiFactory:
+        decorates: 'api_platform.openapi.factory'
+        arguments: ['@App\OpenApi\OpenApiFactory.inner']
+        autoconfigure: false
+
+    # Interface aliases
+
+    App\Interface\BookingServiceInterface:
         alias: 'App\Service\MicrosoftGraphBookingService'
 
-    App\Service\WebformServiceInterface:
+    App\Interface\WebformServiceInterface:
         alias: 'App\Service\WebformService'
 
-    App\Service\NotificationServiceInterface:
+    App\Interface\NotificationServiceInterface:
         alias: 'App\Service\NotificationService'
 
-    App\Service\ResourceServiceInterface:
+    App\Interface\ResourceServiceInterface:
         alias: 'App\Service\ResourceService'
+
+    # Api Filters
 
     resource.search_filter:
         # https://api-platform.com/docs/core/filters/#search-filter
         parent: 'api_platform.doctrine.orm.search_filter'
-        arguments: [ { location: 'exact', resourceName: 'partial', resourceMail: 'exact' } ]
-        tags:  [ 'api_platform.filter' ]
+        arguments:
+            [
+                {
+                    location: 'exact',
+                    resourceName: 'partial',
+                    resourceMail: 'exact',
+                },
+            ]
+        tags: ['api_platform.filter']
         autowire: false
         autoconfigure: false
         public: false
@@ -86,8 +112,19 @@ services:
     resource.boolean_filter:
         # https://api-platform.com/docs/core/filters/#boolean-filter
         parent: 'api_platform.doctrine.orm.boolean_filter'
-        arguments: [ { wheelchairAccessible: ~, videoConferenceEquipment: ~, monitorEquipment: ~, acceptanceFlow: ~, catering: ~, permissionBusinessPartner: ~, permissionCitizen: ~ } ]
-        tags:  [ 'api_platform.filter' ]
+        arguments:
+            [
+                {
+                    wheelchairAccessible: ~,
+                    videoConferenceEquipment: ~,
+                    monitorEquipment: ~,
+                    acceptanceFlow: ~,
+                    catering: ~,
+                    permissionBusinessPartner: ~,
+                    permissionCitizen: ~,
+                },
+            ]
+        tags: ['api_platform.filter']
         autowire: false
         autoconfigure: false
         public: false
@@ -95,40 +132,42 @@ services:
     resource.range_filter:
         # https://api-platform.com/docs/core/filters/#range-filter
         parent: 'api_platform.doctrine.orm.range_filter'
-        arguments: [ { capacity: ~ } ]
-        tags:  [ 'api_platform.filter' ]
+        arguments: [{ capacity: ~ }]
+        tags: ['api_platform.filter']
         autowire: false
         autoconfigure: false
         public: false
 
     user_booking_cache_entry.search_filter:
-      # https://api-platform.com/docs/core/filters/#search-filter
-      parent: 'api_platform.doctrine.orm.search_filter'
-      arguments: [ { title: 'partial' } ]
-      tags:  [ 'api_platform.filter' ]
-      autowire: false
-      autoconfigure: false
-      public: false
+        # https://api-platform.com/docs/core/filters/#search-filter
+        parent: 'api_platform.doctrine.orm.search_filter'
+        arguments: [{ title: 'partial' }]
+        tags: ['api_platform.filter']
+        autowire: false
+        autoconfigure: false
+        public: false
 
     user_booking_cache_entry.date_filter:
-      parent: 'api_platform.doctrine.orm.date_filter'
-      arguments: [ { start: ~, end: ~ } ]
-      tags:  [ 'api_platform.filter' ]
-      autowire: false
-      autoconfigure: false
-      public: false
+        parent: 'api_platform.doctrine.orm.date_filter'
+        arguments: [{ start: ~, end: ~ }]
+        tags: ['api_platform.filter']
+        autowire: false
+        autoconfigure: false
+        public: false
 
     user_booking_cache_entry.order_filter:
-      parent: 'api_platform.doctrine.orm.order_filter'
-      arguments:
-        $properties: { title: ~, start: ~, end: ~, resourceMail: ~, resourceDisplayName: ~  }
-        $orderParameterName: order
-      tags: [ 'api_platform.filter' ]
-      autowire: false
-      autoconfigure: false
-      public: false
-
-    App\OpenApi\OpenApiFactory:
-        decorates: 'api_platform.openapi.factory'
-        arguments: [ '@App\OpenApi\OpenApiFactory.inner' ]
+        parent: 'api_platform.doctrine.orm.order_filter'
+        arguments:
+            $properties:
+                {
+                    title: ~,
+                    start: ~,
+                    end: ~,
+                    resourceMail: ~,
+                    resourceDisplayName: ~,
+                }
+            $orderParameterName: order
+        tags: ['api_platform.filter']
+        autowire: false
         autoconfigure: false
+        public: false

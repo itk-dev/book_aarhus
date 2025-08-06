@@ -8,7 +8,7 @@ use Doctrine\DBAL\Types\DateTimeImmutableType;
 
 class UTCDateTimeImmutableType extends DateTimeImmutableType
 {
-    private static ?\DateTimeZone $utc;
+    private static ?\DateTimeZone $utc = null;
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {

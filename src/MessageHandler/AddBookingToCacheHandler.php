@@ -2,13 +2,12 @@
 
 namespace App\MessageHandler;
 
-use App\Entity\Resources\AAKResource;
 use App\Enum\UserBookingStatusEnum;
+use App\Interface\BookingServiceInterface;
+use App\Interface\UserBookingCacheServiceInterface;
 use App\Message\AddBookingToCacheMessage;
-use App\Repository\Resources\AAKResourceRepository;
-use App\Service\BookingServiceInterface;
+use App\Repository\ResourceRepository;
 use App\Service\MetricsHelper;
-use App\Service\UserBookingCacheServiceInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\RecoverableMessageHandlingException;
 
@@ -21,7 +20,7 @@ class AddBookingToCacheHandler
     public function __construct(
         private readonly BookingServiceInterface $bookingService,
         private readonly UserBookingCacheServiceInterface $userBookingCacheService,
-        private readonly AAKResourceRepository $resourceRepository,
+        private readonly ResourceRepository $resourceRepository,
         private readonly MetricsHelper $metricsHelper,
     ) {
     }
@@ -41,11 +40,11 @@ class AddBookingToCacheHandler
             $resourceEmail = $booking->getResourceEmail();
             $resourceDisplayName = $booking->getResourceName();
 
-            /** @var AAKResource $resource */
             $resource = $this->resourceRepository->findOneBy(['resourceMail' => $resourceEmail]);
 
-            if (null != $resource && $resource->getResourceDisplayName()) {
-                $resourceDisplayName = $resource->getResourceDisplayName();
+            $displayName = $resource?->getResourceDisplayName();
+            if (!empty($displayName)) {
+                $resourceDisplayName = $displayName;
             }
 
             $this->userBookingCacheService->addCacheEntryFromArray([

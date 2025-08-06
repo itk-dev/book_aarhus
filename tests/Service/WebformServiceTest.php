@@ -5,7 +5,7 @@ namespace App\Tests\Service;
 use App\Entity\Main\ApiKeyUser;
 use App\Exception\WebformSubmissionRetrievalException;
 use App\Message\WebformSubmitMessage;
-use App\Repository\Main\ApiKeyUserRepository;
+use App\Repository\ApiKeyUserRepository;
 use App\Service\MetricsHelper;
 use App\Service\WebformService;
 use App\Tests\AbstractBaseApiTestCase;
