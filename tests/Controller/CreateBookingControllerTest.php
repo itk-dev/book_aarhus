@@ -723,7 +723,13 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             ->willReturn('test_html')
         ;
 
-        $conflicts = [
+        // No conflicts on main booking.
+        $mainConflicts = [
+            'DOKK1-Lokale-Test1@aarhus.dk' => [],
+        ];
+
+        // Conflict on buffer booking.
+        $bufferConflicts = [
             'DOKK1-Lokale-Test1@aarhus.dk' => [
                 [
                     'startTime' => '2004-02-26T15:45:00.010Z',
@@ -735,7 +741,19 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $bookingServiceMock
             ->expects($this->exactly(2))
             ->method('getBusyIntervals')
-            ->willReturn($conflicts)
+            ->willReturn($mainConflicts, $bufferConflicts)
+        ;
+
+        $createdBookingMock = [
+            'id' => 'booking_id_12345',
+            'iCalUId' => 'iCalUId_12345',
+            'status' => UserBookingStatusEnum::ACCEPTED->name,
+        ];
+
+        $createBookingServiceMock
+            ->expects($this->once())
+            ->method('createBooking')
+            ->willReturn($createdBookingMock)
         ;
 
         $userBookingCacheServiceMock = $this->createMock(UserBookingCacheServiceInterface::class);
@@ -765,8 +783,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             'bookings' => [
                 [
                     'input' => $mainBooking,
-                    'status' => 'CONFLICT',
-                    'createdBooking' => null,
+                    'status' => 'SUCCESS',
+                    'createdBooking' => $createdBookingMock,
                 ],
                 [
                     'input' => $bufferBooking,
