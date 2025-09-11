@@ -108,7 +108,6 @@ Added auto restart to queue container.
 
 - First release.
 
-
 [Unreleased]: https://github.com/itk-dev/book_aarhus/compare/1.4.1...HEAD
 [1.4.1]: https://github.com/itk-dev/book_aarhus/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/itk-dev/book_aarhus/compare/1.3.0...1.4.0
