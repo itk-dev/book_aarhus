@@ -723,7 +723,13 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             ->willReturn('test_html')
         ;
 
-        $conflicts = [
+        // No conflicts on main booking.
+        $mainConflicts = [
+            'DOKK1-Lokale-Test1@aarhus.dk' => [],
+        ];
+
+        // Conflict on buffer booking.
+        $bufferConflicts = [
             'DOKK1-Lokale-Test1@aarhus.dk' => [
                 [
                     'startTime' => '2004-02-26T15:45:00.010Z',
@@ -735,7 +741,19 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $bookingServiceMock
             ->expects($this->exactly(2))
             ->method('getBusyIntervals')
-            ->willReturn($conflicts)
+            ->willReturn($mainConflicts, $bufferConflicts)
+        ;
+
+        $createdBookingMock = [
+            'id' => 'booking_id_12345',
+            'iCalUId' => 'iCalUId_12345',
+            'status' => UserBookingStatusEnum::ACCEPTED->name,
+        ];
+
+        $createBookingServiceMock
+            ->expects($this->once())
+            ->method('createBooking')
+            ->willReturn($createdBookingMock)
         ;
 
         $userBookingCacheServiceMock = $this->createMock(UserBookingCacheServiceInterface::class);
@@ -765,13 +783,271 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             'bookings' => [
                 [
                     'input' => $mainBooking,
-                    'status' => 'CONFLICT',
-                    'createdBooking' => null,
+                    'status' => 'SUCCESS',
+                    'createdBooking' => $createdBookingMock,
                 ],
                 [
                     'input' => $bufferBooking,
                     'status' => 'CONFLICT',
                     'createdBooking' => null,
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $content);
+    }
+
+    public function testRequestEndIsEqualExistingBookingStart(): void
+    {
+        $client = $this->getAuthenticatedClient();
+
+        $metricMock = $this->createMock(MetricsHelper::class);
+        $aakResourceRepositoryMock = $this->createMock(AAKResourceRepository::class);
+
+        $resourceIdMock = 'DOKK1-Lokale-Test1@aarhus.dk';
+
+        $resource = new AAKResource();
+        $resource->setResourceName('DOKK1-Lokale-Test1');
+        $resource->setResourceDisplayName('DOKK1 Lokale Test1');
+        $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
+        $resource->setLocation('Dokk1');
+        $resource->setAcceptConflict(false);
+
+        $aakResourceRepositoryMock
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->with(['resourceMail' => $resourceIdMock])
+            ->willReturn($resource)
+        ;
+
+        $mainBooking = [
+            'id' => 'main_booking',
+            'subject' => 'Test Booking',
+            'start' => '2004-02-26T15:00:00.010Z',
+            'end' => '2004-02-26T15:30:00.010Z',
+            'name' => 'Admin Jensen',
+            'email' => 'admin_jensen@example.com',
+            'resourceId' => $resourceIdMock,
+            'clientBookingId' => '1234567890',
+            'userId' => 'some_unqiue_user_id',
+            'metaData' => [
+                'data1' => 'example1',
+                'data2' => 'example2',
+            ],
+        ];
+
+        $bookingServiceMock = $this->createMock(BookingServiceInterface::class);
+
+        $createBookingServiceMock = $this->createMock(CreateBookingService::class);
+
+        $mainBodyMock = [
+            'resource' => $resource,
+            'submission' => $mainBooking + [
+                'fromObj' => new \DateTime($mainBooking['start']),
+                'toObj' => new \DateTime($mainBooking['end']),
+            ],
+            'metaData' => $mainBooking['metaData'],
+            'userUniqueId' => 'UID-'.$mainBooking['userId'].'-UID',
+        ];
+
+        $createBookingServiceMock
+            ->expects($this->once())
+            ->method('composeBookingContents')
+            ->with($mainBooking, $resource, $mainBooking['metaData'])
+            ->willReturn($mainBodyMock)
+        ;
+
+        $createBookingServiceMock
+            ->expects($this->once())
+            ->method('renderContentsAsHtml')
+            ->with($mainBodyMock)
+            ->willReturn('test_html')
+        ;
+
+        $conflicts = [
+            'DOKK1-Lokale-Test1@aarhus.dk' => [
+                [
+                    'startTime' => '2004-02-26T15:30:00.010Z',
+                    'endTime' => '2004-02-26T16:45:00.010Z',
+                ],
+            ],
+        ];
+
+        $bookingServiceMock
+            ->expects($this->once())
+            ->method('getBusyIntervals')
+            ->willReturn($conflicts)
+        ;
+
+        $createdBookingMock = [
+            'id' => 'booking_id_12345',
+            'iCalUId' => 'iCalUId_12345',
+            'status' => UserBookingStatusEnum::ACCEPTED->name,
+        ];
+
+        $createBookingServiceMock
+            ->expects($this->once())
+            ->method('createBooking')
+            ->willReturn($createdBookingMock)
+        ;
+
+        $userBookingCacheServiceMock = $this->createMock(UserBookingCacheServiceInterface::class);
+
+        $container = self::getContainer();
+        $container->set(MetricsHelper::class, $metricMock);
+        $container->set(AAKResourceRepository::class, $aakResourceRepositoryMock);
+        $container->set(CreateBookingService::class, $createBookingServiceMock);
+        $container->set(BookingServiceInterface::class, $bookingServiceMock);
+        $container->set(UserBookingCacheServiceInterface::class, $userBookingCacheServiceMock);
+
+        $data = [
+            'abortIfAnyFail' => true,
+            'bookings' => [
+                $mainBooking,
+            ],
+        ];
+
+        $response = $client->request('POST', '/v1/bookings', [
+            'json' => $data,
+        ]);
+
+        $content = $response->toArray();
+
+        $expected = [
+            'bookings' => [
+                [
+                    'input' => $mainBooking,
+                    'status' => 'SUCCESS',
+                    'createdBooking' => $createdBookingMock,
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $content);
+    }
+
+    public function testRequestStartIsEqualExistingBookingEnd(): void
+    {
+        $client = $this->getAuthenticatedClient();
+
+        $metricMock = $this->createMock(MetricsHelper::class);
+        $aakResourceRepositoryMock = $this->createMock(AAKResourceRepository::class);
+
+        $resourceIdMock = 'DOKK1-Lokale-Test1@aarhus.dk';
+
+        $resource = new AAKResource();
+        $resource->setResourceName('DOKK1-Lokale-Test1');
+        $resource->setResourceDisplayName('DOKK1 Lokale Test1');
+        $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
+        $resource->setLocation('Dokk1');
+        $resource->setAcceptConflict(false);
+
+        $aakResourceRepositoryMock
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->with(['resourceMail' => $resourceIdMock])
+            ->willReturn($resource)
+        ;
+
+        $mainBooking = [
+            'id' => 'main_booking',
+            'subject' => 'Test Booking',
+            'start' => '2004-02-26T15:30:00.010Z',
+            'end' => '2004-02-26T16:30:00.010Z',
+            'name' => 'Admin Jensen',
+            'email' => 'admin_jensen@example.com',
+            'resourceId' => $resourceIdMock,
+            'clientBookingId' => '1234567890',
+            'userId' => 'some_unqiue_user_id',
+            'metaData' => [
+                'data1' => 'example1',
+                'data2' => 'example2',
+            ],
+        ];
+
+        $bookingServiceMock = $this->createMock(BookingServiceInterface::class);
+
+        $createBookingServiceMock = $this->createMock(CreateBookingService::class);
+
+        $mainBodyMock = [
+            'resource' => $resource,
+            'submission' => $mainBooking + [
+                'fromObj' => new \DateTime($mainBooking['start']),
+                'toObj' => new \DateTime($mainBooking['end']),
+            ],
+            'metaData' => $mainBooking['metaData'],
+            'userUniqueId' => 'UID-'.$mainBooking['userId'].'-UID',
+        ];
+
+        $createBookingServiceMock
+            ->expects($this->once())
+            ->method('composeBookingContents')
+            ->with($mainBooking, $resource, $mainBooking['metaData'])
+            ->willReturn($mainBodyMock)
+        ;
+
+        $createBookingServiceMock
+            ->expects($this->once())
+            ->method('renderContentsAsHtml')
+            ->with($mainBodyMock)
+            ->willReturn('test_html')
+        ;
+
+        $conflicts = [
+            'DOKK1-Lokale-Test1@aarhus.dk' => [
+                [
+                    'startTime' => '2004-02-26T15:00:00.010Z',
+                    'endTime' => '2004-02-26T15:30:00.010Z',
+                ],
+            ],
+        ];
+
+        $bookingServiceMock
+            ->expects($this->once())
+            ->method('getBusyIntervals')
+            ->willReturn($conflicts)
+        ;
+
+        $createdBookingMock = [
+            'id' => 'booking_id_12345',
+            'iCalUId' => 'iCalUId_12345',
+            'status' => UserBookingStatusEnum::ACCEPTED->name,
+        ];
+
+        $createBookingServiceMock
+            ->expects($this->once())
+            ->method('createBooking')
+            ->willReturn($createdBookingMock)
+        ;
+
+        $userBookingCacheServiceMock = $this->createMock(UserBookingCacheServiceInterface::class);
+
+        $container = self::getContainer();
+        $container->set(MetricsHelper::class, $metricMock);
+        $container->set(AAKResourceRepository::class, $aakResourceRepositoryMock);
+        $container->set(CreateBookingService::class, $createBookingServiceMock);
+        $container->set(BookingServiceInterface::class, $bookingServiceMock);
+        $container->set(UserBookingCacheServiceInterface::class, $userBookingCacheServiceMock);
+
+        $data = [
+            'abortIfAnyFail' => true,
+            'bookings' => [
+                $mainBooking,
+            ],
+        ];
+
+        $response = $client->request('POST', '/v1/bookings', [
+            'json' => $data,
+        ]);
+
+        $content = $response->toArray();
+
+        $expected = [
+            'bookings' => [
+                [
+                    'input' => $mainBooking,
+                    'status' => 'SUCCESS',
+                    'createdBooking' => $createdBookingMock,
                 ],
             ],
         ];
