@@ -9,6 +9,8 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+- Correctly use datetime to identify non-overlapping busy intervals.
+
 ## [1.4.1] - 2025-09-11
 
 - Filtered out non-overlapping busy intervals.
