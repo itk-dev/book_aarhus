@@ -640,8 +640,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $mainBooking = [
             'id' => 'main_booking',
             'subject' => 'Test Booking',
-            'start' => '2004-02-26T15:00:00.000Z',
-            'end' => '2004-02-26T15:30:00.000Z',
+            'start' => '2004-02-26T15:00:00.010Z',
+            'end' => '2004-02-26T15:30:00.010Z',
             'name' => 'Admin Jensen',
             'email' => 'admin_jensen@example.com',
             'resourceId' => $resourceIdMock,
@@ -656,8 +656,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $bufferBooking = [
             'id' => 'buffer_after_booking',
             'subject' => 'Test Booking',
-            'start' => '2004-02-26T15:30:00.000Z',
-            'end' => '2004-02-26T16:00:00.000Z',
+            'start' => '2004-02-26T15:30:00.010Z',
+            'end' => '2004-02-26T16:00:00.010Z',
             'name' => 'Admin Jensen',
             'email' => 'admin_jensen@example.com',
             'resourceId' => $resourceIdMock,
@@ -733,11 +733,11 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             'DOKK1-Lokale-Test1@aarhus.dk' => [
                 [
                     'startTime' => [
-                        'dateTime' => '2004-02-26T15:45:00.0000000',
+                        'dateTime' => '2004-02-26T15:45:00.0100000',
                         'timeZone' => 'UTC',
                     ],
                     'endTime' => [
-                        'dateTime' => '2004-02-26T16:30:00.0000000',
+                        'dateTime' => '2004-02-26T16:30:00.0100000',
                         'timeZone' => 'UTC',
                     ],
                 ],
@@ -829,8 +829,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $mainBooking = [
             'id' => 'main_booking',
             'subject' => 'Test Booking',
-            'start' => '2004-02-26T15:00:00.000Z',
-            'end' => '2004-02-26T15:30:00.000Z',
+            'start' => '2004-02-26T15:00:00.010Z',
+            'end' => '2004-02-26T15:30:00.010Z',
             'name' => 'Admin Jensen',
             'email' => 'admin_jensen@example.com',
             'resourceId' => $resourceIdMock,
@@ -874,11 +874,11 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             'DOKK1-Lokale-Test1@aarhus.dk' => [
                 [
                     'startTime' => [
-                        'dateTime' => '2004-02-26T15:30:00.0000000',
+                        'dateTime' => '2004-02-26T15:30:00.0100000',
                         'timeZone' => 'UTC',
                     ],
                     'endTime' => [
-                        'dateTime' => '2004-02-26T16:45:00.0000000',
+                        'dateTime' => '2004-02-26T16:45:00.0100000',
                         'timeZone' => 'UTC',
                     ],
                 ],
@@ -964,8 +964,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $mainBooking = [
             'id' => 'main_booking',
             'subject' => 'Test Booking',
-            'start' => '2004-02-26T15:30:00.000Z',
-            'end' => '2004-02-26T16:30:00.000Z',
+            'start' => '2004-02-26T15:30:00.010Z',
+            'end' => '2004-02-26T16:30:00.010Z',
             'name' => 'Admin Jensen',
             'email' => 'admin_jensen@example.com',
             'resourceId' => $resourceIdMock,
@@ -1009,11 +1009,11 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
             'DOKK1-Lokale-Test1@aarhus.dk' => [
                 [
                     'startTime' => [
-                        'dateTime' => '2004-02-26T15:00:00.0000000',
+                        'dateTime' => '2004-02-26T15:00:00.0100000',
                         'timeZone' => 'UTC',
                     ],
                     'endTime' => [
-                        'dateTime' => '2004-02-26T15:30:00.0000000',
+                        'dateTime' => '2004-02-26T15:30:00.0100000',
                         'timeZone' => 'UTC',
                     ],
                 ],

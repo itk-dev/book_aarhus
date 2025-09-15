@@ -136,9 +136,8 @@ class CreateBookingController extends AbstractController
                     if (!empty($result[$resourceEmail])) {
                         // Remove the above-mentioned non-overlapping busy intervals.
                         $result[$resourceEmail] = array_filter($result[$resourceEmail], function (array $booking) use ($bookingStart, $bookingEnd) {
-                            $timeZone = new \DateTimeZone($booking['startTime']['timeZone']);
-                            $busyIntervalStart = new \DateTime($booking['startTime']['dateTime'], $timeZone);
-                            $busyIntervalEnd = new \DateTime($booking['endTime']['dateTime'], $timeZone);
+                            $busyIntervalStart = new \DateTime($booking['startTime']['dateTime'], new \DateTimeZone($booking['startTime']['timeZone']));
+                            $busyIntervalEnd = new \DateTime($booking['endTime']['dateTime'], new \DateTimeZone($booking['endTime']['timeZone']));
 
                             return $bookingStart < $busyIntervalEnd && $bookingEnd > $busyIntervalStart;
                         });
