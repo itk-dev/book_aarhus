@@ -9,6 +9,8 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+## [1.4.2] - 2025-09-15
+
 - Correctly use datetime to identify non-overlapping busy intervals.
 
 ## [1.4.1] - 2025-09-11
@@ -108,7 +110,8 @@ Added auto restart to queue container.
 
 - First release.
 
-[Unreleased]: https://github.com/itk-dev/book_aarhus/compare/1.4.1...HEAD
+[Unreleased]: https://github.com/itk-dev/book_aarhus/compare/1.4.2...HEAD
+[1.4.2]: https://github.com/itk-dev/book_aarhus/compare/1.4.1...1.4.2
 [1.4.1]: https://github.com/itk-dev/book_aarhus/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/itk-dev/book_aarhus/compare/1.3.0...1.4.0
 [1.3.0]: https://github.com/itk-dev/book_aarhus/compare/1.2.3...1.3.0
