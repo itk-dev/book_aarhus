@@ -100,7 +100,7 @@ class CreateBookingController extends AbstractController
                     $booking->setId($input['id']);
 
                     $bookingRequest->booking = $booking;
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
 
                     $bookingRequest->status = CreateBookingStatusEnum::ERROR;
@@ -143,7 +143,7 @@ class CreateBookingController extends AbstractController
                             return $bookingStart < $busyIntervalEnd && $bookingEnd > $busyIntervalStart;
                         });
                     }
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     $bookingRequest->status = CreateBookingStatusEnum::ERROR;
 
                     if ($abortIfAnyFail) {
