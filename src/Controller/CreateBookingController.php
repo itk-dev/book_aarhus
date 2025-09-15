@@ -100,7 +100,7 @@ class CreateBookingController extends AbstractController
                     $booking->setId($input['id']);
 
                     $bookingRequest->booking = $booking;
-                } catch (\Exception) {
+                } catch (\Exception $e) {
                     $this->metricsHelper->incMethodTotal(__METHOD__, MetricsHelper::EXCEPTION);
 
                     $bookingRequest->status = CreateBookingStatusEnum::ERROR;
@@ -136,13 +136,14 @@ class CreateBookingController extends AbstractController
                     if (!empty($result[$resourceEmail])) {
                         // Remove the above-mentioned non-overlapping busy intervals.
                         $result[$resourceEmail] = array_filter($result[$resourceEmail], function (array $booking) use ($bookingStart, $bookingEnd) {
-                            $busyIntervalStart = new \DateTime($booking['startTime']);
-                            $busyIntervalEnd = new \DateTime($booking['endTime']);
+                            $timeZone = new \DateTimeZone($booking['startTime']['timeZone']);
+                            $busyIntervalStart = new \DateTime($booking['startTime']['dateTime'], $timeZone);
+                            $busyIntervalEnd = new \DateTime($booking['endTime']['dateTime'], $timeZone);
 
                             return $bookingStart < $busyIntervalEnd && $bookingEnd > $busyIntervalStart;
                         });
                     }
-                } catch (\Exception) {
+                } catch (\Exception $e) {
                     $bookingRequest->status = CreateBookingStatusEnum::ERROR;
 
                     if ($abortIfAnyFail) {
