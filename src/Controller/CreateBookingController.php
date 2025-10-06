@@ -123,9 +123,23 @@ class CreateBookingController extends AbstractController
                 }
 
                 $resourceEmail = $booking->getResourceEmail();
+                $bookingStart = $booking->getStartTime();
+                $bookingEnd = $booking->getEndTime();
 
                 try {
-                    $result = $this->bookingService->getBusyIntervals([$resourceEmail], $booking->getStartTime(), $booking->getEndTime());
+                    // Be aware that getBusyIntervals will yield bookings that end at
+                    // $bookingStart and likewise bookings that start at $bookingEnd.
+                    $result = $this->bookingService->getBusyIntervals([$resourceEmail], $bookingStart, $bookingEnd);
+
+                    if (!empty($result[$resourceEmail])) {
+                        // Remove the above-mentioned non-overlapping busy intervals.
+                        $result[$resourceEmail] = array_filter($result[$resourceEmail], function (array $booking) use ($bookingStart, $bookingEnd) {
+                            $busyIntervalStart = new \DateTime($booking['startTime']['dateTime'], new \DateTimeZone($booking['startTime']['timeZone']));
+                            $busyIntervalEnd = new \DateTime($booking['endTime']['dateTime'], new \DateTimeZone($booking['endTime']['timeZone']));
+
+                            return $bookingStart < $busyIntervalEnd && $bookingEnd > $busyIntervalStart;
+                        });
+                    }
                 } catch (\Exception) {
                     $bookingRequest->status = CreateBookingStatusEnum::ERROR;
 

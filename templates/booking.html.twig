@@ -75,11 +75,11 @@
                                         </tr>
                                         <tr class="start-time">
                                             <td>Starttidspunkt:</td>
-                                            <td>{{ submission.fromObj|date('d/m/Y - H:i') }}<span id="start" class="hidden hasData" data-format="ISO-8601">{{ submission.start }}</span></td>
+                                            <td>{{ submission.from }}</td>
                                         </tr>
                                         <tr class="end-time">
                                             <td>Sluttidspunkt:</td>
-                                            <td>{{ submission.toObj|date('d/m/Y - H:i') }}<span id="end" class="hidden hasData" data-format="ISO-8601">{{ submission.end }}</span></td>
+                                            <td>{{ submission.to }}</td>
                                         </tr>
                                         {# Metadata fields #}
                                         {% for key, value in metaData %}
