@@ -732,8 +732,14 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $bufferConflicts = [
             'DOKK1-Lokale-Test1@aarhus.dk' => [
                 [
-                    'startTime' => '2004-02-26T15:45:00.010Z',
-                    'endTime' => '2004-02-26T16:30:00.010Z',
+                    'startTime' => [
+                        'dateTime' => '2004-02-26T15:45:00.0100000',
+                        'timeZone' => 'UTC',
+                    ],
+                    'endTime' => [
+                        'dateTime' => '2004-02-26T16:30:00.0100000',
+                        'timeZone' => 'UTC',
+                    ],
                 ],
             ],
         ];
@@ -867,8 +873,14 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $conflicts = [
             'DOKK1-Lokale-Test1@aarhus.dk' => [
                 [
-                    'startTime' => '2004-02-26T15:30:00.010Z',
-                    'endTime' => '2004-02-26T16:45:00.010Z',
+                    'startTime' => [
+                        'dateTime' => '2004-02-26T15:30:00.0100000',
+                        'timeZone' => 'UTC',
+                    ],
+                    'endTime' => [
+                        'dateTime' => '2004-02-26T16:45:00.0100000',
+                        'timeZone' => 'UTC',
+                    ],
                 ],
             ],
         ];
@@ -996,8 +1008,14 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $conflicts = [
             'DOKK1-Lokale-Test1@aarhus.dk' => [
                 [
-                    'startTime' => '2004-02-26T15:00:00.010Z',
-                    'endTime' => '2004-02-26T15:30:00.010Z',
+                    'startTime' => [
+                        'dateTime' => '2004-02-26T15:00:00.0100000',
+                        'timeZone' => 'UTC',
+                    ],
+                    'endTime' => [
+                        'dateTime' => '2004-02-26T15:30:00.0100000',
+                        'timeZone' => 'UTC',
+                    ],
                 ],
             ],
         ];
