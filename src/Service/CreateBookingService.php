@@ -189,10 +189,6 @@ class CreateBookingService
     /**
      * Formats a DateTime object to a string with the day of the week, according to
      * configured format, timezone and locale.
-     *
-     * @param \DateTime $dateTime
-     *
-     * @return string
      */
     private function formatDateTime(\DateTime $dateTime): string
     {
