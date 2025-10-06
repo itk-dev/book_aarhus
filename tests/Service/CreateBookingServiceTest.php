@@ -2,7 +2,8 @@
 
 namespace App\Tests\Service;
 
-use App\Entity\Resources\AAKResource;
+use App\Entity\Main\Location;
+use App\Entity\Main\Resource;
 use App\Service\CreateBookingService;
 use App\Tests\AbstractBaseApiTestCase;
 
@@ -14,11 +15,14 @@ class CreateBookingServiceTest extends AbstractBaseApiTestCase
         /** @var CreateBookingService $createBookingService */
         $createBookingService = $container->get(CreateBookingService::class);
 
-        $resource = new AAKResource();
+        $location = new Location();
+        $location->setLocation('Dokk1');
+
+        $resource = new Resource();
         $resource->setResourceName('DOKK1-Lokale-Test1');
         $resource->setResourceDisplayName('DOKK1 Lokale Test1');
         $resource->setResourceMail('DOKK1-Lokale-Test1@aarhus.dk');
-        $resource->setLocation('Dokk1');
+        $resource->setLocation($location);
 
         // Booking in winter time.
         $winterBooking = [
