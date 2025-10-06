@@ -212,8 +212,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $bodyMock = [
             'resource' => $resource,
             'submission' => $mainBooking + [
-                'fromObj' => new \DateTime($mainBooking['start']),
-                'toObj' => new \DateTime($mainBooking['end']),
+                'from' => '26/02/2004 - 15:00 torsdag',
+                'to' => '26/02/2004 - 15:30 torsdag',
             ],
             'metaData' => $mainBooking['metaData'],
             'userUniqueId' => 'UID-'.$mainBooking['userId'].'-UID',
@@ -341,8 +341,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $mainBodyMock = [
             'resource' => $resource,
             'submission' => $mainBooking + [
-                'fromObj' => new \DateTime($mainBooking['start']),
-                'toObj' => new \DateTime($mainBooking['end']),
+                'from' => '26/02/2004 - 15:00 torsdag',
+                'to' => '26/02/2004 - 15:30 torsdag',
             ],
             'metaData' => $mainBooking['metaData'],
             'userUniqueId' => 'UID-'.$mainBooking['userId'].'-UID',
@@ -351,8 +351,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $bufferBodyMock = [
             'resource' => $resource,
             'submission' => $bufferBooking + [
-                'fromObj' => new \DateTime($bufferBooking['start']),
-                'toObj' => new \DateTime($bufferBooking['end']),
+                'from' => '26/02/2004 - 15:30 torsdag',
+                'to' => '26/02/2004 - 16:00 torsdag',
             ],
             'metaData' => $bufferBooking['metaData'],
             'userUniqueId' => 'UID-'.$bufferBooking['userId'].'-UID',
@@ -508,8 +508,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $mainBodyMock = [
             'resource' => $resource,
             'submission' => $mainBooking + [
-                'fromObj' => new \DateTime($mainBooking['start']),
-                'toObj' => new \DateTime($mainBooking['end']),
+                'from' => '26/02/2004 - 15:00 torsdag',
+                'to' => '26/02/2004 - 15:30 torsdag',
             ],
             'metaData' => $mainBooking['metaData'],
             'userUniqueId' => 'UID-'.$mainBooking['userId'].'-UID',
@@ -518,8 +518,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $bufferBodyMock = [
             'resource' => $resource,
             'submission' => $bufferBooking + [
-                'fromObj' => new \DateTime($bufferBooking['start']),
-                'toObj' => new \DateTime($bufferBooking['end']),
+                'from' => '26/02/2004 - 15:30 torsdag',
+                'to' => '26/02/2004 - 16:00 torsdag',
             ],
             'metaData' => $bufferBooking['metaData'],
             'userUniqueId' => 'UID-'.$bufferBooking['userId'].'-UID',
@@ -676,8 +676,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $mainBodyMock = [
             'resource' => $resource,
             'submission' => $mainBooking + [
-                'fromObj' => new \DateTime($mainBooking['start']),
-                'toObj' => new \DateTime($mainBooking['end']),
+                'from' => '26/02/2004 - 15:00 torsdag',
+                'to' => '26/02/2004 - 15:30 torsdag',
             ],
             'metaData' => $mainBooking['metaData'],
             'userUniqueId' => 'UID-'.$mainBooking['userId'].'-UID',
@@ -686,8 +686,8 @@ class CreateBookingControllerTest extends AbstractBaseApiTestCase
         $bufferBodyMock = [
             'resource' => $resource,
             'submission' => $bufferBooking + [
-                'fromObj' => new \DateTime($bufferBooking['start']),
-                'toObj' => new \DateTime($bufferBooking['end']),
+                'from' => '26/02/2004 - 15:30 torsdag',
+                'to' => '26/02/2004 - 16:00 torsdag',
             ],
             'metaData' => $bufferBooking['metaData'],
             'userUniqueId' => 'UID-'.$bufferBooking['userId'].'-UID',

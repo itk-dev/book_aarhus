@@ -9,6 +9,8 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+- Added day of week to formatted dates according to locale in bookings.
+
 ## [1.4.2] - 2025-09-15
 
 - Correctly use datetime to identify non-overlapping busy intervals.
