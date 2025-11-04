@@ -1375,6 +1375,8 @@ components:
           type: boolean
         catering:
           type: boolean
+        telecoil:
+          type: boolean
         formId:
           type:
             - string
@@ -1496,6 +1498,8 @@ components:
         acceptanceFlow:
           type: boolean
         catering:
+          type: boolean
+        telecoil:
           type: boolean
         formId:
           type:
