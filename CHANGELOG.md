@@ -9,6 +9,9 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+- Fixed messenger queue DSN.
+- Changed app default cache to redis.
+
 ## [1.4.2] - 2025-09-15
 
 - Correctly use datetime to identify non-overlapping busy intervals.
