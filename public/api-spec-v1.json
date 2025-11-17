@@ -2116,6 +2116,9 @@
                     "catering": {
                         "type": "boolean"
                     },
+                    "telecoil": {
+                        "type": "boolean"
+                    },
                     "formId": {
                         "type": [
                             "string",
@@ -2297,6 +2300,9 @@
                         "type": "boolean"
                     },
                     "catering": {
+                        "type": "boolean"
+                    },
+                    "telecoil": {
                         "type": "boolean"
                     },
                     "formId": {

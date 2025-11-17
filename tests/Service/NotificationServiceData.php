@@ -43,6 +43,7 @@ class NotificationServiceData
         $resource->setGeoCoordinates('56.15357461749666, 10.214345916610233');
         $resource->setMonitorEquipment(true);
         $resource->setCatering(false);
+        $resource->setTelecoil(false);
         $resource->setAcceptanceFlow(true);
         $resource->setCapacity(50);
         $resource->setPermissionBusinessPartner(true);

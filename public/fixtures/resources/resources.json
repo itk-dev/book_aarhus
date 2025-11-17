@@ -32,7 +32,8 @@
     "AcceptConflict": "False",
     "ShowinOS2Display": "True",
     "Straksbookning": "False",
-    "IncludeinUI": "True"
+    "IncludeinUI": "True",
+    "Teleslynge": "True"
   },
   {
     "ID": "2",
@@ -67,7 +68,8 @@
     "AcceptConflict": "False",
     "ShowinOS2Display": "False",
     "Straksbookning": "False",
-    "IncludeinUI": "True"
+    "IncludeinUI": "True",
+    "Teleslynge": "False"
   },
   {
     "ID": "3",
@@ -102,7 +104,8 @@
     "AcceptConflict": "True",
     "ShowinOS2Display": "False",
     "Straksbookning": "False",
-    "IncludeinUI": "True"
+    "IncludeinUI": "True",
+    "Teleslynge": "False"
   },
   {
     "ID": "4",
@@ -137,6 +140,7 @@
     "AcceptConflict": "True",
     "ShowinOS2Display": "False",
     "Straksbookning": "False",
-    "IncludeinUI": "False"
+    "IncludeinUI": "False",
+    "Teleslynge": "False"
   }
 ]

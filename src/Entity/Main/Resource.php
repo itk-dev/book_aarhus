@@ -169,6 +169,10 @@ class Resource
     private bool $catering;
 
     #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: false)]
+    private bool $telecoil;
+
+    #[Groups(['resource', 'minimum'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $formId = null;
 
@@ -380,6 +384,16 @@ class Resource
     public function setCatering(bool $catering): void
     {
         $this->catering = $catering;
+    }
+
+    public function isTelecoil(): bool
+    {
+        return $this->telecoil;
+    }
+
+    public function setTelecoil(bool $telecoil): void
+    {
+        $this->telecoil = $telecoil;
     }
 
     public function getFormId(): ?string

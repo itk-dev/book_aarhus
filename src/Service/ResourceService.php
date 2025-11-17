@@ -124,6 +124,7 @@ class ResourceService implements ResourceServiceInterface
             $resource->setMonitorEquipment($this->parseBoolString($resourceData['MonitorEquipment']));
             $resource->setAcceptanceFlow($this->parseBoolString($resourceData['AcceptanceFlow']));
             $resource->setCatering($this->parseBoolString($resourceData['Catering']));
+            $resource->setTelecoil($this->parseBoolString($resourceData['Teleslynge']));
             $resource->setFormId($resourceData['FormID']);
             $resource->setHasHolidayOpen($this->parseBoolString($resourceData['HasHolidayOpen']));
             $resource->setHasOpen($this->parseBoolString($resourceData['HasOpen']));

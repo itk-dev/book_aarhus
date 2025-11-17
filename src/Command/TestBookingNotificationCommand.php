@@ -120,6 +120,7 @@ class TestBookingNotificationCommand extends Command
         $res->setVideoConferenceEquipment(false);
         $res->setMonitorEquipment(false);
         $res->setCatering(false);
+        $res->setTelecoil(false);
         $res->setAcceptanceFlow(false);
         $res->setCapacity(10);
         $res->setPermissionBusinessPartner(true);
