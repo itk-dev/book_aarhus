@@ -1,4 +1,9 @@
 services:
+  nginx:
+    labels:
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-metrics.rule=Host(`${COMPOSE_SERVER_DOMAIN}`) && PathPrefix(`/metrics`) "
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-metrics.middlewares=ITKMetricsAuth@file"
+
   supervisor:
     image: itkdev/supervisor-php8.3:alpine
     restart: unless-stopped

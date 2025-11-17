@@ -13,6 +13,10 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 - Added day of week to formatted dates according to locale in bookings.
 - Introduced telecoil (teleslynge) to resources.
 
+## [1.4.3] - 2025-11-06
+
+- Fixed messenger queue DSN.
+
 ## [1.4.2] - 2025-09-15
 
 - Correctly use datetime to identify non-overlapping busy intervals.
