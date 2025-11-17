@@ -21,7 +21,6 @@ framework:
                     delay: 60000 # 1 minutes
                     multiplier: 2
                     max_delay: 3600000 # 1 hour
-
             failed:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN_FAILED)%'
                 options:
