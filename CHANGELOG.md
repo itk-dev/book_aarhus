@@ -9,6 +9,8 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+## [1.5.0] - 2025-11-17
+
 - Changed to import resources from endpoints instead of hooking into an external database.
 - Added day of week to formatted dates according to locale in bookings.
 - Introduced telecoil (teleslynge) to resources.
@@ -118,7 +120,9 @@ Added auto restart to queue container.
 
 - First release.
 
-[Unreleased]: https://github.com/itk-dev/book_aarhus/compare/1.4.2...HEAD
+[Unreleased]: https://github.com/itk-dev/book_aarhus/compare/1.5.0...HEAD
+[1.5.0]: https://github.com/itk-dev/book_aarhus/compare/1.4.3...1.5.0
+[1.4.3]: https://github.com/itk-dev/book_aarhus/compare/1.4.2...1.4.3
 [1.4.2]: https://github.com/itk-dev/book_aarhus/compare/1.4.1...1.4.2
 [1.4.1]: https://github.com/itk-dev/book_aarhus/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/itk-dev/book_aarhus/compare/1.3.0...1.4.0
