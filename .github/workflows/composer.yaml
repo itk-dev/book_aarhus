@@ -26,7 +26,7 @@
 name: Composer
 
 env:
-  COMPOSE_USER: runner
+  COMPOSE_USER: root
 
 on:
   pull_request:
@@ -41,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Create docker network
         run: |
@@ -55,7 +55,7 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Create docker network
         run: |
@@ -70,7 +70,7 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Create docker network
         run: |
