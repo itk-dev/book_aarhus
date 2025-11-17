@@ -9,6 +9,8 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+- Updated recipes and packages
+
 ## [1.5.0] - 2025-11-17
 
 - Changed to import resources from endpoints instead of hooking into an external database.
