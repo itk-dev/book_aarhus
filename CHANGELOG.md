@@ -11,7 +11,7 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [1.5.1] - 2025-11-18
 
-- Ensured backwords compatibility with locations.
+- Ensured backwards compatibility with locations.
 
 ## [1.5.0] - 2025-11-17
 
