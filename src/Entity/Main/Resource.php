@@ -25,7 +25,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             uriTemplate: '/resources/{id}',
             openapiContext: ['operationId' => 'getResourceItem'],
             normalizationContext: [
-                'groups' => ['resource', 'minimum'],
+                'groups' => ['resource'],
             ]
         ),
         new Get(
