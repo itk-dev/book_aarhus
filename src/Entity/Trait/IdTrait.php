@@ -10,7 +10,7 @@ trait IdTrait
 {
     #[Groups(['resource', 'minimum'])]
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
 
