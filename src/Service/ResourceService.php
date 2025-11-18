@@ -78,9 +78,9 @@ class ResourceService implements ResourceServiceInterface
             $location = $this->locationRepository->findOneBy(['location' => $sourceId]);
             if (null !== $location) {
                 // Unlink location from existing resources.
-                $resourcesWithLocation = $this->resourceRepository->findBy(['location' => $location]);
+                $resourcesWithLocation = $this->resourceRepository->findBy(['locationData' => $location]);
                 foreach ($resourcesWithLocation as $resource) {
-                    $resource->setLocation(null);
+                    $resource->setLocationData(null);
                 }
 
                 $this->entityManager->remove($location);
