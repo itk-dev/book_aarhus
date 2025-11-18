@@ -25,7 +25,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             uriTemplate: '/resources/{id}',
             openapiContext: ['operationId' => 'getResourceItem'],
             normalizationContext: [
-                'groups' => ['resource'],
+                'groups' => ['resource', 'minimum'],
             ]
         ),
         new Get(
@@ -89,7 +89,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
     ],
     normalizationContext: [
-        'groups' => ['resource'],
+        'groups' => ['resource', 'minimum'],
     ]
 )]
 class Resource

@@ -894,12 +894,12 @@
                         "content": {
                             "application/ld+json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Resource.jsonld-resource"
+                                    "$ref": "#/components/schemas/Resource.jsonld-resource_minimum"
                                 }
                             },
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Resource-resource"
+                                    "$ref": "#/components/schemas/Resource-resource_minimum"
                                 }
                             }
                         }
@@ -1924,6 +1924,29 @@
                     "holidayClose": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
+                    }
+                }
+            },
+            "HolidayOpeningHours-resource_minimum": {
+                "type": "object",
+                "description": "",
+                "deprecated": false,
+                "properties": {
+                    "holidayOpen": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "holidayClose": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
                     }
                 }
             },
@@ -1974,6 +1997,64 @@
                     "holidayClose": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
+                    }
+                }
+            },
+            "HolidayOpeningHours.jsonld-resource_minimum": {
+                "type": "object",
+                "description": "",
+                "deprecated": false,
+                "properties": {
+                    "@context": {
+                        "readOnly": true,
+                        "oneOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "@vocab": {
+                                        "type": "string"
+                                    },
+                                    "hydra": {
+                                        "type": "string",
+                                        "enum": [
+                                            "http://www.w3.org/ns/hydra/core#"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "@vocab",
+                                    "hydra"
+                                ],
+                                "additionalProperties": true
+                            }
+                        ]
+                    },
+                    "@id": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "@type": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "holidayOpen": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "holidayClose": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
                     }
                 }
             },
@@ -1992,6 +2073,32 @@
                     "close": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
+                    }
+                }
+            },
+            "OpeningHours-resource_minimum": {
+                "type": "object",
+                "description": "",
+                "deprecated": false,
+                "properties": {
+                    "weekday": {
+                        "type": "integer"
+                    },
+                    "open": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "close": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
                     }
                 }
             },
@@ -2045,6 +2152,67 @@
                     "close": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
+                    }
+                }
+            },
+            "OpeningHours.jsonld-resource_minimum": {
+                "type": "object",
+                "description": "",
+                "deprecated": false,
+                "properties": {
+                    "@context": {
+                        "readOnly": true,
+                        "oneOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "@vocab": {
+                                        "type": "string"
+                                    },
+                                    "hydra": {
+                                        "type": "string",
+                                        "enum": [
+                                            "http://www.w3.org/ns/hydra/core#"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "@vocab",
+                                    "hydra"
+                                ],
+                                "additionalProperties": true
+                            }
+                        ]
+                    },
+                    "@id": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "@type": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "weekday": {
+                        "type": "integer"
+                    },
+                    "open": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "close": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
                     }
                 }
             },
@@ -2199,6 +2367,168 @@
                             "string",
                             "null"
                         ]
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
+                    }
+                }
+            },
+            "Resource-resource_minimum": {
+                "type": "object",
+                "description": "Resource",
+                "deprecated": false,
+                "properties": {
+                    "openHours": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OpeningHours-resource_minimum"
+                        }
+                    },
+                    "holidayOpenHours": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HolidayOpeningHours-resource_minimum"
+                        }
+                    },
+                    "location": {
+                        "type": "string"
+                    },
+                    "resourceMail": {
+                        "type": "string"
+                    },
+                    "resourceName": {
+                        "type": "string"
+                    },
+                    "resourceImage": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "resourceEmailText": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "geoCoordinates": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "capacity": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "resourceDescription": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "wheelchairAccessible": {
+                        "type": "boolean"
+                    },
+                    "videoConferenceEquipment": {
+                        "type": "boolean"
+                    },
+                    "monitorEquipment": {
+                        "type": "boolean"
+                    },
+                    "acceptanceFlow": {
+                        "type": "boolean"
+                    },
+                    "catering": {
+                        "type": "boolean"
+                    },
+                    "telecoil": {
+                        "type": "boolean"
+                    },
+                    "formId": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "hasHolidayOpen": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "hasOpen": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "hasWhitelist": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "permissionEmployee": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "permissionCitizen": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "permissionBusinessPartner": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "city": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "streetName": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "postalCode": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "resourceCategory": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "resourceDisplayName": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "locationDisplayName": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
                     }
                 }
             },
@@ -2388,6 +2718,203 @@
                             "string",
                             "null"
                         ]
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
+                    }
+                }
+            },
+            "Resource.jsonld-resource_minimum": {
+                "type": "object",
+                "description": "Resource",
+                "deprecated": false,
+                "properties": {
+                    "@context": {
+                        "readOnly": true,
+                        "oneOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "@vocab": {
+                                        "type": "string"
+                                    },
+                                    "hydra": {
+                                        "type": "string",
+                                        "enum": [
+                                            "http://www.w3.org/ns/hydra/core#"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "@vocab",
+                                    "hydra"
+                                ],
+                                "additionalProperties": true
+                            }
+                        ]
+                    },
+                    "@id": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "@type": {
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "openHours": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OpeningHours.jsonld-resource_minimum"
+                        }
+                    },
+                    "holidayOpenHours": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HolidayOpeningHours.jsonld-resource_minimum"
+                        }
+                    },
+                    "location": {
+                        "type": "string"
+                    },
+                    "resourceMail": {
+                        "type": "string"
+                    },
+                    "resourceName": {
+                        "type": "string"
+                    },
+                    "resourceImage": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "resourceEmailText": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "geoCoordinates": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "capacity": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "resourceDescription": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "wheelchairAccessible": {
+                        "type": "boolean"
+                    },
+                    "videoConferenceEquipment": {
+                        "type": "boolean"
+                    },
+                    "monitorEquipment": {
+                        "type": "boolean"
+                    },
+                    "acceptanceFlow": {
+                        "type": "boolean"
+                    },
+                    "catering": {
+                        "type": "boolean"
+                    },
+                    "telecoil": {
+                        "type": "boolean"
+                    },
+                    "formId": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "hasHolidayOpen": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "hasOpen": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "hasWhitelist": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "permissionEmployee": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "permissionCitizen": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "permissionBusinessPartner": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "city": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "streetName": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "postalCode": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "resourceCategory": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "resourceDisplayName": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "locationDisplayName": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
                     }
                 }
             },
