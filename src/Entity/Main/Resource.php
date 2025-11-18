@@ -117,8 +117,12 @@ class Resource
     #[ORM\OneToMany(mappedBy: 'resource', targetEntity: CvrWhitelist::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $cvrWhitelists;
 
+    #[Groups(['resource', 'minimum'])]
+    #[ORM\Column(type: Types::STRING, length: 128, nullable: false)]
+    private string $location;
+
     #[ORM\ManyToOne(targetEntity: Location::class, inversedBy: 'resources')]
-    private ?Location $location = null;
+    private ?Location $locationData = null;
 
     #[Groups(['resource', 'minimum'])]
     #[ORM\Column(type: Types::STRING, length: 128, nullable: false)]
@@ -296,14 +300,24 @@ class Resource
         $this->resourceEmailText = $resourceEmailText;
     }
 
-    public function getLocation(): ?Location
+    public function getLocation(): string
     {
         return $this->location;
     }
 
-    public function setLocation(?Location $location): void
+    public function setLocation(string $location): void
     {
         $this->location = $location;
+    }
+
+    public function getLocationData(): ?Location
+    {
+        return $this->locationData;
+    }
+
+    public function setLocationData(?Location $locationData): void
+    {
+        $this->locationData = $locationData;
     }
 
     public function getGeoCoordinates(): ?string

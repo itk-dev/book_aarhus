@@ -2065,6 +2065,9 @@
                             "$ref": "#/components/schemas/HolidayOpeningHours-resource"
                         }
                     },
+                    "location": {
+                        "type": "string"
+                    },
                     "resourceMail": {
                         "type": "string"
                     },
@@ -2250,6 +2253,9 @@
                         "items": {
                             "$ref": "#/components/schemas/HolidayOpeningHours.jsonld-resource"
                         }
+                    },
+                    "location": {
+                        "type": "string"
                     },
                     "resourceMail": {
                         "type": "string"
