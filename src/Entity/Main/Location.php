@@ -18,7 +18,7 @@ class Location implements \Stringable
     /**
      * @var Collection<int, resource>
      */
-    #[ORM\OneToMany(mappedBy: 'location', targetEntity: Resource::class)]
+    #[ORM\OneToMany(mappedBy: 'locationData', targetEntity: Resource::class)]
     private Collection $resources;
 
     #[ORM\Column(type: Types::STRING)]
