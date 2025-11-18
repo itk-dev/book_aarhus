@@ -107,10 +107,10 @@ class ResourceService implements ResourceServiceInterface
             }
 
             $locationId = $resourceData['Location'];
-            $location = $this->locationRepository->findOneBy(['location' => $locationId]);
+            $locationData = $this->locationRepository->findOneBy(['location' => $locationId]);
 
-            if (null !== $location) {
-                $resource->setLocationData($location);
+            if (null !== $locationData) {
+                $resource->setLocationData($locationData);
             }
 
             $resource->setResourceMail($resourceData['ResourceMail']);
@@ -137,12 +137,12 @@ class ResourceService implements ResourceServiceInterface
             $resource->setResourceDisplayName($resourceData['ResourceDisplayName']);
 
             // Location fields.
-            $resource->setLocation($location?->getLocation());
-            $resource->setCity($location?->getCity());
-            $resource->setPostalCode((int) $location?->getPostalCode());
-            $resource->setGeoCoordinates($location?->getGeoCoordinates());
-            $resource->setLocationDisplayName($location?->getDisplayName());
-            $resource->setStreetName($location?->getAddress());
+            $resource->setLocation($locationId);
+            $resource->setCity($locationData?->getCity());
+            $resource->setPostalCode((int) $locationData?->getPostalCode());
+            $resource->setGeoCoordinates($locationData?->getGeoCoordinates());
+            $resource->setLocationDisplayName($locationData?->getDisplayName());
+            $resource->setStreetName($locationData?->getAddress());
 
             $handledSourceIds[] = $resource->getSourceId();
         }
