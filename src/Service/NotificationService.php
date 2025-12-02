@@ -262,8 +262,7 @@ class NotificationService implements NotificationServiceInterface
         $resource = $data['resource'];
         $resourceName = $resource->getResourceDisplayName() ?? $resource->getResourceName();
         $location = $resource->getLocation();
-        $locationName = $location?->getLocation() ?? '';
-        $resourceLocationString = $resourceName.' - '.$locationName;
+        $resourceLocationString = $resourceName.' - '.$location;
 
         switch ($type) {
             case NotificationTypeEnum::SUCCESS:

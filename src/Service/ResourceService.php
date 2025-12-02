@@ -78,9 +78,9 @@ class ResourceService implements ResourceServiceInterface
             $location = $this->locationRepository->findOneBy(['location' => $sourceId]);
             if (null !== $location) {
                 // Unlink location from existing resources.
-                $resourcesWithLocation = $this->resourceRepository->findBy(['location' => $location]);
+                $resourcesWithLocation = $this->resourceRepository->findBy(['locationData' => $location]);
                 foreach ($resourcesWithLocation as $resource) {
-                    $resource->setLocation(null);
+                    $resource->setLocationData(null);
                 }
 
                 $this->entityManager->remove($location);
@@ -107,10 +107,10 @@ class ResourceService implements ResourceServiceInterface
             }
 
             $locationId = $resourceData['Location'];
-            $location = $this->locationRepository->findOneBy(['location' => $locationId]);
+            $locationData = $this->locationRepository->findOneBy(['location' => $locationId]);
 
-            if (null !== $location) {
-                $resource->setLocation($location);
+            if (null !== $locationData) {
+                $resource->setLocationData($locationData);
             }
 
             $resource->setResourceMail($resourceData['ResourceMail']);
@@ -137,11 +137,12 @@ class ResourceService implements ResourceServiceInterface
             $resource->setResourceDisplayName($resourceData['ResourceDisplayName']);
 
             // Location fields.
-            $resource->setCity($location?->getCity());
-            $resource->setPostalCode((int) $location?->getPostalCode());
-            $resource->setGeoCoordinates($location?->getGeoCoordinates());
-            $resource->setLocationDisplayName($location?->getDisplayName());
-            $resource->setStreetName($location?->getAddress());
+            $resource->setLocation($locationId);
+            $resource->setCity($locationData?->getCity());
+            $resource->setPostalCode((int) $locationData?->getPostalCode());
+            $resource->setGeoCoordinates($locationData?->getGeoCoordinates());
+            $resource->setLocationDisplayName($locationData?->getDisplayName());
+            $resource->setStreetName($locationData?->getAddress());
 
             $handledSourceIds[] = $resource->getSourceId();
         }

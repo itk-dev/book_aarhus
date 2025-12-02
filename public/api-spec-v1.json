@@ -1924,6 +1924,10 @@
                     "holidayClose": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
                     }
                 }
             },
@@ -1974,6 +1978,10 @@
                     "holidayClose": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
                     }
                 }
             },
@@ -1992,6 +2000,10 @@
                     "close": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
                     }
                 }
             },
@@ -2045,6 +2057,10 @@
                     "close": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
                     }
                 }
             },
@@ -2064,6 +2080,9 @@
                         "items": {
                             "$ref": "#/components/schemas/HolidayOpeningHours-resource"
                         }
+                    },
+                    "location": {
+                        "type": "string"
                     },
                     "resourceMail": {
                         "type": "string"
@@ -2196,6 +2215,10 @@
                             "string",
                             "null"
                         ]
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
                     }
                 }
             },
@@ -2251,6 +2274,9 @@
                             "$ref": "#/components/schemas/HolidayOpeningHours.jsonld-resource"
                         }
                     },
+                    "location": {
+                        "type": "string"
+                    },
                     "resourceMail": {
                         "type": "string"
                     },
@@ -2382,6 +2408,10 @@
                             "string",
                             "null"
                         ]
+                    },
+                    "id": {
+                        "readOnly": true,
+                        "type": "integer"
                     }
                 }
             },

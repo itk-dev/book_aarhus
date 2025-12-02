@@ -106,15 +106,16 @@ class TestBookingNotificationCommand extends Command
 
     private function createResource(): Resource
     {
-        $location = new Location();
-        $location->setLocation('LOCATION1');
+        $locationData = new Location();
+        $locationData->setLocation('LOCATION1');
 
         $res = new Resource();
         $res->setResourceMail('test@bookaarhus.local.itkdev.dk');
         $res->setResourceName('test');
         $res->setResourceDescription('Resource description as shown in the booking app.');
         $res->setResourceEmailText('Resource specific text from resource db.');
-        $res->setLocation($location);
+        $res->setLocationData($locationData);
+        $res->setLocation($locationData->getLocation());
         $res->setGeoCoordinates('56.175895100,10.191482000');
         $res->setWheelchairAccessible(true);
         $res->setVideoConferenceEquipment(false);

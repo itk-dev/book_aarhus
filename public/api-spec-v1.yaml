@@ -1245,6 +1245,9 @@ components:
         holidayClose:
           type: string
           format: date-time
+        id:
+          readOnly: true
+          type: integer
     HolidayOpeningHours.jsonld-resource:
       type: object
       description: ''
@@ -1279,6 +1282,9 @@ components:
         holidayClose:
           type: string
           format: date-time
+        id:
+          readOnly: true
+          type: integer
     OpeningHours-resource:
       type: object
       description: ''
@@ -1292,6 +1298,9 @@ components:
         close:
           type: string
           format: date-time
+        id:
+          readOnly: true
+          type: integer
     OpeningHours.jsonld-resource:
       type: object
       description: ''
@@ -1328,6 +1337,9 @@ components:
         close:
           type: string
           format: date-time
+        id:
+          readOnly: true
+          type: integer
     Resource-resource:
       type: object
       description: Resource
@@ -1341,6 +1353,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/HolidayOpeningHours-resource'
+        location:
+          type: string
         resourceMail:
           type: string
         resourceName:
@@ -1429,6 +1443,9 @@ components:
           type:
             - string
             - 'null'
+        id:
+          readOnly: true
+          type: integer
     Resource.jsonld-resource:
       type: object
       description: Resource
@@ -1465,6 +1482,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/HolidayOpeningHours.jsonld-resource'
+        location:
+          type: string
         resourceMail:
           type: string
         resourceName:
@@ -1553,6 +1572,9 @@ components:
           type:
             - string
             - 'null'
+        id:
+          readOnly: true
+          type: integer
     UserBooking:
       type: object
       description: ''

@@ -11,6 +11,14 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 - Updated recipes and packages
 
+## [1.5.2] - 2025-11-28
+
+- Readded ids to normalization context.
+
+## [1.5.1] - 2025-11-18
+
+- Ensured backwards compatibility with locations.
+
 ## [1.5.0] - 2025-11-17
 
 - Changed to import resources from endpoints instead of hooking into an external database.
@@ -122,7 +130,9 @@ Added auto restart to queue container.
 
 - First release.
 
-[Unreleased]: https://github.com/itk-dev/book_aarhus/compare/1.5.0...HEAD
+[Unreleased]: https://github.com/itk-dev/book_aarhus/compare/1.5.2...HEAD
+[1.5.2]: https://github.com/itk-dev/book_aarhus/compare/1.5.1...1.5.2
+[1.5.1]: https://github.com/itk-dev/book_aarhus/compare/1.5.0...1.5.1
 [1.5.0]: https://github.com/itk-dev/book_aarhus/compare/1.4.3...1.5.0
 [1.4.3]: https://github.com/itk-dev/book_aarhus/compare/1.4.2...1.4.3
 [1.4.2]: https://github.com/itk-dev/book_aarhus/compare/1.4.1...1.4.2
