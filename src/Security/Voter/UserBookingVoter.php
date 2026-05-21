@@ -34,7 +34,7 @@ class UserBookingVoter extends Voter
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
-        if (!($subject instanceof UserBooking)) {
+        if (!$subject instanceof UserBooking) {
             return false;
         }
 
