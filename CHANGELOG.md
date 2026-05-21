@@ -9,6 +9,8 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+- Updated bundles.
+
 ## [1.5.2] - 2025-11-28
 
 - Readded ids to normalization context.
