@@ -9,6 +9,12 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+## [1.5.4] - 2026-06-23
+
+- Updated FailedMessageEventListener.
+  - Added a priority of -101 to ensure it runs after core listeners.
+  - Swallowed exceptions when sending failed messages notifications.
+
 ## [1.5.3] - 2026-05-21
 
 - Updated bundles.
@@ -132,7 +138,9 @@ Added auto restart to queue container.
 
 - First release.
 
-[Unreleased]: https://github.com/itk-dev/book_aarhus/compare/1.5.2...HEAD
+[Unreleased]: https://github.com/itk-dev/book_aarhus/compare/1.5.4...HEAD
+[1.5.4]: https://github.com/itk-dev/book_aarhus/compare/1.5.3...1.5.4
+[1.5.3]: https://github.com/itk-dev/book_aarhus/compare/1.5.2...1.5.3
 [1.5.2]: https://github.com/itk-dev/book_aarhus/compare/1.5.1...1.5.2
 [1.5.1]: https://github.com/itk-dev/book_aarhus/compare/1.5.0...1.5.1
 [1.5.0]: https://github.com/itk-dev/book_aarhus/compare/1.4.3...1.5.0
