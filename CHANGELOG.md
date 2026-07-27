@@ -9,6 +9,8 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+- Added `app:test:metrics-exception` for simulating exceptions in metrics.
+
 ## [1.5.4] - 2026-06-23
 
 - Updated FailedMessageEventListener.
