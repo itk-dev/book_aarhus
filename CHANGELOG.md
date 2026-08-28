@@ -9,6 +9,8 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+## [1.5.5] - 2026-08-28
+
 - Added `app:test:metrics-exception` for simulating exceptions in metrics.
 - Updated packages.
 
@@ -141,7 +143,8 @@ Added auto restart to queue container.
 
 - First release.
 
-[Unreleased]: https://github.com/itk-dev/book_aarhus/compare/1.5.4...HEAD
+[Unreleased]: https://github.com/itk-dev/book_aarhus/compare/1.5.5...HEAD
+[1.5.5]: https://github.com/itk-dev/book_aarhus/compare/1.5.4...1.5.5
 [1.5.4]: https://github.com/itk-dev/book_aarhus/compare/1.5.3...1.5.4
 [1.5.3]: https://github.com/itk-dev/book_aarhus/compare/1.5.2...1.5.3
 [1.5.2]: https://github.com/itk-dev/book_aarhus/compare/1.5.1...1.5.2
