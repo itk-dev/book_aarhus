@@ -9,6 +9,10 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+## [1.5.6] - 2026-10-26
+
+- Changed docker compose nginx image to maintained `nginx/nginx-unprivileged`.
+
 ## [1.5.5] - 2026-08-28
 
 - Added `app:test:metrics-exception` for simulating exceptions in metrics.
@@ -143,7 +147,8 @@ Added auto restart to queue container.
 
 - First release.
 
-[Unreleased]: https://github.com/itk-dev/book_aarhus/compare/1.5.5...HEAD
+[Unreleased]: https://github.com/itk-dev/book_aarhus/compare/1.5.6...HEAD
+[1.5.6]: https://github.com/itk-dev/book_aarhus/compare/1.5.5...1.5.6
 [1.5.5]: https://github.com/itk-dev/book_aarhus/compare/1.5.4...1.5.5
 [1.5.4]: https://github.com/itk-dev/book_aarhus/compare/1.5.3...1.5.4
 [1.5.3]: https://github.com/itk-dev/book_aarhus/compare/1.5.2...1.5.3
