@@ -9,6 +9,8 @@ See [keep a changelog](https://keepachangelog.com/en/1.0.0/) for information abo
 
 ## [Unreleased]
 
+- Updated composer dependencies.
+
 ## [1.5.6] - 2026-10-26
 
 - Changed docker compose nginx image to maintained `nginx/nginx-unprivileged`.

@@ -10,7 +10,6 @@
         "ext-iconv": "*",
         "ext-intl": "*",
         "api-platform/core": "^3.2",
-        "doctrine/annotations": "^1.0",
         "doctrine/doctrine-bundle": "^2.6",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.12",
@@ -93,6 +92,19 @@
             "symfony/runtime": true
         },
         "optimize-autoloader": true,
+        "policy": {
+            "advisories": {
+                "ignore-id": {
+                    "CVE-2026-49858": "Not exploitable: JSON:API/HAL not enabled, no ApiProperty security, php-fpm runtime. No fix for api-platform 3.x.",
+                    "CVE-2026-54164": "Not exploitable: no write operation accepts a relation IRI. No fix for api-platform 3.x."
+                }
+            },
+            "abandoned": {
+                "ignore": {
+                    "doctrine/cache": "Required by doctrine/orm 2.x; goes away with ORM 3."
+                }
+            }
+        },
         "preferred-install": {
             "*": "dist"
         },
