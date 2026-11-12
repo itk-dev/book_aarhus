@@ -85,11 +85,18 @@
         }
     },
     "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "ergebnis/composer-normalize": true,
+            "symfony/flex": true,
+            "symfony/runtime": true
+        },
+        "optimize-autoloader": true,
         "policy": {
             "advisories": {
                 "ignore-id": {
-                    "CVE-2026-54164": "Not exploitable: no write operation accepts a relation IRI. No fix for api-platform 3.x.",
-                    "CVE-2026-49858": "Not exploitable: JSON:API/HAL not enabled, no ApiProperty security, php-fpm runtime. No fix for api-platform 3.x."
+                    "CVE-2026-49858": "Not exploitable: JSON:API/HAL not enabled, no ApiProperty security, php-fpm runtime. No fix for api-platform 3.x.",
+                    "CVE-2026-54164": "Not exploitable: no write operation accepts a relation IRI. No fix for api-platform 3.x."
                 }
             },
             "abandoned": {
@@ -98,13 +105,6 @@
                 }
             }
         },
-        "allow-plugins": {
-            "composer/package-versions-deprecated": true,
-            "ergebnis/composer-normalize": true,
-            "symfony/flex": true,
-            "symfony/runtime": true
-        },
-        "optimize-autoloader": true,
         "preferred-install": {
             "*": "dist"
         },
