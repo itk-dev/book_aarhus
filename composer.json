@@ -101,7 +101,8 @@
             },
             "abandoned": {
                 "ignore": {
-                    "doctrine/cache": "Required by doctrine/orm 2.x; goes away with ORM 3."
+                    "doctrine/cache": "Required by doctrine/orm 2.x; goes away with ORM 3.",
+                    "doctrine/common": "Required by doctrine/orm 2.x; goes away with ORM 3."
                 }
             }
         },
